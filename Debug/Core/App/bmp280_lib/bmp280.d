@@ -1,5 +1,4 @@
-Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
- ../Core/App/lcd_library/lcd.h ../Core/App/bmp280_lib/bmp280_api.h \
+Core/App/bmp280_lib/bmp280.o: ../Core/App/bmp280_lib/bmp280.c \
  ../Core/App/bmp280_lib/bmp280.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h \
  ../Core/Inc/stm32u5xx_hal_conf.h \
@@ -29,13 +28,7 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_pwr_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h \
- ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h \
- ../Core/Inc/main.h ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h \
- ../Core/Inc/stm32u5xx_nucleo_conf.h \
- ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo_errno.h
-../Core/App/app.h:
-../Core/App/lcd_library/lcd.h:
-../Core/App/bmp280_lib/bmp280_api.h:
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h
 ../Core/App/bmp280_lib/bmp280.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h:
 ../Core/Inc/stm32u5xx_hal_conf.h:
@@ -66,7 +59,3 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h:
-../Core/Inc/main.h:
-../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h:
-../Core/Inc/stm32u5xx_nucleo_conf.h:
-../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo_errno.h:

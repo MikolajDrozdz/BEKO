@@ -23,6 +23,7 @@ C_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 Core/App \
+Core/App/bmp280_lib \
 Core/App/lcd_library \
 Core/Src \
 Core/Startup \

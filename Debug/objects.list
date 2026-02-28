@@ -1,4 +1,6 @@
 "./Core/App/app.o"
+"./Core/App/bmp280_lib/bmp280.o"
+"./Core/App/bmp280_lib/bmp280_api.o"
 "./Core/App/lcd_library/lcd.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32u5xx_hal_msp.o"

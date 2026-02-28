@@ -14,6 +14,7 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include Core/App/lcd_library/subdir.mk
+-include Core/App/bmp280_lib/subdir.mk
 -include Core/App/subdir.mk
 -include objects.mk
 
@@ -64,7 +65,7 @@ main-build: BEKO_W1_hello-.elf secondary-outputs
 
 # Tool invocations
 BEKO_W1_hello-.elf BEKO_W1_hello-.map: $(OBJS) $(USER_OBJS) C:\Users\mikol\STM32CubeIDE\workspace_1.19.0\BEKO_W1_hello-\STM32U545RETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "BEKO_W1_hello-.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Users\mikol\STM32CubeIDE\workspace_1.19.0\BEKO_W1_hello-\STM32U545RETXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="BEKO_W1_hello-.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "BEKO_W1_hello-.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Users\mikol\STM32CubeIDE\workspace_1.19.0\BEKO_W1_hello-\STM32U545RETXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="BEKO_W1_hello-.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
