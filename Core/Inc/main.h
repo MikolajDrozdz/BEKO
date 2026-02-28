@@ -59,6 +59,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define VL53L3CX_xshout_Pin GPIO_PIN_3
+#define VL53L3CX_xshout_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 

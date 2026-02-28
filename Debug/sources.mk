@@ -27,6 +27,9 @@ Core/App/bmp280_lib \
 Core/App/lcd_library \
 Core/Src \
 Core/Startup \
+Drivers/BSP/Components/vl53l3cx/modules \
+Drivers/BSP/Components/vl53l3cx/porting \
+Drivers/BSP/Components/vl53l3cx \
 Drivers/BSP/STM32U5xx_Nucleo \
 Drivers/STM32U5xx_HAL_Driver/Src \
 

@@ -11,6 +11,9 @@ RM := rm -rf
 -include sources.mk
 -include Drivers/STM32U5xx_HAL_Driver/Src/subdir.mk
 -include Drivers/BSP/STM32U5xx_Nucleo/subdir.mk
+-include Drivers/BSP/Components/vl53l3cx/porting/subdir.mk
+-include Drivers/BSP/Components/vl53l3cx/modules/subdir.mk
+-include Drivers/BSP/Components/vl53l3cx/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include Core/App/lcd_library/subdir.mk

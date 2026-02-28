@@ -25,9 +25,10 @@ app_init( void )
 	lcd_backlight(1);
 	lcd_set_cursor(0,0);
 	lcd_animation_hello_beko();
+	HAL_Delay(100);
 
 
-	printf("Initializing BMP280 (if connected)");
+	printf("Initializing BMP280 (if connected)\r\n");
 	bool tmp = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_1);
 	bmp280_api_measure_all(&bmp, 50);
 
@@ -35,7 +36,7 @@ app_init( void )
 	{
 		printf("BMP280 init fail!\r\n");
 	}
-	else if(tmp == true)
+	else if(tmp != true)
 	{
 		printf("BMP280 not connected\n\r");
 	}
@@ -45,11 +46,18 @@ app_init( void )
 	}
 
 
+	printf("\n\n \tTOF\n\n");
+
 	return;
 }
 
 void
 app_main( void )
 {
+
+	bmp280_api_measure_all(&bmp, 50);
+	printf("Measurements: temp:%.2f, pres:%.2f\r\n", bmp.temperature_c, bmp.pressure_hpa);
+
+	HAL_Delay(1000);
 
 }
