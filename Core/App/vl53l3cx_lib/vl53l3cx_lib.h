@@ -17,8 +17,8 @@ bool tof_init(void);
 /**
  * @fn int32_t tof_get_distance(void)
  * @brief get distance in mm
- * @note This function is a blocking function, it blocks uC for about 242ms.
- * Although it can by implemented in not-blocking version.
+ * @note Funkcja jest blokująca: czeka na świeżą próbkę z czujnika.
+ * Czas blokowania zależy od TimingBudget (aktualnie ~30 ms + narzut magistrali).
  * @return
  * 		uint32_t distance in mm
  */

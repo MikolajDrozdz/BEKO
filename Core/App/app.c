@@ -43,7 +43,6 @@ app_init( void )
 		printf("Measurements: temp:%.2f, pres:%.2f\r\n", bmp.temperature_c, bmp.pressure_hpa);
 
 
-	printf("ToF init\n\r");
 	tmp = tof_init();
 	(tmp == true) ? printf("ToF initialized\n\r") : printf("ToF not initialized\n\r");
 	printf("Dist: %.1f cm\n\r", ((float) tof_get_distance()) / 10);

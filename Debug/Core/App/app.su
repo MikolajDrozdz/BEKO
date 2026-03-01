@@ -1,2 +1,2 @@
 ../Core/App/app.c:22:1:app_init	32	static
-../Core/App/app.c:56:1:app_main	8	static
+../Core/App/app.c:55:1:app_main	8	static

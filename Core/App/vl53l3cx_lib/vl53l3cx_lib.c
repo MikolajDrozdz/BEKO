@@ -10,7 +10,6 @@ extern I2C_HandleTypeDef hi2c1;
 
 #define TOF_I2C_ADDRESS_8BIT       VL53L3CX_DEVICE_ADDRESS
 #define TOF_I2C_TIMEOUT_MS          100U
-#define TOF_I2C1_TIMING_400KHZ      0x00000004U
 #define TOF_TIMING_BUDGET_MS        30U
 
 static VL53L3CX_Object_t s_tof_obj;
@@ -25,27 +24,9 @@ static int32_t tof_bus_read(uint16_t address, uint8_t *data, uint16_t length);
 static int32_t tof_bus_get_tick(void);
 static bool tof_activate(void);
 
-static bool fresh = true;
-
 static int32_t tof_bus_init(void)
 {
-  hi2c1.Init.Timing = TOF_I2C1_TIMING_400KHZ;
-
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    return -1;
-  }
-
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
-  {
-    return -1;
-  }
-
-  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
-  {
-    return -1;
-  }
-
+  /* I2C1 is configured once by CubeMX in MX_I2C1_Init(). */
   return 0;
 }
 
@@ -135,7 +116,11 @@ static bool tof_activate(void)
     return true;
   }
 
-  if (VL53L3CX_Start(&s_tof_obj, VL53L3CX_MODE_ASYNC_CONTINUOUS) != VL53L3CX_OK)
+  /*
+   * Blocking mode prevents timeout/stale reads when the caller polls faster
+   * than the sensor produces new samples.
+   */
+  if (VL53L3CX_Start(&s_tof_obj, VL53L3CX_MODE_BLOCKING_CONTINUOUS) != VL53L3CX_OK)
   {
     return false;
   }
@@ -144,9 +129,10 @@ static bool tof_activate(void)
   return true;
 }
 
-
+bool first_reading = true;
 int32_t tof_get_distance(void)
 {
+  int32_t status;
   uint32_t target_count;
 
   if (!tof_init())
@@ -161,14 +147,17 @@ int32_t tof_get_distance(void)
 
   memset(&result, 0, sizeof(result));
 
-  for(int i=0; i < 4; i++)
+  if (first_reading)
   {
-	  VL53L3CX_GetDistance(&s_tof_obj, &result);
-	  if(fresh)
-	  {
-		  fresh = !fresh;
-		  HAL_Delay(100);
-	  }
+	VL53L3CX_GetDistance(&s_tof_obj, &result);
+	first_reading = false;
+	HAL_Delay(100);
+  }
+
+  status = VL53L3CX_GetDistance(&s_tof_obj, &result);
+  if (status != VL53L3CX_OK)
+  {
+    return -1;
   }
 
   target_count = result.ZoneResult[0].NumberOfTargets;
