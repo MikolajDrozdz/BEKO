@@ -1,5 +1,8 @@
-.a
-.o
-.elf
-.s
-
+*.a
+*.o
+*.elf
+*.s
+Debug/*
+*.ld
+*.mk
+Debug/

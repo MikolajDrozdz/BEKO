@@ -25,6 +25,7 @@ SUBDIRS := \
 Core/App \
 Core/App/bmp280_lib \
 Core/App/lcd_library \
+Core/App/vl53l3cx_lib \
 Core/Src \
 Core/Startup \
 Drivers/BSP/Components/vl53l3cx/modules \

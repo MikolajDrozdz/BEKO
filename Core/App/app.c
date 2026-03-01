@@ -8,6 +8,7 @@
 #include "app.h"
 #include "lcd_library/lcd.h"
 #include "bmp280_lib/bmp280_api.h"
+#include "vl53l3cx_lib/vl53l3cx_lib.h"
 #include "main.h"
 #include <stdio.h>
 
@@ -29,7 +30,7 @@ app_init( void )
 
 
 	printf("Initializing BMP280 (if connected)\r\n");
-	bool tmp = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_1);
+	int tmp = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_1);
 	bmp280_api_measure_all(&bmp, 50);
 
 	if(bmp.valid != true)
@@ -46,7 +47,10 @@ app_init( void )
 	}
 
 
-	printf("\n\n \tTOF\n\n");
+	printf("ToF init\n\r");
+	tmp = tof_init();
+	(tmp == true) ? printf("ToF initialized\n\r") : printf("ToF not initialized\n\r");
+	printf("Dist: %.1f cm\n\r", ((float) tof_get_distance()) / 10);
 
 	return;
 }
@@ -54,10 +58,5 @@ app_init( void )
 void
 app_main( void )
 {
-
-	bmp280_api_measure_all(&bmp, 50);
-	printf("Measurements: temp:%.2f, pres:%.2f\r\n", bmp.temperature_c, bmp.pressure_hpa);
-
 	HAL_Delay(1000);
-
 }

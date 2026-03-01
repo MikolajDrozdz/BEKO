@@ -16,6 +16,7 @@ RM := rm -rf
 -include Drivers/BSP/Components/vl53l3cx/subdir.mk
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
+-include Core/App/vl53l3cx_lib/subdir.mk
 -include Core/App/lcd_library/subdir.mk
 -include Core/App/bmp280_lib/subdir.mk
 -include Core/App/subdir.mk
