@@ -15,8 +15,8 @@ Automatycznie stworzone przez IDE:
 |:----------|:---------:| ------:|
 | LCD   | OK ✅ | |
 | BMP280 | OK ✅ | Nie jest dostępne na wszystkich płytkach, potrzebna naprawa |
-| TOF | In progress ⚒️ | |
-| RADIO | NO ❌ | |
+| TOF | OK ✅ | Uwaga! funckja blokująca na ok. 242 ms, może być zaimplenetowany w inny sposób. |
+| RADIO | In progess ⚒️  | |
 | MIC | NO ❌ | |
 | Speaker | NO ❌| Trzeba dodać głośnik |
 | ACC | NO ❌ | Trzeba podłączyć |
