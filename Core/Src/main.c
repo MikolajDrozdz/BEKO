@@ -502,12 +502,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(VL53L3CX_xshout_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : RFM_DIO1_EXIT_1_Pin RFM_DIO0_EXIT_2_Pin RFM_DIO4_EXIT_13_Pin RFM_DIO3_EXIT_14_Pin
-                           RFM_DIO2_EXIT_15_Pin RFM_DIO5_EXIT_8_Pin */
-  GPIO_InitStruct.Pin = RFM_DIO1_EXIT_1_Pin|RFM_DIO0_EXIT_2_Pin|RFM_DIO4_EXIT_13_Pin|RFM_DIO3_EXIT_14_Pin
-                          |RFM_DIO2_EXIT_15_Pin|RFM_DIO5_EXIT_8_Pin;
+  /*Configure GPIO pins : RFM_DIO1_EXIT_1_Pin RFM_DIO0_EXIT_2_Pin RFM_DIO5_EXIT_8_Pin */
+  GPIO_InitStruct.Pin = RFM_DIO1_EXIT_1_Pin|RFM_DIO0_EXIT_2_Pin|RFM_DIO5_EXIT_8_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : RFM_DIO4_EXIT_13_Pin RFM_DIO3_EXIT_14_Pin RFM_DIO2_EXIT_15_Pin */
+  GPIO_InitStruct.Pin = RFM_DIO4_EXIT_13_Pin|RFM_DIO3_EXIT_14_Pin|RFM_DIO2_EXIT_15_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SPI_CS_Pin */
@@ -530,9 +534,6 @@ static void MX_GPIO_Init(void)
 
   HAL_NVIC_SetPriority(EXTI2_IRQn, 1, 1);
   HAL_NVIC_EnableIRQ(EXTI2_IRQn);
-
-  HAL_NVIC_SetPriority(EXTI8_IRQn, 1, 0);
-  HAL_NVIC_EnableIRQ(EXTI8_IRQn);
 
   HAL_NVIC_SetPriority(EXTI13_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(EXTI13_IRQn);

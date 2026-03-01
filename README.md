@@ -15,8 +15,8 @@ Automatycznie stworzone przez IDE:
 |:----------|:---------:| ------:|
 | LCD   | OK ✅ | |
 | BMP280 | OK ✅ | Nie jest dostępne na wszystkich płytkach, potrzebna naprawa |
-| TOF | OK ✅ | Uwaga! funckja blokująca na ok. 242 ms, może być zaimplenetowany w inny sposób. |
-| RADIO | In progess ⚒️  | |
+| TOF | OK ✅ | Uwaga! funckja blokująca na ok. 242 ms, może być zaimplenetowany w inny sposób. INT nie jest aktywny, jest zostawiony dla radia. |
+| RADIO | OK ✅ | Jest gotowe do implementacji, jest napisane demo. Powstanie zawdzięczam Codex 5.3 |
 | MIC | NO ❌ | |
 | Speaker | NO ❌| Trzeba dodać głośnik |
 | ACC | NO ❌ | Trzeba podłączyć |
@@ -28,4 +28,4 @@ Automatycznie stworzone przez IDE:
 | OLED DISP | NO ❌ | |
 | SERVO | NO ❌ | |
 | LED DISP | NO ❌ | |
-| LED ARRAY | NO ❌ | |
+| LED ARRAY | In progess ⚒️  | |

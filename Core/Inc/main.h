@@ -84,9 +84,10 @@ void Error_Handler(void);
 #define RMF_RST_GPIO_Port GPIOA
 #define RFM_DIO5_EXIT_8_Pin GPIO_PIN_8
 #define RFM_DIO5_EXIT_8_GPIO_Port GPIOB
-#define RFM_DIO5_EXIT_8_EXTI_IRQn EXTI8_IRQn
 
 /* USER CODE BEGIN Private defines */
+
+#define RFM_DIO5_EXIT_8_EXTI_IRQn EXTI8_IRQn
 
 /* USER CODE END Private defines */
 

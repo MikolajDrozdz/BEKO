@@ -25,6 +25,12 @@ SUBDIRS := \
 Core/App \
 Core/App/bmp280_lib \
 Core/App/lcd_library \
+Core/App/radio_lib/common/sx1276 \
+Core/App/radio_lib/modulations/fsk \
+Core/App/radio_lib/modulations/lora \
+Core/App/radio_lib/modulations/ook \
+Core/App/radio_lib \
+Core/App/radio_lib/test \
 Core/App/vl53l3cx_lib \
 Core/Src \
 Core/Startup \

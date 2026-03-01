@@ -17,6 +17,12 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include Core/App/vl53l3cx_lib/subdir.mk
+-include Core/App/radio_lib/test/subdir.mk
+-include Core/App/radio_lib/modulations/ook/subdir.mk
+-include Core/App/radio_lib/modulations/lora/subdir.mk
+-include Core/App/radio_lib/modulations/fsk/subdir.mk
+-include Core/App/radio_lib/common/sx1276/subdir.mk
+-include Core/App/radio_lib/subdir.mk
 -include Core/App/lcd_library/subdir.mk
 -include Core/App/bmp280_lib/subdir.mk
 -include Core/App/subdir.mk
