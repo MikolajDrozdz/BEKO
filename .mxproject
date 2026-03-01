@@ -3,21 +3,19 @@ LibFiles=Drivers\STM32U5xx_HAL_Driver\Inc\stm32u5xx_hal_cortex.h;Drivers\STM32U5
 
 [PreviousUsedCubeIDEFiles]
 SourceFiles=Core\Src\main.c;Core\Src\stm32u5xx_it.c;Core\Src\stm32u5xx_hal_msp.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_flash.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_flash_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gpio.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gtzc.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rtc.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rtc_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart_ex.c;Drivers\BSP\STM32U5xx_Nucleo\stm32u5xx_nucleo.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart_ex.c;Drivers\CMSIS\Device\ST\STM32U5xx\Source\Templates\system_stm32u5xx.c;Core\Src\system_stm32u5xx.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_flash.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_flash_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gpio.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gtzc.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rtc.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rtc_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart_ex.c;Drivers\BSP\STM32U5xx_Nucleo\stm32u5xx_nucleo.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart.c;Drivers\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart_ex.c;Drivers\CMSIS\Device\ST\STM32U5xx\Source\Templates\system_stm32u5xx.c;Core\Src\system_stm32u5xx.c;;;
-HeaderPath=Drivers\STM32U5xx_HAL_Driver\Inc;Drivers\STM32U5xx_HAL_Driver\Inc\Legacy;Drivers\BSP\STM32U5xx_Nucleo;Drivers\CMSIS\Device\ST\STM32U5xx\Include;Drivers\CMSIS\Include;Drivers\BSP\Components\vl53l3cx\modules;Drivers\BSP\Components\vl53l3cx\porting;Drivers\BSP\Components\vl53l3cx;Core\Inc;X-CUBE-TOF1\Target;
+HeaderPath=Drivers\STM32U5xx_HAL_Driver\Inc;Drivers\STM32U5xx_HAL_Driver\Inc\Legacy;Drivers\BSP\STM32U5xx_Nucleo;Drivers\CMSIS\Device\ST\STM32U5xx\Include;Drivers\CMSIS\Include;Drivers\BSP\Components\vl53l3cx\modules;Drivers\BSP\Components\vl53l3cx\porting;Drivers\BSP\Components\vl53l3cx;Core\Inc;
 CDefines=USE_NUCLEO_64;USE_HAL_DRIVER;STM32U545xx;USE_HAL_DRIVER;USE_HAL_DRIVER;
 
 [PreviousGenFiles]
 AdvancedFolderStructure=true
-HeaderFileListSize=6
+HeaderFileListSize=5
 HeaderFiles#0=..\Core\Inc\stm32u5xx_nucleo_conf.h
-HeaderFiles#1=..\X-CUBE-TOF1\Target\custom_tof_conf.h
-HeaderFiles#2=..\Core\Inc\stm32u5xx_it.h
-HeaderFiles#3=..\Core\Inc\RTE_Components.h
-HeaderFiles#4=..\Core\Inc\stm32u5xx_hal_conf.h
-HeaderFiles#5=..\Core\Inc\main.h
-HeaderFolderListSize=2
+HeaderFiles#1=..\Core\Inc\stm32u5xx_it.h
+HeaderFiles#2=..\Core\Inc\RTE_Components.h
+HeaderFiles#3=..\Core\Inc\stm32u5xx_hal_conf.h
+HeaderFiles#4=..\Core\Inc\main.h
+HeaderFolderListSize=1
 HeaderPath#0=..\Core\Inc
-HeaderPath#1=..\X-CUBE-TOF1\Target
 HeaderFiles=;
 SourceFileListSize=3
 SourceFiles#0=..\Core\Src\stm32u5xx_it.c

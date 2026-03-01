@@ -487,16 +487,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, VL53L3CX_xshout_Pin|SPI_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(RFM_DIO0_OUT_GPIO_Port, RFM_DIO0_OUT_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RMF_RST_GPIO_Port, RMF_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  /*Configure GPIO pin : VL53L3CX_INT_Pin */
+  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(VL53L3CX_INT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : VL53L3CX_xshout_Pin */
   GPIO_InitStruct.Pin = VL53L3CX_xshout_Pin;
@@ -505,20 +502,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(VL53L3CX_xshout_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : RFM_DIO1_EXIT_1_Pin RFM_DIO4_EXIT_13_Pin RFM_DIO3_EXIT_14_Pin RFM_DIO2_EXIT_15_Pin
-                           RFM_DIO5_EXIT_8_Pin */
-  GPIO_InitStruct.Pin = RFM_DIO1_EXIT_1_Pin|RFM_DIO4_EXIT_13_Pin|RFM_DIO3_EXIT_14_Pin|RFM_DIO2_EXIT_15_Pin
-                          |RFM_DIO5_EXIT_8_Pin;
+  /*Configure GPIO pins : RFM_DIO1_EXIT_1_Pin RFM_DIO0_EXIT_2_Pin RFM_DIO4_EXIT_13_Pin RFM_DIO3_EXIT_14_Pin
+                           RFM_DIO2_EXIT_15_Pin RFM_DIO5_EXIT_8_Pin */
+  GPIO_InitStruct.Pin = RFM_DIO1_EXIT_1_Pin|RFM_DIO0_EXIT_2_Pin|RFM_DIO4_EXIT_13_Pin|RFM_DIO3_EXIT_14_Pin
+                          |RFM_DIO2_EXIT_15_Pin|RFM_DIO5_EXIT_8_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : RFM_DIO0_OUT_Pin */
-  GPIO_InitStruct.Pin = RFM_DIO0_OUT_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(RFM_DIO0_OUT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SPI_CS_Pin */
   GPIO_InitStruct.Pin = SPI_CS_Pin;

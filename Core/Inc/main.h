@@ -59,13 +59,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define VL53L3CX_INT_Pin GPIO_PIN_2
+#define VL53L3CX_INT_GPIO_Port GPIOC
 #define VL53L3CX_xshout_Pin GPIO_PIN_3
 #define VL53L3CX_xshout_GPIO_Port GPIOC
 #define RFM_DIO1_EXIT_1_Pin GPIO_PIN_1
 #define RFM_DIO1_EXIT_1_GPIO_Port GPIOB
 #define RFM_DIO1_EXIT_1_EXTI_IRQn EXTI1_IRQn
-#define RFM_DIO0_OUT_Pin GPIO_PIN_2
-#define RFM_DIO0_OUT_GPIO_Port GPIOB
+#define RFM_DIO0_EXIT_2_Pin GPIO_PIN_2
+#define RFM_DIO0_EXIT_2_GPIO_Port GPIOB
+#define RFM_DIO0_EXIT_2_EXTI_IRQn EXTI2_IRQn
 #define RFM_DIO4_EXIT_13_Pin GPIO_PIN_13
 #define RFM_DIO4_EXIT_13_GPIO_Port GPIOB
 #define RFM_DIO4_EXIT_13_EXTI_IRQn EXTI13_IRQn
