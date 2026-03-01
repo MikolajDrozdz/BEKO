@@ -61,6 +61,27 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define VL53L3CX_xshout_Pin GPIO_PIN_3
 #define VL53L3CX_xshout_GPIO_Port GPIOC
+#define RFM_DIO1_EXIT_1_Pin GPIO_PIN_1
+#define RFM_DIO1_EXIT_1_GPIO_Port GPIOB
+#define RFM_DIO1_EXIT_1_EXTI_IRQn EXTI1_IRQn
+#define RFM_DIO0_OUT_Pin GPIO_PIN_2
+#define RFM_DIO0_OUT_GPIO_Port GPIOB
+#define RFM_DIO4_EXIT_13_Pin GPIO_PIN_13
+#define RFM_DIO4_EXIT_13_GPIO_Port GPIOB
+#define RFM_DIO4_EXIT_13_EXTI_IRQn EXTI13_IRQn
+#define RFM_DIO3_EXIT_14_Pin GPIO_PIN_14
+#define RFM_DIO3_EXIT_14_GPIO_Port GPIOB
+#define RFM_DIO3_EXIT_14_EXTI_IRQn EXTI14_IRQn
+#define RFM_DIO2_EXIT_15_Pin GPIO_PIN_15
+#define RFM_DIO2_EXIT_15_GPIO_Port GPIOB
+#define RFM_DIO2_EXIT_15_EXTI_IRQn EXTI15_IRQn
+#define SPI_CS_Pin GPIO_PIN_9
+#define SPI_CS_GPIO_Port GPIOC
+#define RMF_RST_Pin GPIO_PIN_11
+#define RMF_RST_GPIO_Port GPIOA
+#define RFM_DIO5_EXIT_8_Pin GPIO_PIN_8
+#define RFM_DIO5_EXIT_8_GPIO_Port GPIOB
+#define RFM_DIO5_EXIT_8_EXTI_IRQn EXTI8_IRQn
 
 /* USER CODE BEGIN Private defines */
 

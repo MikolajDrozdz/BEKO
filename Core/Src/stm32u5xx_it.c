@@ -198,6 +198,90 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32u5xx.s).                    */
 /******************************************************************************/
 
+/**
+  * @brief This function handles EXTI Line1 interrupt.
+  */
+void EXTI1_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI1_IRQn 0 */
+
+  /* USER CODE END EXTI1_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(RFM_DIO1_EXIT_1_Pin);
+  /* USER CODE BEGIN EXTI1_IRQn 1 */
+
+  /* USER CODE END EXTI1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI Line2 interrupt.
+  */
+void EXTI2_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI2_IRQn 0 */
+
+  /* USER CODE END EXTI2_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_2);
+  /* USER CODE BEGIN EXTI2_IRQn 1 */
+
+  /* USER CODE END EXTI2_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI Line8 interrupt.
+  */
+void EXTI8_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI8_IRQn 0 */
+
+  /* USER CODE END EXTI8_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(RFM_DIO5_EXIT_8_Pin);
+  /* USER CODE BEGIN EXTI8_IRQn 1 */
+
+  /* USER CODE END EXTI8_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI Line13 interrupt.
+  */
+void EXTI13_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI13_IRQn 0 */
+
+  /* USER CODE END EXTI13_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(RFM_DIO4_EXIT_13_Pin);
+  /* USER CODE BEGIN EXTI13_IRQn 1 */
+
+  /* USER CODE END EXTI13_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI Line14 interrupt.
+  */
+void EXTI14_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI14_IRQn 0 */
+
+  /* USER CODE END EXTI14_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(RFM_DIO3_EXIT_14_Pin);
+  /* USER CODE BEGIN EXTI14_IRQn 1 */
+
+  /* USER CODE END EXTI14_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI Line15 interrupt.
+  */
+void EXTI15_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI15_IRQn 0 */
+
+  /* USER CODE END EXTI15_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(RFM_DIO2_EXIT_15_Pin);
+  /* USER CODE BEGIN EXTI15_IRQn 1 */
+
+  /* USER CODE END EXTI15_IRQn 1 */
+}
+
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
