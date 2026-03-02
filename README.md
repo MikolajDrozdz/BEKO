@@ -21,11 +21,11 @@ Automatycznie stworzone przez IDE:
 | Speaker | NO ❌| Trzeba dodać głośnik |
 | ACC | NO ❌ | Trzeba podłączyć |
 | TMP | NO ❌ | |
-| BUTTON | NO ❌ | |
+| BUTTON | In progess ⚒️| |
 | I2C MEM | NO ❌ | |
 | HALL SENSOR | NO ❌ | |
 | LIGHT SENSOR| NO ❌ | |
 | OLED DISP | NO ❌ | |
 | SERVO | NO ❌ | |
 | LED DISP | NO ❌ | |
-| LED ARRAY | In progess ⚒️  | |
+| LED ARRAY | OK ✅ | |
