@@ -7,6 +7,8 @@
 
 #include "../common/sx1276/radio_sx1276_regs.h"
 
+#include "cmsis_os2.h"
+
 #include <ctype.h>
 #include <stdio.h>
 
@@ -15,6 +17,41 @@ static uint32_t s_radio_last_ping_ms = 0U;
 static uint32_t s_radio_last_tx_start_ms = 0U;
 static bool s_demo_initialized = false;
 
+static uint32_t radio_test_irq_save(void)
+{
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
+    return primask;
+}
+
+static void radio_test_irq_restore(uint32_t primask)
+{
+    if (primask == 0U)
+    {
+        __enable_irq();
+    }
+}
+
+static uint32_t radio_test_now_ms(void)
+{
+    osKernelState_t state = osKernelGetState();
+    uint32_t tick_hz;
+    uint32_t tick_count;
+
+    if ((state == osKernelRunning) || (state == osKernelLocked))
+    {
+        tick_hz = osKernelGetTickFreq();
+        tick_count = osKernelGetTickCount();
+        if (tick_hz == 0U)
+        {
+            return tick_count;
+        }
+        return (uint32_t)(((uint64_t)tick_count * 1000ULL) / (uint64_t)tick_hz);
+    }
+
+    return HAL_GetTick();
+}
+
 /**
  * @brief Callback zdarzeń radiowych używany w scenariuszu demo.
  * @param events Maska zdarzeń z `radio_lib`.
@@ -22,8 +59,13 @@ static bool s_demo_initialized = false;
  */
 static void radio_test_event_cb(uint32_t events, void *user_ctx)
 {
+    uint32_t key;
+
     (void)user_ctx;
+
+    key = radio_test_irq_save();
     s_radio_cb_events |= events;
+    radio_test_irq_restore(key);
 }
 
 /**
@@ -185,7 +227,7 @@ void radio_test_demo_init(SPI_HandleTypeDef *hspi)
     printf("RADIO RX start: %s\r\n", (radio_status == RADIO_OK) ? "OK" : "FAIL");
 
     s_radio_cb_events = 0U;
-    s_radio_last_ping_ms = HAL_GetTick();
+    s_radio_last_ping_ms = radio_test_now_ms();
     s_radio_last_tx_start_ms = 0U;
     s_demo_initialized = (radio_status == RADIO_OK);
 }
@@ -196,6 +238,8 @@ void radio_test_demo_init(SPI_HandleTypeDef *hspi)
 void radio_test_demo_process(void)
 {
     uint32_t events;
+    uint32_t cb_events;
+    uint32_t key;
     radio_packet_t pkt;
     uint32_t now;
     radio_status_t tx_status;
@@ -208,8 +252,11 @@ void radio_test_demo_process(void)
     radio_process();
 
     events = radio_take_events();
-    events |= s_radio_cb_events;
+    key = radio_test_irq_save();
+    cb_events = s_radio_cb_events;
     s_radio_cb_events = 0U;
+    radio_test_irq_restore(key);
+    events |= cb_events;
 
     if ((events & RADIO_EVENT_TX_DONE) != 0U)
     {
@@ -249,7 +296,7 @@ void radio_test_demo_process(void)
         printf("RADIO EVT: HW_ERROR\r\n");
     }
 
-    now = HAL_GetTick();
+    now = radio_test_now_ms();
     if ((radio_get_state() == RADIO_STATE_TX) &&
         (s_radio_last_tx_start_ms != 0U) &&
         ((now - s_radio_last_tx_start_ms) > 2000U))
@@ -279,6 +326,12 @@ void radio_test_demo_process(void)
             else
             {
                 printf("RADIO TX failed: %d\r\n", (int)tx_status);
+                if (tx_status == RADIO_EHW)
+                {
+                    printf("RADIO TX recovery: standby+rx_cont\r\n");
+                    (void)radio_standby();
+                    (void)radio_start_rx_continuous();
+                }
             }
         }
         s_radio_last_ping_ms = now;

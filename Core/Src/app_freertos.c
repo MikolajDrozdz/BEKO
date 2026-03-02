@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../App/app.h"
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -117,6 +118,17 @@ void StartDefaultTask(void *argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+  (void)xTask;
+  printf("RTOS FATAL: stack overflow in task: %s\r\n",
+         (pcTaskName != NULL) ? pcTaskName : "unknown");
+  taskDISABLE_INTERRUPTS();
+  for (;;)
+  {
+  }
+}
 
 /* USER CODE END Application */
 

@@ -60,6 +60,17 @@ static void radio_set_event_flags(uint32_t events)
     radio_irq_restore(key);
 }
 
+static bool radio_read_irq_flags_retry(uint8_t *irq_flags)
+{
+    if (sx1276_get_irq_flags(&s_radio.bus, irq_flags))
+    {
+        return true;
+    }
+
+    /* Retry once to handle occasional SPI transient errors. */
+    return sx1276_get_irq_flags(&s_radio.bus, irq_flags);
+}
+
 static bool radio_cfg_valid(const radio_lora_cfg_t *cfg)
 {
     if ((cfg == NULL) ||
@@ -444,6 +455,8 @@ radio_status_t radio_lora_start_rx_single(uint16_t symbol_timeout)
 
 radio_status_t radio_lora_send_async(const uint8_t *data, uint8_t len)
 {
+    uint8_t op_mode = 0U;
+
     if (!s_radio.initialized)
     {
         return RADIO_ESTATE;
@@ -468,6 +481,17 @@ radio_status_t radio_lora_send_async(const uint8_t *data, uint8_t len)
         !sx1276_set_payload_length(&s_radio.bus, len) ||
         !sx1276_write_fifo(&s_radio.bus, data, len) ||
         !sx1276_set_op_mode(&s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_TX)))
+    {
+        return RADIO_EHW;
+    }
+
+    if (!sx1276_read_reg(&s_radio.bus, SX1276_REG_OP_MODE, &op_mode))
+    {
+        return RADIO_EHW;
+    }
+
+    op_mode &= SX1276_OPMODE_MODE_MASK;
+    if ((op_mode != SX1276_MODE_TX) && (op_mode != SX1276_MODE_FSTX))
     {
         return RADIO_EHW;
     }
@@ -531,12 +555,19 @@ void radio_lora_process(void)
      * Fallback: podczas TX sprawdzaj flagi IRQ pollingiem, jeśli zbocze DIO0
      * zostało pominięte.
      */
+    if ((pending == 0U) &&
+        (s_radio.hw.dio[0].port != NULL) &&
+        (HAL_GPIO_ReadPin(s_radio.hw.dio[0].port, s_radio.hw.dio[0].pin) == GPIO_PIN_SET))
+    {
+        pending |= 0x01U;
+    }
+
     if ((pending == 0U) && (s_radio.state != RADIO_STATE_TX))
     {
         return;
     }
 
-    if (!sx1276_get_irq_flags(&s_radio.bus, &irq_flags))
+    if (!radio_read_irq_flags_retry(&irq_flags))
     {
         events |= RADIO_EVENT_HW_ERROR;
         goto done;

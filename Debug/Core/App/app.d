@@ -1,6 +1,4 @@
 Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
- ../Core/App/bmp280_main.h ../Core/App/bmp280_lib/bmp280_api.h \
- ../Core/App/bmp280_lib/bmp280.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h \
  ../Core/Inc/stm32u5xx_hal_conf.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h \
@@ -36,16 +34,28 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h \
- ../Core/App/lcd_main.h ../Core/App/led_array_main.h \
- ../Core/App/radio_main.h ../Core/App/tof_main.h ../Core/Inc/app_delay.h \
+ ../Core/App/bmp280_main.h ../Core/App/bmp280_lib/bmp280_api.h \
+ ../Core/App/bmp280_lib/bmp280.h ../Core/App/lcd_main.h \
+ ../Core/App/led_array_main.h ../Core/App/radio_main.h \
+ ../Core/App/tof_main.h ../Core/Inc/app_delay.h \
  ../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
+ ../Core/Inc/FreeRTOSConfig.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portmacro.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portmacrocommon.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/newlib-freertos.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h \
+ ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h \
  ../Core/Inc/main.h ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h \
  ../Core/Inc/stm32u5xx_nucleo_conf.h \
  ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo_errno.h
 ../Core/App/app.h:
-../Core/App/bmp280_main.h:
-../Core/App/bmp280_lib/bmp280_api.h:
-../Core/App/bmp280_lib/bmp280.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h:
 ../Core/Inc/stm32u5xx_hal_conf.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rcc.h:
@@ -81,12 +91,28 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h:
+../Core/App/bmp280_main.h:
+../Core/App/bmp280_lib/bmp280_api.h:
+../Core/App/bmp280_lib/bmp280.h:
 ../Core/App/lcd_main.h:
 ../Core/App/led_array_main.h:
 ../Core/App/radio_main.h:
 ../Core/App/tof_main.h:
 ../Core/Inc/app_delay.h:
 ../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
+../Core/Inc/FreeRTOSConfig.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h:
+../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portmacro.h:
+../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/portmacrocommon.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/newlib-freertos.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/task.h:
+../Middlewares/Third_Party/FreeRTOS/Source/include/list.h:
 ../Core/Inc/main.h:
 ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h:
 ../Core/Inc/stm32u5xx_nucleo_conf.h:

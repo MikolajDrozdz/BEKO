@@ -16,7 +16,8 @@ The App layer is split into:
 - creates shared synchronization primitives (for example shared I2C mutex),
 - starts feature modules,
 - provides the App-level `MX_FREERTOS_Init()` implementation,
-- runs a small display aggregation task that combines outputs from sensors.
+- runs a small display aggregation task that combines outputs from sensors,
+- owns the shared I2C transaction layer (single place with retries/recovery).
 
 Feature modules own the logic for one subsystem each:
 
@@ -77,8 +78,17 @@ BMP280 and ToF use the same I2C peripheral. Access is serialized by:
 
 - `app_i2c_lock(timeout_ms)`
 - `app_i2c_unlock()`
+- `app_i2c_master_transmit(...)`
+- `app_i2c_master_receive(...)`
+- `app_i2c_mem_write(...)`
+- `app_i2c_mem_read(...)`
 
-Any App module touching shared I2C must use this API.
+Rules:
+
+- do not call `HAL_I2C_*` directly in feature modules,
+- always go through `app_i2c_*`,
+- prefer transaction helpers for new code,
+- use manual lock/unlock only when you need one long atomic sequence.
 
 ### LCD access
 

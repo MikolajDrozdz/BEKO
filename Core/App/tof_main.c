@@ -2,12 +2,18 @@
 
 #include "app.h"
 #include "cmsis_os2.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include "vl53l3cx_lib/vl53l3cx_lib.h"
 
 #include <stdio.h>
 
 static osThreadId_t s_tof_task = NULL;
 static volatile int32_t s_tof_last_distance_mm = -1;
+static StaticTask_t s_tof_task_cb;
+#define TOF_TASK_STACK_SIZE   1024U
+#define TOF_TASK_STACK_WORDS  (TOF_TASK_STACK_SIZE / sizeof(StackType_t))
+static StackType_t s_tof_task_stack[TOF_TASK_STACK_WORDS];
 
 static void tof_main_task_fn(void *argument);
 
@@ -15,7 +21,10 @@ static const osThreadAttr_t s_tof_task_attr =
 {
     .name = "tof_task",
     .priority = (osPriority_t)osPriorityBelowNormal,
-    .stack_size = 768U
+    .stack_mem = s_tof_task_stack,
+    .stack_size = sizeof(s_tof_task_stack),
+    .cb_mem = &s_tof_task_cb,
+    .cb_size = sizeof(s_tof_task_cb)
 };
 
 void tof_main_create_task(void)
@@ -37,7 +46,7 @@ static void tof_main_task_fn(void *argument)
 
     (void)argument;
 
-    if (app_i2c_lock(1000U))
+    if (app_i2c_lock(0U))
     {
         init_ok = tof_init();
         app_i2c_unlock();
@@ -58,7 +67,7 @@ static void tof_main_task_fn(void *argument)
 
     for (;;)
     {
-        if (init_ok && app_i2c_lock(1000U))
+        if (init_ok && app_i2c_lock(0U))
         {
             s_tof_last_distance_mm = tof_get_distance();
             app_i2c_unlock();

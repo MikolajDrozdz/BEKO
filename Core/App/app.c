@@ -14,27 +14,32 @@
 
 #include "app_delay.h"
 #include "cmsis_os2.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
 #include "main.h"
 
 #include <stdio.h>
 #include <string.h>
 
-static osMutexId_t s_app_i2c_mutex = NULL;
-static osThreadId_t s_app_display_task = NULL;
+#define APP_I2C_DEFAULT_TIMEOUT_MS  100U
+#define APP_I2C_RETRY_COUNT         3U
+#define APP_I2C_RETRY_DELAY_MS      1U
 
-static void app_display_task_fn(void *argument);
+static osMutexId_t s_app_i2c_mutex = NULL;
+static StaticSemaphore_t s_app_i2c_mutex_cb;
 
 static const osMutexAttr_t s_app_i2c_mutex_attr =
 {
-    .name = "app_i2c_mutex"
+    .name = "app_i2c_mutex",
+    .attr_bits = osMutexRecursive | osMutexPrioInherit,
+    .cb_mem = &s_app_i2c_mutex_cb,
+    .cb_size = sizeof(s_app_i2c_mutex_cb)
 };
 
-static const osThreadAttr_t s_app_display_task_attr =
-{
-    .name = "app_display",
-    .priority = (osPriority_t)osPriorityLow,
-    .stack_size = 1024U
-};
+static bool app_i2c_ensure_mutex(void);
+static uint32_t app_i2c_normalize_timeout(uint32_t timeout_ms);
+static bool app_i2c_should_recover(I2C_HandleTypeDef *hi2c, HAL_StatusTypeDef status);
+static bool app_i2c_recover_locked(I2C_HandleTypeDef *hi2c);
 
 void app_init(void)
 {
@@ -49,30 +54,24 @@ void app_main(void)
 
 void app_freertos_init(void)
 {
-    if (s_app_i2c_mutex == NULL)
-    {
-        s_app_i2c_mutex = osMutexNew(&s_app_i2c_mutex_attr);
-    }
+    (void)app_i2c_ensure_mutex();
 
     lcd_main_create_task();
     bmp280_main_create_task();
     tof_main_create_task();
     radio_main_create_task();
     led_array_main_create_task();
-
-    if (s_app_display_task == NULL)
-    {
-        s_app_display_task = osThreadNew(app_display_task_fn, NULL, &s_app_display_task_attr);
-    }
 }
 
 bool app_i2c_lock(uint32_t timeout_ms)
 {
     uint32_t timeout;
+    osKernelState_t kernel_state;
 
-    if (s_app_i2c_mutex == NULL)
+    if (!app_i2c_ensure_mutex())
     {
-        return false;
+        kernel_state = osKernelGetState();
+        return (kernel_state == osKernelInactive);
     }
 
     timeout = (timeout_ms == 0U) ? osWaitForever : timeout_ms;
@@ -87,53 +86,281 @@ void app_i2c_unlock(void)
     }
 }
 
-static void app_display_task_fn(void *argument)
+HAL_StatusTypeDef app_i2c_master_transmit(I2C_HandleTypeDef *hi2c,
+                                          uint16_t device_address,
+                                          const uint8_t *data,
+                                          uint16_t size,
+                                          uint32_t timeout_ms)
 {
-    char lcd_line0[17];
-    char lcd_line1[17];
-    bmp280_api_data_t bmp_data;
-    int32_t tof_distance_mm;
-    bool has_bmp;
+    HAL_StatusTypeDef status;
+    uint32_t attempt;
+    uint8_t *tx_data;
 
-    (void)argument;
-
-    lcd_main_set_lines("System booting...", "RTOS tasks start");
-    osDelay(500U);
-
-    for (;;)
+    if ((hi2c == NULL) || ((data == NULL) && (size > 0U)))
     {
-        memset(lcd_line0, 0, sizeof(lcd_line0));
-        memset(lcd_line1, 0, sizeof(lcd_line1));
-
-        has_bmp = bmp280_main_get_last(&bmp_data);
-        tof_distance_mm = tof_main_get_last_distance();
-
-        if (has_bmp)
-        {
-            (void)snprintf(lcd_line0,
-                           sizeof(lcd_line0),
-                           "T:%4.1fC P:%4.0f",
-                           bmp_data.temperature_c,
-                           bmp_data.pressure_hpa);
-        }
-        else
-        {
-            (void)snprintf(lcd_line0, sizeof(lcd_line0), "BMP280: waiting");
-        }
-
-        if (tof_distance_mm >= 0)
-        {
-            (void)snprintf(lcd_line1,
-                           sizeof(lcd_line1),
-                           "ToF:%5ld mm\n",
-                           (long)tof_distance_mm);
-        }
-        else
-        {
-            (void)snprintf(lcd_line1, sizeof(lcd_line1), "ToF: no target");
-        }
-
-        lcd_main_set_lines(lcd_line0, lcd_line1);
-        osDelay(500U);
+        return HAL_ERROR;
     }
+    if (!app_i2c_lock(0U))
+    {
+        return HAL_TIMEOUT;
+    }
+
+    tx_data = (uint8_t *)data;
+    status = HAL_ERROR;
+
+    for (attempt = 0U; attempt < APP_I2C_RETRY_COUNT; attempt++)
+    {
+        status = HAL_I2C_Master_Transmit(hi2c,
+                                         device_address,
+                                         tx_data,
+                                         size,
+                                         app_i2c_normalize_timeout(timeout_ms));
+        if (status == HAL_OK)
+        {
+            break;
+        }
+
+        if (app_i2c_should_recover(hi2c, status))
+        {
+            (void)app_i2c_recover_locked(hi2c);
+        }
+
+        if ((attempt + 1U) < APP_I2C_RETRY_COUNT)
+        {
+            app_delay_ms(APP_I2C_RETRY_DELAY_MS);
+        }
+    }
+
+    app_i2c_unlock();
+    return status;
 }
+
+HAL_StatusTypeDef app_i2c_master_receive(I2C_HandleTypeDef *hi2c,
+                                         uint16_t device_address,
+                                         uint8_t *data,
+                                         uint16_t size,
+                                         uint32_t timeout_ms)
+{
+    HAL_StatusTypeDef status;
+    uint32_t attempt;
+
+    if ((hi2c == NULL) || ((data == NULL) && (size > 0U)))
+    {
+        return HAL_ERROR;
+    }
+    if (!app_i2c_lock(0U))
+    {
+        return HAL_TIMEOUT;
+    }
+
+    status = HAL_ERROR;
+
+    for (attempt = 0U; attempt < APP_I2C_RETRY_COUNT; attempt++)
+    {
+        status = HAL_I2C_Master_Receive(hi2c,
+                                        device_address,
+                                        data,
+                                        size,
+                                        app_i2c_normalize_timeout(timeout_ms));
+        if (status == HAL_OK)
+        {
+            break;
+        }
+
+        if (app_i2c_should_recover(hi2c, status))
+        {
+            (void)app_i2c_recover_locked(hi2c);
+        }
+
+        if ((attempt + 1U) < APP_I2C_RETRY_COUNT)
+        {
+            app_delay_ms(APP_I2C_RETRY_DELAY_MS);
+        }
+    }
+
+    app_i2c_unlock();
+    return status;
+}
+
+HAL_StatusTypeDef app_i2c_mem_write(I2C_HandleTypeDef *hi2c,
+                                    uint16_t device_address,
+                                    uint16_t mem_address,
+                                    uint16_t mem_address_size,
+                                    const uint8_t *data,
+                                    uint16_t size,
+                                    uint32_t timeout_ms)
+{
+    HAL_StatusTypeDef status;
+    uint32_t attempt;
+    uint8_t *tx_data;
+
+    if ((hi2c == NULL) || ((data == NULL) && (size > 0U)))
+    {
+        return HAL_ERROR;
+    }
+    if (!app_i2c_lock(0U))
+    {
+        return HAL_TIMEOUT;
+    }
+
+    tx_data = (uint8_t *)data;
+    status = HAL_ERROR;
+
+    for (attempt = 0U; attempt < APP_I2C_RETRY_COUNT; attempt++)
+    {
+        status = HAL_I2C_Mem_Write(hi2c,
+                                   device_address,
+                                   mem_address,
+                                   mem_address_size,
+                                   tx_data,
+                                   size,
+                                   app_i2c_normalize_timeout(timeout_ms));
+        if (status == HAL_OK)
+        {
+            break;
+        }
+
+        if (app_i2c_should_recover(hi2c, status))
+        {
+            (void)app_i2c_recover_locked(hi2c);
+        }
+
+        if ((attempt + 1U) < APP_I2C_RETRY_COUNT)
+        {
+            app_delay_ms(APP_I2C_RETRY_DELAY_MS);
+        }
+    }
+
+    app_i2c_unlock();
+    return status;
+}
+
+HAL_StatusTypeDef app_i2c_mem_read(I2C_HandleTypeDef *hi2c,
+                                   uint16_t device_address,
+                                   uint16_t mem_address,
+                                   uint16_t mem_address_size,
+                                   uint8_t *data,
+                                   uint16_t size,
+                                   uint32_t timeout_ms)
+{
+    HAL_StatusTypeDef status;
+    uint32_t attempt;
+
+    if ((hi2c == NULL) || ((data == NULL) && (size > 0U)))
+    {
+        return HAL_ERROR;
+    }
+    if (!app_i2c_lock(0U))
+    {
+        return HAL_TIMEOUT;
+    }
+
+    status = HAL_ERROR;
+
+    for (attempt = 0U; attempt < APP_I2C_RETRY_COUNT; attempt++)
+    {
+        status = HAL_I2C_Mem_Read(hi2c,
+                                  device_address,
+                                  mem_address,
+                                  mem_address_size,
+                                  data,
+                                  size,
+                                  app_i2c_normalize_timeout(timeout_ms));
+        if (status == HAL_OK)
+        {
+            break;
+        }
+
+        if (app_i2c_should_recover(hi2c, status))
+        {
+            (void)app_i2c_recover_locked(hi2c);
+        }
+
+        if ((attempt + 1U) < APP_I2C_RETRY_COUNT)
+        {
+            app_delay_ms(APP_I2C_RETRY_DELAY_MS);
+        }
+    }
+
+    app_i2c_unlock();
+    return status;
+}
+
+static bool app_i2c_ensure_mutex(void)
+{
+    osKernelState_t kernel_state;
+
+    if (s_app_i2c_mutex != NULL)
+    {
+        return true;
+    }
+
+    kernel_state = osKernelGetState();
+    if ((kernel_state == osKernelReady) || (kernel_state == osKernelRunning))
+    {
+        s_app_i2c_mutex = osMutexNew(&s_app_i2c_mutex_attr);
+    }
+
+    return (s_app_i2c_mutex != NULL);
+}
+
+static uint32_t app_i2c_normalize_timeout(uint32_t timeout_ms)
+{
+    if (timeout_ms == 0U)
+    {
+        return APP_I2C_DEFAULT_TIMEOUT_MS;
+    }
+
+    return timeout_ms;
+}
+
+static bool app_i2c_should_recover(I2C_HandleTypeDef *hi2c, HAL_StatusTypeDef status)
+{
+    uint32_t error_flags;
+
+    if ((hi2c == NULL) || (status == HAL_OK))
+    {
+        return false;
+    }
+
+    if ((status == HAL_BUSY) || (status == HAL_TIMEOUT))
+    {
+        return true;
+    }
+
+    error_flags = HAL_I2C_GetError(hi2c);
+
+    return ((error_flags & (HAL_I2C_ERROR_BERR |
+                            HAL_I2C_ERROR_ARLO |
+                            HAL_I2C_ERROR_OVR |
+                            HAL_I2C_ERROR_DMA |
+                            HAL_I2C_ERROR_TIMEOUT |
+                            HAL_I2C_ERROR_SIZE |
+                            HAL_I2C_ERROR_DMA_PARAM)) != 0U);
+}
+
+static bool app_i2c_recover_locked(I2C_HandleTypeDef *hi2c)
+{
+    if (hi2c == NULL)
+    {
+        return false;
+    }
+
+    (void)HAL_I2C_DeInit(hi2c);
+
+    if (HAL_I2C_Init(hi2c) != HAL_OK)
+    {
+        return false;
+    }
+    if (HAL_I2CEx_ConfigAnalogFilter(hi2c, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+    {
+        return false;
+    }
+    if (HAL_I2CEx_ConfigDigitalFilter(hi2c, 0U) != HAL_OK)
+    {
+        return false;
+    }
+
+    return true;
+}
+

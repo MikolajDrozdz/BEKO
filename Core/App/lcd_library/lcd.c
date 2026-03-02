@@ -6,6 +6,7 @@
 /* Includes */
 #include "lcd.h"
 
+#include "../app.h"
 #include "app_delay.h"
 #include "main.h"
 #include <stdio.h>
@@ -35,6 +36,7 @@ void lcd_write_nibble(uint8_t nibble, uint8_t rs);
 void lcd_send_cmd(uint8_t cmd);
 void lcd_send_data(uint8_t data);
 void lcd_init();
+static void lcd_write_nibble_raw(uint8_t nibble, uint8_t rs);
 
 /**
   * @brief  The demo function (infinite loop)
@@ -64,21 +66,36 @@ void lcd_demo(void)
 }
 
 void lcd_write_nibble(uint8_t nibble, uint8_t rs) {
+  if (!app_i2c_lock(0U))
+  {
+    return;
+  }
+  lcd_write_nibble_raw(nibble, rs);
+  app_i2c_unlock();
+}
+
+static void lcd_write_nibble_raw(uint8_t nibble, uint8_t rs)
+{
   uint8_t data = nibble << D4_BIT;
   data |= rs << RS_BIT;
   data |= backlight_state << BL_BIT; // Include backlight state in data
   data |= 1 << EN_BIT;
-  HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDR << 1, &data, 1, 100);
+  (void)app_i2c_master_transmit(&hi2c1, I2C_ADDR << 1, &data, 1, 100U);
   app_delay_ms(1U);
   data &= ~(1 << EN_BIT);
-  HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDR << 1, &data, 1, 100);
+  (void)app_i2c_master_transmit(&hi2c1, I2C_ADDR << 1, &data, 1, 100U);
 }
 
 void lcd_send_cmd(uint8_t cmd) {
   uint8_t upper_nibble = cmd >> 4;
   uint8_t lower_nibble = cmd & 0x0F;
-  lcd_write_nibble(upper_nibble, 0);
-  lcd_write_nibble(lower_nibble, 0);
+  if (!app_i2c_lock(0U))
+  {
+    return;
+  }
+  lcd_write_nibble_raw(upper_nibble, 0);
+  lcd_write_nibble_raw(lower_nibble, 0);
+  app_i2c_unlock();
   if (cmd == 0x01 || cmd == 0x02) {
     app_delay_ms(2U);
   }
@@ -87,8 +104,13 @@ void lcd_send_cmd(uint8_t cmd) {
 void lcd_send_data(uint8_t data) {
   uint8_t upper_nibble = data >> 4;
   uint8_t lower_nibble = data & 0x0F;
-  lcd_write_nibble(upper_nibble, 1);
-  lcd_write_nibble(lower_nibble, 1);
+  if (!app_i2c_lock(0U))
+  {
+    return;
+  }
+  lcd_write_nibble_raw(upper_nibble, 1);
+  lcd_write_nibble_raw(lower_nibble, 1);
+  app_i2c_unlock();
 }
 
 void lcd_init() {

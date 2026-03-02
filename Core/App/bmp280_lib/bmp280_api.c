@@ -1,5 +1,7 @@
 #include "bmp280_api.h"
 
+#include "../app.h"
+
 #include <string.h>
 
 #define BMP280_API_REG_CTRL                0xF4U
@@ -27,10 +29,10 @@ static bool bmp280_api_write_reg(uint8_t reg, uint8_t value)
 
     device_addr = (uint16_t)(s_bmp280_dev.addr << 1);
 
-    return (HAL_I2C_Mem_Write(s_bmp280_dev.i2c,
+    return (app_i2c_mem_write(s_bmp280_dev.i2c,
                               device_addr,
                               reg,
-                              1,
+                              I2C_MEMADD_SIZE_8BIT,
                               &value,
                               1,
                               BMP280_API_I2C_TIMEOUT_MS) == HAL_OK);
@@ -47,10 +49,10 @@ static bool bmp280_api_read_reg(uint8_t reg, uint8_t *value)
 
     device_addr = (uint16_t)(s_bmp280_dev.addr << 1);
 
-    return (HAL_I2C_Mem_Read(s_bmp280_dev.i2c,
+    return (app_i2c_mem_read(s_bmp280_dev.i2c,
                              device_addr,
                              reg,
-                             1,
+                             I2C_MEMADD_SIZE_8BIT,
                              value,
                              1,
                              BMP280_API_I2C_TIMEOUT_MS) == HAL_OK);

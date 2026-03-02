@@ -2,6 +2,9 @@
 
 #include "app.h"
 #include "cmsis_os2.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "task.h"
 #include "main.h"
 
 #include <stdio.h>
@@ -9,23 +12,34 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
+#define BMP280_TASK_STACK_SIZE   1024U
+#define BMP280_TASK_STACK_WORDS  (BMP280_TASK_STACK_SIZE / sizeof(StackType_t))
+
 static osThreadId_t s_bmp280_task = NULL;
 static osMutexId_t s_bmp280_data_mutex = NULL;
 static bmp280_api_data_t s_bmp280_last;
 static bool s_bmp280_has_data = false;
+static StaticTask_t s_bmp280_task_cb;
+static StackType_t s_bmp280_task_stack[BMP280_TASK_STACK_WORDS];
+static StaticSemaphore_t s_bmp280_data_mutex_cb;
 
 static void bmp280_main_task_fn(void *argument);
 
 static const osMutexAttr_t s_bmp280_data_mutex_attr =
 {
-    .name = "bmp280_data_mutex"
+    .name = "bmp280_data_mutex",
+    .cb_mem = &s_bmp280_data_mutex_cb,
+    .cb_size = sizeof(s_bmp280_data_mutex_cb)
 };
 
 static const osThreadAttr_t s_bmp280_task_attr =
 {
     .name = "bmp280_task",
     .priority = (osPriority_t)osPriorityBelowNormal,
-    .stack_size = 768U
+    .stack_mem = s_bmp280_task_stack,
+    .stack_size = sizeof(s_bmp280_task_stack),
+    .cb_mem = &s_bmp280_task_cb,
+    .cb_size = sizeof(s_bmp280_task_cb)
 };
 
 void bmp280_main_create_task(void)
@@ -72,7 +86,7 @@ static void bmp280_main_task_fn(void *argument)
 
     (void)argument;
 
-    if (app_i2c_lock(500U))
+    if (app_i2c_lock(0U))
     {
         sensor_ready = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_1);
         app_i2c_unlock();
@@ -95,7 +109,7 @@ static void bmp280_main_task_fn(void *argument)
 
     for (;;)
     {
-        if (sensor_ready && app_i2c_lock(500U))
+        if (sensor_ready && app_i2c_lock(0U))
         {
             if (bmp280_api_measure_all(&sample, 80U))
             {

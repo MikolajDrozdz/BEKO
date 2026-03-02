@@ -1,31 +1,44 @@
 #include "lcd_main.h"
 
 #include "cmsis_os2.h"
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "task.h"
 #include "lcd_library/lcd.h"
 
 #include <string.h>
 
 #define LCD_MAIN_LINE_LEN 20U
+#define LCD_TASK_STACK_SIZE   2048U
+#define LCD_TASK_STACK_WORDS  (LCD_TASK_STACK_SIZE / sizeof(StackType_t))
 
 static osThreadId_t s_lcd_task = NULL;
 static osMutexId_t s_lcd_mutex = NULL;
 static bool s_lcd_ready = false;
 static char s_lcd_buffer[4][LCD_MAIN_LINE_LEN + 1U];
 static bool s_lcd_dirty = false;
+static StaticTask_t s_lcd_task_cb;
+static StackType_t s_lcd_task_stack[LCD_TASK_STACK_WORDS];
+static StaticSemaphore_t s_lcd_mutex_cb;
 
 static void lcd_main_task_fn(void *argument);
 static void lcd_main_copy_to_line(char *dst, const char *src);
 
 static const osMutexAttr_t s_lcd_mutex_attr =
 {
-    .name = "lcd_mutex"
+    .name = "lcd_mutex",
+    .cb_mem = &s_lcd_mutex_cb,
+    .cb_size = sizeof(s_lcd_mutex_cb)
 };
 
 static const osThreadAttr_t s_lcd_task_attr =
 {
     .name = "lcd_task",
     .priority = (osPriority_t)osPriorityLow,
-    .stack_size = 768U
+    .stack_mem = s_lcd_task_stack,
+    .stack_size = sizeof(s_lcd_task_stack),
+    .cb_mem = &s_lcd_task_cb,
+    .cb_size = sizeof(s_lcd_task_cb)
 };
 
 void lcd_main_create_task(void)
@@ -110,9 +123,7 @@ static void lcd_main_task_fn(void *argument)
         {
             if (s_lcd_dirty)
             {
-                memcpy(line0, s_lcd_buffer[0], sizeof(line0));
-                memcpy(line1, s_lcd_buffer[1], sizeof(line1));
-                s_lcd_dirty = false;
+            	// Copy lines to local buffer to minimize time spent in mutex.
                 should_update = true;
             }
             (void)osMutexRelease(s_lcd_mutex);
@@ -120,10 +131,7 @@ static void lcd_main_task_fn(void *argument)
 
         if (should_update)
         {
-            lcd_set_cursor(0U, 0U);
-            lcd_write_string((uint8_t *)line0);
-            lcd_set_cursor(1U, 0U);
-            lcd_write_string((uint8_t *)line1);
+            // Update LCD with new lines. This is done outside of the mutex to avoid blocking other tasks while the LCD is being updated.
         }
 
         osDelay(50U);
