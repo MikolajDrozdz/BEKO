@@ -15,6 +15,8 @@ static uint32_t s_radio_last_ping_ms = 0U;
 static uint32_t s_radio_last_tx_start_ms = 0U;
 static bool s_demo_initialized = false;
 
+void print_received_data(const uint8_t *data, uint32_t length);
+
 /**
  * @brief Callback zdarzeń radiowych używany w scenariuszu demo.
  * @param events Maska zdarzeń z `radio_lib`.
@@ -50,6 +52,20 @@ static void radio_test_print_packet(const radio_packet_t *pkt)
         printf("%c", isprint((unsigned char)c) ? c : '.');
     }
     printf("\r\n");
+}
+
+/**
+ * @brief Handles RX_DONE event and prints received payload.
+ */
+static void radio_test_handle_received_information(void)
+{
+    radio_packet_t pkt;
+
+    if (radio_get_last_packet(&pkt))
+    {
+        radio_test_print_packet(&pkt);
+        print_received_data(pkt.data, pkt.length);
+    }
 }
 
 /**
@@ -196,7 +212,6 @@ void radio_test_demo_init(SPI_HandleTypeDef *hspi)
 void radio_test_demo_process(void)
 {
     uint32_t events;
-    radio_packet_t pkt;
     uint32_t now;
     radio_status_t tx_status;
 
@@ -219,10 +234,7 @@ void radio_test_demo_process(void)
     if ((events & RADIO_EVENT_RX_DONE) != 0U)
     {
         printf("RADIO EVT: RX_DONE\r\n");
-        if (radio_get_last_packet(&pkt))
-        {
-            radio_test_print_packet(&pkt);
-        }
+        radio_test_handle_received_information();
     }
     if ((events & RADIO_EVENT_RX_TIMEOUT) != 0U)
     {
@@ -283,4 +295,25 @@ void radio_test_demo_process(void)
         }
         s_radio_last_ping_ms = now;
     }
+}
+
+/**
+ * @brief Prints received data to the terminal.
+ * @param data Pointer to the data buffer.
+ * @param length Length of the data buffer.
+ */
+void print_received_data(const uint8_t *data, uint32_t length)
+{
+    printf("Received Data (HEX): ");
+    for (uint32_t i = 0; i < length; i++)
+    {
+        printf("%02X ", data[i]);
+    }
+    printf("\nReceived Data (ASCII): ");
+    for (uint32_t i = 0; i < length; i++)
+    {
+        char c = (char)data[i];
+        printf("%c", isprint((unsigned char)c) ? c : '.');
+    }
+    printf("\r\n");
 }

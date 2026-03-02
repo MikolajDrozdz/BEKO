@@ -16,6 +16,7 @@
 #define RADIO_DEFAULT_RX_TIMEOUT_SYMBOLS      0x03FFU
 #define RADIO_RESET_LOW_DELAY_MS              2U
 #define RADIO_RESET_HIGH_DELAY_MS             10U
+#define RADIO_IRQ_POLL_INTERVAL_MS            2U
 
 typedef struct
 {
@@ -30,6 +31,7 @@ typedef struct
     radio_state_t state;
     radio_state_t tx_resume_state;
     uint16_t rx_single_timeout_symbols;
+    uint32_t last_irq_poll_ms;
     radio_packet_t last_packet;
 } radio_context_t;
 
@@ -235,7 +237,7 @@ static radio_status_t radio_read_rx_packet(void)
 static void radio_resume_after_tx(void)
 {
     /* Po wejściu tutaj TX jest już zakończony. */
-    radio_set_state(RADIO_STATE_STANDBY);
+    radio_set_state(RADIO_STATE_RX_CONT);
 
     if (s_radio.tx_resume_state == RADIO_STATE_RX_CONT)
     {
@@ -327,6 +329,7 @@ radio_status_t radio_lora_init(const radio_hw_cfg_t *hw,
     s_radio.bus.nss_pin = hw->nss.pin;
     s_radio.bus.spi_timeout_ms = hw->spi_timeout_ms;
     s_radio.rx_single_timeout_symbols = RADIO_DEFAULT_RX_TIMEOUT_SYMBOLS;
+    s_radio.last_irq_poll_ms = HAL_GetTick();
     s_radio.state = RADIO_STATE_UNINIT;
 
     radio_hw_reset();
@@ -512,6 +515,8 @@ void radio_lora_process(void)
     uint8_t pending;
     uint8_t irq_flags;
     uint8_t op_mode;
+    bool should_poll;
+    uint32_t now_ms;
     uint32_t events = RADIO_EVENT_NONE;
     uint32_t key;
 
@@ -527,10 +532,29 @@ void radio_lora_process(void)
 
     /*
      * Główna ścieżka: zdarzenia z EXTI (pending != 0).
-     * Fallback: podczas TX sprawdzaj flagi IRQ pollingiem, jeśli zbocze DIO0
-     * zostało pominięte.
+     * Fallback: podczas RX/TX okresowo sprawdzaj flagi IRQ pollingiem,
+     * jeśli zbocze DIO zostało pominięte.
      */
-    if ((pending == 0U) && (s_radio.state != RADIO_STATE_TX))
+    should_poll = (pending != 0U);
+    if (!should_poll)
+    {
+        if (s_radio.state == RADIO_STATE_TX)
+        {
+            should_poll = true;
+        }
+        else if ((s_radio.state == RADIO_STATE_RX_CONT) ||
+                 (s_radio.state == RADIO_STATE_RX_SINGLE))
+        {
+            now_ms = HAL_GetTick();
+            if ((now_ms - s_radio.last_irq_poll_ms) >= RADIO_IRQ_POLL_INTERVAL_MS)
+            {
+                s_radio.last_irq_poll_ms = now_ms;
+                should_poll = true;
+            }
+        }
+    }
+
+    if (!should_poll)
     {
         return;
     }

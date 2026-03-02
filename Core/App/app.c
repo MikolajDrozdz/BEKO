@@ -68,6 +68,4 @@ app_main( void )
 {
 	radio_test_demo_process();
 	led_array_process();
-
-	HAL_Delay(10);
 }
