@@ -23,6 +23,7 @@ RM := rm -rf
 -include Core/App/radio_lib/modulations/fsk/subdir.mk
 -include Core/App/radio_lib/common/sx1276/subdir.mk
 -include Core/App/radio_lib/subdir.mk
+-include Core/App/led_array_lib/subdir.mk
 -include Core/App/lcd_library/subdir.mk
 -include Core/App/bmp280_lib/subdir.mk
 -include Core/App/subdir.mk

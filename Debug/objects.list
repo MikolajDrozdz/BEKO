@@ -2,6 +2,7 @@
 "./Core/App/bmp280_lib/bmp280.o"
 "./Core/App/bmp280_lib/bmp280_api.o"
 "./Core/App/lcd_library/lcd.o"
+"./Core/App/led_array_lib/led_array_lib.o"
 "./Core/App/radio_lib/common/sx1276/radio_sx1276.o"
 "./Core/App/radio_lib/modulations/fsk/radio_fsk.o"
 "./Core/App/radio_lib/modulations/lora/radio_lora.o"

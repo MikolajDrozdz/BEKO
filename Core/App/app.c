@@ -8,6 +8,7 @@
 #include "app.h"
 #include "lcd_library/lcd.h"
 #include "bmp280_lib/bmp280_api.h"
+#include "led_array_lib/led_array_lib.h"
 #include "radio_lib/test/radio_test.h"
 #include "vl53l3cx_lib/vl53l3cx_lib.h"
 #include "main.h"
@@ -49,12 +50,24 @@ app_init( void )
 
 
 	radio_test_demo_init(&hspi1);
+
+	if (led_array_init() == LED_ARRAY_OK)
+	{
+		led_array_timer_init(true);
+		led_array_start_rainbow(15U, 5U, 100U);
+		printf("LED rainbow: ON\r\n");
+	}
+	else
+	{
+		printf("LED init failed\r\n");
+	}
 }
 
 void
 app_main( void )
 {
 	radio_test_demo_process();
+	led_array_process();
 
 	HAL_Delay(10);
 }
