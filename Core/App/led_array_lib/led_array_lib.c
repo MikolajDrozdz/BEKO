@@ -5,6 +5,8 @@
 
 #include "led_array_lib.h"
 
+#include "cmsis_os2.h"
+
 #include <string.h>
 
 #define LED_ARRAY_COUNT            5U
@@ -47,6 +49,27 @@ typedef struct
 } led_array_ctx_t;
 
 static led_array_ctx_t s_led;
+
+static uint32_t led_array_now_ms(void)
+{
+    osKernelState_t state;
+    uint32_t tick_hz;
+    uint32_t tick_count;
+
+    state = osKernelGetState();
+    if ((state == osKernelRunning) || (state == osKernelLocked))
+    {
+        tick_hz = osKernelGetTickFreq();
+        tick_count = osKernelGetTickCount();
+        if (tick_hz == 0U)
+        {
+            return tick_count;
+        }
+        return (uint32_t)(((uint64_t)tick_count * 1000ULL) / (uint64_t)tick_hz);
+    }
+
+    return HAL_GetTick();
+}
 
 static uint32_t led_array_get_tim_clock(TIM_TypeDef *tim)
 {
@@ -421,7 +444,7 @@ led_array_status_t led_array_init(void)
 
     memset(&s_led, 0, sizeof(s_led));
     s_led.tick_period_ms = LED_ARRAY_LIB_DEFAULT_TICK_MS;
-    s_led.last_tick_ms = HAL_GetTick();
+    s_led.last_tick_ms = led_array_now_ms();
     s_led.timer_running = true;
     s_led.initialized = true;
     s_led.effect = LED_ARRAY_EFFECT_NONE;
@@ -459,7 +482,7 @@ led_array_status_t led_array_timer_init(uint32_t tick_period_ms)
     }
 
     s_led.tick_period_ms = tick_period_ms;
-    s_led.last_tick_ms = HAL_GetTick();
+    s_led.last_tick_ms = led_array_now_ms();
     s_led.timer_running = true;
     return LED_ARRAY_OK;
 }
@@ -494,7 +517,7 @@ void led_array_process(void)
         return;
     }
 
-    now = HAL_GetTick();
+    now = led_array_now_ms();
     while ((now - s_led.last_tick_ms) >= s_led.tick_period_ms)
     {
         s_led.last_tick_ms += s_led.tick_period_ms;

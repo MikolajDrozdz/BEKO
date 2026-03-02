@@ -1,5 +1,6 @@
 #include "vl53l3cx_lib.h"
 
+#include "app_delay.h"
 #include "main.h"
 #include "vl53l3cx.h"
 
@@ -73,9 +74,9 @@ bool tof_init(void)
   memset(&s_tof_obj, 0, sizeof(s_tof_obj));
 
   HAL_GPIO_WritePin(VL53L3CX_xshout_GPIO_Port, VL53L3CX_xshout_Pin, GPIO_PIN_RESET);
-  HAL_Delay(2);
+  app_delay_ms(2U);
   HAL_GPIO_WritePin(VL53L3CX_xshout_GPIO_Port, VL53L3CX_xshout_Pin, GPIO_PIN_SET);
-  HAL_Delay(5);
+  app_delay_ms(5U);
 
   io_ctx.Init = tof_bus_init;
   io_ctx.DeInit = tof_bus_deinit;
@@ -151,7 +152,7 @@ int32_t tof_get_distance(void)
   {
 	VL53L3CX_GetDistance(&s_tof_obj, &result);
 	first_reading = false;
-	HAL_Delay(100);
+	app_delay_ms(100U);
   }
 
   status = VL53L3CX_GetDistance(&s_tof_obj, &result);

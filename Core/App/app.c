@@ -1,73 +1,139 @@
 /*
  * app.c
  *
- *  Created on: Feb 28, 2026
- *      Author: mikol
+ * FreeRTOS-style application orchestrator (App-level "app_freertos").
  */
 
 #include "app.h"
-#include "lcd_library/lcd.h"
-#include "bmp280_lib/bmp280_api.h"
-#include "led_array_lib/led_array_lib.h"
-#include "radio_lib/test/radio_test.h"
-#include "vl53l3cx_lib/vl53l3cx_lib.h"
+
+#include "bmp280_main.h"
+#include "lcd_main.h"
+#include "led_array_main.h"
+#include "radio_main.h"
+#include "tof_main.h"
+
+#include "app_delay.h"
+#include "cmsis_os2.h"
 #include "main.h"
+
 #include <stdio.h>
+#include <string.h>
 
-extern I2C_HandleTypeDef hi2c1;
-extern SPI_HandleTypeDef hspi1;
+static osMutexId_t s_app_i2c_mutex = NULL;
+static osThreadId_t s_app_display_task = NULL;
 
-bmp280_api_data_t bmp;
+static void app_display_task_fn(void *argument);
 
-void
-app_init( void )
+static const osMutexAttr_t s_app_i2c_mutex_attr =
 {
-	printf("HELLO BEKO!\n\r");
+    .name = "app_i2c_mutex"
+};
 
-	printf("LCD init\r\n");
-	lcd_clear();
-	lcd_backlight(1);
-	lcd_set_cursor(0,0);
-	lcd_animation_hello_beko();
-	HAL_Delay(100);
+static const osThreadAttr_t s_app_display_task_attr =
+{
+    .name = "app_display",
+    .priority = (osPriority_t)osPriorityLow,
+    .stack_size = 1024U
+};
 
-
-	printf("Initializing BMP280 (if connected)\r\n");
-	int tmp = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_1);
-	bmp280_api_measure_all(&bmp, 50);
-
-	if(bmp.valid != true)
-		printf("BMP280 init fail!\r\n");
-	else if(tmp != true)
-		printf("BMP280 not connected\n\r");
-	else
-		printf("Measurements: temp:%.2f, pres:%.2f\r\n", bmp.temperature_c, bmp.pressure_hpa);
-
-
-	tmp = tof_init();
-	(tmp == true) ? printf("ToF initialized\n\r") : printf("ToF not initialized\n\r");
-	printf("Dist: %.1f cm\n\r", ((float) tof_get_distance()) / 10);
-
-
-	radio_test_demo_init(&hspi1);
-
-	if (led_array_init() == LED_ARRAY_OK)
-	{
-		led_array_timer_init(true);
-		led_array_start_rainbow(15U, 5U, 100U);
-		printf("LED rainbow: ON\r\n");
-	}
-	else
-	{
-		printf("LED init failed\r\n");
-	}
+void app_init(void)
+{
+    printf("APP: FreeRTOS bootstrap\r\n");
 }
 
-void
-app_main( void )
+void app_main(void)
 {
-	radio_test_demo_process();
-	led_array_process();
+    /* Fallback path; should not execute in normal RTOS flow. */
+    app_delay_ms(100U);
+}
 
-	HAL_Delay(10);
+void app_freertos_init(void)
+{
+    if (s_app_i2c_mutex == NULL)
+    {
+        s_app_i2c_mutex = osMutexNew(&s_app_i2c_mutex_attr);
+    }
+
+    lcd_main_create_task();
+    bmp280_main_create_task();
+    tof_main_create_task();
+    radio_main_create_task();
+    led_array_main_create_task();
+
+    if (s_app_display_task == NULL)
+    {
+        s_app_display_task = osThreadNew(app_display_task_fn, NULL, &s_app_display_task_attr);
+    }
+}
+
+bool app_i2c_lock(uint32_t timeout_ms)
+{
+    uint32_t timeout;
+
+    if (s_app_i2c_mutex == NULL)
+    {
+        return false;
+    }
+
+    timeout = (timeout_ms == 0U) ? osWaitForever : timeout_ms;
+    return (osMutexAcquire(s_app_i2c_mutex, timeout) == osOK);
+}
+
+void app_i2c_unlock(void)
+{
+    if (s_app_i2c_mutex != NULL)
+    {
+        (void)osMutexRelease(s_app_i2c_mutex);
+    }
+}
+
+static void app_display_task_fn(void *argument)
+{
+    char lcd_line0[17];
+    char lcd_line1[17];
+    bmp280_api_data_t bmp_data;
+    int32_t tof_distance_mm;
+    bool has_bmp;
+
+    (void)argument;
+
+    lcd_main_set_lines("System booting...", "RTOS tasks start");
+    osDelay(500U);
+
+    for (;;)
+    {
+        memset(lcd_line0, 0, sizeof(lcd_line0));
+        memset(lcd_line1, 0, sizeof(lcd_line1));
+
+        has_bmp = bmp280_main_get_last(&bmp_data);
+        tof_distance_mm = tof_main_get_last_distance();
+
+        if (has_bmp)
+        {
+            (void)snprintf(lcd_line0,
+                           sizeof(lcd_line0),
+                           "T:%4.1fC P:%4.0f",
+                           bmp_data.temperature_c,
+                           bmp_data.pressure_hpa);
+        }
+        else
+        {
+            (void)snprintf(lcd_line0, sizeof(lcd_line0), "BMP280: waiting");
+        }
+
+        if (tof_distance_mm >= 0)
+        {
+            (void)snprintf(lcd_line1,
+                           sizeof(lcd_line1),
+                           "ToF:%5ld mm\n",
+                           (long)tof_distance_mm);
+        }
+        else
+        {
+            (void)snprintf(lcd_line1, sizeof(lcd_line1), "ToF: no target");
+        }
+
+        lcd_main_set_lines(lcd_line0, lcd_line1);
+        osDelay(500U);
+    }
 }

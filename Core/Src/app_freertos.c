@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "../App/app.h"
 
 /* USER CODE END Includes */
 
@@ -64,6 +65,8 @@ const osThreadAttr_t defaultTask_attributes = {
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
+  app_freertos_init();
+  return;
 
   /* USER CODE END Init */
 

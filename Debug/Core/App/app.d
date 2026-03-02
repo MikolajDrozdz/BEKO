@@ -1,5 +1,5 @@
 Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
- ../Core/App/lcd_library/lcd.h ../Core/App/bmp280_lib/bmp280_api.h \
+ ../Core/App/bmp280_main.h ../Core/App/bmp280_lib/bmp280_api.h \
  ../Core/App/bmp280_lib/bmp280.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h \
  ../Core/Inc/stm32u5xx_hal_conf.h \
@@ -31,20 +31,19 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rtc_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h \
+ ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h \
  ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h \
- ../Core/App/led_array_lib/led_array_lib.h \
- ../Core/App/led_array_lib/led_array_lib_config.h \
- ../Core/App/radio_lib/test/radio_test.h \
- ../Core/App/radio_lib/test/../radio_lib.h \
- ../Core/App/radio_lib/test/../radio_lib_config.h \
- ../Core/App/vl53l3cx_lib/vl53l3cx_lib.h ../Core/Inc/main.h \
- ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h \
+ ../Core/App/lcd_main.h ../Core/App/led_array_main.h \
+ ../Core/App/radio_main.h ../Core/App/tof_main.h ../Core/Inc/app_delay.h \
+ ../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h \
+ ../Core/Inc/main.h ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h \
  ../Core/Inc/stm32u5xx_nucleo_conf.h \
  ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo_errno.h
 ../Core/App/app.h:
-../Core/App/lcd_library/lcd.h:
+../Core/App/bmp280_main.h:
 ../Core/App/bmp280_lib/bmp280_api.h:
 ../Core/App/bmp280_lib/bmp280.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal.h:
@@ -77,15 +76,17 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_rtc_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_spi_ex.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim.h:
+../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_tim_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_uart_ex.h:
 ../Drivers/STM32U5xx_HAL_Driver/Inc/stm32u5xx_hal_exti.h:
-../Core/App/led_array_lib/led_array_lib.h:
-../Core/App/led_array_lib/led_array_lib_config.h:
-../Core/App/radio_lib/test/radio_test.h:
-../Core/App/radio_lib/test/../radio_lib.h:
-../Core/App/radio_lib/test/../radio_lib_config.h:
-../Core/App/vl53l3cx_lib/vl53l3cx_lib.h:
+../Core/App/lcd_main.h:
+../Core/App/led_array_main.h:
+../Core/App/radio_main.h:
+../Core/App/tof_main.h:
+../Core/Inc/app_delay.h:
+../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h:
 ../Core/Inc/main.h:
 ../Drivers/BSP/STM32U5xx_Nucleo/stm32u5xx_nucleo.h:
 ../Core/Inc/stm32u5xx_nucleo_conf.h:

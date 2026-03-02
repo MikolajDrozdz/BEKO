@@ -1,2 +1,9 @@
-../Core/App/app.c:23:1:app_init	5
-../Core/App/app.c:67:1:app_main	1
+../Core/Inc/app_delay.h:14:24:app_ms_to_os_ticks	3
+../Core/Inc/app_delay.h:35:20:app_busy_wait_ms	5
+../Core/Inc/app_delay.h:66:20:app_delay_ms	3
+../Core/App/app.c:39:6:app_init	1
+../Core/App/app.c:44:6:app_main	1
+../Core/App/app.c:50:6:app_freertos_init	3
+../Core/App/app.c:69:6:app_i2c_lock	3
+../Core/App/app.c:82:6:app_i2c_unlock	2
+../Core/App/app.c:90:13:app_display_task_fn	3

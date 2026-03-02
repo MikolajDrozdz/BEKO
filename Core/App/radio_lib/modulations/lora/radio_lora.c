@@ -5,6 +5,7 @@
 
 #include "radio_lora.h"
 
+#include "app_delay.h"
 #include "main.h"
 #include "../../common/sx1276/radio_sx1276.h"
 #include "../../common/sx1276/radio_sx1276_regs.h"
@@ -88,9 +89,9 @@ static void radio_hw_reset(void)
 {
     HAL_GPIO_WritePin(s_radio.hw.nss.port, s_radio.hw.nss.pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(s_radio.hw.reset.port, s_radio.hw.reset.pin, GPIO_PIN_RESET);
-    HAL_Delay(RADIO_RESET_LOW_DELAY_MS);
+    app_delay_ms(RADIO_RESET_LOW_DELAY_MS);
     HAL_GPIO_WritePin(s_radio.hw.reset.port, s_radio.hw.reset.pin, GPIO_PIN_SET);
-    HAL_Delay(RADIO_RESET_HIGH_DELAY_MS);
+    app_delay_ms(RADIO_RESET_HIGH_DELAY_MS);
 }
 
 static bool radio_low_data_rate_optimize_required(const radio_lora_cfg_t *cfg)
@@ -336,7 +337,7 @@ radio_status_t radio_lora_init(const radio_hw_cfg_t *hw,
         return RADIO_EHW;
     }
 
-    HAL_Delay(1U);
+    app_delay_ms(1U);
 
     if (!sx1276_get_version(&s_radio.bus, &version) || (version != SX1276_VERSION_ID))
     {

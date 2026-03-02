@@ -6,6 +6,7 @@
 /* Includes */
 #include "lcd.h"
 
+#include "app_delay.h"
 #include "main.h"
 #include <stdio.h>
 #include <string.h>
@@ -57,7 +58,7 @@ void lcd_demo(void)
 	  lcd_write_string(int_to_str);
 	  count++;
 	  memset(int_to_str, 0, sizeof(int_to_str));
-	  HAL_Delay(100);
+	  app_delay_ms(100U);
 
   }
 }
@@ -68,7 +69,7 @@ void lcd_write_nibble(uint8_t nibble, uint8_t rs) {
   data |= backlight_state << BL_BIT; // Include backlight state in data
   data |= 1 << EN_BIT;
   HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDR << 1, &data, 1, 100);
-  HAL_Delay(1);
+  app_delay_ms(1U);
   data &= ~(1 << EN_BIT);
   HAL_I2C_Master_Transmit(&hi2c1, I2C_ADDR << 1, &data, 1, 100);
 }
@@ -79,7 +80,7 @@ void lcd_send_cmd(uint8_t cmd) {
   lcd_write_nibble(upper_nibble, 0);
   lcd_write_nibble(lower_nibble, 0);
   if (cmd == 0x01 || cmd == 0x02) {
-    HAL_Delay(2);
+    app_delay_ms(2U);
   }
 }
 
@@ -91,19 +92,19 @@ void lcd_send_data(uint8_t data) {
 }
 
 void lcd_init() {
-  HAL_Delay(50);
+  app_delay_ms(50U);
   lcd_write_nibble(0x03, 0);
-  HAL_Delay(5);
+  app_delay_ms(5U);
   lcd_write_nibble(0x03, 0);
-  HAL_Delay(1);
+  app_delay_ms(1U);
   lcd_write_nibble(0x03, 0);
-  HAL_Delay(1);
+  app_delay_ms(1U);
   lcd_write_nibble(0x02, 0);
   lcd_send_cmd(0x28);
   lcd_send_cmd(0x0C);
   lcd_send_cmd(0x06);
   lcd_send_cmd(0x01);
-  HAL_Delay(2);
+  app_delay_ms(2U);
 }
 
 void lcd_write_string(uint8_t *str) {
@@ -137,7 +138,7 @@ void lcd_set_cursor(uint8_t row, uint8_t column) {
 
 void lcd_clear(void) {
 	lcd_send_cmd(0x01);
-    HAL_Delay(2);
+    app_delay_ms(2U);
 }
 
 void lcd_backlight(uint8_t state) {
@@ -154,7 +155,7 @@ void lcd_animation_hello_beko(void)
     lcd_clear();
     lcd_set_cursor(1, 5);
     lcd_write_string((uint8_t *)"HELLO BEKO");
-    HAL_Delay(500);
+    app_delay_ms(500U);
 
     lcd_clear();
     lcd_set_cursor(0, 4);
@@ -165,7 +166,7 @@ void lcd_animation_hello_beko(void)
     lcd_write_string((uint8_t *)"  * BEKO *  ");
     lcd_set_cursor(3, 5);
     lcd_write_string((uint8_t *)"   *  *   ");
-    HAL_Delay(500);
+    app_delay_ms(500U);
 
     lcd_clear();
     lcd_set_cursor(0, 0);
@@ -176,14 +177,14 @@ void lcd_animation_hello_beko(void)
     lcd_write_string((uint8_t *)"*  BEKO  *");
     lcd_set_cursor(3, 0);
     lcd_write_string((uint8_t *)"*   *   *   *   *");
-    HAL_Delay(500);
+    app_delay_ms(500U);
 
     lcd_clear();
     lcd_set_cursor(1, 4);
     lcd_write_string((uint8_t *)" .   .   . ");
     lcd_set_cursor(2, 3);
     lcd_write_string((uint8_t *)".   .   .   .");
-    HAL_Delay(500);
+    app_delay_ms(500U);
 
     lcd_clear();
 }
