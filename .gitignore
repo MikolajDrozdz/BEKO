@@ -6,3 +6,5 @@ Debug/*
 *.ld
 *.mk
 Debug/
+.mk
+Debug
