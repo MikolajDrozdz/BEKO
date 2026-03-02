@@ -12,7 +12,7 @@ extern SPI_HandleTypeDef hspi1;
 
 static osThreadId_t s_radio_task = NULL;
 static StaticTask_t s_radio_task_cb;
-#define RADIO_TASK_STACK_SIZE   2048U
+#define RADIO_TASK_STACK_SIZE   4096U
 #define RADIO_TASK_STACK_WORDS  (RADIO_TASK_STACK_SIZE / sizeof(StackType_t))
 static StackType_t s_radio_task_stack[RADIO_TASK_STACK_WORDS];
 

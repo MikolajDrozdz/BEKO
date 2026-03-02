@@ -12,7 +12,7 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
-#define BMP280_TASK_STACK_SIZE   1024U
+#define BMP280_TASK_STACK_SIZE   3072U
 #define BMP280_TASK_STACK_WORDS  (BMP280_TASK_STACK_SIZE / sizeof(StackType_t))
 
 static osThreadId_t s_bmp280_task = NULL;

@@ -11,7 +11,7 @@
 static osThreadId_t s_tof_task = NULL;
 static volatile int32_t s_tof_last_distance_mm = -1;
 static StaticTask_t s_tof_task_cb;
-#define TOF_TASK_STACK_SIZE   1024U
+#define TOF_TASK_STACK_SIZE   6144U
 #define TOF_TASK_STACK_WORDS  (TOF_TASK_STACK_SIZE / sizeof(StackType_t))
 static StackType_t s_tof_task_stack[TOF_TASK_STACK_WORDS];
 
