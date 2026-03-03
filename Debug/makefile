@@ -53,34 +53,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := BEKO
+BUILD_ARTIFACT_NAME := BEKO_W1_hello-
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-BEKO.elf \
+BEKO_W1_hello-.elf \
 
 MAP_FILES += \
-BEKO.map \
+BEKO_W1_hello-.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-BEKO.list \
+BEKO_W1_hello-.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: BEKO.elf secondary-outputs
+main-build: BEKO_W1_hello-.elf secondary-outputs
 
 # Tool invocations
-BEKO.elf BEKO.map: $(OBJS) $(USER_OBJS) /home/henio/stm32/BEKO/STM32U545RETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "BEKO.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"/home/henio/stm32/BEKO/STM32U545RETXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="BEKO.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+BEKO_W1_hello-.elf BEKO_W1_hello-.map: $(OBJS) $(USER_OBJS) C:\Users\mikol\STM32CubeIDE\workspace_1.19.0\BEKO_W1_hello-\STM32U545RETXQ_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "BEKO_W1_hello-.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m33 -T"C:\Users\mikol\STM32CubeIDE\workspace_1.19.0\BEKO_W1_hello-\STM32U545RETXQ_FLASH.ld" --specs=nosys.specs -Wl,-Map="BEKO_W1_hello-.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -89,14 +89,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-BEKO.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "BEKO.list"
+BEKO_W1_hello-.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "BEKO_W1_hello-.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) BEKO.elf BEKO.list BEKO.map default.size.stdout
+	-$(RM) BEKO_W1_hello-.elf BEKO_W1_hello-.list BEKO_W1_hello-.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
