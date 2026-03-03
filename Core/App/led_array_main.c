@@ -43,20 +43,16 @@ void led_array_main_create_task(void)
 
 static void led_array_main_task_fn(void *argument)
 {
-    led_array_status_t st_init;
-    led_array_status_t st_timer;
-    led_array_status_t st_rainbow;
-
     (void)argument;
 
-    st_init = led_array_init();
-    st_timer = led_array_timer_init(1U);
-    st_rainbow = led_array_start_rainbow(15U, 5U, 100U);
+    led_array_init();
+    led_array_timer_init(10U);
+    led_array_start_rainbow(15U, 5U, 100U);
     printf("LED task: running rainbow\r\n");
 
     for (;;)
     {
         led_array_process();
-        osDelay(1U);
+        osDelay(5U);
     }
 }

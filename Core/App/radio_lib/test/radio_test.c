@@ -95,6 +95,23 @@ static void radio_test_print_packet(const radio_packet_t *pkt)
 }
 
 /**
+ * @brief Drukuje payload odebranego pakietu jako tekst terminalowy.
+ * @param pkt Wskaźnik na pakiet do wydruku.
+ */
+static void radio_test_print_packet_text(const radio_packet_t *pkt)
+{
+    uint8_t i;
+
+    printf("RADIO RX TEXT: ");
+    for (i = 0U; i < pkt->length; i++)
+    {
+        char c = (char)pkt->data[i];
+        printf("%c", isprint((unsigned char)c) ? c : '.');
+    }
+    printf("\r\n");
+}
+
+/**
  * @brief Drukuje podstawowe rejestry diagnostyczne ścieżki TX.
  */
 static void radio_test_dump_tx_debug(void)
@@ -269,6 +286,16 @@ void radio_test_demo_process(void)
         if (radio_get_last_packet(&pkt))
         {
             radio_test_print_packet(&pkt);
+            radio_test_print_packet_text(&pkt);
+        }
+        else
+        {
+            printf("RADIO RX: no packet data\r\n");
+        }
+
+        if (radio_get_state() != RADIO_STATE_RX_CONT)
+        {
+            (void)radio_start_rx_continuous();
         }
     }
     if ((events & RADIO_EVENT_RX_TIMEOUT) != 0U)

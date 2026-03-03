@@ -164,6 +164,42 @@ static void radio_set_state(radio_state_t state)
     s_radio.state = state;
 }
 
+static bool radio_wait_for_tx_enter_or_done(uint8_t *op_mode_snapshot)
+{
+    uint8_t op_mode;
+    uint8_t irq_flags;
+    uint8_t retry;
+
+    for (retry = 0U; retry < 5U; retry++)
+    {
+        if (sx1276_read_reg(&s_radio.bus, SX1276_REG_OP_MODE, &op_mode))
+        {
+            if (op_mode_snapshot != NULL)
+            {
+                *op_mode_snapshot = op_mode;
+            }
+
+            op_mode &= SX1276_OPMODE_MODE_MASK;
+            if ((op_mode == SX1276_MODE_TX) || (op_mode == SX1276_MODE_FSTX))
+            {
+                return true;
+            }
+        }
+
+        if (sx1276_get_irq_flags(&s_radio.bus, &irq_flags))
+        {
+            if ((irq_flags & SX1276_IRQ_TX_DONE) != 0U)
+            {
+                return true;
+            }
+        }
+
+        app_delay_ms(1U);
+    }
+
+    return false;
+}
+
 static void radio_handle_exti_pin(uint16_t pin)
 {
     uint8_t i;
@@ -485,13 +521,7 @@ radio_status_t radio_lora_send_async(const uint8_t *data, uint8_t len)
         return RADIO_EHW;
     }
 
-    if (!sx1276_read_reg(&s_radio.bus, SX1276_REG_OP_MODE, &op_mode))
-    {
-        return RADIO_EHW;
-    }
-
-    op_mode &= SX1276_OPMODE_MODE_MASK;
-    if ((op_mode != SX1276_MODE_TX) && (op_mode != SX1276_MODE_FSTX))
+    if (!radio_wait_for_tx_enter_or_done(&op_mode))
     {
         return RADIO_EHW;
     }
@@ -746,5 +776,4 @@ void radio_lora_on_exti(uint16_t gpio_pin)
 {
     radio_handle_exti_pin(gpio_pin);
 }
-
 
