@@ -443,7 +443,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
+  huart1.Init.BaudRate = 1000000;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -498,11 +498,11 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RMF_RST_GPIO_Port, RMF_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : VL53L3CX_INT_Pin DIG_B1_Pin */
-  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin|DIG_B1_Pin;
+  /*Configure GPIO pin : VL53L3CX_INT_Pin */
+  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(VL53L3CX_INT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : VL53L3CX_xshout_Pin */
   GPIO_InitStruct.Pin = VL53L3CX_xshout_Pin;
@@ -510,12 +510,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(VL53L3CX_xshout_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : DIG_B2_Pin DIG_B3_Pin */
-  GPIO_InitStruct.Pin = DIG_B2_Pin|DIG_B3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : RFM_DIO1_EXIT_1_Pin RFM_DIO0_EXIT_2_Pin RFM_DIO5_EXIT_8_Pin */
   GPIO_InitStruct.Pin = RFM_DIO1_EXIT_1_Pin|RFM_DIO0_EXIT_2_Pin|RFM_DIO5_EXIT_8_Pin;
@@ -576,19 +570,19 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI1_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI2_IRQn, 1, 1);
+  HAL_NVIC_SetPriority(EXTI2_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI2_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI13_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(EXTI13_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI13_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI14_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(EXTI14_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI14_IRQn);
 
-  HAL_NVIC_SetPriority(EXTI15_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(EXTI15_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI15_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
@@ -599,6 +593,28 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
+
+/**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM5 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim : TIM handle
+  * @retval None
+  */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* USER CODE BEGIN Callback 0 */
+
+  /* USER CODE END Callback 0 */
+  if (htim->Instance == TIM5)
+  {
+    HAL_IncTick();
+  }
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+}
 
 /**
   * @brief  This function is executed in case of error occurrence.

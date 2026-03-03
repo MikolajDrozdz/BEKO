@@ -63,10 +63,6 @@ void Error_Handler(void);
 #define VL53L3CX_INT_GPIO_Port GPIOC
 #define VL53L3CX_xshout_Pin GPIO_PIN_3
 #define VL53L3CX_xshout_GPIO_Port GPIOC
-#define DIG_B2_Pin GPIO_PIN_2
-#define DIG_B2_GPIO_Port GPIOA
-#define DIG_B3_Pin GPIO_PIN_3
-#define DIG_B3_GPIO_Port GPIOA
 #define RFM_DIO1_EXIT_1_Pin GPIO_PIN_1
 #define RFM_DIO1_EXIT_1_GPIO_Port GPIOB
 #define RFM_DIO1_EXIT_1_EXTI_IRQn EXTI1_IRQn
@@ -82,8 +78,6 @@ void Error_Handler(void);
 #define RFM_DIO2_EXIT_15_Pin GPIO_PIN_15
 #define RFM_DIO2_EXIT_15_GPIO_Port GPIOB
 #define RFM_DIO2_EXIT_15_EXTI_IRQn EXTI15_IRQn
-#define DIG_B1_Pin GPIO_PIN_8
-#define DIG_B1_GPIO_Port GPIOC
 #define SPI_CS_Pin GPIO_PIN_9
 #define SPI_CS_GPIO_Port GPIOC
 #define RMF_RST_Pin GPIO_PIN_11

@@ -6,16 +6,76 @@
 #include "radio_test.h"
 
 #include "../common/sx1276/radio_sx1276_regs.h"
+#include "../../lcd_library/lcd.h"
 
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
+
+#define RADIO_TEST_LCD_ROWS 4U
+#define RADIO_TEST_LCD_COLS 20U
 
 static volatile uint32_t s_radio_cb_events = 0U;
 static uint32_t s_radio_last_ping_ms = 0U;
 static uint32_t s_radio_last_tx_start_ms = 0U;
 static bool s_demo_initialized = false;
+static bool s_lcd_rx_initialized = false;
+static char s_lcd_rx_lines[RADIO_TEST_LCD_ROWS][RADIO_TEST_LCD_COLS + 1U];
 
-void print_received_data(const uint8_t *data, uint32_t length);
+static void print_received_data(const uint8_t *data, uint32_t length);
+
+static void radio_test_lcd_render(void)
+{
+    uint8_t row;
+
+    for (row = 0U; row < RADIO_TEST_LCD_ROWS; row++)
+    {
+        lcd_set_cursor(row, 0U);
+        lcd_write_string((uint8_t *)s_lcd_rx_lines[row]);
+    }
+}
+
+static void radio_test_lcd_init(void)
+{
+    uint8_t row;
+
+    for (row = 0U; row < RADIO_TEST_LCD_ROWS; row++)
+    {
+        memset(s_lcd_rx_lines[row], ' ', RADIO_TEST_LCD_COLS);
+        s_lcd_rx_lines[row][RADIO_TEST_LCD_COLS] = '\0';
+    }
+
+    lcd_clear();
+    radio_test_lcd_render();
+    s_lcd_rx_initialized = true;
+}
+
+static void radio_test_lcd_push_message(const uint8_t *data, uint32_t length)
+{
+    uint8_t row;
+    uint32_t i;
+
+    if (!s_lcd_rx_initialized)
+    {
+        radio_test_lcd_init();
+    }
+
+    for (row = 0U; row < (RADIO_TEST_LCD_ROWS - 1U); row++)
+    {
+        memcpy(s_lcd_rx_lines[row], s_lcd_rx_lines[row + 1U], (RADIO_TEST_LCD_COLS + 1U));
+    }
+
+    memset(s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U], ' ', RADIO_TEST_LCD_COLS);
+    s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U][RADIO_TEST_LCD_COLS] = '\0';
+
+    for (i = 0U; (i < length) && (i < RADIO_TEST_LCD_COLS); i++)
+    {
+        char c = (char)data[i];
+        s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U][i] = isprint((unsigned char)c) ? c : '.';
+    }
+
+    radio_test_lcd_render();
+}
 
 /**
  * @brief Callback zdarzeń radiowych używany w scenariuszu demo.
@@ -65,6 +125,7 @@ static void radio_test_handle_received_information(void)
     {
         radio_test_print_packet(&pkt);
         print_received_data(pkt.data, pkt.length);
+        radio_test_lcd_push_message(pkt.data, pkt.length);
     }
 }
 
@@ -302,7 +363,7 @@ void radio_test_demo_process(void)
  * @param data Pointer to the data buffer.
  * @param length Length of the data buffer.
  */
-void print_received_data(const uint8_t *data, uint32_t length)
+static void print_received_data(const uint8_t *data, uint32_t length)
 {
     printf("Received Data (HEX): ");
     for (uint32_t i = 0; i < length; i++)
