@@ -21,6 +21,7 @@ RM := rm -rf
 -include Core/Startup/subdir.mk
 -include Core/Src/subdir.mk
 -include Core/App/vl53l3cx_lib/subdir.mk
+-include Core/App/st33ktpm2x_lib/subdir.mk
 -include Core/App/radio_lib/test/subdir.mk
 -include Core/App/radio_lib/modulations/ook/subdir.mk
 -include Core/App/radio_lib/modulations/lora/subdir.mk
@@ -29,6 +30,7 @@ RM := rm -rf
 -include Core/App/radio_lib/subdir.mk
 -include Core/App/led_array_lib/subdir.mk
 -include Core/App/lcd_library/subdir.mk
+-include Core/App/i2c_mem_store_lib/subdir.mk
 -include Core/App/bmp280_lib/subdir.mk
 -include Core/App/subdir.mk
 -include objects.mk

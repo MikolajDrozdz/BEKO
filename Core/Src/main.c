@@ -571,8 +571,8 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RMF_RST_GPIO_Port, RMF_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : VL53L3CX_INT_Pin DIG_B1_Pin */
-  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin|DIG_B1_Pin;
+  /*Configure GPIO pins : VL53L3CX_INT_Pin DIG_B2_Pin */
+  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin|DIG_B2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -584,8 +584,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(VL53L3CX_xshout_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : DIG_B2_Pin DIG_B3_Pin */
-  GPIO_InitStruct.Pin = DIG_B2_Pin|DIG_B3_Pin;
+  /*Configure GPIO pins : DIG_B3_Pin DIG_B1_Pin */
+  GPIO_InitStruct.Pin = DIG_B3_Pin|DIG_B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);

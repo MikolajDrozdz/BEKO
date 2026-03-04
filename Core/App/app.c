@@ -7,9 +7,12 @@
 #include "app.h"
 
 #include "bmp280_main.h"
+#include "button_main.h"
 #include "lcd_main.h"
 #include "led_array_main.h"
+#include "menu_main.h"
 #include "radio_main.h"
+#include "security_main.h"
 #include "tof_main.h"
 
 #include "app_delay.h"
@@ -57,6 +60,9 @@ void app_freertos_init(void)
     (void)app_i2c_ensure_mutex();
 
     lcd_main_create_task();
+    security_main_create_task();
+    button_main_create_task();
+    menu_main_create_task();
     bmp280_main_create_task();
     tof_main_create_task();
     radio_main_create_task();

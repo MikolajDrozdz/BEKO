@@ -861,3 +861,154 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_pcr_read_sha256(st33ktpm2x_t *ctx,
     memcpy(digest_sha256_out, &rsp[off], 32U);
     return ST33KTPM2X_OK;
 }
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_start_auth_session(st33ktpm2x_t *ctx,
+                                                        uint32_t *session_handle_out,
+                                                        uint32_t *tpm_rc)
+{
+    (void)ctx;
+    if (session_handle_out != NULL)
+    {
+        *session_handle_out = 0UL;
+    }
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_pcr(st33ktpm2x_t *ctx,
+                                                uint32_t session_handle,
+                                                uint8_t pcr_index,
+                                                uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)session_handle;
+    (void)pcr_index;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_physical_presence(st33ktpm2x_t *ctx,
+                                                              uint32_t session_handle,
+                                                              uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)session_handle;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_command_code(st33ktpm2x_t *ctx,
+                                                         uint32_t session_handle,
+                                                         uint32_t command_code,
+                                                         uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)session_handle;
+    (void)command_code;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_or(st33ktpm2x_t *ctx,
+                                               uint32_t session_handle,
+                                               const uint8_t *digest_list,
+                                               uint8_t digest_count,
+                                               uint8_t digest_size,
+                                               uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)session_handle;
+    (void)digest_list;
+    (void)digest_count;
+    (void)digest_size;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_define(st33ktpm2x_t *ctx,
+                                              uint32_t nv_index,
+                                              uint16_t data_size,
+                                              uint32_t attributes,
+                                              uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)nv_index;
+    (void)data_size;
+    (void)attributes;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_read(st33ktpm2x_t *ctx,
+                                            uint32_t nv_index,
+                                            uint16_t offset,
+                                            uint8_t *out_data,
+                                            uint16_t out_capacity,
+                                            uint16_t *out_len,
+                                            uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)nv_index;
+    (void)offset;
+    (void)out_data;
+    (void)out_capacity;
+    if (out_len != NULL)
+    {
+        *out_len = 0U;
+    }
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write(st33ktpm2x_t *ctx,
+                                             uint32_t nv_index,
+                                             uint16_t offset,
+                                             const uint8_t *data,
+                                             uint16_t data_len,
+                                             uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)nv_index;
+    (void)offset;
+    (void)data;
+    (void)data_len;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_flush_context(st33ktpm2x_t *ctx,
+                                                  uint32_t handle,
+                                                  uint32_t *tpm_rc)
+{
+    (void)ctx;
+    (void)handle;
+    if (tpm_rc != NULL)
+    {
+        *tpm_rc = 0UL;
+    }
+    return ST33KTPM2X_ENOTSUP;
+}

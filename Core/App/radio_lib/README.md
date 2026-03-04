@@ -62,6 +62,9 @@ Do szybkiego uruchomienia można użyć `test/radio_test.c`:
 - `radio_test_demo_init(&hspi1)`,
 - `radio_test_demo_process()` cyklicznie w pętli głównej.
 
+W tym projekcie warstwa aplikacyjna używa obecnie `radio_main` (task RTOS), a
+`radio_test.c` jest traktowany jako moduł diagnostyczny.
+
 ## Status backendów
 
 - LoRa: implementacja produkcyjna (SX1276/RFM95).

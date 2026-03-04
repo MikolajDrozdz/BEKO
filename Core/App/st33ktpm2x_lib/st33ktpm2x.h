@@ -273,6 +273,133 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_pcr_read_sha256(st33ktpm2x_t *ctx,
                                                     uint32_t *update_counter_out,
                                                     uint32_t *tpm_rc);
 
+/**
+ * @brief Start TPM2 policy/auth session helper (scaffold API).
+ * @param ctx Driver context.
+ * @param session_handle_out [out] Created session handle.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_start_auth_session(st33ktpm2x_t *ctx,
+                                                        uint32_t *session_handle_out,
+                                                        uint32_t *tpm_rc);
+
+/**
+ * @brief Apply PolicyPCR in an existing policy session (scaffold API).
+ * @param ctx Driver context.
+ * @param session_handle Policy session handle.
+ * @param pcr_index PCR index.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_pcr(st33ktpm2x_t *ctx,
+                                                uint32_t session_handle,
+                                                uint8_t pcr_index,
+                                                uint32_t *tpm_rc);
+
+/**
+ * @brief Apply Physical Presence policy branch (scaffold API).
+ * @param ctx Driver context.
+ * @param session_handle Policy session handle.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_physical_presence(st33ktpm2x_t *ctx,
+                                                              uint32_t session_handle,
+                                                              uint32_t *tpm_rc);
+
+/**
+ * @brief Apply PolicyCommandCode in an existing policy session (scaffold API).
+ * @param ctx Driver context.
+ * @param session_handle Policy session handle.
+ * @param command_code TPM command code to authorize.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_command_code(st33ktpm2x_t *ctx,
+                                                         uint32_t session_handle,
+                                                         uint32_t command_code,
+                                                         uint32_t *tpm_rc);
+
+/**
+ * @brief Apply PolicyOR branch combiner (scaffold API).
+ * @param ctx Driver context.
+ * @param session_handle Policy session handle.
+ * @param digest_list Pointer to concatenated digest list.
+ * @param digest_count Number of digests.
+ * @param digest_size Single digest size.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_policy_or(st33ktpm2x_t *ctx,
+                                               uint32_t session_handle,
+                                               const uint8_t *digest_list,
+                                               uint8_t digest_count,
+                                               uint8_t digest_size,
+                                               uint32_t *tpm_rc);
+
+/**
+ * @brief Define NV index (scaffold API).
+ * @param ctx Driver context.
+ * @param nv_index NV index handle.
+ * @param data_size NV data size.
+ * @param attributes NV attributes mask.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_define(st33ktpm2x_t *ctx,
+                                              uint32_t nv_index,
+                                              uint16_t data_size,
+                                              uint32_t attributes,
+                                              uint32_t *tpm_rc);
+
+/**
+ * @brief Read bytes from NV index (scaffold API).
+ * @param ctx Driver context.
+ * @param nv_index NV index handle.
+ * @param offset Offset in bytes.
+ * @param out_data Output buffer.
+ * @param out_capacity Output capacity.
+ * @param out_len [out] Returned data length.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_read(st33ktpm2x_t *ctx,
+                                            uint32_t nv_index,
+                                            uint16_t offset,
+                                            uint8_t *out_data,
+                                            uint16_t out_capacity,
+                                            uint16_t *out_len,
+                                            uint32_t *tpm_rc);
+
+/**
+ * @brief Write bytes to NV index (scaffold API).
+ * @param ctx Driver context.
+ * @param nv_index NV index handle.
+ * @param offset Offset in bytes.
+ * @param data Input data.
+ * @param data_len Input data length.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write(st33ktpm2x_t *ctx,
+                                             uint32_t nv_index,
+                                             uint16_t offset,
+                                             const uint8_t *data,
+                                             uint16_t data_len,
+                                             uint32_t *tpm_rc);
+
+/**
+ * @brief Flush transient context/session handle (scaffold API).
+ * @param ctx Driver context.
+ * @param handle Transient handle.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_flush_context(st33ktpm2x_t *ctx,
+                                                  uint32_t handle,
+                                                  uint32_t *tpm_rc);
+
 #ifdef __cplusplus
 }
 #endif
