@@ -63,6 +63,10 @@ void Error_Handler(void);
 #define VL53L3CX_INT_GPIO_Port GPIOC
 #define VL53L3CX_xshout_Pin GPIO_PIN_3
 #define VL53L3CX_xshout_GPIO_Port GPIOC
+#define TPM_RESET__Pin GPIO_PIN_7
+#define TPM_RESET__GPIO_Port GPIOA
+#define TMP_RESET_Pin GPIO_PIN_0
+#define TMP_RESET_GPIO_Port GPIOB
 #define RFM_DIO1_EXIT_1_Pin GPIO_PIN_1
 #define RFM_DIO1_EXIT_1_GPIO_Port GPIOB
 #define RFM_DIO1_EXIT_1_EXTI_IRQn EXTI1_IRQn
