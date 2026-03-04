@@ -292,14 +292,14 @@ void radio_lora_default_lora_cfg(radio_lora_cfg_t *cfg)
 
     memset(cfg, 0, sizeof(*cfg));
     cfg->frequency_hz = RADIO_LIB_DEFAULT_FREQ_HZ;
-    cfg->bandwidth = RADIO_LORA_BW_125_KHZ;
-    cfg->spreading_factor = 7U;
+    cfg->bandwidth = RADIO_LORA_BW_500_KHZ;
+    cfg->spreading_factor = 12U;
     cfg->coding_rate = 5U;
     cfg->preamble_len = 8U;
     cfg->sync_word = RADIO_LIB_DEFAULT_SYNC_WORD;
-    cfg->crc_on = true;
+    cfg->crc_on = false;
     cfg->invert_iq = false;
-    cfg->tx_power_dbm = 14;
+    cfg->tx_power_dbm = 20;
     cfg->implicit_header = false;
     cfg->payload_len = 0U;
 }

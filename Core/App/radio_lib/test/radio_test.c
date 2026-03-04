@@ -50,7 +50,7 @@ static void radio_test_lcd_init(void)
     s_lcd_rx_initialized = true;
 }
 
-static void radio_test_lcd_push_message(const uint8_t *data, uint32_t length)
+static void radio_test_lcd_push_message(const uint8_t *data, uint32_t length, uint16_t rssi)
 {
     uint8_t row;
     uint32_t i;
@@ -68,9 +68,28 @@ static void radio_test_lcd_push_message(const uint8_t *data, uint32_t length)
     memset(s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U], ' ', RADIO_TEST_LCD_COLS);
     s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U][RADIO_TEST_LCD_COLS] = '\0';
 
-    for (i = 0U; (i < length) && (i < RADIO_TEST_LCD_COLS); i++)
     {
-        char c = (char)data[i];
+        char *line = s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U];
+        int16_t rssi_dbm = (int16_t)rssi;
+        uint16_t mag = (uint16_t)((rssi_dbm < 0) ? -rssi_dbm : rssi_dbm);
+
+        if (mag > 999U)
+        {
+            mag = 999U;
+        }
+
+        line[0] = (rssi_dbm < 0) ? '-' : '+';
+        line[1] = (char)('0' + (mag / 100U));
+        line[2] = (char)('0' + ((mag / 10U) % 10U));
+        line[3] = (char)('0' + (mag % 10U));
+        line[4] = 'd';
+        line[5] = 'B';
+        line[6] = 'm';
+    }
+
+    for (i = 7U; ((i - 7U) < length) && (i < RADIO_TEST_LCD_COLS); i++)
+    {
+        char c = (char)data[i - 7U];
         s_lcd_rx_lines[RADIO_TEST_LCD_ROWS - 1U][i] = isprint((unsigned char)c) ? c : '.';
     }
 
@@ -125,7 +144,7 @@ static void radio_test_handle_received_information(void)
     {
         radio_test_print_packet(&pkt);
         print_received_data(pkt.data, pkt.length);
-        radio_test_lcd_push_message(pkt.data, pkt.length);
+        radio_test_lcd_push_message(pkt.data, pkt.length, pkt.rssi_dbm);
     }
 }
 
