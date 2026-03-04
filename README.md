@@ -20,9 +20,9 @@ Automatycznie stworzone przez IDE:
 | MIC | NO ❌ | |
 | Speaker | NO ❌| Trzeba dodać głośnik |
 | ACC | NO ❌ | Trzeba podłączyć |
-| TMP | NO ❌ | |
+| TMP | OK ✅ | |
 | BUTTON | In progess ⚒️ | |
-| I2C MEM | NO ❌ | |
+| I2C MEM |  In progess ⚒️ | |
 | HALL SENSOR | NO ❌ | |
 | LIGHT SENSOR| NO ❌ | |
 | OLED DISP | NO ❌ | |

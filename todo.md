@@ -2,7 +2,6 @@ Dodaj do tego projektu kontroler, coś na zasadzie menu na wyświetlaczu, są pr
 
 Do menu zrób zadanie manu_main.
 
-
 Na początku po uruchomieniu ma pokazać się inicjalizacja hello beko, która już jest. Potem ma zacząć działać w domyślej konfiguracji, czyli ma odbierać dane na podstawowych ustawieniach (takie jakie są w demo).
 
 Jeżeli kliknę w przycisk jaki kolwiek ma pojawić się pager_menu w którym będą opcje takie jak wyślij wiadomość i kilka grup przykładowych wiadomości.
