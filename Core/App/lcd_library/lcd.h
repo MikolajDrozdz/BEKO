@@ -13,6 +13,7 @@
 /* Public interface */
 
 void lcd_demo(void);
+void lcd_init(void);
 void lcd_write_string(uint8_t *str);
 void lcd_set_cursor(uint8_t row, uint8_t column);
 void lcd_clear(void);

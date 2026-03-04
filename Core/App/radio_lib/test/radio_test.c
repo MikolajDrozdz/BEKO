@@ -6,6 +6,7 @@
 #include "radio_test.h"
 
 #include "../common/sx1276/radio_sx1276_regs.h"
+#include "../../lcd_main.h"
 
 #include "cmsis_os2.h"
 
@@ -109,6 +110,19 @@ static void radio_test_print_packet_text(const radio_packet_t *pkt)
         printf("%c", isprint((unsigned char)c) ? c : '.');
     }
     printf("\r\n");
+}
+
+static void radio_test_publish_packet_to_lcd(const radio_packet_t *pkt)
+{
+    if ((pkt == NULL) || (pkt->length == 0U))
+    {
+        return;
+    }
+
+    if (!lcd_main_push_message(pkt->rssi_dbm, pkt->data, pkt->length))
+    {
+        printf("LCD queue: drop\r\n");
+    }
 }
 
 /**
@@ -287,6 +301,7 @@ void radio_test_demo_process(void)
         {
             radio_test_print_packet(&pkt);
             radio_test_print_packet_text(&pkt);
+            radio_test_publish_packet_to_lcd(&pkt);
         }
         else
         {
