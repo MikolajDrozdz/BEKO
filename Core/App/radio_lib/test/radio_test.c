@@ -7,6 +7,7 @@
 
 #include "../common/sx1276/radio_sx1276_regs.h"
 #include "../../lcd_main.h"
+#include "../../i2c_mem_store_lib/i2c_mem_store.h"
 
 #include "cmsis_os2.h"
 
@@ -17,6 +18,10 @@ static volatile uint32_t s_radio_cb_events = 0U;
 static uint32_t s_radio_last_ping_ms = 0U;
 static uint32_t s_radio_last_tx_start_ms = 0U;
 static bool s_demo_initialized = false;
+static i2c_mem_store_t s_msg_store;
+static bool s_msg_store_ready = false;
+
+extern I2C_HandleTypeDef hi2c1;
 
 static uint32_t radio_test_irq_save(void)
 {
@@ -125,6 +130,22 @@ static void radio_test_publish_packet_to_lcd(const radio_packet_t *pkt)
     }
 }
 
+static void radio_test_store_packet_in_i2c_memory(const radio_packet_t *pkt)
+{
+    i2c_mem_store_status_t rc;
+
+    if ((pkt == NULL) || (!s_msg_store_ready))
+    {
+        return;
+    }
+
+    rc = i2c_mem_store_append_message(&s_msg_store, pkt->rssi_dbm, pkt->data, pkt->length);
+    if (rc != I2C_MEM_STORE_OK)
+    {
+        printf("MEM LOG write failed: %d\r\n", (int)rc);
+    }
+}
+
 /**
  * @brief Drukuje podstawowe rejestry diagnostyczne ścieżki TX.
  */
@@ -222,6 +243,8 @@ void radio_test_demo_init(SPI_HandleTypeDef *hspi)
     radio_hw_cfg_t radio_hw;
     radio_lora_cfg_t radio_cfg;
     radio_status_t radio_status;
+    i2c_mem_store_cfg_t mem_cfg;
+    i2c_mem_store_status_t mem_rc;
     uint8_t radio_version = 0U;
 
     if (hspi == NULL)
@@ -232,6 +255,19 @@ void radio_test_demo_init(SPI_HandleTypeDef *hspi)
     }
 
     printf("RADIO init\r\n");
+
+    i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
+    mem_rc = i2c_mem_store_init(&s_msg_store, &mem_cfg, true);
+    if (mem_rc == I2C_MEM_STORE_OK)
+    {
+        s_msg_store_ready = true;
+        printf("MEM LOG init OK\r\n");
+    }
+    else
+    {
+        s_msg_store_ready = false;
+        printf("MEM LOG init failed: %d\r\n", (int)mem_rc);
+    }
 
     radio_default_hw_cfg(&radio_hw, hspi);
     radio_default_lora_cfg(&radio_cfg);
@@ -302,6 +338,7 @@ void radio_test_demo_process(void)
             radio_test_print_packet(&pkt);
             radio_test_print_packet_text(&pkt);
             radio_test_publish_packet_to_lcd(&pkt);
+            radio_test_store_packet_in_i2c_memory(&pkt);
         }
         else
         {
