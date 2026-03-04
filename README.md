@@ -16,12 +16,12 @@ Automatycznie stworzone przez IDE:
 | LCD   | OK ✅ | |
 | BMP280 | OK ✅ | Nie jest dostępne na wszystkich płytkach, potrzebna naprawa |
 | TOF | OK ✅ | Uwaga! funckja blokująca na ok. 242 ms, może być zaimplenetowany w inny sposób. INT nie jest aktywny, jest zostawiony dla radia. |
-| RADIO | OK ✅ | Jest gotowe do implementacji, jest napisane demo. Powstanie zawdzięczam Codex 5.3 |
+| RADIO | OK ✅ | |
 | MIC | NO ❌ | |
-| Speaker | NO ❌| Trzeba dodać głośnik |
+| Speaker | In progess ⚒️ | Trzeba dodać głośnik |
 | ACC | NO ❌ | Trzeba podłączyć |
 | TMP | OK ✅ | |
-| BUTTON | In progess ⚒️ | |
+| BUTTON | OK ✅ | |
 | I2C MEM |  In progess ⚒️ | |
 | HALL SENSOR | NO ❌ | |
 | LIGHT SENSOR| NO ❌ | |
