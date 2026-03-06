@@ -77,6 +77,6 @@ static void tof_main_task_fn(void *argument)
             s_tof_last_distance_mm = -1;
         }
 
-        osDelay(300U);
+        osDelay(1000U);
     }
 }
