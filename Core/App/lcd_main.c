@@ -45,6 +45,8 @@ static StackType_t s_lcd_task_stack[LCD_TASK_STACK_WORDS];
 static lcd_main_mode_t s_mode = LCD_MODE_MONITOR;
 static char s_monitor_lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U];
 static char s_ui_lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U];
+static char s_rendered_lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U];
+static bool s_render_cache_valid = false;
 
 static void lcd_main_task_fn(void *argument);
 static void lcd_main_fill_line(char *dst, const char *src);
@@ -53,6 +55,7 @@ static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
 static void lcd_main_shift_up_and_append(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U], const char *line);
 static void lcd_main_render_mode(void);
 static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
+static void lcd_main_invalidate_render_cache(void);
 static bool lcd_main_post_message(const lcd_main_msg_t *msg);
 
 static const osThreadAttr_t s_lcd_task_attr =
@@ -164,6 +167,7 @@ bool lcd_main_show_boot_hello(void)
 static void lcd_main_task_fn(void *argument)
 {
     lcd_main_msg_t msg;
+    bool render_required;
 
     (void)argument;
 
@@ -173,8 +177,10 @@ static void lcd_main_task_fn(void *argument)
 
     lcd_main_clear_lines(s_monitor_lines);
     lcd_main_clear_lines(s_ui_lines);
+    lcd_main_clear_lines(s_rendered_lines);
     lcd_main_fill_line(s_monitor_lines[0], "HELLO BEKO");
     lcd_main_fill_line(s_monitor_lines[1], "RX monitor...");
+    s_render_cache_valid = false;
 
     lcd_animation_hello_beko();
     s_mode = LCD_MODE_MONITOR;
@@ -187,62 +193,76 @@ static void lcd_main_task_fn(void *argument)
             continue;
         }
 
-        switch (msg.type)
+        render_required = false;
+
+        do
         {
-            case LCD_MAIN_MSG_SET_LINE:
-                if (msg.line_index < LCD_MAIN_ROWS)
-                {
-                    lcd_main_fill_line(s_ui_lines[msg.line_index], msg.text0);
-                }
-                break;
+            switch (msg.type)
+            {
+                case LCD_MAIN_MSG_SET_LINE:
+                    if (msg.line_index < LCD_MAIN_ROWS)
+                    {
+                        lcd_main_fill_line(s_ui_lines[msg.line_index], msg.text0);
+                        render_required = true;
+                    }
+                    break;
 
-            case LCD_MAIN_MSG_SET_LINES:
-                lcd_main_clear_lines(s_ui_lines);
-                lcd_main_fill_line(s_ui_lines[0], msg.text0);
-                lcd_main_fill_line(s_ui_lines[1], msg.text1);
-                break;
-
-            case LCD_MAIN_MSG_PUSH_MONITOR:
-                lcd_main_shift_up_and_append(s_monitor_lines, msg.text0);
-                break;
-
-            case LCD_MAIN_MSG_SET_MODE:
-                if ((msg.mode == LCD_MODE_MENU) || (msg.mode == LCD_MODE_POPUP))
-                {
+                case LCD_MAIN_MSG_SET_LINES:
                     lcd_main_clear_lines(s_ui_lines);
-                }
-                s_mode = msg.mode;
-                break;
+                    lcd_main_fill_line(s_ui_lines[0], msg.text0);
+                    lcd_main_fill_line(s_ui_lines[1], msg.text1);
+                    render_required = true;
+                    break;
 
-            case LCD_MAIN_MSG_SHOW_POPUP:
-                lcd_main_clear_lines(s_ui_lines);
-                lcd_main_fill_line(s_ui_lines[0], msg.text0);
-                lcd_main_fill_line(s_ui_lines[1], msg.text1);
-                lcd_main_fill_line(s_ui_lines[2], msg.text2);
-                lcd_main_fill_line(s_ui_lines[3], msg.text3);
-                s_mode = LCD_MODE_POPUP;
-                break;
+                case LCD_MAIN_MSG_PUSH_MONITOR:
+                    lcd_main_shift_up_and_append(s_monitor_lines, msg.text0);
+                    if (s_mode == LCD_MODE_MONITOR)
+                    {
+                        render_required = true;
+                    }
+                    break;
 
-            case LCD_MAIN_MSG_SHOW_BOOT:
-                lcd_animation_hello_beko();
-                s_mode = LCD_MODE_MONITOR;
-                break;
+                case LCD_MAIN_MSG_SET_MODE:
+                    if ((msg.mode == LCD_MODE_MENU) || (msg.mode == LCD_MODE_POPUP))
+                    {
+                        lcd_main_clear_lines(s_ui_lines);
+                    }
+                    s_mode = msg.mode;
+                    render_required = true;
+                    break;
 
-            case LCD_MAIN_MSG_CLEAR:
-                lcd_main_clear_lines(s_monitor_lines);
-                lcd_main_clear_lines(s_ui_lines);
-                break;
+                case LCD_MAIN_MSG_SHOW_POPUP:
+                    lcd_main_clear_lines(s_ui_lines);
+                    lcd_main_fill_line(s_ui_lines[0], msg.text0);
+                    lcd_main_fill_line(s_ui_lines[1], msg.text1);
+                    lcd_main_fill_line(s_ui_lines[2], msg.text2);
+                    lcd_main_fill_line(s_ui_lines[3], msg.text3);
+                    s_mode = LCD_MODE_POPUP;
+                    render_required = true;
+                    break;
 
-            default:
-                break;
-        }
+                case LCD_MAIN_MSG_SHOW_BOOT:
+                    lcd_animation_hello_beko();
+                    s_mode = LCD_MODE_MONITOR;
+                    lcd_main_invalidate_render_cache();
+                    render_required = true;
+                    break;
 
-        if ((msg.type == LCD_MAIN_MSG_PUSH_MONITOR) && (s_mode != LCD_MODE_MONITOR))
+                case LCD_MAIN_MSG_CLEAR:
+                    lcd_main_clear_lines(s_monitor_lines);
+                    lcd_main_clear_lines(s_ui_lines);
+                    render_required = true;
+                    break;
+
+                default:
+                    break;
+            }
+        } while (osMessageQueueGet(s_lcd_queue, &msg, NULL, 0U) == osOK);
+
+        if (render_required)
         {
-            continue;
+            lcd_main_render_mode();
         }
-
-        lcd_main_render_mode();
     }
 }
 
@@ -366,12 +386,30 @@ static void lcd_main_render_mode(void)
 static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U])
 {
     uint8_t row;
+    bool all_ok = true;
 
     for (row = 0U; row < LCD_MAIN_ROWS; row++)
     {
-        lcd_set_cursor(row, 0U);
-        lcd_write_string((uint8_t *)lines[row]);
+        if ((!s_render_cache_valid) ||
+            (memcmp(lines[row], s_rendered_lines[row], (LCD_MAIN_COLS + 1U)) != 0))
+        {
+            if (lcd_write_line(row, lines[row], LCD_MAIN_COLS))
+            {
+                memcpy(s_rendered_lines[row], lines[row], (LCD_MAIN_COLS + 1U));
+            }
+            else
+            {
+                all_ok = false;
+            }
+        }
     }
+
+    s_render_cache_valid = all_ok;
+}
+
+static void lcd_main_invalidate_render_cache(void)
+{
+    s_render_cache_valid = false;
 }
 
 static bool lcd_main_post_message(const lcd_main_msg_t *msg)
@@ -392,6 +430,11 @@ static bool lcd_main_post_message(const lcd_main_msg_t *msg)
 
     if (st == osErrorResource)
     {
+        if (msg->type != LCD_MAIN_MSG_PUSH_MONITOR)
+        {
+            return (osMessageQueuePut(s_lcd_queue, msg, 0U, 5U) == osOK);
+        }
+
         if (osMessageQueueGet(s_lcd_queue, &dropped, NULL, 0U) == osOK)
         {
             return (osMessageQueuePut(s_lcd_queue, msg, 0U, 0U) == osOK);

@@ -16,8 +16,8 @@ bool radio_main_cmd_set_auto_ping(bool enabled);
 bool radio_main_cmd_start_pairing(uint32_t timeout_ms);
 bool radio_main_cmd_pairing_accept(bool accept);
 bool radio_main_cmd_send_join_req(void);
+bool radio_main_cmd_send_trust_removed(uint32_t dst_id);
 
 uint32_t radio_main_get_node_id(void);
 
 #endif /* APP_RADIO_MAIN_H_ */
-

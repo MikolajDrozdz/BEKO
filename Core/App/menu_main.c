@@ -459,9 +459,12 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     {
         char rx_line0[21];
         char rx_line1[21];
-        char rx_line2[21];
         char code_line[21];
+        char text_safe[21];
         const char *title = "NOTICE";
+
+        memcpy(text_safe, n->text, sizeof(text_safe));
+        text_safe[sizeof(text_safe) - 1U] = '\0';
 
         switch (n->type)
         {
@@ -495,35 +498,32 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
         {
             memset(rx_line0, 0, sizeof(rx_line0));
             memset(rx_line1, 0, sizeof(rx_line1));
-            memset(rx_line2, 0, sizeof(rx_line2));
-
-            snprintf(rx_line0, sizeof(rx_line0), "RX: %.16s", has_text ? n->text : "");
+            snprintf(rx_line0, sizeof(rx_line0), "RX: %.16s", has_text ? text_safe : "");
             snprintf(rx_line1, sizeof(rx_line1), "RSSI: %d dBm", (int)n->rssi_dbm);
-            snprintf(rx_line2, sizeof(rx_line2), "KOD:%08lX", (unsigned long)n->device_code);
-            menu_render_popup(rx_line0, rx_line1, rx_line2, "Press any key");
+            menu_render_popup(rx_line0, rx_line1, "", "");
         }
         else if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-            (strncmp(n->text, "JOIN_REQ", 8U) == 0))
+            (strncmp(text_safe, "JOIN_REQ", 8U) == 0))
         {
             st->pairing_prompt = true;
-            snprintf(code_line, sizeof(code_line), "Code: %.11s", (n->text[8] == ' ') ? &n->text[9] : "----");
+            snprintf(code_line, sizeof(code_line), "Code: %.11s", (text_safe[8] == ' ') ? &text_safe[9] : "----");
             menu_render_popup("PAIR REQUEST", code_line, "OK=accept", "Hold OK=reject");
         }
         else if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-                 (strncmp(n->text, "JOIN_SENT", 9U) == 0))
+                 (strncmp(text_safe, "JOIN_SENT", 9U) == 0))
         {
-            snprintf(code_line, sizeof(code_line), "Code: %.11s", (n->text[9] == ' ') ? &n->text[10] : "----");
+            snprintf(code_line, sizeof(code_line), "Code: %.11s", (text_safe[9] == ' ') ? &text_safe[10] : "----");
             menu_render_popup("JOIN REQ SENT", code_line, "Wait for JOIN_OK", "");
         }
         else if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-                 (strncmp(n->text, "JOIN_OK", 7U) == 0))
+                 (strncmp(text_safe, "JOIN_OK", 7U) == 0))
         {
-            snprintf(code_line, sizeof(code_line), "Code: %.11s", (n->text[7] == ' ') ? &n->text[8] : "----");
+            snprintf(code_line, sizeof(code_line), "Code: %.11s", (text_safe[7] == ' ') ? &text_safe[8] : "----");
             menu_render_popup("PAIRING OK", code_line, "Device trusted", "");
         }
         else
         {
-            menu_render_popup(title, has_text ? n->text : "(empty)", "Press any key", "");
+            menu_render_popup(title, has_text ? text_safe : "(empty)", "", "");
         }
     }
 }
@@ -702,6 +702,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
     int32_t distance_mm;
     uint8_t idx;
     uint8_t count;
+    bool send_ok;
 
     memset(line0, 0, sizeof(line0));
     memset(line1, 0, sizeof(line1));
@@ -727,47 +728,57 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_DEFAULT:
-            (void)radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent STS:OK");
+            send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent STS:OK" : "Send failed");
             break;
 
         case MENU_ACTION_SEND_ALERT_FIRE:
-            (void)radio_main_cmd_send_template(0U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent ALR:FIRE");
+            send_ok = radio_main_cmd_send_template(0U, 0U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent ALR:FIRE" : "Send failed");
             break;
         case MENU_ACTION_SEND_ALERT_INTR:
-            (void)radio_main_cmd_send_template(0U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent ALR:INTR");
+            send_ok = radio_main_cmd_send_template(0U, 1U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent ALR:INTR" : "Send failed");
             break;
         case MENU_ACTION_SEND_ALERT_LOWBATT:
-            (void)radio_main_cmd_send_template(0U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent ALR:LOW");
+            send_ok = radio_main_cmd_send_template(0U, 2U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent ALR:LOW" : "Send failed");
             break;
 
         case MENU_ACTION_SEND_STATUS_OK:
-            (void)radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent STS:OK");
+            send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent STS:OK" : "Send failed");
             break;
         case MENU_ACTION_SEND_STATUS_BUSY:
-            (void)radio_main_cmd_send_template(1U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent STS:BUSY");
+            send_ok = radio_main_cmd_send_template(1U, 1U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent STS:BUSY" : "Send failed");
             break;
         case MENU_ACTION_SEND_STATUS_IDLE:
-            (void)radio_main_cmd_send_template(1U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent STS:IDLE");
+            send_ok = radio_main_cmd_send_template(1U, 2U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent STS:IDLE" : "Send failed");
             break;
 
         case MENU_ACTION_SEND_SERVICE_PING:
-            (void)radio_main_cmd_send_template(2U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent SRV:PING");
+            send_ok = radio_main_cmd_send_template(2U, 0U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent SRV:PING" : "Send failed");
             break;
         case MENU_ACTION_SEND_SERVICE_RESET:
-            (void)radio_main_cmd_send_template(2U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent SRV:RESET");
+            send_ok = radio_main_cmd_send_template(2U, 1U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent SRV:RESET" : "Send failed");
             break;
         case MENU_ACTION_SEND_SERVICE_SYNC:
-            (void)radio_main_cmd_send_template(2U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "Sent SRV:SYNC");
+            send_ok = radio_main_cmd_send_template(2U, 2U, BEKO_NET_BROADCAST_ID);
+            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
+                             send_ok ? "Sent SRV:SYNC" : "Send failed");
             break;
 
         case MENU_ACTION_DEVICE_ADD:
@@ -785,9 +796,27 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             {
                 if (security_main_cmd_get_device(idx, &info) && info.in_use)
                 {
-                    (void)security_main_cmd_delete_device(info.node_id);
-                    snprintf(line0, sizeof(line0), "Deleted slot %u", idx);
-                    menu_notify_text(MENU_NOTIFICATION_SECURITY, line0);
+                    bool deleted = security_main_cmd_delete_device(info.node_id);
+                    bool notified = false;
+
+                    if (deleted)
+                    {
+                        notified = radio_main_cmd_send_trust_removed(info.node_id);
+                    }
+
+                    if (!deleted)
+                    {
+                        menu_notify_text(MENU_NOTIFICATION_ERROR, "Delete failed");
+                    }
+                    else if (notified)
+                    {
+                        snprintf(line0, sizeof(line0), "Deleted slot %u", idx);
+                        menu_notify_text(MENU_NOTIFICATION_SECURITY, line0);
+                    }
+                    else
+                    {
+                        menu_notify_text(MENU_NOTIFICATION_WARNING, "Deleted local only");
+                    }
                     return;
                 }
             }

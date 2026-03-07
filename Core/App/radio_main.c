@@ -35,7 +35,8 @@ typedef enum
     RADIO_MAIN_CMD_SET_AUTO_PING,
     RADIO_MAIN_CMD_START_PAIRING,
     RADIO_MAIN_CMD_PAIRING_ACCEPT,
-    RADIO_MAIN_CMD_SEND_JOIN_REQ
+    RADIO_MAIN_CMD_SEND_JOIN_REQ,
+    RADIO_MAIN_CMD_SEND_TRUST_REMOVED
 } radio_main_cmd_id_t;
 
 typedef struct
@@ -68,6 +69,10 @@ typedef struct
         {
             uint32_t timeout_ms;
         } pairing;
+        struct
+        {
+            uint32_t dst_id;
+        } to_node;
     } u;
 } radio_main_cmd_t;
 
@@ -122,6 +127,7 @@ static void radio_main_handle_events(void);
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt);
 static void radio_main_handle_hopping(void);
 static void radio_main_handle_auto_ping(void);
+static void radio_main_ensure_rx_continuous(void);
 static void radio_main_notify(menu_notification_type_t type, const char *text);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
 static bool radio_main_finish_pairing(bool accept);
@@ -289,6 +295,17 @@ bool radio_main_cmd_send_join_req(void)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
+bool radio_main_cmd_send_trust_removed(uint32_t dst_id)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SEND_TRUST_REMOVED;
+    cmd.u.to_node.dst_id = dst_id;
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
 uint32_t radio_main_get_node_id(void)
 {
     uint32_t node_id = 0U;
@@ -325,10 +342,10 @@ static void radio_main_task_fn(void *argument)
 
     if (security_main_cmd_get_runtime_cfg(&sec_cfg))
     {
-        s_ctx.fh_enabled = sec_cfg.fh_enabled;
         s_ctx.coding_enabled = sec_cfg.coding_enabled;
-        s_ctx.auto_ping_enabled = sec_cfg.auto_ping_enabled;
-        s_ctx.lora_preset = sec_cfg.lora_preset;
+        s_ctx.fh_enabled = false;
+        s_ctx.auto_ping_enabled = false;
+        s_ctx.lora_preset = 0U;
     }
     else
     {
@@ -430,6 +447,13 @@ static void radio_main_task_fn(void *argument)
                     cmd_result = radio_main_send_join_request_internal();
                     break;
 
+                case RADIO_MAIN_CMD_SEND_TRUST_REMOVED:
+                    cmd_result = radio_main_send_system_frame(BEKO_NET_TYPE_TRUST_REMOVED,
+                                                              cmd.u.to_node.dst_id,
+                                                              (const uint8_t *)"REMOVED",
+                                                              7U);
+                    break;
+
                 default:
                     break;
             }
@@ -447,6 +471,7 @@ static void radio_main_task_fn(void *argument)
             radio_main_handle_events();
             radio_main_handle_hopping();
             radio_main_handle_auto_ping();
+            radio_main_ensure_rx_continuous();
         }
 
         if (s_ctx.pairing_active && (radio_main_now_ms() >= s_ctx.pairing_until_ms))
@@ -608,8 +633,17 @@ static bool radio_main_send_system_frame(uint8_t type,
         memcpy(frame.payload, payload, payload_len);
     }
 
-    if (s_ctx.coding_enabled && security_main_get_network_key(key))
+    if ((type == BEKO_NET_TYPE_USER) &&
+        s_ctx.coding_enabled)
     {
+        if (dst_id == BEKO_NET_BROADCAST_ID)
+        {
+            return false;
+        }
+        if (!security_main_get_peer_link_key(s_ctx.node_id, dst_id, key))
+        {
+            return false;
+        }
         beko_net_xtea_ctr_crypt(frame.payload, frame.payload_len, key, frame.msg_id);
         frame.flags |= BEKO_NET_FLAG_CODED;
     }
@@ -634,6 +668,41 @@ static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, 
 
     msg = s_template_groups[group_id][msg_id];
     len = (uint16_t)strlen(msg);
+
+    if (s_ctx.coding_enabled && (dst_id == BEKO_NET_BROADCAST_ID))
+    {
+        trusted_info_t info;
+        uint8_t idx;
+        bool sent_any = false;
+
+        for (idx = 0U; idx < 16U; idx++)
+        {
+            if (security_main_cmd_get_device(idx, &info) && info.in_use)
+            {
+                uint32_t wait_start = radio_main_now_ms();
+
+                while (radio_get_state() == RADIO_STATE_TX)
+                {
+                    radio_process();
+                    if ((radio_main_now_ms() - wait_start) > 250U)
+                    {
+                        break;
+                    }
+                    osDelay(2U);
+                }
+
+                if (radio_main_send_system_frame(BEKO_NET_TYPE_USER,
+                                                 info.node_id,
+                                                 (const uint8_t *)msg,
+                                                 len))
+                {
+                    sent_any = true;
+                }
+            }
+        }
+        return sent_any;
+    }
+
     return radio_main_send_system_frame(BEKO_NET_TYPE_USER, dst_id, (const uint8_t *)msg, len);
 }
 
@@ -653,6 +722,7 @@ static void radio_main_handle_events(void)
     if ((events & RADIO_EVENT_TX_DONE) != 0U)
     {
         printf("RADIO EVT: TX_DONE\r\n");
+        radio_main_ensure_rx_continuous();
     }
     if ((events & RADIO_EVENT_CRC_ERR) != 0U)
     {
@@ -665,6 +735,7 @@ static void radio_main_handle_events(void)
     if ((events & RADIO_EVENT_HW_ERROR) != 0U)
     {
         printf("RADIO EVT: HW_ERROR\r\n");
+        radio_main_ensure_rx_continuous();
     }
 }
 
@@ -696,13 +767,29 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         frame_decoded = frame;
         if ((frame.flags & BEKO_NET_FLAG_CODED) != 0U)
         {
-            if (security_main_get_network_key(key))
+            if (frame_decoded.type == BEKO_NET_TYPE_USER)
             {
-                beko_net_xtea_ctr_crypt(frame_decoded.payload,
-                                        frame_decoded.payload_len,
-                                        key,
-                                        frame_decoded.msg_id);
+                if (!security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
+                {
+                    printf("RADIO RX coded from unknown src=0x%08lX\r\n",
+                           (unsigned long)frame_decoded.src_id);
+                    return;
+                }
             }
+            else if (!security_main_get_network_key(key))
+            {
+                return;
+            }
+
+            beko_net_xtea_ctr_crypt(frame_decoded.payload,
+                                    frame_decoded.payload_len,
+                                    key,
+                                    frame_decoded.msg_id);
+        }
+        else if (s_ctx.coding_enabled && (frame_decoded.type == BEKO_NET_TYPE_USER))
+        {
+            /* In secure mode ignore uncoded user payloads. */
+            return;
         }
 
         if (frame_decoded.payload_len > 0U)
@@ -792,6 +879,17 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             {
                 radio_main_notify(MENU_NOTIFICATION_PAIRING, "JOIN_REJECT");
                 s_ctx.pairing_outgoing_pending = false;
+            }
+        }
+        else if (frame_decoded.type == BEKO_NET_TYPE_TRUST_REMOVED)
+        {
+            if (security_main_cmd_delete_device(frame_decoded.src_id))
+            {
+                radio_main_notify(MENU_NOTIFICATION_WARNING, "Removed by peer");
+            }
+            else
+            {
+                radio_main_notify(MENU_NOTIFICATION_WARNING, "Peer removed trust");
             }
         }
         else
@@ -888,6 +986,24 @@ static void radio_main_handle_auto_ping(void)
     {
         (void)radio_main_send_template_internal(2U, 0U, BEKO_NET_BROADCAST_ID);
     }
+}
+
+static void radio_main_ensure_rx_continuous(void)
+{
+    if (!s_ctx.initialized)
+    {
+        return;
+    }
+    if (radio_get_state() == RADIO_STATE_TX)
+    {
+        return;
+    }
+    if (radio_get_state() == RADIO_STATE_RX_CONT)
+    {
+        return;
+    }
+
+    (void)radio_start_rx_continuous();
 }
 
 static void radio_main_notify(menu_notification_type_t type, const char *text)

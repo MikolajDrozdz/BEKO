@@ -16,13 +16,18 @@
 #define SECURITY_CMD_WAIT_MS                3000U
 #define SECURITY_CMD_POLL_MS                5U
 #define SECURITY_TRUSTED_MAX                16U
-#define SECURITY_SETTINGS_SLOT              0U
-#define SECURITY_KEY_SEED_SLOT              1U
+#define SECURITY_STORE_SLOT                 0U
+#define SECURITY_TRUSTED_SLOT_BASE          1U
+#define SECURITY_STORE_MAGIC                0xA5U
+#define SECURITY_STORE_VERSION              1U
+#define SECURITY_LEGACY_SETTINGS_SLOT       0U
+#define SECURITY_LEGACY_KEY_SEED_SLOT       1U
 #define SECURITY_SETTINGS_MAGIC             0x5345U
 #define SECURITY_SETTINGS_VERSION           1U
 #define SECURITY_KEY_MAGIC                  0x4B59U
 #define SECURITY_KEY_SEED_BYTES             8U
-#define SECURITY_CODE_MAX                   8U
+#define SECURITY_CODE_MAX                   I2C_MEM_STORE_TRUSTED_CODE_MAX
+#define SECURITY_TRUSTED_ID_LEN             4U
 
 typedef enum
 {
@@ -99,6 +104,16 @@ typedef struct
 
 typedef struct
 {
+    uint8_t magic;
+    uint8_t version;
+    uint8_t flags;
+    uint8_t notify_mode;
+    uint8_t lora_preset;
+    uint8_t seed[SECURITY_KEY_SEED_BYTES];
+} security_store_wire_t;
+
+typedef struct
+{
     uint16_t magic;
     uint8_t version;
     uint8_t flags;
@@ -130,7 +145,7 @@ static st33ktpm2x_t s_tpm;
 static security_trusted_entry_t s_trusted[SECURITY_TRUSTED_MAX];
 static security_runtime_cfg_t s_runtime_cfg =
 {
-    .coding_enabled = false,
+    .coding_enabled = true,
     .fh_enabled = false,
     .auto_ping_enabled = false,
     .notify_mode = SECURITY_NOTIFY_POPUP,
@@ -143,6 +158,7 @@ static uint8_t s_network_key[16] =
     0x19U, 0x2AU, 0x3BU, 0x4CU,
     0x5DU, 0x6EU, 0x7FU, 0x80U
 };
+static uint8_t s_key_seed_cached[SECURITY_KEY_SEED_BYTES];
 
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c3;
@@ -153,14 +169,26 @@ static bool security_main_enqueue_sync(const security_cmd_t *cmd, security_cmd_s
 
 static uint16_t security_crc16(const uint8_t *data, uint16_t len);
 static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16]);
-static bool security_load_settings_from_store(void);
-static bool security_save_settings_to_store(void);
-static bool security_load_key_seed_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
-static bool security_save_key_seed_to_store(const uint8_t seed[SECURITY_KEY_SEED_BYTES]);
+static void security_peer_link_key_derive(uint32_t local_node_id,
+                                          uint32_t peer_node_id,
+                                          const uint8_t *code,
+                                          uint8_t code_len,
+                                          uint8_t key_out[16]);
+static bool security_load_runtime_and_seed_from_store(void);
+static bool security_save_runtime_and_seed_to_store(void);
+static bool security_load_settings_legacy_from_store(void);
+static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static bool security_rotate_key_internal(void);
 static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len);
 static bool security_delete_device_internal(uint32_t node_id);
 static bool security_get_device_internal(uint8_t idx, trusted_info_t *out);
+static uint8_t security_trusted_store_capacity(void);
+static uint16_t security_trusted_store_slot(uint8_t idx);
+static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRUSTED_ID_LEN]);
+static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID_LEN]);
+static bool security_store_trusted_slot(uint8_t idx);
+static bool security_erase_trusted_slot(uint8_t idx);
+static void security_load_trusted_from_store(void);
 static void security_bootstrap_tpm(void);
 static void security_bootstrap_store(void);
 
@@ -368,6 +396,53 @@ bool security_main_get_network_key(uint8_t key_out[16])
     return ok;
 }
 
+bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_id, uint8_t key_out[16])
+{
+    bool ok = false;
+    uint8_t code[SECURITY_CODE_MAX];
+    uint8_t code_len = 0U;
+    uint8_t i;
+
+    if ((key_out == NULL) || (peer_node_id == 0U) || (s_security_mutex == NULL))
+    {
+        return false;
+    }
+
+    memset(code, 0, sizeof(code));
+    if (osMutexAcquire(s_security_mutex, 100U) == osOK)
+    {
+        if (s_security_initialized)
+        {
+            for (i = 0U; i < SECURITY_TRUSTED_MAX; i++)
+            {
+                if (s_trusted[i].in_use && (s_trusted[i].node_id == peer_node_id))
+                {
+                    code_len = s_trusted[i].code_len;
+                    if (code_len > SECURITY_CODE_MAX)
+                    {
+                        code_len = SECURITY_CODE_MAX;
+                    }
+                    if (code_len > 0U)
+                    {
+                        memcpy(code, s_trusted[i].code, code_len);
+                    }
+                    break;
+                }
+            }
+        }
+        (void)osMutexRelease(s_security_mutex);
+    }
+
+    if (code_len == 0U)
+    {
+        return false;
+    }
+
+    security_peer_link_key_derive(local_node_id, peer_node_id, code, code_len, key_out);
+    ok = true;
+    return ok;
+}
+
 bool security_main_log_message(int16_t rssi_dbm, const uint8_t *payload, uint8_t payload_len)
 {
     security_cmd_t cmd;
@@ -490,12 +565,12 @@ static void security_main_task_fn(void *argument)
 
                 case SECURITY_CMD_SET_CODING:
                     s_runtime_cfg.coding_enabled = cmd.u.set_bool.enabled;
-                    cmd.sync->result = security_save_settings_to_store();
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
                 case SECURITY_CMD_SET_FH:
                     s_runtime_cfg.fh_enabled = cmd.u.set_bool.enabled;
-                    cmd.sync->result = security_save_settings_to_store();
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
                 case SECURITY_CMD_ROTATE_KEY:
@@ -504,17 +579,17 @@ static void security_main_task_fn(void *argument)
 
                 case SECURITY_CMD_SET_NOTIFY:
                     s_runtime_cfg.notify_mode = cmd.u.set_notify.mode;
-                    cmd.sync->result = security_save_settings_to_store();
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
                 case SECURITY_CMD_SET_PRESET:
                     s_runtime_cfg.lora_preset = cmd.u.set_preset.preset_id;
-                    cmd.sync->result = security_save_settings_to_store();
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
                 case SECURITY_CMD_SET_AUTO_PING:
                     s_runtime_cfg.auto_ping_enabled = cmd.u.set_bool.enabled;
-                    cmd.sync->result = security_save_settings_to_store();
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
                 case SECURITY_CMD_GET_RUNTIME:
@@ -616,7 +691,140 @@ static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES]
     }
 }
 
-static bool security_load_settings_from_store(void)
+static void security_peer_link_key_derive(uint32_t local_node_id,
+                                          uint32_t peer_node_id,
+                                          const uint8_t *code,
+                                          uint8_t code_len,
+                                          uint8_t key_out[16])
+{
+    uint32_t lo;
+    uint32_t hi;
+    /**
+     * @brief FNV-1a hash algorithm initial offset basis constant
+     * @details This is the standard 32-bit FNV offset basis value used as the
+     *          starting hash value in the FNV-1a (Fowler-Noll-Vo) hash function.
+     *          The value 2166136261 (0x811c9dc5) is the recommended prime for
+     *          32-bit FNV hashing.
+     */
+    uint32_t h = 2166136261UL;
+    uint8_t i;
+
+    if ((key_out == NULL) || (code == NULL) || (code_len == 0U))
+    {
+        return;
+    }
+
+    lo = (local_node_id < peer_node_id) ? local_node_id : peer_node_id;
+    hi = (local_node_id < peer_node_id) ? peer_node_id : local_node_id;
+
+#define SECURITY_FNV_MIX(_v)             \
+    do                                   \
+    {                                    \
+        h ^= (uint8_t)(_v);              \
+        h *= 16777619UL;                 \
+    } while (0)
+
+    SECURITY_FNV_MIX('B');
+    SECURITY_FNV_MIX('K');
+    SECURITY_FNV_MIX('L');
+    SECURITY_FNV_MIX('1');
+
+    for (i = 0U; i < 4U; i++)
+    {
+        SECURITY_FNV_MIX((lo >> (24U - (8U * i))) & 0xFFU);
+    }
+    for (i = 0U; i < 4U; i++)
+    {
+        SECURITY_FNV_MIX((hi >> (24U - (8U * i))) & 0xFFU);
+    }
+    SECURITY_FNV_MIX(code_len);
+    for (i = 0U; i < code_len; i++)
+    {
+        SECURITY_FNV_MIX(code[i]);
+    }
+
+    for (i = 0U; i < 16U; i++)
+    {
+        h ^= (h << 13);
+        h ^= (h >> 17);
+        h ^= (h << 5);
+        h += (uint32_t)code[i % code_len] + ((uint32_t)i * 41UL);
+        key_out[i] = (uint8_t)((h >> ((i % 3U) * 8U)) & 0xFFU);
+    }
+
+#undef SECURITY_FNV_MIX
+}
+
+static bool security_load_runtime_and_seed_from_store(void)
+{
+    uint8_t buf[sizeof(security_store_wire_t)];
+    uint8_t len = 0U;
+    security_store_wire_t w;
+    i2c_mem_store_status_t rc;
+
+    if (!s_mem_ready)
+    {
+        return false;
+    }
+
+    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_STORE_SLOT, buf, sizeof(buf), &len);
+    if ((rc != I2C_MEM_STORE_OK) || (len != sizeof(w)))
+    {
+        return false;
+    }
+
+    memcpy(&w, buf, sizeof(w));
+    if ((w.magic != SECURITY_STORE_MAGIC) || (w.version != SECURITY_STORE_VERSION))
+    {
+        return false;
+    }
+
+    s_runtime_cfg.coding_enabled = ((w.flags & 0x01U) != 0U);
+    s_runtime_cfg.fh_enabled = ((w.flags & 0x02U) != 0U);
+    s_runtime_cfg.auto_ping_enabled = ((w.flags & 0x04U) != 0U);
+    s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
+                                SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
+    s_runtime_cfg.lora_preset = w.lora_preset;
+    memcpy(s_key_seed_cached, w.seed, SECURITY_KEY_SEED_BYTES);
+    return true;
+}
+
+static bool security_save_runtime_and_seed_to_store(void)
+{
+    security_store_wire_t w;
+
+    if (!s_mem_ready)
+    {
+        return true;
+    }
+
+    memset(&w, 0, sizeof(w));
+    w.magic = SECURITY_STORE_MAGIC;
+    w.version = SECURITY_STORE_VERSION;
+    w.flags = 0U;
+    if (s_runtime_cfg.coding_enabled)
+    {
+        w.flags |= 0x01U;
+    }
+    if (s_runtime_cfg.fh_enabled)
+    {
+        w.flags |= 0x02U;
+    }
+    if (s_runtime_cfg.auto_ping_enabled)
+    {
+        w.flags |= 0x04U;
+    }
+    w.notify_mode = (uint8_t)s_runtime_cfg.notify_mode;
+    w.lora_preset = s_runtime_cfg.lora_preset;
+    memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
+
+    return (i2c_mem_store_secret_write(&s_mem_store,
+                                       SECURITY_STORE_SLOT,
+                                       (const uint8_t *)&w,
+                                       sizeof(w)) == I2C_MEM_STORE_OK);
+}
+
+static bool security_load_settings_legacy_from_store(void)
 {
     uint8_t buf[sizeof(security_settings_wire_t)];
     uint8_t len = 0U;
@@ -628,7 +836,7 @@ static bool security_load_settings_from_store(void)
         return false;
     }
 
-    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_SETTINGS_SLOT, buf, sizeof(buf), &len);
+    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_LEGACY_SETTINGS_SLOT, buf, sizeof(buf), &len);
     if ((rc != I2C_MEM_STORE_OK) || (len != sizeof(w)))
     {
         return false;
@@ -653,42 +861,7 @@ static bool security_load_settings_from_store(void)
     return true;
 }
 
-static bool security_save_settings_to_store(void)
-{
-    security_settings_wire_t w;
-
-    if (!s_mem_ready)
-    {
-        return true;
-    }
-
-    memset(&w, 0, sizeof(w));
-    w.magic = SECURITY_SETTINGS_MAGIC;
-    w.version = SECURITY_SETTINGS_VERSION;
-    w.flags = 0U;
-    if (s_runtime_cfg.coding_enabled)
-    {
-        w.flags |= 0x01U;
-    }
-    if (s_runtime_cfg.fh_enabled)
-    {
-        w.flags |= 0x02U;
-    }
-    if (s_runtime_cfg.auto_ping_enabled)
-    {
-        w.flags |= 0x04U;
-    }
-    w.notify_mode = (uint8_t)s_runtime_cfg.notify_mode;
-    w.lora_preset = s_runtime_cfg.lora_preset;
-    w.crc = security_crc16((const uint8_t *)&w, (uint16_t)(sizeof(w) - sizeof(w.crc)));
-
-    return (i2c_mem_store_secret_write(&s_mem_store,
-                                       SECURITY_SETTINGS_SLOT,
-                                       (const uint8_t *)&w,
-                                       sizeof(w)) == I2C_MEM_STORE_OK);
-}
-
-static bool security_load_key_seed_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES])
+static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     uint8_t buf[sizeof(security_key_wire_t)];
     uint8_t len = 0U;
@@ -700,7 +873,7 @@ static bool security_load_key_seed_from_store(uint8_t seed[SECURITY_KEY_SEED_BYT
         return false;
     }
 
-    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_KEY_SEED_SLOT, buf, sizeof(buf), &len);
+    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_LEGACY_KEY_SEED_SLOT, buf, sizeof(buf), &len);
     if ((rc != I2C_MEM_STORE_OK) || (len != sizeof(w)))
     {
         return false;
@@ -718,26 +891,6 @@ static bool security_load_key_seed_from_store(uint8_t seed[SECURITY_KEY_SEED_BYT
 
     memcpy(seed, w.seed, SECURITY_KEY_SEED_BYTES);
     return true;
-}
-
-static bool security_save_key_seed_to_store(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
-{
-    security_key_wire_t w;
-
-    if ((!s_mem_ready) || (seed == NULL))
-    {
-        return false;
-    }
-
-    memset(&w, 0, sizeof(w));
-    w.magic = SECURITY_KEY_MAGIC;
-    memcpy(w.seed, seed, SECURITY_KEY_SEED_BYTES);
-    w.crc = security_crc16((const uint8_t *)&w, (uint16_t)(sizeof(w) - sizeof(w.crc)));
-
-    return (i2c_mem_store_secret_write(&s_mem_store,
-                                       SECURITY_KEY_SEED_SLOT,
-                                       (const uint8_t *)&w,
-                                       sizeof(w)) == I2C_MEM_STORE_OK);
 }
 
 static bool security_rotate_key_internal(void)
@@ -773,13 +926,171 @@ static bool security_rotate_key_internal(void)
         }
     }
 
+    memcpy(s_key_seed_cached, seed, SECURITY_KEY_SEED_BYTES);
     security_key_seed_to_key(seed, s_network_key);
     if (s_mem_ready)
     {
-        (void)security_save_key_seed_to_store(seed);
+        (void)security_save_runtime_and_seed_to_store();
     }
 
     return true;
+}
+
+static uint8_t security_trusted_store_capacity(void)
+{
+    uint16_t available;
+
+    if (!s_mem_ready)
+    {
+        return 0U;
+    }
+    if (s_mem_store.secret_slot_count <= SECURITY_TRUSTED_SLOT_BASE)
+    {
+        return 0U;
+    }
+
+    available = (uint16_t)(s_mem_store.secret_slot_count - SECURITY_TRUSTED_SLOT_BASE);
+    if (available > SECURITY_TRUSTED_MAX)
+    {
+        available = SECURITY_TRUSTED_MAX;
+    }
+
+    return (uint8_t)available;
+}
+
+static uint16_t security_trusted_store_slot(uint8_t idx)
+{
+    return (uint16_t)(SECURITY_TRUSTED_SLOT_BASE + idx);
+}
+
+static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRUSTED_ID_LEN])
+{
+    if (out == NULL)
+    {
+        return;
+    }
+
+    out[0] = (uint8_t)((node_id >> 24) & 0xFFU);
+    out[1] = (uint8_t)((node_id >> 16) & 0xFFU);
+    out[2] = (uint8_t)((node_id >> 8) & 0xFFU);
+    out[3] = (uint8_t)(node_id & 0xFFU);
+}
+
+static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID_LEN])
+{
+    if (in == NULL)
+    {
+        return 0U;
+    }
+
+    return ((uint32_t)in[0] << 24) |
+           ((uint32_t)in[1] << 16) |
+           ((uint32_t)in[2] << 8) |
+           (uint32_t)in[3];
+}
+
+static bool security_store_trusted_slot(uint8_t idx)
+{
+    i2c_mem_store_trusted_device_t rec;
+    i2c_mem_store_status_t rc;
+    uint8_t capacity = security_trusted_store_capacity();
+
+    if (!s_mem_ready)
+    {
+        return true;
+    }
+    if (idx >= capacity)
+    {
+        return true;
+    }
+    if (!s_trusted[idx].in_use)
+    {
+        return security_erase_trusted_slot(idx);
+    }
+
+    memset(&rec, 0, sizeof(rec));
+    rec.id_len = SECURITY_TRUSTED_ID_LEN;
+    rec.code_len = s_trusted[idx].code_len;
+    if (rec.code_len > I2C_MEM_STORE_TRUSTED_CODE_MAX)
+    {
+        rec.code_len = I2C_MEM_STORE_TRUSTED_CODE_MAX;
+    }
+
+    security_node_id_to_bytes(s_trusted[idx].node_id, rec.id);
+    if (rec.code_len > 0U)
+    {
+        memcpy(rec.code, s_trusted[idx].code, rec.code_len);
+    }
+
+    rc = i2c_mem_store_trusted_device_write(&s_mem_store, security_trusted_store_slot(idx), &rec);
+    return (rc == I2C_MEM_STORE_OK);
+}
+
+static bool security_erase_trusted_slot(uint8_t idx)
+{
+    uint8_t capacity = security_trusted_store_capacity();
+    i2c_mem_store_status_t rc;
+
+    if (!s_mem_ready)
+    {
+        return true;
+    }
+    if (idx >= capacity)
+    {
+        return true;
+    }
+
+    rc = i2c_mem_store_secret_erase(&s_mem_store, security_trusted_store_slot(idx));
+    return (rc == I2C_MEM_STORE_OK);
+}
+
+static void security_load_trusted_from_store(void)
+{
+    uint8_t idx;
+    uint8_t capacity = security_trusted_store_capacity();
+
+    if (!s_mem_ready)
+    {
+        return;
+    }
+
+    for (idx = 0U; idx < capacity; idx++)
+    {
+        i2c_mem_store_trusted_device_t rec;
+        i2c_mem_store_status_t rc;
+        uint32_t node_id;
+
+        memset(&rec, 0, sizeof(rec));
+        rc = i2c_mem_store_trusted_device_read(&s_mem_store, security_trusted_store_slot(idx), &rec);
+        if (rc != I2C_MEM_STORE_OK)
+        {
+            continue;
+        }
+        if (rec.id_len != SECURITY_TRUSTED_ID_LEN)
+        {
+            continue;
+        }
+
+        node_id = security_node_id_from_bytes(rec.id);
+        if (node_id == 0U)
+        {
+            continue;
+        }
+
+        s_trusted[idx].in_use = true;
+        s_trusted[idx].node_id = node_id;
+        s_trusted[idx].code_len = rec.code_len;
+        if (s_trusted[idx].code_len > SECURITY_CODE_MAX)
+        {
+            s_trusted[idx].code_len = SECURITY_CODE_MAX;
+        }
+        if (s_trusted[idx].code_len > 0U)
+        {
+            memcpy(s_trusted[idx].code, rec.code, s_trusted[idx].code_len);
+        }
+    }
+
+    printf("SEC: trusted slots persisted=%u\r\n", capacity);
 }
 
 static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len)
@@ -806,6 +1117,10 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
             {
                 memcpy(s_trusted[i].code, code, len);
             }
+            if (!security_store_trusted_slot(i))
+            {
+                printf("SEC: trusted update persist failed idx=%u\r\n", i);
+            }
             return true;
         }
 
@@ -829,6 +1144,10 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
         memcpy(s_trusted[free_idx].code, code, len);
     }
 
+    if (!security_store_trusted_slot(free_idx))
+    {
+        printf("SEC: trusted add persist failed idx=%u\r\n", free_idx);
+    }
     return true;
 }
 
@@ -841,6 +1160,10 @@ static bool security_delete_device_internal(uint32_t node_id)
         if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
         {
             memset(&s_trusted[i], 0, sizeof(s_trusted[i]));
+            if (!security_erase_trusted_slot(i))
+            {
+                printf("SEC: trusted erase persist failed idx=%u\r\n", i);
+            }
             return true;
         }
     }
@@ -905,10 +1228,11 @@ static void security_bootstrap_tpm(void)
 static void security_bootstrap_store(void)
 {
     i2c_mem_store_cfg_t mem_cfg;
-    uint8_t seed[SECURITY_KEY_SEED_BYTES];
+    bool loaded = false;
 
     i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
     mem_cfg.secret_area_bytes = 48U;
+    memset(s_key_seed_cached, 0, sizeof(s_key_seed_cached));
 
     if (i2c_mem_store_init(&s_mem_store, &mem_cfg, true) == I2C_MEM_STORE_OK)
     {
@@ -921,16 +1245,37 @@ static void security_bootstrap_store(void)
         printf("SEC: MEM store unavailable\r\n");
     }
 
-    (void)security_load_settings_from_store();
-
-    if (security_load_key_seed_from_store(seed))
+    if (s_mem_ready)
     {
-        security_key_seed_to_key(seed, s_network_key);
+        loaded = security_load_runtime_and_seed_from_store();
+        if (!loaded)
+        {
+            if (security_load_settings_legacy_from_store() &&
+                security_load_key_seed_legacy_from_store(s_key_seed_cached))
+            {
+                loaded = true;
+            }
+        }
+    }
+
+    if (loaded)
+    {
+        security_key_seed_to_key(s_key_seed_cached, s_network_key);
     }
     else
     {
         (void)security_rotate_key_internal();
     }
 
-    (void)security_save_settings_to_store();
+    /* Keep secure defaults after restart. */
+    s_runtime_cfg.coding_enabled = true;
+    s_runtime_cfg.fh_enabled = false;
+    s_runtime_cfg.auto_ping_enabled = false;
+    s_runtime_cfg.lora_preset = 0U;
+
+    if (s_mem_ready)
+    {
+        (void)security_save_runtime_and_seed_to_store();
+        security_load_trusted_from_store();
+    }
 }
