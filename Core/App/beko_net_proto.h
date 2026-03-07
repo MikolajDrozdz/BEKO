@@ -22,6 +22,7 @@ extern "C" {
 #define BEKO_NET_MAX_PAYLOAD            200U
 
 #define BEKO_NET_FLAG_CODED             (1U << 0)
+#define BEKO_NET_FLAG_AUTH              (1U << 1)
 
 #define BEKO_NET_DEDUP_CAPACITY         32U
 

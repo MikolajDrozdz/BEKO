@@ -23,6 +23,7 @@
 #define RADIO_HOP_PERIOD_MS                  2000UL
 #define RADIO_DEDUP_WINDOW_MS                60000UL
 #define RADIO_PAIR_CODE_LEN                  6U
+#define RADIO_AUTH_TAG_LEN                   4U
 
 typedef enum
 {
@@ -132,6 +133,12 @@ static void radio_main_notify(menu_notification_type_t type, const char *text);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
 static bool radio_main_finish_pairing(bool accept);
 static bool radio_main_send_join_request_internal(void);
+static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
+                                            const beko_net_frame_t *frame,
+                                            const uint8_t *cipher_payload,
+                                            uint16_t cipher_len);
+static void radio_main_auth_tag_write_be(uint32_t tag, uint8_t out[RADIO_AUTH_TAG_LEN]);
+static uint32_t radio_main_auth_tag_read_be(const uint8_t in[RADIO_AUTH_TAG_LEN]);
 static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len);
 static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char *out, uint8_t out_size);
 static uint32_t radio_main_now_ms(void);
@@ -636,7 +643,13 @@ static bool radio_main_send_system_frame(uint8_t type,
     if ((type == BEKO_NET_TYPE_USER) &&
         s_ctx.coding_enabled)
     {
+        uint32_t tag;
+
         if (dst_id == BEKO_NET_BROADCAST_ID)
+        {
+            return false;
+        }
+        if ((uint16_t)(payload_len + RADIO_AUTH_TAG_LEN) > BEKO_NET_MAX_PAYLOAD)
         {
             return false;
         }
@@ -645,7 +658,12 @@ static bool radio_main_send_system_frame(uint8_t type,
             return false;
         }
         beko_net_xtea_ctr_crypt(frame.payload, frame.payload_len, key, frame.msg_id);
+        tag = radio_main_auth_tag_compute(key, &frame, frame.payload, frame.payload_len);
+        memmove(&frame.payload[RADIO_AUTH_TAG_LEN], frame.payload, frame.payload_len);
+        radio_main_auth_tag_write_be(tag, frame.payload);
+        frame.payload_len = (uint16_t)(frame.payload_len + RADIO_AUTH_TAG_LEN);
         frame.flags |= BEKO_NET_FLAG_CODED;
+        frame.flags |= BEKO_NET_FLAG_AUTH;
     }
 
     if (!beko_net_encode(&frame, raw, sizeof(raw), &raw_len))
@@ -769,12 +787,44 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         {
             if (frame_decoded.type == BEKO_NET_TYPE_USER)
             {
+                uint16_t cipher_len;
+                uint32_t rx_tag;
+                uint32_t expected_tag;
+
                 if (!security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
                 {
                     printf("RADIO RX coded from unknown src=0x%08lX\r\n",
                            (unsigned long)frame_decoded.src_id);
                     return;
                 }
+                if (((frame.flags & BEKO_NET_FLAG_AUTH) == 0U) ||
+                    (frame_decoded.payload_len < RADIO_AUTH_TAG_LEN))
+                {
+                    printf("RADIO RX coded without auth src=0x%08lX\r\n",
+                           (unsigned long)frame_decoded.src_id);
+                    return;
+                }
+
+                cipher_len = (uint16_t)(frame_decoded.payload_len - RADIO_AUTH_TAG_LEN);
+                rx_tag = radio_main_auth_tag_read_be(frame_decoded.payload);
+                expected_tag = radio_main_auth_tag_compute(key,
+                                                           &frame_decoded,
+                                                           &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
+                                                           cipher_len);
+                if ((rx_tag ^ expected_tag) != 0UL)
+                {
+                    printf("RADIO RX auth mismatch src=0x%08lX\r\n",
+                           (unsigned long)frame_decoded.src_id);
+                    return;
+                }
+
+                if (cipher_len > 0U)
+                {
+                    memmove(frame_decoded.payload,
+                            &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
+                            cipher_len);
+                }
+                frame_decoded.payload_len = cipher_len;
             }
             else if (!security_main_get_network_key(key))
             {
@@ -794,6 +844,16 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
         if (frame_decoded.payload_len > 0U)
         {
+            uint16_t i;
+
+            printf("RADIO RX DEC: ");
+            for (i = 0U; i < frame_decoded.payload_len; i++)
+            {
+                char c = (char)frame_decoded.payload[i];
+                printf("%c", isprint((unsigned char)c) ? c : '.');
+            }
+            printf("\r\n");
+
             (void)lcd_main_push_message(pkt->rssi_dbm, frame_decoded.payload, frame_decoded.payload_len);
         }
         else
@@ -1113,6 +1173,89 @@ static bool radio_main_send_join_request_internal(void)
     snprintf(note, sizeof(note), "JOIN_SENT %.10s", code_text);
     radio_main_notify(MENU_NOTIFICATION_PAIRING, note);
     return true;
+}
+
+static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
+                                            const beko_net_frame_t *frame,
+                                            const uint8_t *cipher_payload,
+                                            uint16_t cipher_len)
+{
+    uint32_t h = 2166136261UL;
+    uint8_t i;
+
+    if ((key == NULL) || (frame == NULL))
+    {
+        return 0UL;
+    }
+
+#define RADIO_AUTH_FNV_MIX(x) \
+    do                        \
+    {                         \
+        h ^= (uint8_t)(x);    \
+        h *= 16777619UL;      \
+    } while (0)
+
+    for (i = 0U; i < 16U; i++)
+    {
+        RADIO_AUTH_FNV_MIX(key[i]);
+    }
+
+    RADIO_AUTH_FNV_MIX(frame->type);
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->src_id >> 24));
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->src_id >> 16));
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->src_id >> 8));
+    RADIO_AUTH_FNV_MIX((uint8_t)frame->src_id);
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->dst_id >> 24));
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->dst_id >> 16));
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->dst_id >> 8));
+    RADIO_AUTH_FNV_MIX((uint8_t)frame->dst_id);
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->msg_id >> 24));
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->msg_id >> 16));
+    RADIO_AUTH_FNV_MIX((uint8_t)(frame->msg_id >> 8));
+    RADIO_AUTH_FNV_MIX((uint8_t)frame->msg_id);
+    RADIO_AUTH_FNV_MIX((uint8_t)(cipher_len >> 8));
+    RADIO_AUTH_FNV_MIX((uint8_t)cipher_len);
+
+    if ((cipher_payload != NULL) && (cipher_len > 0U))
+    {
+        for (i = 0U; i < cipher_len; i++)
+        {
+            RADIO_AUTH_FNV_MIX(cipher_payload[i]);
+        }
+    }
+
+#undef RADIO_AUTH_FNV_MIX
+
+    h ^= (h >> 13);
+    h *= 0x9E3779B1UL;
+    h ^= (h >> 16);
+    return h;
+}
+
+static void radio_main_auth_tag_write_be(uint32_t tag, uint8_t out[RADIO_AUTH_TAG_LEN])
+{
+    if (out == NULL)
+    {
+        return;
+    }
+
+    out[0] = (uint8_t)(tag >> 24);
+    out[1] = (uint8_t)(tag >> 16);
+    out[2] = (uint8_t)(tag >> 8);
+    out[3] = (uint8_t)tag;
+}
+
+static uint32_t radio_main_auth_tag_read_be(const uint8_t in[RADIO_AUTH_TAG_LEN])
+{
+    if (in == NULL)
+    {
+        return 0UL;
+    }
+
+    return ((uint32_t)in[0] << 24) |
+           ((uint32_t)in[1] << 16) |
+           ((uint32_t)in[2] << 8) |
+           (uint32_t)in[3];
 }
 
 static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len)
