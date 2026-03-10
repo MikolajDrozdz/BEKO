@@ -9,6 +9,8 @@ void radio_main_create_task(void);
 bool radio_main_cmd_send_template(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
 bool radio_main_cmd_set_lora_preset(uint8_t preset_id);
 bool radio_main_cmd_set_modulation(uint8_t modulation_id);
+bool radio_main_cmd_set_modulation_freq(uint32_t frequency_hz);
+bool radio_main_cmd_set_modulation_bw(uint8_t bandwidth_code);
 bool radio_main_cmd_set_fh(bool enabled);
 bool radio_main_cmd_set_coding(bool enabled);
 bool radio_main_cmd_set_auto_ping(bool enabled);

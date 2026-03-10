@@ -8,6 +8,7 @@
 #include "lcd_main.h"
 #include "led_array_lib/led_array_lib.h"
 #include "radio_main.h"
+#include "radio_lib/radio_lib.h"
 #include "security_main.h"
 #include "task.h"
 #include "tof_main.h"
@@ -36,6 +37,12 @@ typedef enum
     MENU_PAGE_HARDWARE,
     MENU_PAGE_MODULATION,
     MENU_PAGE_MOD_LORA,
+    MENU_PAGE_MOD_FSK,
+    MENU_PAGE_MOD_FSK_FREQ,
+    MENU_PAGE_MOD_FSK_BW,
+    MENU_PAGE_MOD_OOK,
+    MENU_PAGE_MOD_OOK_FREQ,
+    MENU_PAGE_MOD_OOK_BW,
     MENU_PAGE_INFO
 } menu_page_id_t;
 
@@ -70,6 +77,20 @@ typedef enum
     MENU_ACTION_MOD_LORA_STD,
     MENU_ACTION_MOD_LORA_RANGE,
     MENU_ACTION_MOD_LORA_FAST,
+    MENU_ACTION_MOD_FSK_ENABLE,
+    MENU_ACTION_MOD_FSK_FREQ_8681,
+    MENU_ACTION_MOD_FSK_FREQ_8683,
+    MENU_ACTION_MOD_FSK_FREQ_8685,
+    MENU_ACTION_MOD_FSK_BW_125,
+    MENU_ACTION_MOD_FSK_BW_250,
+    MENU_ACTION_MOD_FSK_BW_500,
+    MENU_ACTION_MOD_OOK_ENABLE,
+    MENU_ACTION_MOD_OOK_FREQ_8681,
+    MENU_ACTION_MOD_OOK_FREQ_8683,
+    MENU_ACTION_MOD_OOK_FREQ_8685,
+    MENU_ACTION_MOD_OOK_BW_125,
+    MENU_ACTION_MOD_OOK_BW_250,
+    MENU_ACTION_MOD_OOK_BW_500,
     MENU_ACTION_MOD_FSK,
     MENU_ACTION_MOD_OOK,
     MENU_ACTION_INFO_SHOW
@@ -205,8 +226,8 @@ static const menu_item_t s_page_hardware_items[] =
 static const menu_item_t s_page_modulation_items[] =
 {
     { "LoRa", MENU_PAGE_MOD_LORA, MENU_ACTION_NONE },
-    { "FSK", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK },
-    { "OOK", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK },
+    { "FSK", MENU_PAGE_MOD_FSK, MENU_ACTION_NONE },
+    { "OOK", MENU_PAGE_MOD_OOK, MENU_ACTION_NONE },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -215,6 +236,54 @@ static const menu_item_t s_page_mod_lora_items[] =
     { "STD 868.1", MENU_PAGE_NONE, MENU_ACTION_MOD_LORA_STD },
     { "RANGE 868.3", MENU_PAGE_NONE, MENU_ACTION_MOD_LORA_RANGE },
     { "FAST 868.5", MENU_PAGE_NONE, MENU_ACTION_MOD_LORA_FAST },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_mod_fsk_items[] =
+{
+    { "Use FSK mode", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_ENABLE },
+    { "Frequency", MENU_PAGE_MOD_FSK_FREQ, MENU_ACTION_NONE },
+    { "Bandwidth", MENU_PAGE_MOD_FSK_BW, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_mod_fsk_freq_items[] =
+{
+    { "868.1 MHz", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_FREQ_8681 },
+    { "868.3 MHz", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_FREQ_8683 },
+    { "868.5 MHz", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_FREQ_8685 },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_mod_fsk_bw_items[] =
+{
+    { "BW 125 kHz", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_BW_125 },
+    { "BW 250 kHz", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_BW_250 },
+    { "BW 500 kHz", MENU_PAGE_NONE, MENU_ACTION_MOD_FSK_BW_500 },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_mod_ook_items[] =
+{
+    { "Use OOK mode", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_ENABLE },
+    { "Frequency", MENU_PAGE_MOD_OOK_FREQ, MENU_ACTION_NONE },
+    { "Bandwidth", MENU_PAGE_MOD_OOK_BW, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_mod_ook_freq_items[] =
+{
+    { "868.1 MHz", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_FREQ_8681 },
+    { "868.3 MHz", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_FREQ_8683 },
+    { "868.5 MHz", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_FREQ_8685 },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_mod_ook_bw_items[] =
+{
+    { "BW 125 kHz", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_BW_125 },
+    { "BW 250 kHz", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_BW_250 },
+    { "BW 500 kHz", MENU_PAGE_NONE, MENU_ACTION_MOD_OOK_BW_500 },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -237,6 +306,12 @@ static const menu_page_t s_pages[] =
     { "HARDWARE", MENU_PAGE_MAIN, s_page_hardware_items, (uint8_t)(sizeof(s_page_hardware_items) / sizeof(s_page_hardware_items[0])) },
     { "MODULATION", MENU_PAGE_MAIN, s_page_modulation_items, (uint8_t)(sizeof(s_page_modulation_items) / sizeof(s_page_modulation_items[0])) },
     { "LORA", MENU_PAGE_MODULATION, s_page_mod_lora_items, (uint8_t)(sizeof(s_page_mod_lora_items) / sizeof(s_page_mod_lora_items[0])) },
+    { "FSK", MENU_PAGE_MODULATION, s_page_mod_fsk_items, (uint8_t)(sizeof(s_page_mod_fsk_items) / sizeof(s_page_mod_fsk_items[0])) },
+    { "FSK FREQ", MENU_PAGE_MOD_FSK, s_page_mod_fsk_freq_items, (uint8_t)(sizeof(s_page_mod_fsk_freq_items) / sizeof(s_page_mod_fsk_freq_items[0])) },
+    { "FSK BW", MENU_PAGE_MOD_FSK, s_page_mod_fsk_bw_items, (uint8_t)(sizeof(s_page_mod_fsk_bw_items) / sizeof(s_page_mod_fsk_bw_items[0])) },
+    { "OOK", MENU_PAGE_MODULATION, s_page_mod_ook_items, (uint8_t)(sizeof(s_page_mod_ook_items) / sizeof(s_page_mod_ook_items[0])) },
+    { "OOK FREQ", MENU_PAGE_MOD_OOK, s_page_mod_ook_freq_items, (uint8_t)(sizeof(s_page_mod_ook_freq_items) / sizeof(s_page_mod_ook_freq_items[0])) },
+    { "OOK BW", MENU_PAGE_MOD_OOK, s_page_mod_ook_bw_items, (uint8_t)(sizeof(s_page_mod_ook_bw_items) / sizeof(s_page_mod_ook_bw_items[0])) },
     { "INFO", MENU_PAGE_MAIN, s_page_info_items, (uint8_t)(sizeof(s_page_info_items) / sizeof(s_page_info_items[0])) }
 };
 
@@ -967,32 +1042,185 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_MOD_LORA_STD:
+            (void)radio_main_cmd_set_modulation(0U);
             (void)radio_main_cmd_set_lora_preset(0U);
             (void)security_main_cmd_set_lora_preset(0U);
             menu_notify_text(MENU_NOTIFICATION_SECURITY, "LoRa STD");
             break;
         case MENU_ACTION_MOD_LORA_RANGE:
+            (void)radio_main_cmd_set_modulation(0U);
             (void)radio_main_cmd_set_lora_preset(1U);
             (void)security_main_cmd_set_lora_preset(1U);
             menu_notify_text(MENU_NOTIFICATION_SECURITY, "LoRa RANGE");
             break;
         case MENU_ACTION_MOD_LORA_FAST:
+            (void)radio_main_cmd_set_modulation(0U);
             (void)radio_main_cmd_set_lora_preset(2U);
             (void)security_main_cmd_set_lora_preset(2U);
             menu_notify_text(MENU_NOTIFICATION_SECURITY, "LoRa FAST");
             break;
 
-        case MENU_ACTION_MOD_FSK:
-            if (!radio_main_cmd_set_modulation(1U))
+        case MENU_ACTION_MOD_FSK_ENABLE:
+            if (radio_main_cmd_set_modulation(1U))
             {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK not impl");
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK mode");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK set failed");
             }
             break;
-        case MENU_ACTION_MOD_OOK:
-            if (!radio_main_cmd_set_modulation(2U))
+        case MENU_ACTION_MOD_FSK_FREQ_8681:
+            (void)radio_main_cmd_set_modulation(1U);
+            if (radio_main_cmd_set_modulation_freq(868100000UL))
             {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK not impl");
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK F=868.1");
             }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK freq failed");
+            }
+            break;
+        case MENU_ACTION_MOD_FSK_FREQ_8683:
+            (void)radio_main_cmd_set_modulation(1U);
+            if (radio_main_cmd_set_modulation_freq(868300000UL))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK F=868.3");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK freq failed");
+            }
+            break;
+        case MENU_ACTION_MOD_FSK_FREQ_8685:
+            (void)radio_main_cmd_set_modulation(1U);
+            if (radio_main_cmd_set_modulation_freq(868500000UL))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK F=868.5");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK freq failed");
+            }
+            break;
+        case MENU_ACTION_MOD_FSK_BW_125:
+            (void)radio_main_cmd_set_modulation(1U);
+            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_125_KHZ))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK BW125");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK bw failed");
+            }
+            break;
+        case MENU_ACTION_MOD_FSK_BW_250:
+            (void)radio_main_cmd_set_modulation(1U);
+            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_250_KHZ))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK BW250");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK bw failed");
+            }
+            break;
+        case MENU_ACTION_MOD_FSK_BW_500:
+            (void)radio_main_cmd_set_modulation(1U);
+            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_500_KHZ))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK BW500");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK bw failed");
+            }
+            break;
+
+        case MENU_ACTION_MOD_OOK_ENABLE:
+            if (radio_main_cmd_set_modulation(2U))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK mode");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK set failed");
+            }
+            break;
+        case MENU_ACTION_MOD_OOK_FREQ_8681:
+            (void)radio_main_cmd_set_modulation(2U);
+            if (radio_main_cmd_set_modulation_freq(868100000UL))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK F=868.1");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK freq failed");
+            }
+            break;
+        case MENU_ACTION_MOD_OOK_FREQ_8683:
+            (void)radio_main_cmd_set_modulation(2U);
+            if (radio_main_cmd_set_modulation_freq(868300000UL))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK F=868.3");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK freq failed");
+            }
+            break;
+        case MENU_ACTION_MOD_OOK_FREQ_8685:
+            (void)radio_main_cmd_set_modulation(2U);
+            if (radio_main_cmd_set_modulation_freq(868500000UL))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK F=868.5");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK freq failed");
+            }
+            break;
+        case MENU_ACTION_MOD_OOK_BW_125:
+            (void)radio_main_cmd_set_modulation(2U);
+            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_125_KHZ))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK BW125");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK bw failed");
+            }
+            break;
+        case MENU_ACTION_MOD_OOK_BW_250:
+            (void)radio_main_cmd_set_modulation(2U);
+            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_250_KHZ))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK BW250");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK bw failed");
+            }
+            break;
+        case MENU_ACTION_MOD_OOK_BW_500:
+            (void)radio_main_cmd_set_modulation(2U);
+            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_500_KHZ))
+            {
+                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK BW500");
+            }
+            else
+            {
+                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK bw failed");
+            }
+            break;
+
+        case MENU_ACTION_MOD_FSK:
+            (void)radio_main_cmd_set_modulation(1U);
+            menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK mode");
+            break;
+        case MENU_ACTION_MOD_OOK:
+            (void)radio_main_cmd_set_modulation(2U);
+            menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK mode");
             break;
 
         case MENU_ACTION_INFO_SHOW:

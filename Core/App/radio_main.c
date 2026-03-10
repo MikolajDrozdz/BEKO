@@ -31,6 +31,8 @@ typedef enum
     RADIO_MAIN_CMD_SEND_TEMPLATE,
     RADIO_MAIN_CMD_SET_PRESET,
     RADIO_MAIN_CMD_SET_MODULATION,
+    RADIO_MAIN_CMD_SET_MOD_FREQ,
+    RADIO_MAIN_CMD_SET_MOD_BW,
     RADIO_MAIN_CMD_SET_FH,
     RADIO_MAIN_CMD_SET_CODING,
     RADIO_MAIN_CMD_SET_AUTO_PING,
@@ -64,6 +66,10 @@ typedef struct
         } set_u8;
         struct
         {
+            uint32_t value;
+        } set_u32;
+        struct
+        {
             bool enabled;
         } set_bool;
         struct
@@ -87,6 +93,10 @@ typedef struct
     bool coding_enabled;
     bool auto_ping_enabled;
     uint8_t lora_preset;
+    uint32_t fsk_freq_hz;
+    radio_lora_bw_t fsk_bw;
+    uint32_t ook_freq_hz;
+    radio_lora_bw_t ook_bw;
     uint8_t hop_idx;
     uint32_t last_hop_ms;
     uint32_t last_ping_ms;
@@ -118,6 +128,8 @@ static bool radio_main_enqueue_sync(const radio_main_cmd_t *cmd, radio_main_cmd_
 static bool radio_main_wait_sync(radio_main_cmd_sync_t *sync, uint32_t timeout_ms);
 static bool radio_main_radio_init_and_start(void);
 static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg);
+static void radio_main_apply_modulation_cfg(void);
+static bool radio_main_is_supported_bw(uint8_t bw_code);
 static bool radio_main_reconfigure_radio(void);
 static bool radio_main_send_system_frame(uint8_t type,
                                          uint32_t dst_id,
@@ -237,6 +249,30 @@ bool radio_main_cmd_set_modulation(uint8_t modulation_id)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
+bool radio_main_cmd_set_modulation_freq(uint32_t frequency_hz)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SET_MOD_FREQ;
+    cmd.u.set_u32.value = frequency_hz;
+
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
+bool radio_main_cmd_set_modulation_bw(uint8_t bandwidth_code)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SET_MOD_BW;
+    cmd.u.set_u8.value = bandwidth_code;
+
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
 bool radio_main_cmd_set_fh(bool enabled)
 {
     radio_main_cmd_t cmd;
@@ -342,6 +378,10 @@ static void radio_main_task_fn(void *argument)
     s_ctx.next_msg_id = 1U;
     s_ctx.modulation_id = 0U;
     s_ctx.lora_preset = 0U;
+    s_ctx.fsk_freq_hz = 868300000UL;
+    s_ctx.fsk_bw = RADIO_LORA_BW_125_KHZ;
+    s_ctx.ook_freq_hz = 868500000UL;
+    s_ctx.ook_bw = RADIO_LORA_BW_125_KHZ;
     beko_net_dedup_init(&s_ctx.dedup, RADIO_DEDUP_WINDOW_MS);
 
     radio_default_hw_cfg(&s_ctx.hw, &hspi1);
@@ -362,7 +402,7 @@ static void radio_main_task_fn(void *argument)
         s_ctx.lora_preset = 0U;
     }
 
-    radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+    radio_main_apply_modulation_cfg();
     s_ctx.last_hop_ms = radio_main_now_ms();
     s_ctx.last_ping_ms = radio_main_now_ms();
     s_ctx.hop_idx = 0U;
@@ -394,22 +434,65 @@ static void radio_main_task_fn(void *argument)
                     if (cmd.u.set_u8.value <= 2U)
                     {
                         s_ctx.lora_preset = cmd.u.set_u8.value;
-                        radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
-                        cmd_result = radio_main_reconfigure_radio();
+                        if (s_ctx.modulation_id == 0U)
+                        {
+                            radio_main_apply_modulation_cfg();
+                            cmd_result = radio_main_reconfigure_radio();
+                        }
+                        else
+                        {
+                            cmd_result = true;
+                        }
                     }
                     break;
 
                 case RADIO_MAIN_CMD_SET_MODULATION:
-                    s_ctx.modulation_id = cmd.u.set_u8.value;
-                    if (s_ctx.modulation_id == 0U)
+                    if (cmd.u.set_u8.value <= 2U)
                     {
-                        cmd_result = true;
+                        s_ctx.modulation_id = cmd.u.set_u8.value;
+                        radio_main_apply_modulation_cfg();
+                        cmd_result = radio_main_reconfigure_radio();
                     }
-                    else
+                    break;
+
+                case RADIO_MAIN_CMD_SET_MOD_FREQ:
+                    if ((cmd.u.set_u32.value >= 150000000UL) &&
+                        (cmd.u.set_u32.value <= 960000000UL))
                     {
-                        radio_main_notify(MENU_NOTIFICATION_ERROR,
-                                          (s_ctx.modulation_id == 1U) ? "FSK not implemented" : "OOK not implemented");
-                        cmd_result = false;
+                        if (s_ctx.modulation_id == 1U)
+                        {
+                            s_ctx.fsk_freq_hz = cmd.u.set_u32.value;
+                        }
+                        else if (s_ctx.modulation_id == 2U)
+                        {
+                            s_ctx.ook_freq_hz = cmd.u.set_u32.value;
+                        }
+                        else
+                        {
+                            s_ctx.lora_cfg.frequency_hz = cmd.u.set_u32.value;
+                        }
+                        radio_main_apply_modulation_cfg();
+                        cmd_result = radio_main_reconfigure_radio();
+                    }
+                    break;
+
+                case RADIO_MAIN_CMD_SET_MOD_BW:
+                    if (radio_main_is_supported_bw(cmd.u.set_u8.value))
+                    {
+                        if (s_ctx.modulation_id == 1U)
+                        {
+                            s_ctx.fsk_bw = (radio_lora_bw_t)cmd.u.set_u8.value;
+                        }
+                        else if (s_ctx.modulation_id == 2U)
+                        {
+                            s_ctx.ook_bw = (radio_lora_bw_t)cmd.u.set_u8.value;
+                        }
+                        else
+                        {
+                            s_ctx.lora_cfg.bandwidth = (radio_lora_bw_t)cmd.u.set_u8.value;
+                        }
+                        radio_main_apply_modulation_cfg();
+                        cmd_result = radio_main_reconfigure_radio();
                     }
                     break;
 
@@ -589,6 +672,36 @@ static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg
         default:
             break;
     }
+}
+
+static void radio_main_apply_modulation_cfg(void)
+{
+    if (s_ctx.modulation_id == 0U)
+    {
+        radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+        return;
+    }
+
+    if (s_ctx.modulation_id == 1U)
+    {
+        s_ctx.lora_cfg.frequency_hz = s_ctx.fsk_freq_hz;
+        s_ctx.lora_cfg.bandwidth = s_ctx.fsk_bw;
+        s_ctx.lora_cfg.spreading_factor = 7U;
+        s_ctx.lora_cfg.coding_rate = 5U;
+        return;
+    }
+
+    s_ctx.lora_cfg.frequency_hz = s_ctx.ook_freq_hz;
+    s_ctx.lora_cfg.bandwidth = s_ctx.ook_bw;
+    s_ctx.lora_cfg.spreading_factor = 7U;
+    s_ctx.lora_cfg.coding_rate = 5U;
+}
+
+static bool radio_main_is_supported_bw(uint8_t bw_code)
+{
+    return ((bw_code == (uint8_t)RADIO_LORA_BW_125_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_250_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_500_KHZ));
 }
 
 static bool radio_main_reconfigure_radio(void)
