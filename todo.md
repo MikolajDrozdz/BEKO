@@ -1,208 +1,662 @@
-# Plan Implementacji: Kontroler Menu + Button Task + Security/Forwarding (RTOS, LCD 20x4)
+# Dokumentacja projektu – bezpieczna sieć pagerowa oparta o STM32, RFM95W i Raspberry Pi Zero
 
-## Summary
-Zaimplementujemy pełny kontroler UI oparty o taski RTOS: `button_main` (polling co 25 ms), `menu_main` (stanowa nawigacja i rendering), `security_main` (TPM + polityki security), oraz rozszerzony `radio_main` (routing, forwarding, konfiguracja modulacji, pairing).  
-Start systemu: animacja `HELLO BEKO`, potem tryb domyślny RX na ustawieniach demo, ale bez auto-PING.  
-Po naciśnięciu dowolnego przycisku: wejście do `pager_menu`.  
-Dodamy forwarding wiadomości systemowych (TTL + dedup), menu hierarchiczne zgodne z wymaganiami, oraz trwałość ustawień.
+## 1. Cel projektu
 
-## Decyzje Zablokowane (z rozmowy)
-1. Nawigacja: 3 przyciski (`UP`, `DOWN`, `OK`), back = długi `OK`.
-2. Piny przycisków: `dig1=UP=PC8`, `dig2=DOWN=PA2`, `dig3=OK=PA3`, aktywne stanem niskim.
-3. Polling przycisków: co 25 ms, bez EXTI.
-4. Zakres: maksymalny (pełny kontroler + domena security + routing).
-5. Forwarding: tak, `TTL + dedup`.
-6. Auto-PING demo: wyłączony domyślnie.
-7. Pairing: `Add new device` = 60 s, pierwszy `JOIN_REQ`, potem akceptacja.
-8. Trusted devices: TPM NV, `policy session`, layout per-device, limit 16 urządzeń.
-9. Policy: `PCR + PP + CommandCode`.
-10. PP: oddzielny sygnał fizyczny związany z TPM (nie używamy MCU GPIO do PP).
-11. Coding radiowe: `XTEA-CTR + CRC16`, klucz z TPM NV.
-12. Frequency hopping: profil `868.1/868.3/868.5 MHz`, hop co 2 s, stan przywracany z pamięci.
-13. LoRa w menu: presety.
-14. FSK/OOK: pozycje dostępne w menu, próba aktywacji kończy się kontrolowanym błędem runtime.
-15. Powiadomienia podczas menu: tryb konfigurowalny, domyślnie `Popup`, zamknięcie dowolnym przyciskiem.
-16. Integracja GPIO: przez aktualizację `.ioc` (nie tylko USER CODE).
-17. Szablony wiadomości: grupy `ALERT/STATUS/SERVICE`.
+Celem projektu jest implementacja lekkiej, bezprzewodowej sieci pagerowej umożliwiającej przesyłanie krótkich komunikatów tekstowych do urządzeń klienckich oraz odbieranie prostych odpowiedzi zwrotnych z poziomu fizycznych przycisków.
 
-## Architektura Tasków i Odpowiedzialność
-1. `button_main` (nowy task): polling GPIO co 25 ms, debouncing, short/long press, publikacja eventów.
-2. `menu_main` (nowy task): state machine UI, `pager_menu`, menu główne, podmenu i operacje użytkownika.
-3. `security_main` (nowy task): operacje TPM (NV, policy session), klucze, trusted devices, funkcje security.
-4. `radio_main` (refactor): AO z kolejką komend; RX/TX, parse ramek systemowych, relay, dedup, hop, presety LoRa.
-5. `lcd_main` (istniejący AO): rozszerzenie o tryby renderu `monitor/menu/popup`, arbitraż źródeł wyświetlania.
-6. Istniejące taski `bmp280_main`, `tof_main`, `led_array_main`: pozostają, menu wywołuje ich API.
+Projekt ma odpowiadać na potrzeby dyskretnej i niezawodnej komunikacji w środowisku pracy, np. pomiędzy kuchnią i kelnerem w restauracji albo pomiędzy pracownikami hali produkcyjnej. Wiadomości są wysyłane z poziomu panelu webowego uruchomionego na Raspberry Pi Zero, a następnie rozsyłane drogą radiową do węzłów końcowych opartych o mikrokontrolery STM32 i moduły RFM95W-862S2.
 
-## Zmiany w Interfejsach Publicznych (API/typy)
-1. `button_main.h` (nowy):
-- `void button_main_create_task(void);`
-- `bool button_main_get_event(button_event_t *evt, uint32_t timeout_ms);`
-- `button_event_t`: `UP_SHORT`, `DOWN_SHORT`, `OK_SHORT`, `OK_LONG`.
+Najważniejszym założeniem projektu jest bezpieczeństwo transmisji. System ma zapewniać poufność wiadomości, ochronę przed modyfikacją ramek, podstawowe zabezpieczenie przed powtórzeniem starej transmisji oraz kontrolę listy zaufanych urządzeń. Dodatkowo każdy węzeł jest wyposażony w moduł ST33KTPM2X32DKG9, który ma wspierać generowanie i ochronę materiału kluczowego.
 
-2. `menu_main.h` (nowy):
-- `void menu_main_create_task(void);`
-- `bool menu_main_post_notification(const menu_notification_t *n);`
-- `menu_notification_t`: RX, warning, error, pairing prompt, security result.
+---
 
-3. `security_main.h` (nowy):
-- `void security_main_create_task(void);`
-- `bool security_main_cmd_add_device(uint32_t node_id, const uint8_t *code, uint8_t len);`
-- `bool security_main_cmd_delete_device(uint32_t node_id);`
-- `bool security_main_cmd_get_device(uint8_t idx, trusted_info_t *out);`
-- `bool security_main_cmd_set_coding(bool enabled);`
-- `bool security_main_cmd_rotate_key(void);`
-- `bool security_main_cmd_set_fh(bool enabled);`
+## 2. Scenariusz użycia systemu
 
-4. `radio_main.h` (rozszerzenie):
-- `bool radio_main_cmd_send_template(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);`
-- `bool radio_main_cmd_set_lora_preset(uint8_t preset_id);`
-- `bool radio_main_cmd_set_modulation(uint8_t modulation_id);`
-- `bool radio_main_cmd_set_fh(bool enabled);`
-- `bool radio_main_cmd_set_coding(bool enabled);`
-- `bool radio_main_cmd_set_auto_ping(bool enabled);`
+W przykładowym scenariuszu Raspberry Pi Zero pełni rolę centralnego punktu zarządzania systemem. Na Raspberry Pi działa prosty panel webowy dostępny przez Wi-Fi, z którego operator może:
 
-5. `lcd_main.h` (rozszerzenie):
-- `bool lcd_main_set_mode(lcd_main_mode_t mode);`
-- `bool lcd_main_show_popup(const char *l0, const char *l1, const char *l2, const char *l3);`
-- `bool lcd_main_show_boot_hello(void);`
-- `lcd_main_mode_t`: `LCD_MODE_MONITOR`, `LCD_MODE_MENU`, `LCD_MODE_POPUP`.
+- wybrać adresata wiadomości,
+- wpisać krótki komunikat tekstowy,
+- wysłać wiadomość do wybranego węzła,
+- śledzić status dostarczenia,
+- odebrać odpowiedź od użytkownika urządzenia końcowego.
 
-6. `st33ktpm2x.h/.c` (rozszerzenie TPM):
-- nowe helpery sesji/policy/NV: `start_auth_session`, `policy_pcr`, `policy_physical_presence`, `policy_command_code`, `policy_or`, `nv_define`, `nv_read`, `nv_write`, `flush_context`.
-- struktury rekordów trusted i storage key.
+Urządzenie końcowe STM32 po odebraniu wiadomości:
 
-## Format Ramek Systemowych i Routing
-1. Protokół `BEKO_NET_V1` (binarny):
-- `magic(2)='BK'`, `ver(1)=1`, `type(1)`, `flags(1)`, `ttl(1)`, `src_id(4)`, `dst_id(4)`, `msg_id(4)`, `payload_len(2)`, `payload(N)`, `crc16(2)`.
-2. Domyślne `node_id`: hash z `HAL_GetUIDw0/1/2`.
-3. `TTL` domyślne: 3.
-4. Dedup cache: 32 wpisy, okno 60 s.
-5. Forward rule:
-- forward tylko jeśli ramka jest systemowa i nie jest do tego urządzenia.
-- decrement TTL i relay gdy `ttl > 1`.
-- brak relay dla duplikatu (dedup hit) i własnych ramek (`src_id == self`).
-6. ACK policy:
-- ACK tylko dla pairing (`JOIN_REQ/JOIN_ACCEPT` flow).
-7. Wiadomości niesystemowe:
-- lokalny print/LCD/log, bez relay.
+- sprawdza, czy wiadomość jest skierowana do niego,
+- weryfikuje jej autentyczność i integralność,
+- odszyfrowuje treść,
+- wyświetla komunikat na ekranie,
+- umożliwia odpowiedź jednym z trzech przycisków, np.:
+  - `TAK`,
+  - `NIE`,
+  - `OK` / `PRZYJĄŁEM`.
 
-## Security i TPM NV (Policy Session)
-1. Klucz sieci (16 B XTEA) w TPM NV, handle dedykowany.
-2. Trusted devices: `per-device NV index`, 16 slotów.
-3. Metadata trusted (maska zajętości + wersja) w osobnym NV index.
-4. Policy:
-- branch R: `PolicyPCR + PolicyPhysicalPresence + PolicyCommandCode(NV_Read)`.
-- branch W: `PolicyPCR + PolicyPhysicalPresence + PolicyCommandCode(NV_Write)`.
-- final auth przez `PolicyOR` branchy.
-5. PP:
-- traktowany jako sygnał fizyczny TPM; menu pokaże instrukcję „naciśnij PP” i retry sesji do timeout.
-6. Security->Keys:
-- rotate key: nowy klucz z TPM RNG, zapis TPM NV, potwierdzenie w UI.
-7. Security->Coding:
-- ON/OFF kodowania radiowego (`XTEA-CTR + CRC16`), stan trwały.
-8. Security->Frequency hopping:
-- ON/OFF + profil kanałów, stan trwały.
+Jeżeli wiadomość nie jest przeznaczona dla danego węzła, a jej licznik `TTL` jest większy od zera, węzeł może przekazać ją dalej. Dzięki temu system może działać w trybie prostego, wieloskokowego routingu typu WSN / mesh relay.
 
-## Menu i UX (LCD 20x4)
-1. Boot:
-- `HELLO BEKO` animacja z istniejącej biblioteki.
-- automatyczne przejście do monitor RX.
-2. Monitor RX:
-- linie przewijane jak terminal, format `RSSI4:MSG` (20 kolumn, truncation).
-3. Wejście do menu:
-- dowolny przycisk z monitora otwiera `pager_menu`.
-4. `pager_menu`:
-- `Send message`
-- `Message groups`
-- `Main menu`
-- `Exit`
-5. `Main menu`:
-- `Devices` -> `Add new device`, `Delete device`, `Info device`.
-- `Security` -> `Frequency hopping`, `TPM`, `Keys`, `Coding`.
-- `Hardware` -> `Dist measure/Measure`, `Temperature`, `Pressure`, `Led`.
-- `Modulation` -> `LoRa`, `FSK`, `OOK`.
-- `Info`.
-6. Nawigacja:
-- `UP/DOWN`: zmiana pozycji.
-- `OK short`: enter/select.
-- `OK long`: back/cancel.
-7. Powiadomienia:
-- tryb konfigurowalny (`Popup` lub `Badge`), domyślnie `Popup`.
-- popup zamykany dowolnym przyciskiem.
-8. Auto-exit:
-- 60 s bezczynności -> powrót do monitor RX.
+---
 
-## Presety i Funkcje Domenowe
-1. LoRa presety:
-- `STD`: 868.1 MHz, BW125, SF7, CR4/5.
-- `RANGE`: 868.3 MHz, BW125, SF12, CR4/5.
-- `FAST`: 868.5 MHz, BW500, SF7, CR4/5.
-2. FSK/OOK:
-- wybór dozwolony, runtime zwraca błąd i pokazuje status (bez crash/restart).
-3. Szablony wiadomości:
-- `ALERT`: `ALR:FIRE`, `ALR:INTRUSION`, `ALR:LOWBATT`.
-- `STATUS`: `STS:OK`, `STS:BUSY`, `STS:IDLE`.
-- `SERVICE`: `SRV:PING`, `SRV:RESET`, `SRV:SYNC`.
+## 3. Infrastruktura systemu
 
-## Trwałość Ustawień
-1. Ustawienia UI/radia (FH state, notification mode, coding state, ostatni preset LoRa, auto-ping) trzymane w EEPROM secret slot (`i2c_mem_store_secret_*`).
-2. Trusted devices i key material trzymane w TPM NV.
-3. Domyślne boot fallback:
-- auto-ping OFF,
-- coding ON/OFF wg zapisu,
-- notify `Popup`,
-- FH stan przywrócony z pamięci.
+## 3.1. Elementy sprzętowe
 
-## Zmiany w Plikach (Plan)
-1. Nowe pliki:
-- `Core/App/button_main.c`, `Core/App/button_main.h`
-- `Core/App/menu_main.c`, `Core/App/menu_main.h`
-- `Core/App/security_main.c`, `Core/App/security_main.h`
-- `Core/App/beko_net_proto.c`, `Core/App/beko_net_proto.h`
-2. Modyfikacje:
-- `Core/App/app.c` (rejestracja nowych tasków)
-- `Core/App/radio_main.c/.h` (AO + routing/forwarding/komendy)
-- `Core/App/lcd_main.c/.h` (tryby monitor/menu/popup/boot)
-- `Core/App/st33ktpm2x_lib/st33ktpm2x.c/.h` (policy + NV API)
-- `Core/App/radio_lib/*` (reconfigure LoRa runtime, obsługa błędów modulacji)
-- `Core/App/radio_lib/test/radio_test.c` (redukcja do diagnostyki, bez sterowania runtime)
-- `BEKO_W1_hello-.ioc`, `Core/Src/main.c`, `Core/Inc/main.h` (PC8/PA2/PA3 GPIO input + etykiety)
-- dokumentacja: `README.md`, `Core/App/README.md`, README modułów.
-3. Nazewnictwo:
-- używamy `menu_main` (zgodnie ze stylem projektu), alias `manu_main` nie będzie dodawany.
+System składa się z następujących elementów:
 
-## Test Cases i Kryteria Akceptacji
-1. Boot/UI:
-- Po starcie widać `HELLO BEKO`, potem monitor RX.
-- Dowolny klawisz otwiera `pager_menu`.
-2. Button timing:
-- Polling dokładnie co 25 ms (log timestamp + brak EXTI zależności).
-- Short/long press działa deterministycznie.
-3. RX/LCD/UART:
-- każda odebrana wiadomość: print na UART + jedna linia LCD, trunc do 20 znaków, scroll terminalowy.
-4. Menu logic:
-- pełna nawigacja drzewem, `OK long` wraca poziom wyżej, auto-exit 60 s.
-5. Devices pairing:
-- tryb 60 s, pierwszy JOIN_REQ, akceptacja/reject, wynik na LCD/UART.
-6. Security TPM:
-- odczyt TPM info działa.
-- read/write trusted list przez NV policy session działa przy aktywnym PP.
-- keys rotate zapisuje nowy key w TPM NV.
-7. Routing:
-- forwarding działa dla ramek systemowych obcych, TTL maleje.
-- dedup 32/60s blokuje duplikaty.
-- wiadomości niesystemowe nie są forwardowane.
-8. Modulation:
-- LoRa presety przełączalne i skuteczne.
-- FSK/OOK wybieralne, kończą się kontrolowanym błędem runtime.
-9. Persistence:
-- restart przywraca FH state, notify mode, coding state i preset LoRa.
-10. Regressions:
-- brak degradacji odczytu BMP280/ToF i LED task.
+### Węzeł główny
+- **Raspberry Pi Zero**
+- moduł radiowy zgodny z rodziną **RFM95W-862S2**
+- interfejs Wi-Fi do obsługi panelu webowego
+- oprogramowanie zarządzające wysyłką i odbiorem komunikatów
 
-## Assumptions i Domyślne Założenia
-1. `PP` jest realizowany sprzętowo po stronie TPM (nie wymagamy dedykowanego GPIO MCU `gpio_pp`).
-2. Piny `PC8/PA2/PA3` są fizycznie podłączone do przycisków i wolne logicznie.
-3. FSK/OOK backend pozostaje placeholderem w tej iteracji; obsłużymy to przez kontrolowany błąd.
-4. Dla kodowania radiowego używamy XTEA-CTR (spójność z istniejącym kodem), mimo że produkcyjnie docelowo można rozważyć mocniejszą kryptografię.
-5. Aktualizacja `.ioc` i regeneracja kodu CubeMX jest częścią implementacji.
+### Węzły klienckie
+- **STM32**
+- moduł radiowy **RFM95W-862S2**
+- wyświetlacz do prezentacji wiadomości
+- 3 przyciski do odpowiedzi predefiniowanych
+- pamięć EEPROM / NVM do przechowywania konfiguracji
+- moduł bezpieczeństwa **ST33KTPM2X32DKG9**
+- opcjonalnie buzzer / LED do sygnalizacji nowej wiadomości
+
+## 3.2. Topologia logiczna
+
+System ma charakter **hybrydowy**:
+
+- logicznie posiada punkt centralny zarządzania na Raspberry Pi,
+- radiowo działa jako **sieć wieloskokowa**, gdzie węzły mogą przekazywać dalej komunikaty.
+
+W praktyce Raspberry Pi jest źródłem większości wiadomości użytkowych, natomiast węzły STM32 pełnią jednocześnie role:
+
+- odbiorników końcowych,
+- przekaźników ramek,
+- nadajników odpowiedzi zwrotnych.
+
+---
+
+## 4. Założenia projektowe
+
+W systemie przyjęto następujące założenia:
+
+- bardzo krótka wiadomość użytkowa,
+- maksymalna długość ramki aplikacyjnej: **64 bajty**,
+- możliwość działania w paśmie radiowym z użyciem RFM95W,
+- wsparcie dla transmisji:
+  - **LoRa**,
+  - **FSK**,
+- obowiązkowe potwierdzenie odbioru wiadomości,
+- podstawowy mechanizm multi-hop,
+- wysoki priorytet bezpieczeństwa,
+- trwałość informacji o zaufanych urządzeniach po restarcie,
+- minimalna złożoność obsługi po stronie użytkownika końcowego.
+
+---
+
+## 5. Architektura systemu
+
+System można podzielić na 4 warstwy funkcjonalne:
+
+## 5.1. Warstwa webowa
+Uruchomiona na Raspberry Pi Zero. Odpowiada za:
+
+- logowanie użytkownika do panelu,
+- tworzenie wiadomości,
+- wybór adresata,
+- podgląd statusów dostarczenia,
+- prezentację odpowiedzi z węzłów,
+- zarządzanie parowaniem urządzeń.
+
+## 5.2. Warstwa aplikacyjna
+Definiuje typy komunikatów, logikę routingu i zachowanie systemu. Przykładowe typy ramek:
+
+- `USER_MSG` – wiadomość tekstowa do użytkownika,
+- `ACK` – potwierdzenie odebrania,
+- `RESP` – odpowiedź z przycisku,
+- `JOIN_REQ` – żądanie parowania,
+- `JOIN_ACCEPT` – akceptacja parowania,
+- `TRUST_REMOVED` – usunięcie zaufania,
+- `HELLO` / `BEACON` – diagnostyka lub wykrywanie obecności.
+
+## 5.3. Warstwa bezpieczeństwa
+Zapewnia:
+
+- wyprowadzanie kluczy,
+- szyfrowanie danych,
+- generowanie i weryfikację MAC,
+- anti-replay,
+- przechowywanie zaufanych peerów,
+- współpracę z TPM.
+
+## 5.4. Warstwa radiowa
+Odpowiada za transmisję przez RFM95W, w tym:
+
+- konfigurację LoRa / FSK,
+- nadawanie i odbiór ramek,
+- retransmisję,
+- zarządzanie kanałem radiowym,
+- podstawowy mechanizm przekazywania dalej.
+
+---
+
+## 6. Działanie systemu
+
+## 6.1. Przepływ wiadomości od panelu webowego do węzła
+
+1. Operator otwiera panel webowy na Raspberry Pi.
+2. Wybiera urządzenie docelowe lub grupę urządzeń.
+3. Wpisuje krótki komunikat tekstowy.
+4. Raspberry Pi buduje ramkę aplikacyjną.
+5. Dla wiadomości typu `USER_MSG` dobierany jest klucz per-peer.
+6. Treść wiadomości zostaje zaszyfrowana.
+7. Do ramki dodawany jest MAC.
+8. Ramka zostaje nadana przez moduł radiowy.
+9. Węzeł pośredni:
+   - odbiera ramkę,
+   - sprawdza, czy już ją widział,
+   - zmniejsza `TTL`,
+   - przekazuje dalej, jeśli nie jest adresatem końcowym.
+10. Węzeł docelowy:
+   - weryfikuje autentyczność,
+   - sprawdza anti-replay,
+   - odszyfrowuje wiadomość,
+   - wyświetla ją użytkownikowi,
+   - odsyła `ACK`.
+11. Użytkownik może wysłać odpowiedź przez przycisk.
+12. Odpowiedź wraca do Raspberry Pi jako ramka `RESP`.
+
+## 6.2. Zachowanie węzła końcowego
+
+Po odebraniu poprawnej wiadomości węzeł:
+
+- zapisuje `msg_id` / `counter` do mechanizmu deduplikacji,
+- wyświetla treść,
+- generuje lokalny sygnał (np. buzzer / LED),
+- oczekuje na reakcję użytkownika,
+- po naciśnięciu przycisku wysyła odpowiedź.
+
+## 6.3. Forwarding wiadomości
+
+Jeśli węzeł nie jest adresem docelowym:
+
+- sprawdza, czy ramka nie została już przetworzona,
+- sprawdza `TTL`,
+- po krótkim losowym opóźnieniu retransmituje ramkę.
+
+Takie podejście zmniejsza ryzyko lawinowego floodingu przy większej liczbie urządzeń.
+
+---
+
+## 7. Obecne mechanizmy zabezpieczające
+
+W obecnym systemie chronione są następujące obszary:
+
+- poufność wiadomości `USER`,
+- podstawowa integralność i uwierzytelnienie,
+- trwałość listy trusted po restarcie,
+- logiczne rozróżnienie ramek systemowych i użytkowych.
+
+## 7.1. Aktualny przebieg transmisji `USER`
+
+1. Nadajnik buduje ramkę `BEKO_NET_V1` zawierającą:
+   - `src_id`,
+   - `dst_id`,
+   - `msg_id`,
+   - `ttl`,
+   - `payload`.
+2. Pobierany jest klucz per-peer.
+3. Payload szyfrowany jest algorytmem `XTEA-CTR`.
+4. Wyliczany jest `AuthTag` 4B na podstawie:
+   - klucza per-peer,
+   - pól nagłówka,
+   - zaszyfrowanego payloadu.
+5. Do transmisji wysyłany jest `AuthTag`, a następnie ciphertext.
+6. Odbiornik najpierw weryfikuje `AuthTag`.
+7. Dopiero po poprawnej weryfikacji odszyfrowuje treść.
+
+---
+
+## 8. Proponowane ulepszenia bezpieczeństwa
+
+Ze względu na ograniczenia obecnej implementacji należy rozszerzyć system o kilka istotnych mechanizmów.
+
+## 8.1. Silniejszy MAC
+
+Obecny `AuthTag` ma 32 bity, co jest zbyt małą wartością dla systemu, który ma być uznany za bezpieczny.
+
+### Propozycja
+Zastąpić `AuthTag` mechanizmem:
+- `HMAC-SHA256` z obcięciem do **8 bajtów**, albo
+- `AES-CMAC` z obcięciem do **8 bajtów**, jeśli implementacja AES będzie wygodniejsza.
+
+### Uzasadnienie
+8-bajtowy tag daje znacznie lepszą odporność niż 4 bajty, a nadal pozwala zmieścić się w limicie 64 bajtów.
+
+## 8.2. Silniejsze parowanie
+
+Zamiast krótkiego kodu cyfr należy zastosować:
+- losowy challenge 128-bit,
+- opcjonalnie wyświetlenie skrótu lub krótkiego kodu porównawczego dla użytkownika,
+- potwierdzenie parowania przez fizyczny przycisk.
+
+Takie podejście znacząco utrudnia atak offline.
+
+## 8.3. Anti-replay per-peer
+
+Należy dodać:
+- monotoniczny licznik nadawcy,
+- okno akceptacji po stronie odbiorcy,
+- zapis ostatniego zaakceptowanego licznika w NVM.
+
+To pozwoli blokować powtórne odtworzenie starszych ramek.
+
+## 8.4. Ograniczenie jawnych metadanych
+
+W obecnej wersji część pól nagłówka jest jawna. To upraszcza routing, ale ułatwia analizę ruchu.
+
+### Możliwe podejście
+- pozostawić jawne tylko pola niezbędne do routingu,
+- dodać pseudonimowe identyfikatory sesyjne,
+- okresowo rotować identyfikatory logiczne.
+
+## 8.5. Re-key
+
+Należy wprowadzić politykę rotacji kluczy per-peer:
+- po określonej liczbie ramek,
+- po określonym czasie,
+- po ponownym parowaniu,
+- po wykryciu incydentu bezpieczeństwa.
+
+---
+
+## 9. Ograniczenie 64 bajtów i konsekwencje projektowe
+
+Najważniejsze ograniczenie projektu to maksymalny rozmiar ramki aplikacyjnej wynoszący **64 bajty**. Oznacza to, że wszystkie pola nagłówka, bezpieczeństwa i danych użytkownika muszą zmieścić się w tym limicie.
+
+W praktyce należy rozdzielić typy ramek na:
+
+- **ramki użytkowe** – zoptymalizowane pod krótkie komunikaty,
+- **ramki systemowe / parujące** – również mieszczące się w 64 bajtach, ale o mniejszym polu danych.
+
+Nie ma potrzeby, aby każda ramka przenosiła 128-bit challenge. Taki challenge powinien być obecny tylko w ramkach parowania.
+
+---
+
+## 10. Proponowany format ramki
+
+Poniżej przedstawiono rekomendowaną ramkę aplikacyjną dla wiadomości użytkowych.
+
+## 10.1. Ramka `USER_MSG` / `ACK` / `RESP`
+
+| Pole | Rozmiar | Opis |
+|---|---:|---|
+| `ver_type` | 1 B | wersja protokołu + typ wiadomości |
+| `flags` | 1 B | bity sterujące: ACK required, forwarded, encrypted, response itp. |
+| `src_id` | 2 B | identyfikator źródła |
+| `dst_id` | 2 B | identyfikator celu |
+| `msg_id` | 2 B | identyfikator wiadomości |
+| `ttl` | 1 B | liczba pozostałych skoków |
+| `counter` | 4 B | licznik anty-replay per-peer |
+| `payload_len` | 1 B | długość payloadu |
+| `payload` | 0–34 B | dane użytkownika / odpowiedź |
+| `mac_tag` | 8 B | skrócony MAC, np. HMAC-SHA256-64 |
+| `reserved` | dopełnienie | opcjonalne pole przyszłej rozbudowy |
+
+### Suma przykładowa
+Nagłówek stały bez payloadu i bez rezerwy:
+- 1 + 1 + 2 + 2 + 2 + 1 + 4 + 1 + 8 = **22 bajty**
+
+Daje to:
+- **42 bajty** wolne w limicie 64 B,
+- praktycznie bezpiecznie można przyjąć **payload do 32–34 bajtów**.
+
+To jest rozsądna długość dla pagera tekstowego, np.:
+- `STANOWISKO 4`,
+- `PRZYJDZ TERAZ`,
+- `ZAMOWIENIE GOTOWE`,
+- `TAK`,
+- `NIE`,
+- `OK`.
+
+## 10.2. Ramka `JOIN_REQ` / `JOIN_ACCEPT`
+
+Dla ramek parowania można przyjąć osobny układ:
+
+| Pole | Rozmiar | Opis |
+|---|---:|---|
+| `ver_type` | 1 B | wersja + typ `JOIN_*` |
+| `flags` | 1 B | bity sterujące |
+| `src_id` | 2 B | identyfikator źródła |
+| `dst_id` | 2 B | identyfikator celu lub broadcast lokalny |
+| `msg_id` | 2 B | identyfikator |
+| `ttl` | 1 B | liczba skoków |
+| `pair_nonce` | 16 B | challenge 128-bit |
+| `pair_info` | 4–8 B | dane pomocnicze, np. capabilities |
+| `mac_tag` | 8 B | MAC |
+| `optional` | reszta | zależnie od etapu parowania |
+
+Taki układ nadal mieści się w 64 bajtach.
+
+---
+
+## 11. Opis pól ramki
+
+## 11.1. `ver_type`
+Pole łączy wersję protokołu i typ ramki. Pozwala rozróżnić:
+- `USER_MSG`,
+- `ACK`,
+- `RESP`,
+- `JOIN_REQ`,
+- `JOIN_ACCEPT`,
+- `TRUST_REMOVED`.
+
+## 11.2. `flags`
+Służy do sygnalizacji zachowania ramki:
+- czy wymaga potwierdzenia,
+- czy jest zaszyfrowana,
+- czy została forwardowana,
+- czy zawiera odpowiedź przycisku.
+
+## 11.3. `src_id` i `dst_id`
+Identyfikatory urządzeń. W przyszłości mogą zostać zastąpione przez pseudonimy sesyjne.
+
+## 11.4. `msg_id`
+Identyfikator logiczny wiadomości, używany m.in. do:
+- korelacji `ACK`,
+- deduplikacji,
+- śledzenia retransmisji.
+
+## 11.5. `ttl`
+Chroni sieć przed nieskończonym krążeniem ramek.
+
+## 11.6. `counter`
+Monotoniczny licznik bezpieczeństwa per-peer. Stanowi kluczowy element ochrony anti-replay.
+
+## 11.7. `payload_len`
+Umożliwia interpretację długości danych użytkowych.
+
+## 11.8. `payload`
+W przypadku `USER_MSG` zawiera wiadomość tekstową.
+W przypadku `RESP` może zawierać:
+- kod odpowiedzi,
+- opcjonalny krótki komentarz,
+- status.
+
+## 11.9. `mac_tag`
+Skrócony MAC zapewniający:
+- integralność,
+- uwierzytelnienie nadawcy,
+- powiązanie danych z nagłówkiem i ciphertextem.
+
+---
+
+## 12. Proponowane szyfrowanie i uwierzytelnianie
+
+## 12.1. Wariant minimalnej ingerencji
+Jeśli chcesz zachować obecną architekturę:
+
+- szyfrowanie: `XTEA-CTR`,
+- uwierzytelnianie: `HMAC-SHA256` obcięty do 8 bajtów.
+
+To podejście jest najłatwiejsze do wdrożenia jako ewolucja obecnego projektu.
+
+## 12.2. Wariant bardziej docelowy
+Jeżeli zasoby STM32 i złożoność implementacji na to pozwolą, lepiej rozważyć:
+- `AES-CTR + CMAC`,
+- albo nowoczesny AEAD, np. `Ascon-128a`, jeśli chcesz mieć szyfrowanie i integralność w jednym mechanizmie.
+
+Dla projektu studenckiego i istniejącej bazy kodu sensowne jest jednak podejście ewolucyjne, czyli pozostanie przy aktualnym szyfrowaniu i wzmocnienie MAC.
+
+---
+
+## 13. Rola TPM ST33KTPM2X32DKG9
+
+Moduł TPM może pełnić w systemie następujące role:
+
+- źródło losowości do generowania seeda,
+- źródło nonce do parowania,
+- bezpieczne powiązanie urządzenia z materiałem kluczowym,
+- potwierdzanie działań administracyjnych przez przycisk `TPM_PP`,
+- wsparcie przy inicjalizacji zaufania po starcie.
+
+### Zalecany model
+TPM nie musi wykonywać całej kryptografii runtime dla każdej ramki. Wystarczy, że:
+- generuje seed,
+- uczestniczy w inicjalizacji kluczy,
+- zabezpiecza operacje krytyczne,
+- pomaga w budowaniu zaufania do urządzenia.
+
+To jest realistyczne dla projektu o ograniczonych zasobach.
+
+---
+
+## 14. Parowanie urządzeń
+
+## 14.1. Cel parowania
+Parowanie służy do:
+- ustanowienia relacji zaufania,
+- uzgodnienia materiału wejściowego do klucza per-peer,
+- zapisania partnera na liście trusted.
+
+## 14.2. Proponowany przebieg parowania
+
+1. Urządzenie A wchodzi w tryb parowania.
+2. Generuje `pair_nonce_A` z użyciem TPM lub RNG.
+3. Wysyła `JOIN_REQ`.
+4. Urządzenie B odbiera `JOIN_REQ`.
+5. Użytkownik B zatwierdza parowanie przyciskiem.
+6. B generuje `pair_nonce_B`.
+7. B wyprowadza wspólny materiał kluczowy z:
+   - `pair_nonce_A`,
+   - `pair_nonce_B`,
+   - `src_id`,
+   - `dst_id`,
+   - lokalnego seeda.
+8. B zapisuje A jako trusted.
+9. B odsyła `JOIN_ACCEPT`.
+10. A weryfikuje odpowiedź i zapisuje B jako trusted.
+11. Obie strony odkładają dane do EEPROM / NVM.
+
+## 14.3. Co zapisywać po parowaniu
+
+Dla każdego peer-a warto przechowywać:
+
+- `peer_id`,
+- status trusted,
+- materiał do wyprowadzenia klucza lub gotowy klucz per-peer,
+- ostatni zaakceptowany `counter_rx`,
+- ostatni użyty `counter_tx`,
+- znacznik czasu / licznik rotacji klucza,
+- flagi polityki bezpieczeństwa.
+
+---
+
+## 15. Usuwanie parowania
+
+Usuwanie relacji trusted musi działać dwustronnie.
+
+## 15.1. Proponowany scenariusz
+
+1. Użytkownik na urządzeniu A usuwa B z listy trusted.
+2. A lokalnie kasuje zaufanie i materiał kluczowy związany z B.
+3. A wysyła do B ramkę `TRUST_REMOVED`.
+4. Po odebraniu i zweryfikowaniu tej ramki B usuwa A ze swojej listy trusted.
+5. Obie strony aktualizują EEPROM / NVM.
+
+## 15.2. Uwagi praktyczne
+Jeżeli `TRUST_REMOVED` nie zostanie dostarczone:
+- A i tak uznaje B za niezaufane,
+- B może nadal uważać A za trusted do czasu ręcznego usunięcia lub timeoutu polityki.
+
+Dlatego warto przewidzieć:
+- lokalne usuwanie natychmiastowe,
+- synchronizację z drugą stroną jako mechanizm dodatkowy.
+
+---
+
+## 16. Przykładowy scenariusz komunikacji użytkowej
+
+1. Raspberry Pi wysyła wiadomość do węzła `NODE_03`:
+   - treść: `PRZYJDZ DO STREFY A`.
+2. Budowana jest ramka `USER_MSG`.
+3. Dobierany jest klucz per-peer dla `RPI -> NODE_03`.
+4. Payload jest szyfrowany.
+5. Obliczany jest `mac_tag`.
+6. Ramka zostaje wysłana do sieci.
+7. `NODE_01` odbiera ramkę:
+   - widzi, że `dst_id != NODE_01`,
+   - zmniejsza `ttl`,
+   - przekazuje dalej.
+8. `NODE_03` odbiera ramkę:
+   - weryfikuje MAC,
+   - sprawdza `counter`,
+   - odszyfrowuje treść,
+   - wyświetla wiadomość,
+   - odsyła `ACK`.
+9. Użytkownik naciska przycisk `TAK`.
+10. `NODE_03` buduje ramkę `RESP`.
+11. Odpowiedź wraca do Raspberry Pi.
+12. Panel webowy pokazuje status:
+   - dostarczono,
+   - odpowiedź: `TAK`.
+
+---
+
+## 17. Słabe punkty obecnej implementacji
+
+Aktualna wersja systemu ma następujące ograniczenia:
+
+- `AuthTag` 32-bit jest zbyt krótki,
+- kod parowania ma zbyt małą entropię,
+- brak pełnego, trwałego anti-replay per-peer,
+- brak forward secrecy,
+- metadane w nagłówku są jawne,
+- aktywny jammer nadal może zakłócić komunikację,
+- forwarding może generować nadmiarowy ruch bez dodatkowych ograniczeń.
+
+---
+
+## 18. Rekomendacje implementacyjne
+
+## 18.1. Co wdrożyć w pierwszej kolejności
+1. 8-bajtowy MAC.
+2. 4-bajtowy licznik anti-replay per-peer.
+3. potwierdzenia `ACK`.
+4. retransmisję z limitem prób.
+5. zapisywanie liczników i trusted do NVM.
+6. rozdzielenie formatów ramek użytkowych i parujących.
+
+## 18.2. Co wdrożyć w drugiej kolejności
+1. challenge 128-bit w parowaniu,
+2. pseudonimy sesyjne,
+3. rotację kluczy,
+4. bardziej zaawansowany routing niż prosty flood relay,
+5. politykę wygaszania starych peerów.
+
+---
+
+## 19. Proponowany plan realizacji projektu
+
+## Etap 1 – komunikacja podstawowa
+- uruchomienie łącza RFM95W pomiędzy Raspberry Pi i STM32,
+- obsługa nadawania / odbioru,
+- prosty format ramki,
+- wyświetlanie wiadomości na ekranie,
+- odpowiedzi przyciskami.
+
+## Etap 2 – potwierdzenia i forwarding
+- `ACK`,
+- retransmisja po timeout,
+- `TTL`,
+- deduplikacja ramek,
+- forwarding przez inne węzły.
+
+## Etap 3 – bezpieczeństwo obecnej wersji
+- integracja z TPM,
+- lista trusted,
+- szyfrowanie `USER`,
+- bieżący `AuthTag`,
+- zapis konfiguracji do EEPROM.
+
+## Etap 4 – wzmocnienie bezpieczeństwa
+- przejście na 64-bit MAC,
+- challenge 128-bit,
+- licznik anti-replay per-peer,
+- re-key.
+
+## Etap 5 – panel webowy
+- interfejs po Wi-Fi,
+- lista urządzeń,
+- wysyłanie wiadomości,
+- status dostarczenia,
+- historia odpowiedzi.
+
+---
+
+## 20. Checklista rzeczy do wprowadzenia
+
+### Funkcjonalność podstawowa
+- [ ] zdefiniować finalny format ramki `USER_MSG`
+- [ ] zdefiniować finalny format ramki `ACK`
+- [ ] zdefiniować finalny format ramki `RESP`
+- [ ] zdefiniować finalny format ramek `JOIN_REQ` i `JOIN_ACCEPT`
+- [ ] wdrożyć obsługę `TTL`
+- [ ] wdrożyć forwarding wiadomości
+- [ ] wdrożyć deduplikację ramek
+- [ ] wdrożyć retransmisję po braku `ACK`
+- [ ] wdrożyć obsługę 3 przycisków i mapowanie odpowiedzi
+- [ ] wdrożyć wyświetlanie wiadomości na ekranie
+- [ ] wdrożyć status dostarczenia na Raspberry Pi
+
+### Bezpieczeństwo
+- [ ] zastąpić 4B `AuthTag` przez 8B MAC
+- [ ] zdecydować: `HMAC-SHA256-64` czy `AES-CMAC-64`
+- [ ] wdrożyć licznik anti-replay per-peer
+- [ ] zapisywać stan liczników do NVM
+- [ ] wdrożyć challenge 128-bit w parowaniu
+- [ ] wymusić fizyczne potwierdzenie parowania przyciskiem
+- [ ] dopracować sposób wyprowadzania klucza per-peer
+- [ ] wdrożyć politykę rotacji kluczy
+- [ ] ograniczyć liczbę jawnych metadanych
+- [ ] rozważyć pseudonimy sesyjne zamiast stałych ID
+
+### TPM / pamięć trwała
+- [ ] dopracować wykorzystanie RNG z TPM
+- [ ] określić, co dokładnie jest trzymane w EEPROM
+- [ ] zabezpieczyć aktualizację rekordów trusted przed uszkodzeniem zasilania
+- [ ] wdrożyć procedurę usuwania kluczy i trusted
+- [ ] sprawdzić, czy reset urządzenia nie powoduje niespójności liczników
+
+### Sieć i niezawodność
+- [ ] ustalić politykę retransmisji
+- [ ] dobrać wartości timeoutów
+- [ ] dobrać domyślny `TTL`
+- [ ] dodać losowe opóźnienie przed forwardingiem
+- [ ] ograniczyć floodowanie przy wielu węzłach
+- [ ] przetestować pracę w LoRa i FSK
+- [ ] porównać zasięg, opóźnienie i odporność dla obu trybów
+
+### Panel webowy
+- [ ] przygotować prosty backend na Raspberry Pi
+- [ ] przygotować formularz wysyłki wiadomości
+- [ ] dodać listę urządzeń i ich statusów
+- [ ] dodać historię wiadomości
+- [ ] dodać podgląd `ACK`
+- [ ] dodać podgląd odpowiedzi z przycisków
+
+### Testy
+- [ ] test poprawnego doręczenia
+- [ ] test utraty pojedynczej ramki
+- [ ] test retransmisji
+- [ ] test multi-hop
+- [ ] test duplicate frame
+- [ ] test replay attack
+- [ ] test błędnego MAC
+- [ ] test nieautoryzowanego urządzenia
+- [ ] test usuwania trusted
+- [ ] test restartu urządzenia i odtwarzania stanu
+- [ ] test zachowania po zaniku zasilania podczas zapisu NVM
+
+---
+
+## 21. Podsumowanie
+
+Projekt stanowi bezpieczną, lekką sieć pagerową dla krótkich komunikatów tekstowych, w której Raspberry Pi Zero pełni rolę węzła zarządzającego z interfejsem webowym, a urządzenia STM32 z modułami RFM95W pełnią rolę odbiorników i przekaźników. Obecna wersja systemu posiada już podstawowe mechanizmy ochrony, takie jak szyfrowanie treści i weryfikacja tagu autentyczności, jednak wymaga dalszego wzmocnienia, szczególnie w obszarze MAC, anti-replay oraz procesu parowania.
+
+Najważniejszym kompromisem projektowym jest limit 64 bajtów. Z tego powodu format ramki musi być bardzo zwarty, a funkcje bezpieczeństwa powinny być dobierane tak, aby zapewnić realną ochronę bez nadmiernego narzutu. Zaproponowana architektura pozwala osiągnąć ten cel i jednocześnie zachować prostotę wdrożenia na platformie STM32 + RFM95W + Raspberry Pi Zero.

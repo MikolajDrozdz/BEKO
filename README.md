@@ -82,6 +82,54 @@ Automatycznie stworzone przez IDE:
 6. Jeśli `AuthTag` się nie zgadza, B odrzuca ramkę (brak wyświetlenia i brak dalszego przetwarzania).
 7. Jeśli A usuwa B z trusted, A wysyła `TRUST_REMOVED`, a B usuwa A ze swojej listy po odebraniu tej ramki.
 
+## Przykładowa ramka `BEKO_NET_V1`
+
+Poniżej przykład logicznej ramki aplikacyjnej przed wysłaniem przez radio:
+
+```text
+magic       = 'BK'                 // 2 B
+ver         = 0x01                 // 1 B
+type        = USER                 // 1 B
+flags       = 0x01                 // 1 B, np. coding enabled
+ttl         = 0x03                 // 1 B
+src_id      = 0x00000021           // 4 B
+dst_id      = 0x00000044           // 4 B
+msg_id      = 0x00001234           // 4 B
+payload_len = 0x000D               // 2 B
+payload     = "TEMP=23.4 C"        // N B
+crc16       = 0xA1B2               // 2 B
+```
+
+### Elementy ramki
+
+| Pole | Rozmiar | Opis |
+|:-----|:--------|:-----|
+| `magic` | 2 B | Stały znacznik protokołu, pozwala rozpoznać ramkę `BEKO_NET_V1`. |
+| `ver` | 1 B | Wersja formatu ramki. |
+| `type` | 1 B | Typ wiadomości, np. `USER`, `JOIN_REQ`, `JOIN_ACCEPT`, `TRUST_REMOVED`. |
+| `flags` | 1 B | Flagi sterujące, np. informacja o aktywnym kodowaniu. |
+| `ttl` | 1 B | Licznik przeskoków lub limit dalszego forwardowania ramki. |
+| `src_id` | 4 B | Identyfikator nadawcy. |
+| `dst_id` | 4 B | Identyfikator odbiorcy. |
+| `msg_id` | 4 B | Identyfikator wiadomości używany m.in. do deduplikacji i anti-replay. |
+| `payload_len` | 2 B | Długość pola `payload` w bajtach. |
+| `payload` | N B | Dane użytkownika albo dane systemowe zależnie od `type`. |
+| `crc16` | 2 B | Suma kontrolna wykorzystywana do wykrywania błędów transmisji. |
+
+### Uwaga dla trybu secure
+
+Dla wiadomości `USER` z aktywnym codingiem zawartość `payload` jest szyfrowana, a przed ciphertextem dokładany jest `AuthTag` 4 B. W praktyce oznacza to, że logiczne dane użytkownika:
+
+```text
+payload = "TEMP=23.4 C"
+```
+
+po zabezpieczeniu są przenoszone jako:
+
+```text
+payload = [AuthTag 4 B] + [ciphertext N B]
+```
+
 ## Słabe punkty i możliwe ataki
 
 ### Ograniczenia obecnej implementacji
