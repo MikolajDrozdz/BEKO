@@ -1,8 +1,8 @@
 # radio_lib
 
 Modułowa biblioteka radiowa dla układów SX1276/RFM95 (np. RFM95W-862S2) dla STM32.
-Warstwa aplikacyjna korzysta z jednego API (`radio_lib.h`), a konkretna modulacja
-jest wybierana kompilacyjnie.
+Warstwa aplikacyjna korzysta z jednego API (`radio_lib.h`), a backend może być
+wybierany zarówno kompilacyjnie, jak i przełączany w runtime.
 
 ## Cele projektu
 
@@ -24,9 +24,9 @@ jest wybierana kompilacyjnie.
 | `modulations/lora/radio_lora.h` | Kontrakt backendu LoRa. |
 | `modulations/lora/radio_lora.c` | Implementacja LoRa: init, TX/RX, zdarzenia, DIO/IRQ, recovery. |
 | `modulations/fsk/radio_fsk.h` | Kontrakt backendu FSK. |
-| `modulations/fsk/radio_fsk.c` | Szkielet backendu FSK (placeholder, `RADIO_ESTATE`). |
+| `modulations/fsk/radio_fsk.c` | Implementacja backendu FSK/GFSK/MSK/GMSK w packet-mode SX1276. |
 | `modulations/ook/radio_ook.h` | Kontrakt backendu OOK. |
-| `modulations/ook/radio_ook.c` | Szkielet backendu OOK (placeholder, `RADIO_ESTATE`). |
+| `modulations/ook/radio_ook.c` | Implementacja backendu OOK w packet-mode SX1276. |
 | `test/radio_test.h` | Publiczne narzędzia testowe i diagnostyczne. |
 | `test/radio_test.c` | Scenariusz demo: probe, dump rejestrów, okresowy `PING`, logowanie zdarzeń. |
 
@@ -38,7 +38,9 @@ W pliku `radio_lib_config.h` ustaw makro:
 - `RADIO_LIB_ACTIVE_MODULATION = RADIO_LIB_MODULATION_FSK`,
 - `RADIO_LIB_ACTIVE_MODULATION = RADIO_LIB_MODULATION_OOK`.
 
-Aplikacja zawsze używa `radio_lib.h`; zmienia się wyłącznie backend wewnętrzny.
+Aplikacja zawsze używa `radio_lib.h`; backend można też przełączyć w runtime
+przez `radio_select_backend(...)` i przekazać profil przez `radio_set_fsk_cfg(...)`
+lub `radio_set_ook_cfg(...)`.
 
 ## Model obsługi przerwań (IRQ/EXTI)
 
@@ -68,8 +70,8 @@ W tym projekcie warstwa aplikacyjna używa obecnie `radio_main` (task RTOS), a
 ## Status backendów
 
 - LoRa: implementacja produkcyjna (SX1276/RFM95).
-- FSK: szkielet API przygotowany do dalszej implementacji.
-- OOK: szkielet API przygotowany do dalszej implementacji.
+- FSK: działający backend SX1276 z TX/RX, FIFO, IRQ i packet engine.
+- OOK: działający backend SX1276 z TX/RX, FIFO, IRQ i packet engine.
 
 ## Dokumentacja Doxygen
 

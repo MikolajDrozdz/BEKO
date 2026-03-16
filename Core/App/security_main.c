@@ -1,5 +1,6 @@
 #include "security_main.h"
 
+#include "beko_net_proto.h"
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
 #include "i2c_mem_store_lib/i2c_mem_store.h"
@@ -17,9 +18,10 @@
 #define SECURITY_CMD_POLL_MS                5U
 #define SECURITY_TRUSTED_MAX                16U
 #define SECURITY_STORE_SLOT                 0U
-#define SECURITY_TRUSTED_SLOT_BASE          1U
+#define SECURITY_STORE_RADIO_SLOT           1U
+#define SECURITY_TRUSTED_SLOT_BASE          2U
 #define SECURITY_STORE_MAGIC                0xA5U
-#define SECURITY_STORE_VERSION              1U
+#define SECURITY_STORE_VERSION              2U
 #define SECURITY_LEGACY_SETTINGS_SLOT       0U
 #define SECURITY_LEGACY_KEY_SEED_SLOT       1U
 #define SECURITY_SETTINGS_MAGIC             0x5345U
@@ -41,6 +43,7 @@ typedef enum
     SECURITY_CMD_SET_NOTIFY,
     SECURITY_CMD_SET_PRESET,
     SECURITY_CMD_SET_AUTO_PING,
+    SECURITY_CMD_SET_RADIO_RUNTIME,
     SECURITY_CMD_GET_RUNTIME,
     SECURITY_CMD_LOG_MESSAGE
 } security_cmd_id_t;
@@ -87,6 +90,10 @@ typedef struct
         } set_preset;
         struct
         {
+            radio_main_runtime_cfg_t cfg;
+        } set_radio;
+        struct
+        {
             int16_t rssi_dbm;
             uint8_t len;
             uint8_t payload[I2C_MEM_STORE_LOG_PAYLOAD_MAX];
@@ -109,8 +116,16 @@ typedef struct
     uint8_t flags;
     uint8_t notify_mode;
     uint8_t lora_preset;
+    uint8_t active_modulation;
     uint8_t seed[SECURITY_KEY_SEED_BYTES];
 } security_store_wire_t;
+
+typedef struct
+{
+    uint8_t magic;
+    uint8_t version;
+    uint8_t packed[11];
+} security_radio_store_wire_t;
 
 typedef struct
 {
@@ -149,7 +164,9 @@ static security_runtime_cfg_t s_runtime_cfg =
     .fh_enabled = false,
     .auto_ping_enabled = false,
     .notify_mode = SECURITY_NOTIFY_POPUP,
-    .lora_preset = 0U
+    .lora_preset = 2U,
+    .active_modulation = RADIO_MAIN_MODULATION_LORA,
+    .radio_profiles_persisted = false
 };
 static uint8_t s_network_key[16] =
 {
@@ -162,6 +179,35 @@ static uint8_t s_key_seed_cached[SECURITY_KEY_SEED_BYTES];
 
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c3;
+
+static const uint32_t s_freq_options_hz[] =
+{
+    868000000UL, 868100000UL, 868300000UL, 868500000UL, 868800000UL, 869050000UL, 869525000UL
+};
+static const uint32_t s_bitrate_options_bps[] =
+{
+    1200UL, 2400UL, 4800UL, 9600UL, 19200UL, 38400UL, 50000UL, 100000UL
+};
+static const uint16_t s_preamble_options[] =
+{
+    4U, 6U, 8U, 12U, 16U, 24U, 32U
+};
+static const int8_t s_power_options_dbm[] =
+{
+    2, 5, 8, 11, 14, 17, 20
+};
+static const uint32_t s_sync_word_options[] =
+{
+    0x12UL, 0x34UL, 0x56UL, 0xA5UL, 0x55AAUL, 0x2DD4UL, 0xA55AUL, 0x00C194C1UL, 0x1ACFFC1DUL
+};
+static const uint8_t s_sync_len_options[] =
+{
+    0U, 1U, 2U, 3U, 4U
+};
+static const uint8_t s_ook_threshold_options[] =
+{
+    4U, 8U, 12U, 16U, 24U, 32U, 48U, 64U
+};
 
 static void security_main_task_fn(void *argument);
 static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_ms);
@@ -176,6 +222,20 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint8_t key_out[16]);
 static bool security_load_runtime_and_seed_from_store(void);
 static bool security_save_runtime_and_seed_to_store(void);
+static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg);
+static uint8_t security_pack_bits(uint8_t *buf, uint8_t bit_pos, uint32_t value, uint8_t width);
+static uint8_t security_unpack_bits(const uint8_t *buf, uint8_t bit_pos, uint8_t width, uint32_t *value_out);
+static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, uint8_t count, uint8_t fallback);
+static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, uint8_t count, uint8_t fallback);
+static uint8_t security_index_from_i8(int8_t value, const int8_t *table, uint8_t count, uint8_t fallback);
+static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8_t count, uint8_t fallback);
+static uint32_t security_u32_from_index(uint8_t idx, const uint32_t *table, uint8_t count, uint32_t fallback);
+static uint16_t security_u16_from_index(uint8_t idx, const uint16_t *table, uint8_t count, uint16_t fallback);
+static int8_t security_i8_from_index(uint8_t idx, const int8_t *table, uint8_t count, int8_t fallback);
+static uint8_t security_u8_from_index(uint8_t idx, const uint8_t *table, uint8_t count, uint8_t fallback);
+static bool security_save_radio_profiles_to_store(void);
+static bool security_load_radio_profiles_from_store(void);
+static void security_migrate_trusted_slot_v1_to_v2(void);
 static bool security_load_settings_legacy_from_store(void);
 static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static bool security_rotate_key_internal(void);
@@ -348,6 +408,22 @@ bool security_main_cmd_set_auto_ping(bool enabled)
     memset(&cmd, 0, sizeof(cmd));
     cmd.id = SECURITY_CMD_SET_AUTO_PING;
     cmd.u.set_bool.enabled = enabled;
+    return security_main_enqueue_sync(&cmd, &sync);
+}
+
+bool security_main_cmd_set_radio_runtime_cfg(const radio_main_runtime_cfg_t *cfg)
+{
+    security_cmd_t cmd;
+    security_cmd_sync_t sync;
+
+    if (cfg == NULL)
+    {
+        return false;
+    }
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = SECURITY_CMD_SET_RADIO_RUNTIME;
+    cmd.u.set_radio.cfg = *cfg;
     return security_main_enqueue_sync(&cmd, &sync);
 }
 
@@ -592,6 +668,15 @@ static void security_main_task_fn(void *argument)
                     cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
+                case SECURITY_CMD_SET_RADIO_RUNTIME:
+                    s_runtime_cfg.active_modulation = cmd.u.set_radio.cfg.active_modulation;
+                    s_runtime_cfg.lora = cmd.u.set_radio.cfg.lora;
+                    s_runtime_cfg.fsk = cmd.u.set_radio.cfg.fsk;
+                    s_runtime_cfg.ook = cmd.u.set_radio.cfg.ook;
+                    s_runtime_cfg.radio_profiles_persisted = true;
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    break;
+
                 case SECURITY_CMD_GET_RUNTIME:
                     cmd.sync->runtime_out = s_runtime_cfg;
                     cmd.sync->result = true;
@@ -691,6 +776,183 @@ static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES]
     }
 }
 
+static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return;
+    }
+
+    memset(&cfg->lora, 0, sizeof(cfg->lora));
+    cfg->lora.frequency_hz = 868500000UL;
+    cfg->lora.bandwidth = RADIO_LORA_BW_500_KHZ;
+    cfg->lora.spreading_factor = 7U;
+    cfg->lora.coding_rate = 5U;
+    cfg->lora.preamble_len = 8U;
+    cfg->lora.sync_word = 0x34U;
+    cfg->lora.crc_on = true;
+    cfg->lora.invert_iq = false;
+    cfg->lora.tx_power_dbm = 17;
+    cfg->lora.implicit_header = false;
+    cfg->lora.payload_len = 0U;
+
+    memset(&cfg->fsk, 0, sizeof(cfg->fsk));
+    cfg->fsk.shaping = RADIO_MAIN_FSK_SHAPING_GFSK;
+    cfg->fsk.frequency_hz = 868300000UL;
+    cfg->fsk.bitrate_bps = 4800UL;
+    cfg->fsk.rx_bandwidth = RADIO_LORA_BW_125_KHZ;
+    cfg->fsk.filter = RADIO_MAIN_FILTER_BT_05;
+    cfg->fsk.tx_power_dbm = 14;
+    cfg->fsk.preamble_len = 8U;
+    cfg->fsk.sync_word_len = 2U;
+    cfg->fsk.sync_word = 0x00002DD4UL;
+    cfg->fsk.address_filter = RADIO_MAIN_ADDRESS_FILTER_NONE;
+    cfg->fsk.crc_type = RADIO_MAIN_CRC_CCITT;
+    cfg->fsk.data_whitening = true;
+
+    memset(&cfg->ook, 0, sizeof(cfg->ook));
+    cfg->ook.frequency_hz = 868500000UL;
+    cfg->ook.bitrate_bps = 4800UL;
+    cfg->ook.rx_bandwidth = RADIO_LORA_BW_125_KHZ;
+    cfg->ook.tx_power_dbm = 10;
+    cfg->ook.preamble_len = 8U;
+    cfg->ook.sync_word_len = 2U;
+    cfg->ook.sync_word = 0x00002DD4UL;
+    cfg->ook.threshold = RADIO_MAIN_OOK_THRESHOLD_PEAK;
+    cfg->ook.threshold_value = 12U;
+    cfg->active_modulation = RADIO_MAIN_MODULATION_LORA;
+    cfg->radio_profiles_persisted = false;
+}
+
+static uint8_t security_pack_bits(uint8_t *buf, uint8_t bit_pos, uint32_t value, uint8_t width)
+{
+    uint8_t bit;
+
+    for (bit = 0U; bit < width; bit++)
+    {
+        uint8_t dst_bit = (uint8_t)(bit_pos + bit);
+        uint8_t dst_byte = (uint8_t)(dst_bit / 8U);
+        uint8_t dst_mask = (uint8_t)(1U << (dst_bit % 8U));
+
+        if (((value >> bit) & 0x01UL) != 0UL)
+        {
+            buf[dst_byte] |= dst_mask;
+        }
+        else
+        {
+            buf[dst_byte] &= (uint8_t)~dst_mask;
+        }
+    }
+
+    return (uint8_t)(bit_pos + width);
+}
+
+static uint8_t security_unpack_bits(const uint8_t *buf, uint8_t bit_pos, uint8_t width, uint32_t *value_out)
+{
+    uint32_t value = 0UL;
+    uint8_t bit;
+
+    if (value_out == NULL)
+    {
+        return bit_pos;
+    }
+
+    for (bit = 0U; bit < width; bit++)
+    {
+        uint8_t src_bit = (uint8_t)(bit_pos + bit);
+        uint8_t src_byte = (uint8_t)(src_bit / 8U);
+        uint8_t src_mask = (uint8_t)(1U << (src_bit % 8U));
+
+        if ((buf[src_byte] & src_mask) != 0U)
+        {
+            value |= (1UL << bit);
+        }
+    }
+
+    *value_out = value;
+    return (uint8_t)(bit_pos + width);
+}
+
+static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, uint8_t count, uint8_t fallback)
+{
+    uint8_t i;
+
+    for (i = 0U; i < count; i++)
+    {
+        if (table[i] == value)
+        {
+            return i;
+        }
+    }
+
+    return fallback;
+}
+
+static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, uint8_t count, uint8_t fallback)
+{
+    uint8_t i;
+
+    for (i = 0U; i < count; i++)
+    {
+        if (table[i] == value)
+        {
+            return i;
+        }
+    }
+
+    return fallback;
+}
+
+static uint8_t security_index_from_i8(int8_t value, const int8_t *table, uint8_t count, uint8_t fallback)
+{
+    uint8_t i;
+
+    for (i = 0U; i < count; i++)
+    {
+        if (table[i] == value)
+        {
+            return i;
+        }
+    }
+
+    return fallback;
+}
+
+static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8_t count, uint8_t fallback)
+{
+    uint8_t i;
+
+    for (i = 0U; i < count; i++)
+    {
+        if (table[i] == value)
+        {
+            return i;
+        }
+    }
+
+    return fallback;
+}
+
+static uint32_t security_u32_from_index(uint8_t idx, const uint32_t *table, uint8_t count, uint32_t fallback)
+{
+    return (idx < count) ? table[idx] : fallback;
+}
+
+static uint16_t security_u16_from_index(uint8_t idx, const uint16_t *table, uint8_t count, uint16_t fallback)
+{
+    return (idx < count) ? table[idx] : fallback;
+}
+
+static int8_t security_i8_from_index(uint8_t idx, const int8_t *table, uint8_t count, int8_t fallback)
+{
+    return (idx < count) ? table[idx] : fallback;
+}
+
+static uint8_t security_u8_from_index(uint8_t idx, const uint8_t *table, uint8_t count, uint8_t fallback)
+{
+    return (idx < count) ? table[idx] : fallback;
+}
+
 static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint32_t peer_node_id,
                                           const uint8_t *code,
@@ -768,13 +1030,14 @@ static bool security_load_runtime_and_seed_from_store(void)
     }
 
     rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_STORE_SLOT, buf, sizeof(buf), &len);
-    if ((rc != I2C_MEM_STORE_OK) || (len != sizeof(w)))
+    if ((rc != I2C_MEM_STORE_OK) || ((len != 13U) && (len != sizeof(w))))
     {
         return false;
     }
 
     memcpy(&w, buf, sizeof(w));
-    if ((w.magic != SECURITY_STORE_MAGIC) || (w.version != SECURITY_STORE_VERSION))
+    if ((w.magic != SECURITY_STORE_MAGIC) ||
+        ((w.version != 1U) && (w.version != SECURITY_STORE_VERSION)))
     {
         return false;
     }
@@ -785,7 +1048,17 @@ static bool security_load_runtime_and_seed_from_store(void)
     s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
                                 SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
     s_runtime_cfg.lora_preset = w.lora_preset;
+    s_runtime_cfg.active_modulation = (w.version >= SECURITY_STORE_VERSION) ?
+                                      (radio_main_modulation_t)w.active_modulation :
+                                      RADIO_MAIN_MODULATION_LORA;
+    s_runtime_cfg.radio_profiles_persisted = false;
     memcpy(s_key_seed_cached, w.seed, SECURITY_KEY_SEED_BYTES);
+
+    if (w.version >= SECURITY_STORE_VERSION)
+    {
+        s_runtime_cfg.radio_profiles_persisted = security_load_radio_profiles_from_store();
+    }
+
     return true;
 }
 
@@ -816,12 +1089,237 @@ static bool security_save_runtime_and_seed_to_store(void)
     }
     w.notify_mode = (uint8_t)s_runtime_cfg.notify_mode;
     w.lora_preset = s_runtime_cfg.lora_preset;
+    w.active_modulation = (uint8_t)s_runtime_cfg.active_modulation;
     memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
 
+    if (i2c_mem_store_secret_write(&s_mem_store,
+                                   SECURITY_STORE_SLOT,
+                                   (const uint8_t *)&w,
+                                   sizeof(w)) != I2C_MEM_STORE_OK)
+    {
+        return false;
+    }
+
+    if (!security_save_radio_profiles_to_store())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+static bool security_save_radio_profiles_to_store(void)
+{
+    security_radio_store_wire_t w;
+    uint8_t bit_pos = 0U;
+
+    memset(&w, 0, sizeof(w));
+    w.magic = SECURITY_STORE_MAGIC;
+    w.version = SECURITY_STORE_VERSION;
+
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.lora.frequency_hz,
+                                                         s_freq_options_hz,
+                                                         (uint8_t)(sizeof(s_freq_options_hz) / sizeof(s_freq_options_hz[0])),
+                                                         1U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.lora.bandwidth, 4U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)(s_runtime_cfg.lora.spreading_factor - 6U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)(s_runtime_cfg.lora.coding_rate - 5U), 2U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_i8(s_runtime_cfg.lora.tx_power_dbm,
+                                                        s_power_options_dbm,
+                                                        (uint8_t)(sizeof(s_power_options_dbm) / sizeof(s_power_options_dbm[0])),
+                                                        4U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, s_runtime_cfg.lora.crc_on ? 1UL : 0UL, 1U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u16(s_runtime_cfg.lora.preamble_len,
+                                                         &s_preamble_options[1],
+                                                         6U, 1U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, s_runtime_cfg.lora.implicit_header ? 1UL : 0UL, 1U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, s_runtime_cfg.lora.invert_iq ? 1UL : 0UL, 1U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.lora.sync_word,
+                                                         s_sync_word_options,
+                                                         4U, 1U), 2U);
+
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.fsk.shaping, 2U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.fsk.frequency_hz,
+                                                         s_freq_options_hz,
+                                                         (uint8_t)(sizeof(s_freq_options_hz) / sizeof(s_freq_options_hz[0])),
+                                                         2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.fsk.bitrate_bps,
+                                                         s_bitrate_options_bps,
+                                                         (uint8_t)(sizeof(s_bitrate_options_bps) / sizeof(s_bitrate_options_bps[0])),
+                                                         2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.fsk.rx_bandwidth - 4UL, 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.fsk.filter, 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_i8(s_runtime_cfg.fsk.tx_power_dbm,
+                                                        s_power_options_dbm,
+                                                        (uint8_t)(sizeof(s_power_options_dbm) / sizeof(s_power_options_dbm[0])),
+                                                        4U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u16(s_runtime_cfg.fsk.preamble_len,
+                                                         s_preamble_options,
+                                                         (uint8_t)(sizeof(s_preamble_options) / sizeof(s_preamble_options[0])),
+                                                         2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u8(s_runtime_cfg.fsk.sync_word_len,
+                                                        s_sync_len_options,
+                                                        5U, 2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32((uint32_t)s_runtime_cfg.fsk.sync_word,
+                                                         &s_sync_word_options[4],
+                                                         5U, 1U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.fsk.address_filter, 2U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 (s_runtime_cfg.fsk.crc_type == RADIO_MAIN_CRC_IBM) ? 1UL :
+                                 ((s_runtime_cfg.fsk.crc_type == RADIO_MAIN_CRC_CCITT) ? 2UL : 0UL), 2U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, s_runtime_cfg.fsk.data_whitening ? 1UL : 0UL, 1U);
+
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.ook.frequency_hz,
+                                                         s_freq_options_hz,
+                                                         (uint8_t)(sizeof(s_freq_options_hz) / sizeof(s_freq_options_hz[0])),
+                                                         3U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.ook.bitrate_bps,
+                                                         s_bitrate_options_bps,
+                                                         (uint8_t)(sizeof(s_bitrate_options_bps) / sizeof(s_bitrate_options_bps[0])),
+                                                         2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_i8(s_runtime_cfg.ook.tx_power_dbm,
+                                                        s_power_options_dbm,
+                                                        (uint8_t)(sizeof(s_power_options_dbm) / sizeof(s_power_options_dbm[0])),
+                                                        2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.ook.rx_bandwidth - 4UL, 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u16(s_runtime_cfg.ook.preamble_len,
+                                                         s_preamble_options,
+                                                         (uint8_t)(sizeof(s_preamble_options) / sizeof(s_preamble_options[0])),
+                                                         2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u8(s_runtime_cfg.ook.sync_word_len,
+                                                        s_sync_len_options,
+                                                        5U, 2U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos,
+                                 security_index_from_u32(s_runtime_cfg.ook.sync_word,
+                                                         &s_sync_word_options[4],
+                                                         5U, 1U), 3U);
+    bit_pos = security_pack_bits(w.packed, bit_pos, (uint32_t)s_runtime_cfg.ook.threshold, 2U);
+    (void)security_pack_bits(w.packed, bit_pos,
+                             security_index_from_u8(s_runtime_cfg.ook.threshold_value,
+                                                    s_ook_threshold_options,
+                                                    8U, 2U), 3U);
+
     return (i2c_mem_store_secret_write(&s_mem_store,
-                                       SECURITY_STORE_SLOT,
+                                       SECURITY_STORE_RADIO_SLOT,
                                        (const uint8_t *)&w,
                                        sizeof(w)) == I2C_MEM_STORE_OK);
+}
+
+static bool security_load_radio_profiles_from_store(void)
+{
+    uint8_t buf[sizeof(security_radio_store_wire_t)];
+    uint8_t len = 0U;
+    security_radio_store_wire_t w;
+    uint8_t bit_pos = 0U;
+    uint32_t value = 0UL;
+
+    if (!s_mem_ready)
+    {
+        return false;
+    }
+
+    if (i2c_mem_store_secret_read(&s_mem_store,
+                                  SECURITY_STORE_RADIO_SLOT,
+                                  buf,
+                                  sizeof(buf),
+                                  &len) != I2C_MEM_STORE_OK)
+    {
+        return false;
+    }
+    if (len != sizeof(w))
+    {
+        return false;
+    }
+
+    memcpy(&w, buf, sizeof(w));
+    if ((w.magic != SECURITY_STORE_MAGIC) || (w.version != SECURITY_STORE_VERSION))
+    {
+        return false;
+    }
+
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.lora.frequency_hz = security_u32_from_index((uint8_t)value, s_freq_options_hz, 7U, 868500000UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 4U, &value);
+    s_runtime_cfg.lora.bandwidth = (radio_lora_bw_t)value;
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.lora.spreading_factor = (uint8_t)(value + 6U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
+    s_runtime_cfg.lora.coding_rate = (uint8_t)(value + 5U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.lora.tx_power_dbm = security_i8_from_index((uint8_t)value, s_power_options_dbm, 7U, 17);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 1U, &value);
+    s_runtime_cfg.lora.crc_on = (value != 0UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.lora.preamble_len = security_u16_from_index((uint8_t)value, &s_preamble_options[1], 6U, 8U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 1U, &value);
+    s_runtime_cfg.lora.implicit_header = (value != 0UL);
+    s_runtime_cfg.lora.payload_len = s_runtime_cfg.lora.implicit_header ? BEKO_NET_MAX_PAYLOAD : 0U;
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 1U, &value);
+    s_runtime_cfg.lora.invert_iq = (value != 0UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
+    s_runtime_cfg.lora.sync_word = (uint8_t)security_u32_from_index((uint8_t)value, s_sync_word_options, 4U, 0x34U);
+
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
+    s_runtime_cfg.fsk.shaping = (radio_main_fsk_shaping_t)value;
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.frequency_hz = security_u32_from_index((uint8_t)value, s_freq_options_hz, 7U, 868300000UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.bitrate_bps = security_u32_from_index((uint8_t)value, s_bitrate_options_bps, 8U, 4800UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.rx_bandwidth = (radio_lora_bw_t)(value + 4U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.filter = (radio_main_filter_t)value;
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.tx_power_dbm = security_i8_from_index((uint8_t)value, s_power_options_dbm, 7U, 14);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.preamble_len = security_u16_from_index((uint8_t)value, s_preamble_options, 7U, 8U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.sync_word_len = security_u8_from_index((uint8_t)value, s_sync_len_options, 5U, 2U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.fsk.sync_word = security_u32_from_index((uint8_t)value, &s_sync_word_options[4], 5U, 0x2DD4UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
+    s_runtime_cfg.fsk.address_filter = (radio_main_address_filter_t)value;
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
+    s_runtime_cfg.fsk.crc_type = (value == 1UL) ? RADIO_MAIN_CRC_IBM :
+                                 ((value == 2UL) ? RADIO_MAIN_CRC_CCITT : RADIO_MAIN_CRC_OFF);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 1U, &value);
+    s_runtime_cfg.fsk.data_whitening = (value != 0UL);
+
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.frequency_hz = security_u32_from_index((uint8_t)value, s_freq_options_hz, 7U, 868500000UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.bitrate_bps = security_u32_from_index((uint8_t)value, s_bitrate_options_bps, 8U, 4800UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.tx_power_dbm = security_i8_from_index((uint8_t)value, s_power_options_dbm, 7U, 10);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.rx_bandwidth = (radio_lora_bw_t)(value + 4U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.preamble_len = security_u16_from_index((uint8_t)value, s_preamble_options, 7U, 8U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.sync_word_len = security_u8_from_index((uint8_t)value, s_sync_len_options, 5U, 2U);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.sync_word = security_u32_from_index((uint8_t)value, &s_sync_word_options[4], 5U, 0x2DD4UL);
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
+    s_runtime_cfg.ook.threshold = (radio_main_ook_threshold_t)value;
+    bit_pos = security_unpack_bits(w.packed, bit_pos, 3U, &value);
+    s_runtime_cfg.ook.threshold_value = security_u8_from_index((uint8_t)value, s_ook_threshold_options, 8U, 12U);
+
+    return true;
 }
 
 static bool security_load_settings_legacy_from_store(void)
@@ -891,6 +1389,26 @@ static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_S
 
     memcpy(seed, w.seed, SECURITY_KEY_SEED_BYTES);
     return true;
+}
+
+static void security_migrate_trusted_slot_v1_to_v2(void)
+{
+    i2c_mem_store_trusted_device_t trusted;
+
+    if (!s_mem_ready)
+    {
+        return;
+    }
+
+    if (i2c_mem_store_trusted_device_read(&s_mem_store, 1U, &trusted) != I2C_MEM_STORE_OK)
+    {
+        return;
+    }
+
+    if (i2c_mem_store_trusted_device_write(&s_mem_store, SECURITY_TRUSTED_SLOT_BASE, &trusted) == I2C_MEM_STORE_OK)
+    {
+        (void)i2c_mem_store_secret_erase(&s_mem_store, 1U);
+    }
 }
 
 static bool security_rotate_key_internal(void)
@@ -1216,7 +1734,7 @@ static void security_bootstrap_tpm(void)
     if (st33ktpm2x_read_identity(&s_tpm, &did_vid, &rid) == ST33KTPM2X_OK)
     {
         s_tpm_ready = true;
-        printf("SEC: TPM ready DIDVID=0x%08lX RID=0x%02X\r\n", did_vid, rid);
+        printf("SEC: TPM ready DIDVID=0x%08lX RID=0x%02X\r\n", (unsigned long)did_vid, rid);
     }
     else
     {
@@ -1229,10 +1747,12 @@ static void security_bootstrap_store(void)
 {
     i2c_mem_store_cfg_t mem_cfg;
     bool loaded = false;
+    bool loaded_v1 = false;
 
     i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
-    mem_cfg.secret_area_bytes = 48U;
+    mem_cfg.secret_area_bytes = 72U;
     memset(s_key_seed_cached, 0, sizeof(s_key_seed_cached));
+    security_load_default_radio_profiles(&s_runtime_cfg);
 
     if (i2c_mem_store_init(&s_mem_store, &mem_cfg, true) == I2C_MEM_STORE_OK)
     {
@@ -1248,6 +1768,7 @@ static void security_bootstrap_store(void)
     if (s_mem_ready)
     {
         loaded = security_load_runtime_and_seed_from_store();
+        loaded_v1 = loaded && !s_runtime_cfg.radio_profiles_persisted;
         if (!loaded)
         {
             if (security_load_settings_legacy_from_store() &&
@@ -1267,14 +1788,12 @@ static void security_bootstrap_store(void)
         (void)security_rotate_key_internal();
     }
 
-    /* Keep secure defaults after restart. */
-    s_runtime_cfg.coding_enabled = true;
-    s_runtime_cfg.fh_enabled = false;
-    s_runtime_cfg.auto_ping_enabled = false;
-    s_runtime_cfg.lora_preset = 0U;
-
     if (s_mem_ready)
     {
+        if (loaded_v1)
+        {
+            security_migrate_trusted_slot_v1_to_v2();
+        }
         (void)security_save_runtime_and_seed_to_store();
         security_load_trusted_from_store();
     }

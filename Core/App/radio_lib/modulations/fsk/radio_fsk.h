@@ -1,9 +1,6 @@
 /**
  * @file radio_fsk.h
- * @brief Interfejs backendu modulacji FSK (szkielet).
- *
- * Plik definiuje docelowy kontrakt API dla FSK. Aktualna implementacja jest
- * placeholderem i zwraca błędy stanu (`RADIO_ESTATE`).
+ * @brief Interfejs backendu modulacji FSK dla SX1276.
  */
 
 #ifndef APP_RADIO_LIB_MODULATIONS_FSK_RADIO_FSK_H_
@@ -19,6 +16,8 @@ extern "C" {
 void radio_fsk_default_hw_cfg(radio_hw_cfg_t *cfg, SPI_HandleTypeDef *hspi);
 /** @brief Domyślna konfiguracja parametrów backendu FSK. */
 void radio_fsk_default_lora_cfg(radio_lora_cfg_t *cfg);
+/** @brief Ustawia runtime konfigurację właściwą dla backendu FSK. */
+radio_status_t radio_fsk_set_runtime_cfg(const radio_fsk_cfg_t *cfg);
 /** @brief Inicjalizacja backendu FSK. */
 radio_status_t radio_fsk_init(const radio_hw_cfg_t *hw,
                               const radio_lora_cfg_t *cfg,

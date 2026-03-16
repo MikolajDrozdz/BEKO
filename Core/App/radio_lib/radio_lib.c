@@ -1,10 +1,6 @@
 /**
  * @file radio_lib.c
- * @brief Fasada biblioteki radia delegująca wywołania do aktywnego backendu.
- *
- * Implementacja w tym pliku nie zawiera logiki modulacji. Jej rolą jest
- * przekierowanie funkcji API do backendu wybranego przez
- * `RADIO_LIB_ACTIVE_MODULATION`.
+ * @brief Fasada biblioteki radia delegująca wywołania do backendu wybranego w runtime.
  */
 
 #include "radio_lib.h"
@@ -13,30 +9,91 @@
 #include "modulations/lora/radio_lora.h"
 #include "modulations/ook/radio_ook.h"
 
-/**
- * @note Szczegółowe opisy parametrów i kodów zwrotnych funkcji publicznych
- * znajdują się w `radio_lib.h`.
- */
+#include <string.h>
+
+static uint8_t s_active_backend = RADIO_LIB_ACTIVE_MODULATION;
+
+static uint8_t radio_normalize_backend(uint8_t modulation)
+{
+    if ((modulation == RADIO_LIB_MODULATION_LORA) ||
+        (modulation == RADIO_LIB_MODULATION_FSK) ||
+        (modulation == RADIO_LIB_MODULATION_OOK))
+    {
+        return modulation;
+    }
+
+    return RADIO_LIB_MODULATION_LORA;
+}
+
 void radio_default_hw_cfg(radio_hw_cfg_t *cfg, SPI_HandleTypeDef *hspi)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
     radio_lora_default_hw_cfg(cfg, hspi);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    radio_fsk_default_hw_cfg(cfg, hspi);
-#else
-    radio_ook_default_hw_cfg(cfg, hspi);
-#endif
 }
 
 void radio_default_lora_cfg(radio_lora_cfg_t *cfg)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
     radio_lora_default_lora_cfg(cfg);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    radio_fsk_default_lora_cfg(cfg);
-#else
-    radio_ook_default_lora_cfg(cfg);
-#endif
+}
+
+void radio_default_fsk_cfg(radio_fsk_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return;
+    }
+
+    memset(cfg, 0, sizeof(*cfg));
+    cfg->frequency_hz = 868300000UL;
+    cfg->bitrate_bps = 4800UL;
+    cfg->rx_bandwidth = RADIO_LORA_BW_125_KHZ;
+    cfg->shaping = RADIO_FSK_SHAPING_GFSK;
+    cfg->filter = RADIO_FSK_FILTER_BT_05;
+    cfg->tx_power_dbm = 14;
+    cfg->preamble_len = 8U;
+    cfg->sync_word_len = 2U;
+    cfg->sync_word = 0x00002DD4UL;
+    cfg->address_filter = RADIO_ADDRESS_FILTER_OFF;
+    cfg->crc_type = RADIO_PACKET_CRC_CCITT;
+    cfg->data_whitening = true;
+}
+
+void radio_default_ook_cfg(radio_ook_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return;
+    }
+
+    memset(cfg, 0, sizeof(*cfg));
+    cfg->frequency_hz = 868500000UL;
+    cfg->bitrate_bps = 4800UL;
+    cfg->rx_bandwidth = RADIO_LORA_BW_125_KHZ;
+    cfg->tx_power_dbm = 10;
+    cfg->preamble_len = 8U;
+    cfg->sync_word_len = 2U;
+    cfg->sync_word = 0x00002DD4UL;
+    cfg->threshold = RADIO_OOK_THRESHOLD_PEAK;
+    cfg->threshold_value = 12U;
+}
+
+void radio_select_backend(uint8_t modulation)
+{
+    s_active_backend = radio_normalize_backend(modulation);
+}
+
+uint8_t radio_get_backend(void)
+{
+    return s_active_backend;
+}
+
+radio_status_t radio_set_fsk_cfg(const radio_fsk_cfg_t *cfg)
+{
+    return radio_fsk_set_runtime_cfg(cfg);
+}
+
+radio_status_t radio_set_ook_cfg(const radio_ook_cfg_t *cfg)
+{
+    return radio_ook_set_runtime_cfg(cfg);
 }
 
 radio_status_t radio_init(const radio_hw_cfg_t *hw,
@@ -44,178 +101,264 @@ radio_status_t radio_init(const radio_hw_cfg_t *hw,
                           radio_event_cb_t cb,
                           void *user_ctx)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_init(hw, cfg, cb, user_ctx);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_init(hw, cfg, cb, user_ctx);
-#else
-    return radio_ook_init(hw, cfg, cb, user_ctx);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_init(hw, cfg, cb, user_ctx);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_init(hw, cfg, cb, user_ctx);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_init(hw, cfg, cb, user_ctx);
+    }
 }
 
 radio_status_t radio_deinit(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_deinit();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_deinit();
-#else
-    return radio_ook_deinit();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_deinit();
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_deinit();
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_deinit();
+    }
 }
 
 radio_status_t radio_start_rx_continuous(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_start_rx_continuous();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_start_rx_continuous();
-#else
-    return radio_ook_start_rx_continuous();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_start_rx_continuous();
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_start_rx_continuous();
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_start_rx_continuous();
+    }
 }
 
 radio_status_t radio_start_rx_single(uint16_t symbol_timeout)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_start_rx_single(symbol_timeout);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_start_rx_single(symbol_timeout);
-#else
-    return radio_ook_start_rx_single(symbol_timeout);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_start_rx_single(symbol_timeout);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_start_rx_single(symbol_timeout);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_start_rx_single(symbol_timeout);
+    }
 }
 
 radio_status_t radio_send_async(const uint8_t *data, uint8_t len)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_send_async(data, len);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_send_async(data, len);
-#else
-    return radio_ook_send_async(data, len);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_send_async(data, len);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_send_async(data, len);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_send_async(data, len);
+    }
 }
 
 radio_status_t radio_standby(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_standby();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_standby();
-#else
-    return radio_ook_standby();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_standby();
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_standby();
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_standby();
+    }
 }
 
 radio_status_t radio_sleep(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_sleep();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_sleep();
-#else
-    return radio_ook_sleep();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_sleep();
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_sleep();
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_sleep();
+    }
 }
 
 void radio_process(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    radio_lora_process();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    radio_fsk_process();
-#else
-    radio_ook_process();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            radio_fsk_process();
+            break;
+
+        case RADIO_LIB_MODULATION_OOK:
+            radio_ook_process();
+            break;
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            radio_lora_process();
+            break;
+    }
 }
 
 uint32_t radio_take_events(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_take_events();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_take_events();
-#else
-    return radio_ook_take_events();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_take_events();
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_take_events();
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_take_events();
+    }
 }
 
 bool radio_get_last_packet(radio_packet_t *pkt)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_get_last_packet(pkt);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_get_last_packet(pkt);
-#else
-    return radio_ook_get_last_packet(pkt);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_get_last_packet(pkt);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_get_last_packet(pkt);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_get_last_packet(pkt);
+    }
 }
 
 radio_state_t radio_get_state(void)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_get_state();
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_get_state();
-#else
-    return radio_ook_get_state();
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_get_state();
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_get_state();
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_get_state();
+    }
 }
 
 radio_status_t radio_raw_read_reg(uint8_t reg, uint8_t *value)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_raw_read_reg(reg, value);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_raw_read_reg(reg, value);
-#else
-    return radio_ook_raw_read_reg(reg, value);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_raw_read_reg(reg, value);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_raw_read_reg(reg, value);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_raw_read_reg(reg, value);
+    }
 }
 
 radio_status_t radio_raw_write_reg(uint8_t reg, uint8_t value)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_raw_write_reg(reg, value);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_raw_write_reg(reg, value);
-#else
-    return radio_ook_raw_write_reg(reg, value);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_raw_write_reg(reg, value);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_raw_write_reg(reg, value);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_raw_write_reg(reg, value);
+    }
 }
 
 radio_status_t radio_raw_read_burst(uint8_t reg, uint8_t *data, uint8_t len)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_raw_read_burst(reg, data, len);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_raw_read_burst(reg, data, len);
-#else
-    return radio_ook_raw_read_burst(reg, data, len);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_raw_read_burst(reg, data, len);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_raw_read_burst(reg, data, len);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_raw_read_burst(reg, data, len);
+    }
 }
 
 radio_status_t radio_raw_write_burst(uint8_t reg, const uint8_t *data, uint8_t len)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    return radio_lora_raw_write_burst(reg, data, len);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    return radio_fsk_raw_write_burst(reg, data, len);
-#else
-    return radio_ook_raw_write_burst(reg, data, len);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            return radio_fsk_raw_write_burst(reg, data, len);
+
+        case RADIO_LIB_MODULATION_OOK:
+            return radio_ook_raw_write_burst(reg, data, len);
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            return radio_lora_raw_write_burst(reg, data, len);
+    }
 }
 
 void radio_on_exti(uint16_t gpio_pin)
 {
-#if (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_LORA)
-    radio_lora_on_exti(gpio_pin);
-#elif (RADIO_LIB_ACTIVE_MODULATION == RADIO_LIB_MODULATION_FSK)
-    radio_fsk_on_exti(gpio_pin);
-#else
-    radio_ook_on_exti(gpio_pin);
-#endif
+    switch (s_active_backend)
+    {
+        case RADIO_LIB_MODULATION_FSK:
+            radio_fsk_on_exti(gpio_pin);
+            break;
+
+        case RADIO_LIB_MODULATION_OOK:
+            radio_ook_on_exti(gpio_pin);
+            break;
+
+        case RADIO_LIB_MODULATION_LORA:
+        default:
+            radio_lora_on_exti(gpio_pin);
+            break;
+    }
 }
 
 #if RADIO_LIB_OWNS_HAL_EXTI_CALLBACK

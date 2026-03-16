@@ -55,7 +55,7 @@
  * @brief Domyślna częstotliwość LoRa (Hz).
  */
 #ifndef RADIO_LIB_DEFAULT_FREQ_HZ
-#define RADIO_LIB_DEFAULT_FREQ_HZ 868100000UL
+#define RADIO_LIB_DEFAULT_FREQ_HZ 868500000UL
 #endif
 
 /**

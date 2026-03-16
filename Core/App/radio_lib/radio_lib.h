@@ -2,8 +2,9 @@
  * @file radio_lib.h
  * @brief Główne API biblioteki radiowej.
  *
- * Ten plik udostępnia jednolite API dla aplikacji. Konkretna implementacja
- * jest wybierana kompilacyjnie (LoRa/FSK/OOK) przez `radio_lib_config.h`.
+ * Ten plik udostępnia jednolite API dla aplikacji. Domyślny backend nadal może
+ * być wskazany kompilacyjnie przez `radio_lib_config.h`, ale warstwa aplikacji
+ * może go również przełączyć w runtime przez `radio_select_backend(...)`.
  */
 
 #ifndef APP_RADIO_LIB_RADIO_LIB_H_
@@ -118,6 +119,94 @@ typedef struct
 } radio_lora_cfg_t;
 
 /**
+ * @brief Kształtowanie widma dla rodziny FSK.
+ */
+typedef enum
+{
+    RADIO_FSK_SHAPING_FSK = 0U,   /**< Klasyczne FSK bez filtra gaussowskiego. */
+    RADIO_FSK_SHAPING_GFSK,       /**< GFSK z filtrem gaussowskim. */
+    RADIO_FSK_SHAPING_MSK,        /**< MSK. */
+    RADIO_FSK_SHAPING_GMSK        /**< GMSK. */
+} radio_fsk_shaping_t;
+
+/**
+ * @brief Ustawienie filtra BT dla wariantów gaussowskich FSK.
+ */
+typedef enum
+{
+    RADIO_FSK_FILTER_NONE = 0U,
+    RADIO_FSK_FILTER_BT_10,
+    RADIO_FSK_FILTER_BT_07,
+    RADIO_FSK_FILTER_BT_05,
+    RADIO_FSK_FILTER_BT_03
+} radio_fsk_filter_t;
+
+/**
+ * @brief Typ CRC pakietowego dla backendów packet-mode.
+ */
+typedef enum
+{
+    RADIO_PACKET_CRC_OFF = 0U,
+    RADIO_PACKET_CRC_CCITT,
+    RADIO_PACKET_CRC_IBM
+} radio_packet_crc_t;
+
+/**
+ * @brief Tryb filtrowania adresowego dla packet engine FSK/OOK.
+ */
+typedef enum
+{
+    RADIO_ADDRESS_FILTER_OFF = 0U,
+    RADIO_ADDRESS_FILTER_NODE,
+    RADIO_ADDRESS_FILTER_NODE_BROADCAST
+} radio_address_filter_t;
+
+/**
+ * @brief Tryb progu detekcji OOK.
+ */
+typedef enum
+{
+    RADIO_OOK_THRESHOLD_FIXED = 0U,
+    RADIO_OOK_THRESHOLD_PEAK,
+    RADIO_OOK_THRESHOLD_AVERAGE
+} radio_ook_threshold_t;
+
+/**
+ * @brief Konfiguracja backendu FSK/GFSK/MSK/GMSK.
+ */
+typedef struct
+{
+    uint32_t frequency_hz;                /**< Częstotliwość RF [Hz]. */
+    uint32_t bitrate_bps;                 /**< Bitrate [bps]. */
+    radio_lora_bw_t rx_bandwidth;         /**< Szerokość pasma RX zakodowana tym samym enumem co w LoRa. */
+    radio_fsk_shaping_t shaping;          /**< Odmiana/kanał shapingu modulacji. */
+    radio_fsk_filter_t filter;            /**< Typ filtra BT dla wariantów gaussowskich. */
+    int8_t tx_power_dbm;                  /**< Moc TX [dBm]. */
+    uint16_t preamble_len;                /**< Długość preambuły [B]. */
+    uint8_t sync_word_len;                /**< Długość słowa synchronizacji [B]. */
+    uint32_t sync_word;                   /**< Wzorzec sync word, używane najmłodsze `sync_word_len` bajtów. */
+    radio_address_filter_t address_filter;/**< Filtrowanie adresowe packet engine. */
+    radio_packet_crc_t crc_type;          /**< Typ CRC packet engine. */
+    bool data_whitening;                  /**< Włączenie whitening-u danych. */
+} radio_fsk_cfg_t;
+
+/**
+ * @brief Konfiguracja backendu OOK.
+ */
+typedef struct
+{
+    uint32_t frequency_hz;             /**< Częstotliwość nośna [Hz]. */
+    uint32_t bitrate_bps;              /**< Bitrate [bps]. */
+    radio_lora_bw_t rx_bandwidth;      /**< Szerokość pasma RX. */
+    int8_t tx_power_dbm;               /**< Moc TX [dBm]. */
+    uint16_t preamble_len;             /**< Długość preambuły [B]. */
+    uint8_t sync_word_len;             /**< Długość słowa synchronizacji [B]. */
+    uint32_t sync_word;                /**< Wzorzec sync word, używane najmłodsze `sync_word_len` bajtów. */
+    radio_ook_threshold_t threshold;   /**< Tryb progu OOK. */
+    uint8_t threshold_value;           /**< Surowa wartość progu zależna od trybu. */
+} radio_ook_cfg_t;
+
+/**
  * @brief Bufor ostatnio odebranej ramki.
  */
 typedef struct
@@ -149,6 +238,34 @@ void radio_default_hw_cfg(radio_hw_cfg_t *cfg, SPI_HandleTypeDef *hspi);
  * @param cfg [out] Struktura konfiguracji LoRa do uzupełnienia.
  */
 void radio_default_lora_cfg(radio_lora_cfg_t *cfg);
+void radio_default_fsk_cfg(radio_fsk_cfg_t *cfg);
+void radio_default_ook_cfg(radio_ook_cfg_t *cfg);
+
+/**
+ * @brief Wybiera backend modulacji używany przez wspólne API w runtime.
+ * @param modulation Jedna ze stałych `RADIO_LIB_MODULATION_*`.
+ */
+void radio_select_backend(uint8_t modulation);
+
+/**
+ * @brief Zwraca backend aktualnie wybrany do dispatchu runtime.
+ * @return Jedna ze stałych `RADIO_LIB_MODULATION_*`.
+ */
+uint8_t radio_get_backend(void);
+
+/**
+ * @brief Przekazuje konfigurację runtime dla backendu FSK.
+ * @param cfg Konfiguracja FSK do zapamiętania przed `radio_init(...)`.
+ * @return Kod statusu.
+ */
+radio_status_t radio_set_fsk_cfg(const radio_fsk_cfg_t *cfg);
+
+/**
+ * @brief Przekazuje konfigurację runtime dla backendu OOK.
+ * @param cfg Konfiguracja OOK do zapamiętania przed `radio_init(...)`.
+ * @return Kod statusu.
+ */
+radio_status_t radio_set_ook_cfg(const radio_ook_cfg_t *cfg);
 
 /**
  * @brief Inicjalizuje backend radiowy.

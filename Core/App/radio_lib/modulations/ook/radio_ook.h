@@ -1,9 +1,6 @@
 /**
  * @file radio_ook.h
- * @brief Interfejs backendu modulacji OOK (szkielet).
- *
- * Plik definiuje docelowy kontrakt API dla OOK. Aktualna implementacja jest
- * placeholderem i zwraca błędy stanu (`RADIO_ESTATE`).
+ * @brief Interfejs backendu modulacji OOK dla SX1276.
  */
 
 #ifndef APP_RADIO_LIB_MODULATIONS_OOK_RADIO_OOK_H_
@@ -19,6 +16,8 @@ extern "C" {
 void radio_ook_default_hw_cfg(radio_hw_cfg_t *cfg, SPI_HandleTypeDef *hspi);
 /** @brief Domyślna konfiguracja parametrów backendu OOK. */
 void radio_ook_default_lora_cfg(radio_lora_cfg_t *cfg);
+/** @brief Ustawia runtime konfigurację właściwą dla backendu OOK. */
+radio_status_t radio_ook_set_runtime_cfg(const radio_ook_cfg_t *cfg);
 /** @brief Inicjalizacja backendu OOK. */
 radio_status_t radio_ook_init(const radio_hw_cfg_t *hw,
                               const radio_lora_cfg_t *cfg,

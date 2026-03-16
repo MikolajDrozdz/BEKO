@@ -33,6 +33,7 @@ typedef enum
     RADIO_MAIN_CMD_SET_MODULATION,
     RADIO_MAIN_CMD_SET_MOD_FREQ,
     RADIO_MAIN_CMD_SET_MOD_BW,
+    RADIO_MAIN_CMD_SET_OPTION,
     RADIO_MAIN_CMD_SET_FH,
     RADIO_MAIN_CMD_SET_CODING,
     RADIO_MAIN_CMD_SET_AUTO_PING,
@@ -46,6 +47,7 @@ typedef struct
 {
     volatile bool done;
     bool result;
+    radio_main_runtime_cfg_t runtime_cfg;
 } radio_main_cmd_sync_t;
 
 typedef struct
@@ -70,6 +72,11 @@ typedef struct
         } set_u32;
         struct
         {
+            radio_main_option_t option;
+            uint32_t value;
+        } set_option;
+        struct
+        {
             bool enabled;
         } set_bool;
         struct
@@ -86,17 +93,16 @@ typedef struct
 typedef struct
 {
     radio_hw_cfg_t hw;
+    radio_lora_cfg_t backend_cfg;
     radio_lora_cfg_t lora_cfg;
-    uint8_t modulation_id;
+    radio_main_modulation_t modulation_id;
     bool initialized;
     bool fh_enabled;
     bool coding_enabled;
     bool auto_ping_enabled;
     uint8_t lora_preset;
-    uint32_t fsk_freq_hz;
-    radio_lora_bw_t fsk_bw;
-    uint32_t ook_freq_hz;
-    radio_lora_bw_t ook_bw;
+    radio_main_fsk_cfg_t fsk_cfg;
+    radio_main_ook_cfg_t ook_cfg;
     uint8_t hop_idx;
     uint32_t last_hop_ms;
     uint32_t last_ping_ms;
@@ -128,7 +134,20 @@ static bool radio_main_enqueue_sync(const radio_main_cmd_t *cmd, radio_main_cmd_
 static bool radio_main_wait_sync(radio_main_cmd_sync_t *sync, uint32_t timeout_ms);
 static bool radio_main_radio_init_and_start(void);
 static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg);
+static void radio_main_load_default_profiles(void);
+static void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg);
+static void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg);
 static void radio_main_apply_modulation_cfg(void);
+static void radio_main_sync_snapshot(radio_main_runtime_cfg_t *cfg);
+static bool radio_main_apply_option(radio_main_option_t option, uint32_t value);
+static radio_packet_crc_t radio_main_map_fsk_crc(radio_main_crc_type_t crc_type);
+static radio_address_filter_t radio_main_map_fsk_address_filter(radio_main_address_filter_t filter);
+static radio_ook_threshold_t radio_main_map_ook_threshold(radio_main_ook_threshold_t threshold);
+static bool radio_main_push_backend_cfg(void);
+static bool radio_main_validate_frequency(uint32_t frequency_hz);
+static bool radio_main_validate_tx_power(int32_t tx_power_dbm);
+static bool radio_main_validate_bitrate(uint32_t bitrate_bps);
+static bool radio_main_validate_preamble(uint32_t preamble_len);
 static bool radio_main_is_supported_bw(uint8_t bw_code);
 static bool radio_main_reconfigure_radio(void);
 static bool radio_main_send_system_frame(uint8_t type,
@@ -273,6 +292,19 @@ bool radio_main_cmd_set_modulation_bw(uint8_t bandwidth_code)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
+bool radio_main_cmd_set_option(radio_main_option_t option, uint32_t value)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SET_OPTION;
+    cmd.u.set_option.option = option;
+    cmd.u.set_option.value = value;
+
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
 bool radio_main_cmd_set_fh(bool enabled)
 {
     radio_main_cmd_t cmd;
@@ -349,6 +381,25 @@ bool radio_main_cmd_send_trust_removed(uint32_t dst_id)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
+bool radio_main_get_runtime_cfg(radio_main_runtime_cfg_t *cfg_out)
+{
+    bool ok = false;
+
+    if ((cfg_out == NULL) || (s_radio_state_mutex == NULL))
+    {
+        return false;
+    }
+
+    if (osMutexAcquire(s_radio_state_mutex, 100U) == osOK)
+    {
+        radio_main_sync_snapshot(cfg_out);
+        (void)osMutexRelease(s_radio_state_mutex);
+        ok = true;
+    }
+
+    return ok;
+}
+
 uint32_t radio_main_get_node_id(void)
 {
     uint32_t node_id = 0U;
@@ -374,34 +425,44 @@ static void radio_main_task_fn(void *argument)
 
     (void)argument;
     memset(&s_ctx, 0, sizeof(s_ctx));
+    memset(&sec_cfg, 0, sizeof(sec_cfg));
     s_ctx.node_id = beko_net_local_node_id();
     s_ctx.next_msg_id = 1U;
-    s_ctx.modulation_id = 0U;
-    s_ctx.lora_preset = 0U;
-    s_ctx.fsk_freq_hz = 868300000UL;
-    s_ctx.fsk_bw = RADIO_LORA_BW_125_KHZ;
-    s_ctx.ook_freq_hz = 868500000UL;
-    s_ctx.ook_bw = RADIO_LORA_BW_125_KHZ;
+    s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
+    s_ctx.lora_preset = 2U;
     beko_net_dedup_init(&s_ctx.dedup, RADIO_DEDUP_WINDOW_MS);
 
     radio_default_hw_cfg(&s_ctx.hw, &hspi1);
     radio_default_lora_cfg(&s_ctx.lora_cfg);
+    s_ctx.backend_cfg = s_ctx.lora_cfg;
+    radio_main_load_default_profiles();
 
     if (security_main_cmd_get_runtime_cfg(&sec_cfg))
     {
         s_ctx.coding_enabled = sec_cfg.coding_enabled;
-        s_ctx.fh_enabled = false;
-        s_ctx.auto_ping_enabled = false;
-        s_ctx.lora_preset = 0U;
+        s_ctx.fh_enabled = sec_cfg.fh_enabled;
+        s_ctx.auto_ping_enabled = sec_cfg.auto_ping_enabled;
+        s_ctx.lora_preset = sec_cfg.lora_preset;
+        if (sec_cfg.radio_profiles_persisted)
+        {
+            s_ctx.modulation_id = sec_cfg.active_modulation;
+            s_ctx.lora_cfg = sec_cfg.lora;
+            s_ctx.fsk_cfg = sec_cfg.fsk;
+            s_ctx.ook_cfg = sec_cfg.ook;
+        }
     }
     else
     {
         s_ctx.fh_enabled = false;
         s_ctx.coding_enabled = false;
         s_ctx.auto_ping_enabled = false;
-        s_ctx.lora_preset = 0U;
+        s_ctx.lora_preset = 2U;
     }
 
+    if (!sec_cfg.radio_profiles_persisted)
+    {
+        radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+    }
     radio_main_apply_modulation_cfg();
     s_ctx.last_hop_ms = radio_main_now_ms();
     s_ctx.last_ping_ms = radio_main_now_ms();
@@ -434,9 +495,9 @@ static void radio_main_task_fn(void *argument)
                     if (cmd.u.set_u8.value <= 2U)
                     {
                         s_ctx.lora_preset = cmd.u.set_u8.value;
-                        if (s_ctx.modulation_id == 0U)
+                        radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+                        if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA)
                         {
-                            radio_main_apply_modulation_cfg();
                             cmd_result = radio_main_reconfigure_radio();
                         }
                         else
@@ -449,51 +510,51 @@ static void radio_main_task_fn(void *argument)
                 case RADIO_MAIN_CMD_SET_MODULATION:
                     if (cmd.u.set_u8.value <= 2U)
                     {
-                        s_ctx.modulation_id = cmd.u.set_u8.value;
+                        s_ctx.modulation_id = (radio_main_modulation_t)cmd.u.set_u8.value;
                         radio_main_apply_modulation_cfg();
                         cmd_result = radio_main_reconfigure_radio();
                     }
                     break;
 
                 case RADIO_MAIN_CMD_SET_MOD_FREQ:
-                    if ((cmd.u.set_u32.value >= 150000000UL) &&
-                        (cmd.u.set_u32.value <= 960000000UL))
+                    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
                     {
-                        if (s_ctx.modulation_id == 1U)
-                        {
-                            s_ctx.fsk_freq_hz = cmd.u.set_u32.value;
-                        }
-                        else if (s_ctx.modulation_id == 2U)
-                        {
-                            s_ctx.ook_freq_hz = cmd.u.set_u32.value;
-                        }
-                        else
-                        {
-                            s_ctx.lora_cfg.frequency_hz = cmd.u.set_u32.value;
-                        }
-                        radio_main_apply_modulation_cfg();
-                        cmd_result = radio_main_reconfigure_radio();
+                        cmd_result = radio_main_apply_option(RADIO_MAIN_OPTION_FSK_FREQ,
+                                                             cmd.u.set_u32.value);
+                    }
+                    else if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+                    {
+                        cmd_result = radio_main_apply_option(RADIO_MAIN_OPTION_OOK_FREQ,
+                                                             cmd.u.set_u32.value);
+                    }
+                    else
+                    {
+                        cmd_result = radio_main_apply_option(RADIO_MAIN_OPTION_LORA_FREQ,
+                                                             cmd.u.set_u32.value);
                     }
                     break;
 
                 case RADIO_MAIN_CMD_SET_MOD_BW:
-                    if (radio_main_is_supported_bw(cmd.u.set_u8.value))
+                    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
                     {
-                        if (s_ctx.modulation_id == 1U)
-                        {
-                            s_ctx.fsk_bw = (radio_lora_bw_t)cmd.u.set_u8.value;
-                        }
-                        else if (s_ctx.modulation_id == 2U)
-                        {
-                            s_ctx.ook_bw = (radio_lora_bw_t)cmd.u.set_u8.value;
-                        }
-                        else
-                        {
-                            s_ctx.lora_cfg.bandwidth = (radio_lora_bw_t)cmd.u.set_u8.value;
-                        }
-                        radio_main_apply_modulation_cfg();
-                        cmd_result = radio_main_reconfigure_radio();
+                        cmd_result = radio_main_apply_option(RADIO_MAIN_OPTION_FSK_RX_BW,
+                                                             cmd.u.set_u8.value);
                     }
+                    else if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+                    {
+                        cmd_result = radio_main_apply_option(RADIO_MAIN_OPTION_OOK_RX_BW,
+                                                             cmd.u.set_u8.value);
+                    }
+                    else
+                    {
+                        cmd_result = radio_main_apply_option(RADIO_MAIN_OPTION_LORA_BW,
+                                                             cmd.u.set_u8.value);
+                    }
+                    break;
+
+                case RADIO_MAIN_CMD_SET_OPTION:
+                    cmd_result = radio_main_apply_option(cmd.u.set_option.option,
+                                                         cmd.u.set_option.value);
                     break;
 
                 case RADIO_MAIN_CMD_SET_FH:
@@ -622,7 +683,12 @@ static bool radio_main_radio_init_and_start(void)
 {
     radio_status_t st;
 
-    st = radio_init(&s_ctx.hw, &s_ctx.lora_cfg, NULL, NULL);
+    if (!radio_main_push_backend_cfg())
+    {
+        return false;
+    }
+
+    st = radio_init(&s_ctx.hw, &s_ctx.backend_cfg, NULL, NULL);
     if (st != RADIO_OK)
     {
         return false;
@@ -653,6 +719,13 @@ static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg
             cfg->bandwidth = RADIO_LORA_BW_125_KHZ;
             cfg->spreading_factor = 7U;
             cfg->coding_rate = 5U;
+            cfg->preamble_len = 8U;
+            cfg->sync_word = 0x34U;
+            cfg->crc_on = true;
+            cfg->invert_iq = false;
+            cfg->tx_power_dbm = 14;
+            cfg->implicit_header = false;
+            cfg->payload_len = 0U;
             break;
 
         case 1U: /* RANGE */
@@ -660,6 +733,13 @@ static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg
             cfg->bandwidth = RADIO_LORA_BW_125_KHZ;
             cfg->spreading_factor = 12U;
             cfg->coding_rate = 5U;
+            cfg->preamble_len = 12U;
+            cfg->sync_word = 0x34U;
+            cfg->crc_on = true;
+            cfg->invert_iq = false;
+            cfg->tx_power_dbm = 14;
+            cfg->implicit_header = false;
+            cfg->payload_len = 0U;
             break;
 
         case 2U: /* FAST */
@@ -667,6 +747,13 @@ static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg
             cfg->bandwidth = RADIO_LORA_BW_500_KHZ;
             cfg->spreading_factor = 7U;
             cfg->coding_rate = 5U;
+            cfg->preamble_len = 8U;
+            cfg->sync_word = 0x34U;
+            cfg->crc_on = true;
+            cfg->invert_iq = false;
+            cfg->tx_power_dbm = 17;
+            cfg->implicit_header = false;
+            cfg->payload_len = 0U;
             break;
 
         default:
@@ -674,32 +761,559 @@ static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg
     }
 }
 
+/**
+ * @brief Wypełnia profile FSK i OOK wartościami domyślnymi.
+ *
+ * Te profile są przechowywane przez aplikację nawet wtedy, gdy aktywny backend
+ * radiowy nie umie jeszcze ich odwzorować 1:1. Dzięki temu UI i dokumentacja
+ * opisują już docelowy model konfiguracji.
+ */
+static void radio_main_load_default_profiles(void)
+{
+    radio_main_load_default_fsk_profile(&s_ctx.fsk_cfg);
+    radio_main_load_default_ook_profile(&s_ctx.ook_cfg);
+}
+
+static void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return;
+    }
+
+    memset(cfg, 0, sizeof(*cfg));
+    cfg->shaping = RADIO_MAIN_FSK_SHAPING_GFSK;
+    cfg->frequency_hz = 868300000UL;
+    cfg->bitrate_bps = 4800UL;
+    cfg->rx_bandwidth = RADIO_LORA_BW_125_KHZ;
+    cfg->filter = RADIO_MAIN_FILTER_BT_05;
+    cfg->tx_power_dbm = 14;
+    cfg->preamble_len = 8U;
+    cfg->sync_word_len = 2U;
+    cfg->sync_word = 0x00002DD4UL;
+    cfg->address_filter = RADIO_MAIN_ADDRESS_FILTER_NONE;
+    cfg->crc_type = RADIO_MAIN_CRC_CCITT;
+    cfg->data_whitening = true;
+}
+
+static void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return;
+    }
+
+    memset(cfg, 0, sizeof(*cfg));
+    cfg->frequency_hz = 868500000UL;
+    cfg->bitrate_bps = 4800UL;
+    cfg->rx_bandwidth = RADIO_LORA_BW_125_KHZ;
+    cfg->tx_power_dbm = 10;
+    cfg->preamble_len = 8U;
+    cfg->sync_word_len = 2U;
+    cfg->sync_word = 0x00002DD4UL;
+    cfg->threshold = RADIO_MAIN_OOK_THRESHOLD_PEAK;
+    cfg->threshold_value = 12U;
+}
+
+static void radio_main_sync_snapshot(radio_main_runtime_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return;
+    }
+
+    memset(cfg, 0, sizeof(*cfg));
+    cfg->active_modulation = s_ctx.modulation_id;
+    cfg->lora = s_ctx.lora_cfg;
+    cfg->fsk = s_ctx.fsk_cfg;
+    cfg->ook = s_ctx.ook_cfg;
+    cfg->fh_enabled = s_ctx.fh_enabled;
+    cfg->coding_enabled = s_ctx.coding_enabled;
+    cfg->auto_ping_enabled = s_ctx.auto_ping_enabled;
+}
+
+/**
+ * @brief Przygotowuje konfigurację przekazywaną do `radio_init(...)`.
+ *
+ * Warstwa aplikacji przechowuje pełne profile LoRa/FSK/OOK, ale wspólne API
+ * `radio_init(...)` nadal przyjmuje strukturę LoRa. Dlatego w tym miejscu
+ * przygotowujemy tylko tę część, która jest nadal potrzebna dla ścieżki LoRa,
+ * a właściwe profile FSK/OOK są przekazywane osobno przez `radio_set_*_cfg(...)`.
+ */
 static void radio_main_apply_modulation_cfg(void)
 {
-    if (s_ctx.modulation_id == 0U)
+    s_ctx.backend_cfg = s_ctx.lora_cfg;
+
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA)
     {
-        radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+        if (s_ctx.backend_cfg.implicit_header && (s_ctx.backend_cfg.payload_len == 0U))
+        {
+            /*
+             * BEKO wysyła ramki o zmiennej długości, więc implicit header traktujemy
+             * jako tryb eksperymentalny. Wypełniamy `payload_len`, aby backend LoRa
+             * zaakceptował konfigurację przy starcie.
+             */
+            s_ctx.backend_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
+        }
         return;
     }
 
-    if (s_ctx.modulation_id == 1U)
+}
+
+static radio_packet_crc_t radio_main_map_fsk_crc(radio_main_crc_type_t crc_type)
+{
+    switch (crc_type)
     {
-        s_ctx.lora_cfg.frequency_hz = s_ctx.fsk_freq_hz;
-        s_ctx.lora_cfg.bandwidth = s_ctx.fsk_bw;
-        s_ctx.lora_cfg.spreading_factor = 7U;
-        s_ctx.lora_cfg.coding_rate = 5U;
-        return;
+        case RADIO_MAIN_CRC_IBM:
+            return RADIO_PACKET_CRC_IBM;
+
+        case RADIO_MAIN_CRC_CCITT:
+            return RADIO_PACKET_CRC_CCITT;
+
+        case RADIO_MAIN_CRC_OFF:
+        case RADIO_MAIN_CRC_SX1276:
+        default:
+            return RADIO_PACKET_CRC_OFF;
+    }
+}
+
+static radio_address_filter_t radio_main_map_fsk_address_filter(radio_main_address_filter_t filter)
+{
+    switch (filter)
+    {
+        case RADIO_MAIN_ADDRESS_FILTER_NODE:
+            return RADIO_ADDRESS_FILTER_NODE;
+
+        case RADIO_MAIN_ADDRESS_FILTER_NODE_BROADCAST:
+            return RADIO_ADDRESS_FILTER_NODE_BROADCAST;
+
+        case RADIO_MAIN_ADDRESS_FILTER_NONE:
+        default:
+            return RADIO_ADDRESS_FILTER_OFF;
+    }
+}
+
+static radio_ook_threshold_t radio_main_map_ook_threshold(radio_main_ook_threshold_t threshold)
+{
+    switch (threshold)
+    {
+        case RADIO_MAIN_OOK_THRESHOLD_FIXED:
+            return RADIO_OOK_THRESHOLD_FIXED;
+
+        case RADIO_MAIN_OOK_THRESHOLD_AVERAGE:
+            return RADIO_OOK_THRESHOLD_AVERAGE;
+
+        case RADIO_MAIN_OOK_THRESHOLD_PEAK:
+        default:
+            return RADIO_OOK_THRESHOLD_PEAK;
+    }
+}
+
+/**
+ * @brief Przekazuje aktywny profil modulacji do runtime backendu `radio_lib`.
+ *
+ * Funkcja wykonuje jawne mapowanie enum-ów warstwy aplikacji na enum-y
+ * biblioteki radiowej. Dzięki temu menu i logika aplikacyjna mogą rozwijać się
+ * niezależnie od szczegółów backendu SX1276.
+ */
+static bool radio_main_push_backend_cfg(void)
+{
+    radio_status_t st;
+
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        radio_fsk_cfg_t cfg;
+
+        memset(&cfg, 0, sizeof(cfg));
+        cfg.frequency_hz = s_ctx.fsk_cfg.frequency_hz;
+        cfg.bitrate_bps = s_ctx.fsk_cfg.bitrate_bps;
+        cfg.rx_bandwidth = s_ctx.fsk_cfg.rx_bandwidth;
+        cfg.shaping = (radio_fsk_shaping_t)s_ctx.fsk_cfg.shaping;
+        cfg.filter = (radio_fsk_filter_t)s_ctx.fsk_cfg.filter;
+        cfg.tx_power_dbm = s_ctx.fsk_cfg.tx_power_dbm;
+        cfg.preamble_len = s_ctx.fsk_cfg.preamble_len;
+        cfg.sync_word_len = s_ctx.fsk_cfg.sync_word_len;
+        cfg.sync_word = (uint32_t)(s_ctx.fsk_cfg.sync_word & 0xFFFFFFFFUL);
+        cfg.address_filter = radio_main_map_fsk_address_filter(s_ctx.fsk_cfg.address_filter);
+        cfg.crc_type = radio_main_map_fsk_crc(s_ctx.fsk_cfg.crc_type);
+        cfg.data_whitening = s_ctx.fsk_cfg.data_whitening;
+
+        radio_select_backend(RADIO_LIB_MODULATION_FSK);
+        st = radio_set_fsk_cfg(&cfg);
+        return (st == RADIO_OK);
     }
 
-    s_ctx.lora_cfg.frequency_hz = s_ctx.ook_freq_hz;
-    s_ctx.lora_cfg.bandwidth = s_ctx.ook_bw;
-    s_ctx.lora_cfg.spreading_factor = 7U;
-    s_ctx.lora_cfg.coding_rate = 5U;
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        radio_ook_cfg_t cfg;
+
+        memset(&cfg, 0, sizeof(cfg));
+        cfg.frequency_hz = s_ctx.ook_cfg.frequency_hz;
+        cfg.bitrate_bps = s_ctx.ook_cfg.bitrate_bps;
+        cfg.rx_bandwidth = s_ctx.ook_cfg.rx_bandwidth;
+        cfg.tx_power_dbm = s_ctx.ook_cfg.tx_power_dbm;
+        cfg.preamble_len = s_ctx.ook_cfg.preamble_len;
+        cfg.sync_word_len = s_ctx.ook_cfg.sync_word_len;
+        cfg.sync_word = s_ctx.ook_cfg.sync_word;
+        cfg.threshold = radio_main_map_ook_threshold(s_ctx.ook_cfg.threshold);
+        cfg.threshold_value = s_ctx.ook_cfg.threshold_value;
+
+        radio_select_backend(RADIO_LIB_MODULATION_OOK);
+        st = radio_set_ook_cfg(&cfg);
+        return (st == RADIO_OK);
+    }
+
+    radio_select_backend(RADIO_LIB_MODULATION_LORA);
+    return true;
+}
+
+static bool radio_main_validate_frequency(uint32_t frequency_hz)
+{
+    return ((frequency_hz >= 863000000UL) &&
+            (frequency_hz <= 870000000UL));
+}
+
+static bool radio_main_validate_tx_power(int32_t tx_power_dbm)
+{
+    return ((tx_power_dbm >= 2) && (tx_power_dbm <= 20));
+}
+
+static bool radio_main_validate_bitrate(uint32_t bitrate_bps)
+{
+    return ((bitrate_bps >= 600UL) &&
+            (bitrate_bps <= 300000UL));
+}
+
+static bool radio_main_validate_preamble(uint32_t preamble_len)
+{
+    return ((preamble_len >= 1UL) &&
+            (preamble_len <= 65535UL));
+}
+
+static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
+{
+    bool reconfigure_now = false;
+
+    switch (option)
+    {
+        case RADIO_MAIN_OPTION_LORA_PRESET:
+            if (value > 2UL)
+            {
+                return false;
+            }
+            s_ctx.lora_preset = (uint8_t)value;
+            radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_FREQ:
+            if (!radio_main_validate_frequency(value))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.frequency_hz = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_BW:
+            if (!radio_main_is_supported_bw((uint8_t)value))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.bandwidth = (radio_lora_bw_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_SF:
+            if ((value < 6UL) || (value > 12UL))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.spreading_factor = (uint8_t)value;
+            if (value == 6UL)
+            {
+                s_ctx.lora_cfg.implicit_header = true;
+                s_ctx.lora_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
+            }
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_CR:
+            if ((value < 5UL) || (value > 8UL))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.coding_rate = (uint8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_TX_POWER:
+            if (!radio_main_validate_tx_power((int32_t)value))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.tx_power_dbm = (int8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_CRC:
+            if ((value != (uint32_t)RADIO_MAIN_CRC_OFF) &&
+                (value != (uint32_t)RADIO_MAIN_CRC_SX1276))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.crc_on = (value != (uint32_t)RADIO_MAIN_CRC_OFF);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_PREAMBLE:
+            if (!radio_main_validate_preamble(value))
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.preamble_len = (uint16_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_HEADER_MODE:
+            if (value > (uint32_t)RADIO_MAIN_HEADER_IMPLICIT)
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.implicit_header = (value == (uint32_t)RADIO_MAIN_HEADER_IMPLICIT);
+            s_ctx.lora_cfg.payload_len = s_ctx.lora_cfg.implicit_header ? BEKO_NET_MAX_PAYLOAD : 0U;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_IQ_INVERT:
+            if (value > 1UL)
+            {
+                return false;
+            }
+            s_ctx.lora_cfg.invert_iq = (value != 0UL);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_SYNC_WORD:
+            s_ctx.lora_cfg.sync_word = (uint8_t)(value & 0xFFU);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_LORA_RESET_DEFAULTS:
+            s_ctx.lora_preset = 2U;
+            radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_SHAPING:
+            if (value > (uint32_t)RADIO_MAIN_FSK_SHAPING_GMSK)
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.shaping = (radio_main_fsk_shaping_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_FREQ:
+            if (!radio_main_validate_frequency(value))
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.frequency_hz = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_BITRATE:
+            if (!radio_main_validate_bitrate(value))
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.bitrate_bps = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_RX_BW:
+            if (!radio_main_is_supported_bw((uint8_t)value))
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.rx_bandwidth = (radio_lora_bw_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_FILTER:
+            if (value > (uint32_t)RADIO_MAIN_FILTER_BT_03)
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.filter = (radio_main_filter_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_TX_POWER:
+            if (!radio_main_validate_tx_power((int32_t)value))
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.tx_power_dbm = (int8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_PREAMBLE:
+            if (!radio_main_validate_preamble(value))
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.preamble_len = (uint16_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_SYNC_LEN:
+            if (value > 4UL)
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.sync_word_len = (uint8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_SYNC_WORD:
+            s_ctx.fsk_cfg.sync_word = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_ADDRESS_FILTER:
+            if (value > (uint32_t)RADIO_MAIN_ADDRESS_FILTER_NODE_BROADCAST)
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.address_filter = (radio_main_address_filter_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_CRC:
+            if (value > (uint32_t)RADIO_MAIN_CRC_CCITT)
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.crc_type = (radio_main_crc_type_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_WHITENING:
+            if (value > 1UL)
+            {
+                return false;
+            }
+            s_ctx.fsk_cfg.data_whitening = (value != 0UL);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_FSK_RESET_DEFAULTS:
+            radio_main_load_default_fsk_profile(&s_ctx.fsk_cfg);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_FREQ:
+            if (!radio_main_validate_frequency(value))
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.frequency_hz = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_BITRATE:
+            if (!radio_main_validate_bitrate(value))
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.bitrate_bps = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_TX_POWER:
+            if (!radio_main_validate_tx_power((int32_t)value))
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.tx_power_dbm = (int8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_RX_BW:
+            if (!radio_main_is_supported_bw((uint8_t)value))
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.rx_bandwidth = (radio_lora_bw_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_PREAMBLE:
+            if (!radio_main_validate_preamble(value))
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.preamble_len = (uint16_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_SYNC_LEN:
+            if (value > 4UL)
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.sync_word_len = (uint8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_SYNC_WORD:
+            s_ctx.ook_cfg.sync_word = value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_THRESHOLD_TYPE:
+            if (value > (uint32_t)RADIO_MAIN_OOK_THRESHOLD_AVERAGE)
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.threshold = (radio_main_ook_threshold_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_THRESHOLD_VALUE:
+            if (value > 255UL)
+            {
+                return false;
+            }
+            s_ctx.ook_cfg.threshold_value = (uint8_t)value;
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        case RADIO_MAIN_OPTION_OOK_RESET_DEFAULTS:
+            radio_main_load_default_ook_profile(&s_ctx.ook_cfg);
+            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            break;
+
+        default:
+            return false;
+    }
+
+    radio_main_apply_modulation_cfg();
+    return (s_ctx.initialized && reconfigure_now) ? radio_main_reconfigure_radio() : true;
 }
 
 static bool radio_main_is_supported_bw(uint8_t bw_code)
 {
-    return ((bw_code == (uint8_t)RADIO_LORA_BW_125_KHZ) ||
+    return ((bw_code == (uint8_t)RADIO_LORA_BW_7_8_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_10_4_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_15_6_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_20_8_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_31_25_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_41_7_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_62_5_KHZ) ||
+            (bw_code == (uint8_t)RADIO_LORA_BW_125_KHZ) ||
             (bw_code == (uint8_t)RADIO_LORA_BW_250_KHZ) ||
             (bw_code == (uint8_t)RADIO_LORA_BW_500_KHZ));
 }

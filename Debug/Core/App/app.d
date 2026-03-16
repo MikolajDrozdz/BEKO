@@ -38,8 +38,9 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
  ../Core/App/bmp280_lib/bmp280.h ../Core/App/button_main.h \
  ../Core/App/lcd_main.h ../Core/App/led_array_main.h \
  ../Core/App/menu_main.h ../Core/App/radio_main.h \
- ../Core/App/security_main.h ../Core/App/tof_main.h \
- ../Core/Inc/app_delay.h \
+ ../Core/App/radio_lib/radio_lib.h \
+ ../Core/App/radio_lib/radio_lib_config.h ../Core/App/security_main.h \
+ ../Core/App/tof_main.h ../Core/Inc/app_delay.h \
  ../Middlewares/Third_Party/CMSIS/RTOS2/Include/cmsis_os2.h \
  ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h \
  ../Core/Inc/FreeRTOSConfig.h \
@@ -100,6 +101,8 @@ Core/App/app.o: ../Core/App/app.c ../Core/App/app.h \
 ../Core/App/led_array_main.h:
 ../Core/App/menu_main.h:
 ../Core/App/radio_main.h:
+../Core/App/radio_lib/radio_lib.h:
+../Core/App/radio_lib/radio_lib_config.h:
 ../Core/App/security_main.h:
 ../Core/App/tof_main.h:
 ../Core/Inc/app_delay.h:
