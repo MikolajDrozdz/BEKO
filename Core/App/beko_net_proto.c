@@ -141,6 +141,10 @@ bool beko_net_encode(const beko_net_frame_t *frame,
     {
         return false;
     }
+    if ((frame->src_id == 0U) || (frame->msg_id == 0U) || (frame->ttl == 0U))
+    {
+        return false;
+    }
 
     total_len = (uint16_t)(BEKO_NET_HEADER_SIZE + frame->payload_len + 2U);
     if (total_len > out_capacity)
@@ -217,6 +221,10 @@ bool beko_net_decode(const uint8_t *in,
     frame_out->src_id = beko_net_be32_read(&in[6]);
     frame_out->dst_id = beko_net_be32_read(&in[10]);
     frame_out->msg_id = beko_net_be32_read(&in[14]);
+    if ((frame_out->src_id == 0U) || (frame_out->msg_id == 0U) || (frame_out->ttl == 0U))
+    {
+        return false;
+    }
     frame_out->payload_len = payload_len;
     if (payload_len > 0U)
     {
@@ -286,11 +294,10 @@ bool beko_net_should_forward(const beko_net_frame_t *frame, uint32_t self_node_i
     {
         return false;
     }
-    /*
-     * Broadcast packets are also for the local node, but in a mesh/repeater path they should
-     * still be forwarded while TTL permits. Only true unicast packets addressed to this node
-     * stop here.
-     */
+    if (frame->type != BEKO_NET_TYPE_USER)
+    {
+        return false;
+    }
     if (frame->dst_id == self_node_id)
     {
         return false;
@@ -324,7 +331,7 @@ bool beko_net_dedup_seen_or_add(beko_net_dedup_cache_t *cache,
     uint8_t oldest_idx = 0U;
     uint32_t oldest_age = 0U;
 
-    if (cache == NULL)
+    if ((cache == NULL) || (src_id == 0U) || (msg_id == 0U))
     {
         return false;
     }
@@ -340,19 +347,52 @@ bool beko_net_dedup_seen_or_add(beko_net_dedup_cache_t *cache,
             continue;
         }
 
-        if ((cache->entries[i].src_id == src_id) && (cache->entries[i].msg_id == msg_id))
+        if (cache->entries[i].src_id == src_id)
         {
-            if ((now_ms - cache->entries[i].timestamp_ms) <= cache->window_ms)
+            int32_t signed_delta = (int32_t)(msg_id - cache->entries[i].highest_msg_id);
+
+            cache->entries[i].last_seen_ms = now_ms;
+
+            if (signed_delta > 0)
             {
-                return true;
+                uint32_t shift = (uint32_t)signed_delta;
+
+                if (shift >= BEKO_NET_REPLAY_WINDOW_BITS)
+                {
+                    cache->entries[i].recent_mask = 1UL;
+                }
+                else
+                {
+                    cache->entries[i].recent_mask <<= shift;
+                    cache->entries[i].recent_mask |= 1UL;
+                }
+                cache->entries[i].highest_msg_id = msg_id;
+                return false;
             }
-            cache->entries[i].timestamp_ms = now_ms;
-            return false;
+
+            {
+                uint32_t delta = cache->entries[i].highest_msg_id - msg_id;
+                uint32_t bit;
+
+                if (delta >= BEKO_NET_REPLAY_WINDOW_BITS)
+                {
+                    return true;
+                }
+
+                bit = (1UL << delta);
+                if ((cache->entries[i].recent_mask & bit) != 0UL)
+                {
+                    return true;
+                }
+
+                cache->entries[i].recent_mask |= bit;
+                return false;
+            }
         }
 
-        if ((now_ms - cache->entries[i].timestamp_ms) > oldest_age)
+        if ((now_ms - cache->entries[i].last_seen_ms) > oldest_age)
         {
-            oldest_age = (now_ms - cache->entries[i].timestamp_ms);
+            oldest_age = (now_ms - cache->entries[i].last_seen_ms);
             oldest_idx = i;
         }
     }
@@ -364,7 +404,8 @@ bool beko_net_dedup_seen_or_add(beko_net_dedup_cache_t *cache,
 
     cache->entries[free_idx].used = true;
     cache->entries[free_idx].src_id = src_id;
-    cache->entries[free_idx].msg_id = msg_id;
-    cache->entries[free_idx].timestamp_ms = now_ms;
+    cache->entries[free_idx].highest_msg_id = msg_id;
+    cache->entries[free_idx].recent_mask = 1UL;
+    cache->entries[free_idx].last_seen_ms = now_ms;
     return false;
 }

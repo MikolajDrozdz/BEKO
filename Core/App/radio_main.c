@@ -2210,6 +2210,14 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                            frame.src_id,
                                            frame.msg_id,
                                            radio_main_now_ms());
+    if (duplicate)
+    {
+        printf("RADIO REPLAY DROP src=0x%08lX msg=0x%08lX type=%u\r\n",
+               (unsigned long)frame.src_id,
+               (unsigned long)frame.msg_id,
+               (unsigned int)frame.type);
+        return;
+    }
     for_me = beko_net_is_for_node(&frame_decoded, s_ctx.node_id);
 
     if (for_me)
@@ -2315,7 +2323,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         }
     }
 
-    if (!duplicate && beko_net_should_forward(&frame, s_ctx.node_id))
+    if (beko_net_should_forward(&frame, s_ctx.node_id))
     {
         frame.ttl--;
         if (beko_net_encode(&frame, tx_buf, sizeof(tx_buf), &tx_len))
@@ -2690,7 +2698,6 @@ static bool radio_main_send_join_request_internal(void)
     {
         return false;
     }
-
     s_ctx.pairing_outgoing_code_len = RADIO_PAIR_CODE_LEN;
     radio_main_make_pair_code(s_ctx.pairing_outgoing_code, s_ctx.pairing_outgoing_code_len);
 

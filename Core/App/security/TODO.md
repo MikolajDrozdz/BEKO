@@ -25,3 +25,12 @@
 - Zdefiniować wersjonowanie protokołu secure frame.
 - Rozszerzyć dokumentację pairing i trust removal.
 - Dodać testy regresyjne dla auth tag, coding i migracji EEPROM.
+
+## DoS / Replay
+*Co można dodać*
+- Dodać per-source rate limiting dla `USER`.
+- Dodać osobny rate limiting dla ramek control/pairing.
+- Dodać globalny budżet relay TX niezależny od local TX.
+- Dodać licznik nadużyć (`replay`, `bad auth`, `unknown src`) i czasowy cooldown.
+- Agregować alerty security zamiast popupu dla każdego zdarzenia flood.
+- Rozważyć telemetrykę security: liczba replay drop, relay drop, throttle hit.
