@@ -121,8 +121,7 @@ typedef struct
     uint8_t flags;
     uint8_t notify_mode;
     uint8_t lora_preset;
-    uint8_t active_modulation;
-    uint8_t fh_period_idx;
+    uint8_t modulation_fh;
     uint8_t seed[SECURITY_KEY_SEED_BYTES];
 } security_store_wire_t;
 
@@ -233,6 +232,7 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint8_t key_out[16]);
 static bool security_load_runtime_and_seed_from_store(void);
 static bool security_save_runtime_and_seed_to_store(void);
+static bool security_commit_runtime_cfg_soft(void);
 static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg);
 static uint8_t security_pack_bits(uint8_t *buf, uint8_t bit_pos, uint32_t value, uint8_t width);
 static uint8_t security_unpack_bits(const uint8_t *buf, uint8_t bit_pos, uint8_t width, uint32_t *value_out);
@@ -240,6 +240,9 @@ static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, ui
 static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, uint8_t count, uint8_t fallback);
 static uint8_t security_index_from_i8(int8_t value, const int8_t *table, uint8_t count, uint8_t fallback);
 static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8_t count, uint8_t fallback);
+static uint8_t security_pack_modulation_fh(radio_main_modulation_t modulation, uint8_t fh_period_idx);
+static radio_main_modulation_t security_unpack_modulation(uint8_t modulation_fh);
+static uint8_t security_unpack_fh_period_idx(uint8_t modulation_fh);
 static uint32_t security_u32_from_index(uint8_t idx, const uint32_t *table, uint8_t count, uint32_t fallback);
 static uint16_t security_u16_from_index(uint8_t idx, const uint16_t *table, uint8_t count, uint16_t fallback);
 static int8_t security_i8_from_index(uint8_t idx, const int8_t *table, uint8_t count, int8_t fallback);
@@ -663,17 +666,17 @@ static void security_main_task_fn(void *argument)
 
                 case SECURITY_CMD_SET_CODING:
                     s_runtime_cfg.coding_enabled = cmd.u.set_bool.enabled;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_SET_FH:
                     s_runtime_cfg.fh_enabled = cmd.u.set_bool.enabled;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_SET_FH_PERIOD:
                     s_runtime_cfg.fh_period_ms = cmd.u.set_u32.value;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_ROTATE_KEY:
@@ -682,17 +685,17 @@ static void security_main_task_fn(void *argument)
 
                 case SECURITY_CMD_SET_NOTIFY:
                     s_runtime_cfg.notify_mode = cmd.u.set_notify.mode;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_SET_PRESET:
                     s_runtime_cfg.lora_preset = cmd.u.set_preset.preset_id;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_SET_AUTO_PING:
                     s_runtime_cfg.auto_ping_enabled = cmd.u.set_bool.enabled;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_SET_RADIO_RUNTIME:
@@ -701,7 +704,7 @@ static void security_main_task_fn(void *argument)
                     s_runtime_cfg.fsk = cmd.u.set_radio.cfg.fsk;
                     s_runtime_cfg.ook = cmd.u.set_radio.cfg.ook;
                     s_runtime_cfg.radio_profiles_persisted = true;
-                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
                 case SECURITY_CMD_GET_RUNTIME:
@@ -810,43 +813,9 @@ static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
         return;
     }
 
-    memset(&cfg->lora, 0, sizeof(cfg->lora));
-    cfg->lora.frequency_hz = 868500000UL;
-    cfg->lora.bandwidth = RADIO_LORA_BW_500_KHZ;
-    cfg->lora.spreading_factor = 7U;
-    cfg->lora.coding_rate = 5U;
-    cfg->lora.preamble_len = 8U;
-    cfg->lora.sync_word = 0x34U;
-    cfg->lora.crc_on = true;
-    cfg->lora.invert_iq = false;
-    cfg->lora.tx_power_dbm = 17;
-    cfg->lora.implicit_header = false;
-    cfg->lora.payload_len = 0U;
-
-    memset(&cfg->fsk, 0, sizeof(cfg->fsk));
-    cfg->fsk.shaping = RADIO_MAIN_FSK_SHAPING_GFSK;
-    cfg->fsk.frequency_hz = 868300000UL;
-    cfg->fsk.bitrate_bps = 4800UL;
-    cfg->fsk.rx_bandwidth = RADIO_LORA_BW_125_KHZ;
-    cfg->fsk.filter = RADIO_MAIN_FILTER_BT_05;
-    cfg->fsk.tx_power_dbm = 14;
-    cfg->fsk.preamble_len = 8U;
-    cfg->fsk.sync_word_len = 2U;
-    cfg->fsk.sync_word = 0x00002DD4UL;
-    cfg->fsk.address_filter = RADIO_MAIN_ADDRESS_FILTER_NONE;
-    cfg->fsk.crc_type = RADIO_MAIN_CRC_CCITT;
-    cfg->fsk.data_whitening = true;
-
-    memset(&cfg->ook, 0, sizeof(cfg->ook));
-    cfg->ook.frequency_hz = 868500000UL;
-    cfg->ook.bitrate_bps = 4800UL;
-    cfg->ook.rx_bandwidth = RADIO_LORA_BW_125_KHZ;
-    cfg->ook.tx_power_dbm = 10;
-    cfg->ook.preamble_len = 8U;
-    cfg->ook.sync_word_len = 2U;
-    cfg->ook.sync_word = 0x00002DD4UL;
-    cfg->ook.threshold = RADIO_MAIN_OOK_THRESHOLD_PEAK;
-    cfg->ook.threshold_value = 12U;
+    radio_main_load_default_lora_preset(2U, &cfg->lora);
+    radio_main_load_default_fsk_profile(&cfg->fsk);
+    radio_main_load_default_ook_profile(&cfg->ook);
     cfg->fh_period_ms = 2000UL;
     cfg->active_modulation = RADIO_MAIN_MODULATION_LORA;
     cfg->radio_profiles_persisted = false;
@@ -959,6 +928,29 @@ static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8
     }
 
     return fallback;
+}
+
+static uint8_t security_pack_modulation_fh(radio_main_modulation_t modulation, uint8_t fh_period_idx)
+{
+    return (uint8_t)((((uint8_t)modulation) & 0x03U) |
+                     ((fh_period_idx & 0x03U) << 2));
+}
+
+static radio_main_modulation_t security_unpack_modulation(uint8_t modulation_fh)
+{
+    uint8_t modulation = (uint8_t)(modulation_fh & 0x03U);
+
+    if (modulation > (uint8_t)RADIO_MAIN_MODULATION_OOK)
+    {
+        modulation = (uint8_t)RADIO_MAIN_MODULATION_LORA;
+    }
+
+    return (radio_main_modulation_t)modulation;
+}
+
+static uint8_t security_unpack_fh_period_idx(uint8_t modulation_fh)
+{
+    return (uint8_t)((modulation_fh >> 2) & 0x03U);
 }
 
 static uint32_t security_u32_from_index(uint8_t idx, const uint32_t *table, uint8_t count, uint32_t fallback)
@@ -1078,11 +1070,13 @@ static bool security_load_runtime_and_seed_from_store(void)
     s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
                                 SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
     s_runtime_cfg.lora_preset = w.lora_preset;
-    s_runtime_cfg.active_modulation = (w.version >= 2U) ?
-                                      (radio_main_modulation_t)w.active_modulation :
-                                      RADIO_MAIN_MODULATION_LORA;
+    s_runtime_cfg.active_modulation = (w.version >= SECURITY_STORE_VERSION) ?
+                                      security_unpack_modulation(w.modulation_fh) :
+                                      ((w.version >= 2U) ?
+                                       (radio_main_modulation_t)w.modulation_fh :
+                                       RADIO_MAIN_MODULATION_LORA);
     s_runtime_cfg.fh_period_ms = (w.version >= SECURITY_STORE_VERSION) ?
-                                 security_u32_from_index(w.fh_period_idx,
+                                 security_u32_from_index(security_unpack_fh_period_idx(w.modulation_fh),
                                                          s_fh_period_options_ms,
                                                          (uint8_t)(sizeof(s_fh_period_options_ms) /
                                                                    sizeof(s_fh_period_options_ms[0])),
@@ -1126,12 +1120,12 @@ static bool security_save_runtime_and_seed_to_store(void)
     }
     w.notify_mode = (uint8_t)s_runtime_cfg.notify_mode;
     w.lora_preset = s_runtime_cfg.lora_preset;
-    w.active_modulation = (uint8_t)s_runtime_cfg.active_modulation;
-    w.fh_period_idx = security_index_from_u32(s_runtime_cfg.fh_period_ms,
-                                              s_fh_period_options_ms,
-                                              (uint8_t)(sizeof(s_fh_period_options_ms) /
-                                                        sizeof(s_fh_period_options_ms[0])),
-                                              1U);
+    w.modulation_fh = security_pack_modulation_fh(s_runtime_cfg.active_modulation,
+                                                  security_index_from_u32(s_runtime_cfg.fh_period_ms,
+                                                                          s_fh_period_options_ms,
+                                                                          (uint8_t)(sizeof(s_fh_period_options_ms) /
+                                                                                    sizeof(s_fh_period_options_ms[0])),
+                                                                          1U));
     memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
 
     if (i2c_mem_store_secret_write(&s_mem_store,
@@ -1145,6 +1139,16 @@ static bool security_save_runtime_and_seed_to_store(void)
     if (!security_save_radio_profiles_to_store())
     {
         return false;
+    }
+
+    return true;
+}
+
+static bool security_commit_runtime_cfg_soft(void)
+{
+    if (!security_save_runtime_and_seed_to_store())
+    {
+        printf("SEC: runtime cfg applied but not persisted\r\n");
     }
 
     return true;
@@ -1658,6 +1662,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
 {
     uint8_t i;
     uint8_t free_idx = 0xFFU;
+    uint8_t max_slots = SECURITY_TRUSTED_MAX;
 
     if (node_id == 0U)
     {
@@ -1667,8 +1672,16 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     {
         len = SECURITY_CODE_MAX;
     }
+    if (s_mem_ready)
+    {
+        max_slots = security_trusted_store_capacity();
+        if (max_slots == 0U)
+        {
+            return false;
+        }
+    }
 
-    for (i = 0U; i < SECURITY_TRUSTED_MAX; i++)
+    for (i = 0U; i < max_slots; i++)
     {
         if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
         {
@@ -1793,6 +1806,7 @@ static void security_bootstrap_store(void)
     bool loaded_v1 = false;
 
     i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
+    /* M24C01-R has only 128 B, so prioritize settings + radio profiles + one trusted slot. */
     mem_cfg.secret_area_bytes = 72U;
     memset(s_key_seed_cached, 0, sizeof(s_key_seed_cached));
     security_load_default_radio_profiles(&s_runtime_cfg);
@@ -1800,7 +1814,13 @@ static void security_bootstrap_store(void)
     if (i2c_mem_store_init(&s_mem_store, &mem_cfg, true) == I2C_MEM_STORE_OK)
     {
         s_mem_ready = true;
-        printf("SEC: MEM store ready\r\n");
+        printf("SEC: MEM store ready log_slots=%u secret_slots=%u\r\n",
+               (unsigned int)s_mem_store.slot_count,
+               (unsigned int)s_mem_store.secret_slot_count);
+        if (s_mem_store.slot_count == 0U)
+        {
+            printf("SEC: MEM log disabled, storage reserved for trusted devices\r\n");
+        }
     }
     else
     {

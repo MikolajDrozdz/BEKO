@@ -6,6 +6,7 @@
 #include "lcd_main.h"
 #include "menu_main.h"
 #include "radio_lib/radio_lib.h"
+#include "radio_lib/common/sx1276/radio_sx1276_regs.h"
 #include "security_main.h"
 #include "task.h"
 
@@ -114,6 +115,7 @@ typedef struct
     radio_lora_cfg_t backend_cfg;
     radio_lora_cfg_t lora_cfg;
     radio_main_modulation_t modulation_id;
+    radio_main_modulation_t backend_modulation_id;
     bool initialized;
     bool fh_enabled;
     uint32_t fh_period_ms;
@@ -157,9 +159,9 @@ static bool radio_main_wait_sync(radio_main_cmd_sync_t *sync, uint32_t timeout_m
 static bool radio_main_radio_init_and_start(void);
 static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg);
 static void radio_main_load_default_profiles(void);
-static void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg);
-static void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg);
 static void radio_main_apply_modulation_cfg(void);
+static bool radio_main_switch_backend(radio_main_modulation_t modulation);
+static void radio_main_load_default_profile(radio_main_modulation_t modulation);
 static void radio_main_sync_snapshot(radio_main_runtime_cfg_t *cfg);
 static bool radio_main_apply_option(radio_main_option_t option, uint32_t value);
 static radio_packet_crc_t radio_main_map_fsk_crc(radio_main_crc_type_t crc_type);
@@ -179,6 +181,7 @@ static bool radio_main_send_system_frame(uint8_t type,
                                          uint32_t dst_id,
                                          const uint8_t *payload,
                                          uint16_t payload_len);
+static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint8_t len);
 static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len);
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
 static void radio_main_handle_events(void);
@@ -195,6 +198,9 @@ static void radio_main_print_generated_pattern(const char *label, uint8_t value,
 static void radio_main_print_fsk_sync_word(uint64_t sync_word, uint8_t sync_len, const char *label);
 static void radio_main_print_ook_sync_word(uint32_t sync_word, uint8_t sync_len, const char *label);
 static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool retry_attempt);
+static uint32_t radio_main_frf_to_hz(uint8_t msb, uint8_t mid, uint8_t lsb);
+static void radio_main_log_runtime_profile(const char *reason);
+static void radio_main_log_hw_registers(const char *reason);
 static bool radio_main_finish_pairing(bool accept);
 static bool radio_main_send_join_request_internal(void);
 static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
@@ -516,6 +522,7 @@ static void radio_main_task_fn(void *argument)
     s_ctx.node_id = beko_net_local_node_id();
     s_ctx.next_msg_id = 1U;
     s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
+    s_ctx.backend_modulation_id = s_ctx.modulation_id;
     s_ctx.lora_preset = 2U;
     radio_main_clear_last_error();
     beko_net_dedup_init(&s_ctx.dedup, RADIO_DEDUP_WINDOW_MS);
@@ -534,7 +541,6 @@ static void radio_main_task_fn(void *argument)
         s_ctx.lora_preset = sec_cfg.lora_preset;
         if (sec_cfg.radio_profiles_persisted)
         {
-            s_ctx.modulation_id = sec_cfg.active_modulation;
             s_ctx.lora_cfg = sec_cfg.lora;
             s_ctx.fsk_cfg = sec_cfg.fsk;
             s_ctx.ook_cfg = sec_cfg.ook;
@@ -558,6 +564,7 @@ static void radio_main_task_fn(void *argument)
     {
         radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
     }
+    s_ctx.backend_modulation_id = s_ctx.modulation_id;
     radio_main_apply_modulation_cfg();
     s_ctx.last_hop_ms = radio_main_now_ms();
     s_ctx.last_ping_ms = radio_main_now_ms();
@@ -569,7 +576,23 @@ static void radio_main_task_fn(void *argument)
     }
     else
     {
-        printf("RADIO: init failed\r\n");
+        printf("RADIO: init failed, fallback to LoRa defaults\r\n");
+        s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
+        s_ctx.backend_modulation_id = RADIO_MAIN_MODULATION_LORA;
+        s_ctx.lora_preset = 2U;
+        radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+        radio_main_load_default_fsk_profile(&s_ctx.fsk_cfg);
+        radio_main_load_default_ook_profile(&s_ctx.ook_cfg);
+        radio_main_apply_modulation_cfg();
+
+        if (radio_main_radio_init_and_start())
+        {
+            printf("RADIO: fallback init OK node=0x%08lX\r\n", (unsigned long)s_ctx.node_id);
+        }
+        else
+        {
+            printf("RADIO: fallback init failed\r\n");
+        }
     }
 
     for (;;)
@@ -592,7 +615,7 @@ static void radio_main_task_fn(void *argument)
                     {
                         s_ctx.lora_preset = cmd.u.set_u8.value;
                         radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
-                        if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA)
+                        if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA)
                         {
                             cmd_result = radio_main_reconfigure_radio();
                         }
@@ -606,9 +629,21 @@ static void radio_main_task_fn(void *argument)
                 case RADIO_MAIN_CMD_SET_MODULATION:
                     if (cmd.u.set_u8.value <= 2U)
                     {
-                        s_ctx.modulation_id = (radio_main_modulation_t)cmd.u.set_u8.value;
-                        radio_main_apply_modulation_cfg();
-                        cmd_result = radio_main_reconfigure_radio();
+                        radio_main_modulation_t previous_modulation = s_ctx.modulation_id;
+                        radio_main_modulation_t requested = (radio_main_modulation_t)cmd.u.set_u8.value;
+
+                        s_ctx.modulation_id = requested;
+                        cmd_result = radio_main_switch_backend(requested);
+                        if (!cmd_result)
+                        {
+                            radio_main_load_default_profile(requested);
+                            cmd_result = radio_main_switch_backend(requested);
+                        }
+                        if (!cmd_result)
+                        {
+                            s_ctx.modulation_id = previous_modulation;
+                            (void)radio_main_switch_backend(previous_modulation);
+                        }
                     }
                     break;
 
@@ -684,16 +719,17 @@ static void radio_main_task_fn(void *argument)
                     break;
 
                 case RADIO_MAIN_CMD_START_PAIRING:
+                    cmd_result = s_ctx.initialized || radio_main_force_recover_radio("start pairing");
                     s_ctx.pairing_active = true;
                     s_ctx.pairing_pending = false;
                     s_ctx.pairing_outgoing_pending = false;
                     s_ctx.pairing_until_ms = radio_main_now_ms() + cmd.u.pairing.timeout_ms;
-                    if (s_ctx.initialized && (radio_get_state() != RADIO_STATE_TX))
+                    if (cmd_result &&
+                        s_ctx.initialized &&
+                        (radio_get_state() != RADIO_STATE_TX))
                     {
                         (void)radio_start_rx_continuous();
                     }
-                    radio_main_notify(MENU_NOTIFICATION_PAIRING, "Pairing listen ON");
-                    cmd_result = true;
                     break;
 
                 case RADIO_MAIN_CMD_PAIRING_ACCEPT:
@@ -801,12 +837,12 @@ static uint32_t radio_main_tx_timeout_ms(uint16_t payload_len)
     uint32_t bitrate_bps = 0U;
     uint32_t total_bytes = (payload_len == 0U) ? 1UL : (uint32_t)payload_len;
 
-    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK)
     {
         bitrate_bps = s_ctx.fsk_cfg.bitrate_bps;
         total_bytes++;
     }
-    else if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    else if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK)
     {
         bitrate_bps = s_ctx.ook_cfg.bitrate_bps;
         total_bytes++;
@@ -1170,10 +1206,12 @@ static bool radio_main_radio_init_and_start(void)
 
     s_ctx.initialized = true;
     radio_main_tx_clear();
+    radio_main_log_runtime_profile("radio init");
+    radio_main_log_hw_registers("radio init");
     return true;
 }
 
-static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg)
+void radio_main_load_default_lora_preset(uint8_t preset_id, radio_lora_cfg_t *cfg)
 {
     if (cfg == NULL)
     {
@@ -1229,6 +1267,11 @@ static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg
     }
 }
 
+static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg)
+{
+    radio_main_load_default_lora_preset(preset_id, cfg);
+}
+
 /**
  * @brief Wypełnia profile FSK i OOK wartościami domyślnymi.
  *
@@ -1242,7 +1285,7 @@ static void radio_main_load_default_profiles(void)
     radio_main_load_default_ook_profile(&s_ctx.ook_cfg);
 }
 
-static void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg)
+void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg)
 {
     if (cfg == NULL)
     {
@@ -1264,7 +1307,7 @@ static void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg)
     cfg->data_whitening = true;
 }
 
-static void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg)
+void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg)
 {
     if (cfg == NULL)
     {
@@ -1313,7 +1356,7 @@ static void radio_main_apply_modulation_cfg(void)
 {
     s_ctx.backend_cfg = s_ctx.lora_cfg;
 
-    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA)
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA)
     {
         if (s_ctx.backend_cfg.implicit_header && (s_ctx.backend_cfg.payload_len == 0U))
         {
@@ -1328,6 +1371,54 @@ static void radio_main_apply_modulation_cfg(void)
     }
 
 }
+
+static bool radio_main_switch_backend(radio_main_modulation_t modulation)
+{
+    radio_main_modulation_t previous_modulation = s_ctx.backend_modulation_id;
+    bool was_initialized = s_ctx.initialized;
+    bool ok;
+
+    s_ctx.backend_modulation_id = modulation;
+    radio_main_apply_modulation_cfg();
+    ok = s_ctx.initialized ? radio_main_reconfigure_radio() : radio_main_radio_init_and_start();
+    if (ok)
+    {
+        return true;
+    }
+
+    printf("RADIO: backend switch to %u failed, restore %u\r\n",
+           (unsigned int)modulation,
+           (unsigned int)previous_modulation);
+    s_ctx.backend_modulation_id = previous_modulation;
+    radio_main_apply_modulation_cfg();
+    if (was_initialized && !s_ctx.initialized)
+    {
+        (void)radio_main_radio_init_and_start();
+    }
+    return false;
+}
+
+static void radio_main_load_default_profile(radio_main_modulation_t modulation)
+{
+    switch (modulation)
+    {
+        case RADIO_MAIN_MODULATION_FSK:
+            radio_main_load_default_fsk_profile(&s_ctx.fsk_cfg);
+            break;
+
+        case RADIO_MAIN_MODULATION_OOK:
+            radio_main_load_default_ook_profile(&s_ctx.ook_cfg);
+            break;
+
+        case RADIO_MAIN_MODULATION_LORA:
+        default:
+            radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
+            break;
+    }
+
+    radio_main_apply_modulation_cfg();
+}
+
 
 static radio_packet_crc_t radio_main_map_fsk_crc(radio_main_crc_type_t crc_type)
 {
@@ -1389,7 +1480,7 @@ static bool radio_main_push_backend_cfg(void)
 {
     radio_status_t st;
 
-    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK)
     {
         radio_fsk_cfg_t cfg;
 
@@ -1409,10 +1500,14 @@ static bool radio_main_push_backend_cfg(void)
 
         radio_select_backend(RADIO_LIB_MODULATION_FSK);
         st = radio_set_fsk_cfg(&cfg);
+        if (st != RADIO_OK)
+        {
+            printf("RADIO: FSK cfg reject st=%d\r\n", (int)st);
+        }
         return (st == RADIO_OK);
     }
 
-    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK)
     {
         radio_ook_cfg_t cfg;
 
@@ -1429,6 +1524,10 @@ static bool radio_main_push_backend_cfg(void)
 
         radio_select_backend(RADIO_LIB_MODULATION_OOK);
         st = radio_set_ook_cfg(&cfg);
+        if (st != RADIO_OK)
+        {
+            printf("RADIO: OOK cfg reject st=%d\r\n", (int)st);
+        }
         return (st == RADIO_OK);
     }
 
@@ -1482,7 +1581,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
             }
             s_ctx.lora_preset = (uint8_t)value;
             radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_FREQ:
@@ -1491,7 +1590,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.frequency_hz = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_BW:
@@ -1500,7 +1599,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.bandwidth = (radio_lora_bw_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_SF:
@@ -1514,7 +1613,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 s_ctx.lora_cfg.implicit_header = true;
                 s_ctx.lora_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
             }
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_CR:
@@ -1523,7 +1622,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.coding_rate = (uint8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_TX_POWER:
@@ -1532,7 +1631,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.tx_power_dbm = (int8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_CRC:
@@ -1542,7 +1641,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.crc_on = (value != (uint32_t)RADIO_MAIN_CRC_OFF);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_PREAMBLE:
@@ -1551,7 +1650,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.preamble_len = (uint16_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_HEADER_MODE:
@@ -1573,7 +1672,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
             {
                 s_ctx.lora_cfg.payload_len = 0U;
             }
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_IQ_INVERT:
@@ -1582,18 +1681,18 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.lora_cfg.invert_iq = (value != 0UL);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_SYNC_WORD:
             s_ctx.lora_cfg.sync_word = (uint8_t)(value & 0xFFU);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_LORA_RESET_DEFAULTS:
             s_ctx.lora_preset = 2U;
             radio_main_apply_preset_cfg(s_ctx.lora_preset, &s_ctx.lora_cfg);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
         case RADIO_MAIN_OPTION_FSK_SHAPING:
@@ -1602,7 +1701,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.shaping = (radio_main_fsk_shaping_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_FREQ:
@@ -1611,7 +1710,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.frequency_hz = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_BITRATE:
@@ -1620,7 +1719,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.bitrate_bps = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_RX_BW:
@@ -1629,7 +1728,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.rx_bandwidth = (radio_lora_bw_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_FILTER:
@@ -1638,7 +1737,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.filter = (radio_main_filter_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_TX_POWER:
@@ -1647,7 +1746,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.tx_power_dbm = (int8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_PREAMBLE:
@@ -1656,7 +1755,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.preamble_len = (uint16_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_SYNC_LEN:
@@ -1665,12 +1764,12 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.sync_word_len = (uint8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_SYNC_WORD:
             s_ctx.fsk_cfg.sync_word = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_ADDRESS_FILTER:
@@ -1679,7 +1778,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.address_filter = (radio_main_address_filter_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_CRC:
@@ -1688,7 +1787,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.crc_type = (radio_main_crc_type_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_WHITENING:
@@ -1697,12 +1796,12 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.fsk_cfg.data_whitening = (value != 0UL);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_FSK_RESET_DEFAULTS:
             radio_main_load_default_fsk_profile(&s_ctx.fsk_cfg);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_FREQ:
@@ -1711,7 +1810,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.frequency_hz = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_BITRATE:
@@ -1720,7 +1819,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.bitrate_bps = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_TX_POWER:
@@ -1729,7 +1828,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.tx_power_dbm = (int8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_RX_BW:
@@ -1738,7 +1837,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.rx_bandwidth = (radio_lora_bw_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_PREAMBLE:
@@ -1747,7 +1846,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.preamble_len = (uint16_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_SYNC_LEN:
@@ -1756,12 +1855,12 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.sync_word_len = (uint8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_SYNC_WORD:
             s_ctx.ook_cfg.sync_word = value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_THRESHOLD_TYPE:
@@ -1770,7 +1869,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.threshold = (radio_main_ook_threshold_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_THRESHOLD_VALUE:
@@ -1779,12 +1878,12 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
                 return false;
             }
             s_ctx.ook_cfg.threshold_value = (uint8_t)value;
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         case RADIO_MAIN_OPTION_OOK_RESET_DEFAULTS:
             radio_main_load_default_ook_profile(&s_ctx.ook_cfg);
-            reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK);
+            reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK);
             break;
 
         default:
@@ -1969,7 +2068,7 @@ static bool radio_main_send_system_frame(uint8_t type,
  * Starts TX and retries once after a forced radio recovery if the backend looks
  * wedged. This protects the user-facing send path from leaving SX1276 stuck in TX.
  */
-static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
+static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint8_t len)
 {
     radio_status_t st;
 
@@ -1978,7 +2077,7 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
         return false;
     }
 
-    if ((s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK) &&
+    if ((s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK) &&
         (((uint16_t)len + 1U) > 64U))
     {
         printf("RADIO FSK TX ERROR: message too long (%u B raw, max 63 B payload FIFO path)\r\n",
@@ -1988,7 +2087,7 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
         return false;
     }
 
-    if ((s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK) &&
+    if ((s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK) &&
         (((uint16_t)len + 1U) > 64U))
     {
         printf("RADIO OOK TX ERROR: message too long (%u B raw, max 63 B payload FIFO path)\r\n",
@@ -2037,6 +2136,24 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
     }
 
     return false;
+}
+
+static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
+{
+    if ((data == NULL) || (len == 0U))
+    {
+        return false;
+    }
+    if (s_ctx.tx_in_progress)
+    {
+        return false;
+    }
+    if (!radio_main_switch_backend(s_ctx.modulation_id))
+    {
+        return false;
+    }
+
+    return radio_main_send_current_backend_with_retry(data, len);
 }
 
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id)
@@ -2323,7 +2440,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         }
     }
 
-    if (beko_net_should_forward(&frame, s_ctx.node_id))
+    if (!for_me && beko_net_should_forward(&frame, s_ctx.node_id))
     {
         frame.ttl--;
         if (beko_net_encode(&frame, tx_buf, sizeof(tx_buf), &tx_len))
@@ -2365,7 +2482,10 @@ static void radio_main_handle_hopping(void)
     s_ctx.last_hop_ms = now;
     s_ctx.hop_idx = (uint8_t)((s_ctx.hop_idx + 1U) % 3U);
     s_ctx.lora_cfg.frequency_hz = s_hop_channels_hz[s_ctx.hop_idx];
-    (void)radio_main_reconfigure_radio();
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA)
+    {
+        (void)radio_main_reconfigure_radio();
+    }
 }
 
 static void radio_main_handle_auto_ping(void)
@@ -2571,7 +2691,7 @@ static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool ret
         return;
     }
 
-    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK)
     {
         uint8_t length_byte = len;
 
@@ -2597,7 +2717,7 @@ static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool ret
         return;
     }
 
-    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK)
     {
         uint8_t length_byte = len;
 
@@ -2635,6 +2755,140 @@ static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool ret
            s_ctx.lora_cfg.invert_iq ? "invert" : "normal");
     radio_main_print_hex_bytes("RADIO TX LORA PAYLOAD: ", data, len);
     radio_main_print_tx_ascii(data, len);
+}
+
+static uint32_t radio_main_frf_to_hz(uint8_t msb, uint8_t mid, uint8_t lsb)
+{
+    uint32_t frf = ((uint32_t)msb << 16) |
+                   ((uint32_t)mid << 8) |
+                   (uint32_t)lsb;
+
+    return (uint32_t)((((uint64_t)frf) * 32000000ULL) >> 19);
+}
+
+static void radio_main_log_runtime_profile(const char *reason)
+{
+    const char *tag = (reason != NULL) ? reason : "state";
+
+    printf("RADIO CFG [%s]: sel=%u backend=%u lib=%u state=%d init=%u\r\n",
+           tag,
+           (unsigned int)s_ctx.modulation_id,
+           (unsigned int)s_ctx.backend_modulation_id,
+           (unsigned int)radio_get_backend(),
+           (int)radio_get_state(),
+           s_ctx.initialized ? 1U : 0U);
+
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        printf("RADIO CFG [%s] FSK: freq=%luHz br=%lubps bw=%u shape=%u filter=%u pre=%u sync_len=%u crc=%u white=%u addr=%u\r\n",
+               tag,
+               (unsigned long)s_ctx.fsk_cfg.frequency_hz,
+               (unsigned long)s_ctx.fsk_cfg.bitrate_bps,
+               (unsigned int)s_ctx.fsk_cfg.rx_bandwidth,
+               (unsigned int)s_ctx.fsk_cfg.shaping,
+               (unsigned int)s_ctx.fsk_cfg.filter,
+               (unsigned int)s_ctx.fsk_cfg.preamble_len,
+               (unsigned int)s_ctx.fsk_cfg.sync_word_len,
+               (unsigned int)s_ctx.fsk_cfg.crc_type,
+               s_ctx.fsk_cfg.data_whitening ? 1U : 0U,
+               (unsigned int)s_ctx.fsk_cfg.address_filter);
+        radio_main_print_fsk_sync_word(s_ctx.fsk_cfg.sync_word,
+                                       s_ctx.fsk_cfg.sync_word_len,
+                                       "RADIO CFG FSK SYNC: ");
+        return;
+    }
+
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        printf("RADIO CFG [%s] OOK: freq=%luHz br=%lubps bw=%u pre=%u sync_len=%u thr=%u thr_v=%u\r\n",
+               tag,
+               (unsigned long)s_ctx.ook_cfg.frequency_hz,
+               (unsigned long)s_ctx.ook_cfg.bitrate_bps,
+               (unsigned int)s_ctx.ook_cfg.rx_bandwidth,
+               (unsigned int)s_ctx.ook_cfg.preamble_len,
+               (unsigned int)s_ctx.ook_cfg.sync_word_len,
+               (unsigned int)s_ctx.ook_cfg.threshold,
+               (unsigned int)s_ctx.ook_cfg.threshold_value);
+        radio_main_print_ook_sync_word(s_ctx.ook_cfg.sync_word,
+                                       s_ctx.ook_cfg.sync_word_len,
+                                       "RADIO CFG OOK SYNC: ");
+        return;
+    }
+
+    printf("RADIO CFG [%s] LORA: freq=%luHz bw=%u sf=%u cr=4/%u pre=%u sync=%02X crc=%u iq=%u hdr=%u\r\n",
+           tag,
+           (unsigned long)s_ctx.lora_cfg.frequency_hz,
+           (unsigned int)s_ctx.lora_cfg.bandwidth,
+           (unsigned int)s_ctx.lora_cfg.spreading_factor,
+           (unsigned int)s_ctx.lora_cfg.coding_rate,
+           (unsigned int)s_ctx.lora_cfg.preamble_len,
+           (unsigned int)s_ctx.lora_cfg.sync_word,
+           s_ctx.lora_cfg.crc_on ? 1U : 0U,
+           s_ctx.lora_cfg.invert_iq ? 1U : 0U,
+           s_ctx.lora_cfg.implicit_header ? 1U : 0U);
+}
+
+static void radio_main_log_hw_registers(const char *reason)
+{
+    uint8_t op_mode = 0U;
+    uint8_t frf_msb = 0U;
+    uint8_t frf_mid = 0U;
+    uint8_t frf_lsb = 0U;
+    uint8_t rx_bw = 0U;
+    uint8_t bitrate_msb = 0U;
+    uint8_t bitrate_lsb = 0U;
+    uint8_t sync_cfg = 0U;
+    uint8_t packet_cfg2 = 0U;
+    const char *tag = (reason != NULL) ? reason : "state";
+    bool ok;
+
+    if (!s_ctx.initialized)
+    {
+        return;
+    }
+
+    ok = (radio_raw_read_reg(SX1276_REG_OP_MODE, &op_mode) == RADIO_OK) &&
+         (radio_raw_read_reg(SX1276_REG_FRF_MSB, &frf_msb) == RADIO_OK) &&
+         (radio_raw_read_reg(SX1276_REG_FRF_MID, &frf_mid) == RADIO_OK) &&
+         (radio_raw_read_reg(SX1276_REG_FRF_LSB, &frf_lsb) == RADIO_OK) &&
+         (radio_raw_read_reg(SX1276_REG_RX_BW, &rx_bw) == RADIO_OK);
+    if (!ok)
+    {
+        printf("RADIO HW [%s]: reg read failed\r\n", tag);
+        return;
+    }
+
+    printf("RADIO HW [%s]: opmode=0x%02X mode=%u mod=0x%02X frf=0x%02X%02X%02X -> %luHz rx_bw=0x%02X\r\n",
+           tag,
+           (unsigned int)op_mode,
+           (unsigned int)(op_mode & SX1276_OPMODE_MODE_MASK),
+           (unsigned int)(op_mode & SX1276_OPMODE_MODULATION_MASK),
+           (unsigned int)frf_msb,
+           (unsigned int)frf_mid,
+           (unsigned int)frf_lsb,
+           (unsigned long)radio_main_frf_to_hz(frf_msb, frf_mid, frf_lsb),
+           (unsigned int)rx_bw);
+
+    if ((s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK) ||
+        (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK))
+    {
+        ok = (radio_raw_read_reg(SX1276_REG_BITRATE_MSB, &bitrate_msb) == RADIO_OK) &&
+             (radio_raw_read_reg(SX1276_REG_BITRATE_LSB, &bitrate_lsb) == RADIO_OK) &&
+             (radio_raw_read_reg(SX1276_REG_SYNC_CONFIG, &sync_cfg) == RADIO_OK) &&
+             (radio_raw_read_reg(SX1276_REG_PACKET_CONFIG_2, &packet_cfg2) == RADIO_OK);
+        if (ok)
+        {
+            uint16_t bitrate_reg = ((uint16_t)bitrate_msb << 8) | bitrate_lsb;
+            uint32_t bitrate_hz = (bitrate_reg != 0U) ? (32000000UL / (uint32_t)bitrate_reg) : 0UL;
+
+            printf("RADIO HW [%s]: bitrate_reg=0x%04X -> %lubps sync_cfg=0x%02X packet_cfg2=0x%02X\r\n",
+                   tag,
+                   (unsigned int)bitrate_reg,
+                   (unsigned long)bitrate_hz,
+                   (unsigned int)sync_cfg,
+                   (unsigned int)packet_cfg2);
+        }
+    }
 }
 
 static bool radio_main_finish_pairing(bool accept)
@@ -2686,6 +2940,7 @@ static bool radio_main_finish_pairing(bool accept)
     snprintf(n.text, sizeof(n.text), "JOIN_OK %s", code_text);
     (void)menu_main_post_notification(&n);
     s_ctx.pairing_pending = false;
+    s_ctx.pairing_active = false;
     return true;
 }
 

@@ -182,6 +182,10 @@ typedef struct
     bool auto_ping_enabled;                    /**< Flaga automatycznego `PING`. */
 } radio_main_runtime_cfg_t;
 
+void radio_main_load_default_lora_preset(uint8_t preset_id, radio_lora_cfg_t *cfg);
+void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg);
+void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg);
+
 void radio_main_create_task(void);
 
 bool radio_main_cmd_send_template(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);

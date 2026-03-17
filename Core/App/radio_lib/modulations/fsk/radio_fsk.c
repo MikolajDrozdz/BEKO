@@ -73,6 +73,7 @@ static bool radio_cfg_valid(const radio_fsk_cfg_t *cfg)
         ((uint8_t)cfg->shaping > (uint8_t)RADIO_FSK_SHAPING_GMSK) ||
         ((uint8_t)cfg->filter > (uint8_t)RADIO_FSK_FILTER_BT_03) ||
         (cfg->preamble_len == 0U) ||
+        (cfg->sync_word_len == 0U) ||
         (cfg->sync_word_len > 4U) ||
         ((uint8_t)cfg->address_filter > (uint8_t)RADIO_ADDRESS_FILTER_NODE_BROADCAST) ||
         ((uint8_t)cfg->crc_type > (uint8_t)RADIO_PACKET_CRC_IBM))
@@ -242,15 +243,10 @@ static bool radio_write_sync_word(const radio_fsk_cfg_t *cfg)
     uint8_t sync_bytes[4];
     uint8_t i;
 
-    if (cfg->sync_word_len == 0U)
-    {
-        return sx1276_write_reg(&s_radio.bus, SX1276_REG_SYNC_CONFIG, 0x00U);
-    }
-
-    sync_config = (uint8_t)(SX1276_SYNC_ON |
+    sync_config = (uint8_t)(SX1276_SYNC_AUTO_RESTART_PLL |
+                            SX1276_SYNC_ON |
                             SX1276_SYNC_FIFOFILL_AUTO |
                             ((cfg->sync_word_len - 1U) & 0x07U));
-
     for (i = 0U; i < cfg->sync_word_len; i++)
     {
         uint8_t shift = (uint8_t)(((cfg->sync_word_len - 1U - i) * 8U) & 0x1FU);
@@ -293,7 +289,7 @@ static bool radio_apply_fsk_config(const radio_fsk_cfg_t *cfg)
            sx1276_write_reg(&s_radio.bus, SX1276_REG_PREAMBLE_LSB_FSK, (uint8_t)(cfg->preamble_len & 0xFFU)) &&
            radio_write_sync_word(cfg) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_PACKET_CONFIG_1, radio_get_packet_config_1(cfg)) &&
-           sx1276_write_reg(&s_radio.bus, SX1276_REG_PACKET_CONFIG_2, 0x00U) &&
+           sx1276_write_reg(&s_radio.bus, SX1276_REG_PACKET_CONFIG_2, SX1276_PACKET_DATA_MODE_PACKET) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_PAYLOAD_LENGTH_FSK, RADIO_LIB_MAX_PAYLOAD) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_NODE_ADDRESS, RADIO_FSK_NODE_ADDRESS_DEFAULT) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_BROADCAST_ADDRESS, RADIO_FSK_BROADCAST_ADDRESS) &&

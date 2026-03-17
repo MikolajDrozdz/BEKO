@@ -68,6 +68,7 @@ static bool radio_cfg_valid(const radio_ook_cfg_t *cfg)
         (cfg->bitrate_bps < 600UL) || (cfg->bitrate_bps > 300000UL) ||
         ((uint8_t)cfg->rx_bandwidth > (uint8_t)RADIO_LORA_BW_500_KHZ) ||
         (cfg->preamble_len == 0U) ||
+        (cfg->sync_word_len == 0U) ||
         (cfg->sync_word_len > 4U) ||
         ((uint8_t)cfg->threshold > (uint8_t)RADIO_OOK_THRESHOLD_AVERAGE))
     {
@@ -119,11 +120,6 @@ static bool radio_write_sync_word(const radio_ook_cfg_t *cfg)
     uint8_t sync_bytes[4];
     uint8_t i;
 
-    if (cfg->sync_word_len == 0U)
-    {
-        return sx1276_write_reg(&s_radio.bus, SX1276_REG_SYNC_CONFIG, 0x00U);
-    }
-
     for (i = 0U; i < cfg->sync_word_len; i++)
     {
         uint8_t shift = (uint8_t)(((cfg->sync_word_len - 1U - i) * 8U) & 0x1FU);
@@ -131,7 +127,8 @@ static bool radio_write_sync_word(const radio_ook_cfg_t *cfg)
     }
 
     return sx1276_write_reg(&s_radio.bus, SX1276_REG_SYNC_CONFIG,
-                            (uint8_t)(SX1276_SYNC_ON |
+                            (uint8_t)(SX1276_SYNC_AUTO_RESTART_PLL |
+                                      SX1276_SYNC_ON |
                                       SX1276_SYNC_FIFOFILL_AUTO |
                                       ((cfg->sync_word_len - 1U) & 0x07U))) &&
            sx1276_write_burst(&s_radio.bus, SX1276_REG_SYNC_VALUE_1, sync_bytes, cfg->sync_word_len);
@@ -215,7 +212,7 @@ static bool radio_apply_ook_config(const radio_ook_cfg_t *cfg)
            radio_write_sync_word(cfg) &&
            radio_apply_threshold(cfg) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_PACKET_CONFIG_1, SX1276_PACKET_FORMAT_VARIABLE) &&
-           sx1276_write_reg(&s_radio.bus, SX1276_REG_PACKET_CONFIG_2, 0x00U) &&
+           sx1276_write_reg(&s_radio.bus, SX1276_REG_PACKET_CONFIG_2, SX1276_PACKET_DATA_MODE_PACKET) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_PAYLOAD_LENGTH_FSK, RADIO_LIB_MAX_PAYLOAD) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_FIFO_THRESH,
                             (uint8_t)(SX1276_FIFO_THRESH_TX_START_NOT_EMPTY |

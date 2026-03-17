@@ -298,7 +298,7 @@ bool beko_net_should_forward(const beko_net_frame_t *frame, uint32_t self_node_i
     {
         return false;
     }
-    if (frame->dst_id == self_node_id)
+    if (beko_net_is_for_node(frame, self_node_id))
     {
         return false;
     }

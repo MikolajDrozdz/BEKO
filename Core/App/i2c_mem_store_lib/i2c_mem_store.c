@@ -374,7 +374,7 @@ static bool i2c_mem_store_layout_valid(const i2c_mem_store_cfg_t *cfg,
     slot_count = (uint16_t)(log_bytes / I2C_MEM_STORE_LOG_RECORD_SIZE);
     secret_slots = (uint16_t)(cfg->secret_area_bytes / I2C_MEM_STORE_SECRET_SLOT_SIZE);
 
-    if ((slot_count == 0U) || (secret_slots == 0U))
+    if (secret_slots == 0U)
     {
         return false;
     }
@@ -500,6 +500,10 @@ i2c_mem_store_status_t i2c_mem_store_append_message(i2c_mem_store_t *ctx,
     {
         return I2C_MEM_STORE_EINVAL;
     }
+    if (ctx->slot_count == 0U)
+    {
+        return I2C_MEM_STORE_EFULL;
+    }
 
     effective_len = payload_len;
     if (effective_len > I2C_MEM_STORE_LOG_PAYLOAD_MAX)
@@ -553,6 +557,10 @@ i2c_mem_store_status_t i2c_mem_store_read_message(i2c_mem_store_t *ctx,
     if ((ctx == NULL) || (!ctx->initialized) || (out_record == NULL))
     {
         return I2C_MEM_STORE_EINVAL;
+    }
+    if (ctx->slot_count == 0U)
+    {
+        return I2C_MEM_STORE_ENOTFOUND;
     }
     if (index_from_latest >= ctx->valid_count)
     {

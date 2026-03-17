@@ -358,7 +358,6 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_modal_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n);
 static void menu_execute_action(menu_state_t *st, menu_action_t action);
-static void menu_notify_text(menu_notification_type_t type, const char *text);
 static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text);
 static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text, const char *err_text);
 static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_text);
@@ -1603,13 +1602,22 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     {
         return;
     }
-    if (st->current_page == MENU_PAGE_NONE)
+    if ((st->current_page == MENU_PAGE_NONE) &&
+        (n->type != MENU_NOTIFICATION_PAIRING))
     {
         return;
     }
     if (st->modal != MENU_MODAL_NONE)
     {
-        return;
+        if ((n->type == MENU_NOTIFICATION_PAIRING) &&
+            (st->modal == MENU_MODAL_INFO))
+        {
+            st->modal = MENU_MODAL_NONE;
+        }
+        else
+        {
+            return;
+        }
     }
     if (n->type == MENU_NOTIFICATION_RX)
     {
@@ -2363,28 +2371,3 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
     return true;
 }
 
-static void menu_notify_text(menu_notification_type_t type, const char *text)
-{
-    menu_notification_t n;
-
-    memset(&n, 0, sizeof(n));
-    n.type = type;
-    if (text != NULL)
-    {
-        size_t i;
-
-        for (i = 0U; (i < MENU_LINE_CHARS) && (text[i] != '\0'); i++)
-        {
-            n.text[i] = text[i];
-        }
-        if (i < MENU_LINE_CHARS)
-        {
-            n.text[i] = '\0';
-        }
-        else
-        {
-            n.text[MENU_LINE_CHARS] = '\0';
-        }
-    }
-    (void)menu_main_post_notification(&n);
-}
