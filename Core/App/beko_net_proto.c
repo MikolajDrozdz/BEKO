@@ -286,7 +286,12 @@ bool beko_net_should_forward(const beko_net_frame_t *frame, uint32_t self_node_i
     {
         return false;
     }
-    if (beko_net_is_for_node(frame, self_node_id))
+    /*
+     * Broadcast packets are also for the local node, but in a mesh/repeater path they should
+     * still be forwarded while TTL permits. Only true unicast packets addressed to this node
+     * stop here.
+     */
+    if (frame->dst_id == self_node_id)
     {
         return false;
     }

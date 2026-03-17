@@ -11,14 +11,15 @@
 
 #define LCD_MAIN_ROWS              4U
 #define LCD_MAIN_COLS              20U
-#define LCD_MAIN_QUEUE_LENGTH      24U
-#define LCD_TASK_STACK_SIZE        3072U
+#define LCD_MAIN_QUEUE_LENGTH      256U
+#define LCD_TASK_STACK_SIZE        8192U
 #define LCD_TASK_STACK_WORDS       (LCD_TASK_STACK_SIZE / sizeof(StackType_t))
 
 typedef enum
 {
     LCD_MAIN_MSG_SET_LINE = 0,
     LCD_MAIN_MSG_SET_LINES,
+    LCD_MAIN_MSG_SHOW_MENU,
     LCD_MAIN_MSG_PUSH_MONITOR,
     LCD_MAIN_MSG_SET_MODE,
     LCD_MAIN_MSG_SHOW_POPUP,
@@ -50,12 +51,16 @@ static bool s_render_cache_valid = false;
 
 static void lcd_main_task_fn(void *argument);
 static void lcd_main_fill_line(char *dst, const char *src);
+static void lcd_main_write_rssi_field(char *dst, int16_t rssi_dbm);
 static void lcd_main_fill_line_from_payload(char *dst, int16_t rssi_dbm, const uint8_t *data, uint32_t length);
 static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
 static void lcd_main_shift_up_and_append(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U], const char *line);
 static void lcd_main_render_mode(void);
 static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
 static void lcd_main_invalidate_render_cache(void);
+static bool lcd_main_is_monitor_message_type(lcd_main_msg_type_t type);
+static bool lcd_main_is_fullscreen_ui_message_type(lcd_main_msg_type_t type);
+static void lcd_main_drop_pending_messages(void);
 static bool lcd_main_post_message(const lcd_main_msg_t *msg);
 
 static const osThreadAttr_t s_lcd_task_attr =
@@ -114,6 +119,25 @@ bool lcd_main_set_lines(const char *line0, const char *line1)
     msg.type = LCD_MAIN_MSG_SET_LINES;
     lcd_main_fill_line(msg.text0, line0);
     lcd_main_fill_line(msg.text1, line1);
+    return lcd_main_post_message(&msg);
+}
+
+/**
+ * @brief Update all four menu rows in one queue message.
+ *
+ * Menu navigation used to enqueue each line separately, which could leave stale rows on screen
+ * when the LCD queue was busy. Sending the whole frame atomically keeps the UI coherent.
+ */
+bool lcd_main_show_menu(const char *l0, const char *l1, const char *l2, const char *l3)
+{
+    lcd_main_msg_t msg;
+
+    memset(&msg, 0, sizeof(msg));
+    msg.type = LCD_MAIN_MSG_SHOW_MENU;
+    lcd_main_fill_line(msg.text0, l0);
+    lcd_main_fill_line(msg.text1, l1);
+    lcd_main_fill_line(msg.text2, l2);
+    lcd_main_fill_line(msg.text3, l3);
     return lcd_main_post_message(&msg);
 }
 
@@ -178,11 +202,10 @@ static void lcd_main_task_fn(void *argument)
     lcd_main_clear_lines(s_monitor_lines);
     lcd_main_clear_lines(s_ui_lines);
     lcd_main_clear_lines(s_rendered_lines);
-    lcd_main_fill_line(s_monitor_lines[0], "HELLO BEKO");
-    lcd_main_fill_line(s_monitor_lines[1], "RX monitor...");
     s_render_cache_valid = false;
 
     lcd_animation_hello_beko();
+    lcd_main_clear_lines(s_monitor_lines);
     s_mode = LCD_MODE_MONITOR;
     lcd_main_render_mode();
 
@@ -211,6 +234,17 @@ static void lcd_main_task_fn(void *argument)
                     lcd_main_clear_lines(s_ui_lines);
                     lcd_main_fill_line(s_ui_lines[0], msg.text0);
                     lcd_main_fill_line(s_ui_lines[1], msg.text1);
+                    lcd_main_invalidate_render_cache();
+                    render_required = true;
+                    break;
+
+                case LCD_MAIN_MSG_SHOW_MENU:
+                    lcd_main_fill_line(s_ui_lines[0], msg.text0);
+                    lcd_main_fill_line(s_ui_lines[1], msg.text1);
+                    lcd_main_fill_line(s_ui_lines[2], msg.text2);
+                    lcd_main_fill_line(s_ui_lines[3], msg.text3);
+                    s_mode = LCD_MODE_MENU;
+                    lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
 
@@ -228,6 +262,7 @@ static void lcd_main_task_fn(void *argument)
                         lcd_main_clear_lines(s_ui_lines);
                     }
                     s_mode = msg.mode;
+                    lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
 
@@ -238,6 +273,7 @@ static void lcd_main_task_fn(void *argument)
                     lcd_main_fill_line(s_ui_lines[2], msg.text2);
                     lcd_main_fill_line(s_ui_lines[3], msg.text3);
                     s_mode = LCD_MODE_POPUP;
+                    lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
 
@@ -251,6 +287,7 @@ static void lcd_main_task_fn(void *argument)
                 case LCD_MAIN_MSG_CLEAR:
                     lcd_main_clear_lines(s_monitor_lines);
                     lcd_main_clear_lines(s_ui_lines);
+                    lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
 
@@ -289,47 +326,72 @@ static void lcd_main_fill_line(char *dst, const char *src)
     dst[LCD_MAIN_COLS] = '\0';
 }
 
-static void lcd_main_fill_line_from_payload(char *dst, int16_t rssi_dbm, const uint8_t *data, uint32_t length)
+/**
+ * @brief Render RSSI into the fixed 4-character field used by the monitor view.
+ *
+ * The LCD format reserves columns 0..3 for RSSI and column 4 for ':'.
+ * This helper keeps the full signed value visible down to -999 dBm instead of clipping at -99.
+ */
+static void lcd_main_write_rssi_field(char *dst, int16_t rssi_dbm)
 {
-    uint32_t i;
-    uint32_t msg_max_len = (LCD_MAIN_COLS - 5U);
-    int32_t rssi_display;
+    int32_t value;
+    uint32_t magnitude;
+    int8_t pos;
 
     if (dst == NULL)
     {
         return;
     }
 
-    if (rssi_dbm > 999)
-    {
-        rssi_display = 999;
-    }
-    else if (rssi_dbm < -99)
-    {
-        rssi_display = -99;
-    }
-    else
-    {
-        rssi_display = rssi_dbm;
-    }
-
     dst[0] = ' ';
     dst[1] = ' ';
     dst[2] = ' ';
     dst[3] = ' ';
-    if (rssi_display < 0)
+
+    value = (int32_t)rssi_dbm;
+    if (value > 999)
     {
-        int32_t mag = -rssi_display;
-        dst[0] = '-';
-        dst[1] = (char)('0' + ((mag / 10) % 10));
-        dst[2] = (char)('0' + (mag % 10));
+        value = 999;
     }
-    else
+    else if (value < -999)
     {
-        dst[1] = (char)('0' + ((rssi_display / 100) % 10));
-        dst[2] = (char)('0' + ((rssi_display / 10) % 10));
-        dst[3] = (char)('0' + (rssi_display % 10));
+        value = -999;
     }
+
+    magnitude = (value < 0) ? (uint32_t)(-value) : (uint32_t)value;
+    pos = 3;
+
+    do
+    {
+        dst[pos] = (char)('0' + (magnitude % 10UL));
+        magnitude /= 10UL;
+        pos--;
+    } while ((magnitude != 0UL) && (pos >= 0));
+
+    if (value < 0)
+    {
+        if (pos >= 0)
+        {
+            dst[pos] = '-';
+        }
+        else
+        {
+            dst[0] = '-';
+        }
+    }
+}
+
+static void lcd_main_fill_line_from_payload(char *dst, int16_t rssi_dbm, const uint8_t *data, uint32_t length)
+{
+    uint32_t i;
+    uint32_t msg_max_len = (LCD_MAIN_COLS - 5U);
+
+    if (dst == NULL)
+    {
+        return;
+    }
+
+    lcd_main_write_rssi_field(dst, rssi_dbm);
     dst[4] = ':';
 
     for (i = 0U; i < msg_max_len; i++)
@@ -412,14 +474,76 @@ static void lcd_main_invalidate_render_cache(void)
     s_render_cache_valid = false;
 }
 
-static bool lcd_main_post_message(const lcd_main_msg_t *msg)
+static bool lcd_main_is_monitor_message_type(lcd_main_msg_type_t type)
+{
+    return (type == LCD_MAIN_MSG_PUSH_MONITOR);
+}
+
+static bool lcd_main_is_fullscreen_ui_message_type(lcd_main_msg_type_t type)
+{
+    if (type == LCD_MAIN_MSG_SHOW_MENU)
+    {
+        return true;
+    }
+
+    if (type == LCD_MAIN_MSG_SHOW_POPUP)
+    {
+        return true;
+    }
+
+    if (type == LCD_MAIN_MSG_SET_MODE)
+    {
+        return true;
+    }
+
+    if (type == LCD_MAIN_MSG_SET_LINES)
+    {
+        return true;
+    }
+
+    if (type == LCD_MAIN_MSG_SHOW_BOOT)
+    {
+        return true;
+    }
+
+    if (type == LCD_MAIN_MSG_CLEAR)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+/*
+ * Full-screen UI updates must win over any stale backlog. Dropping pending LCD messages here is
+ * cheaper than letting old popups arrive late and overwrite the current menu state.
+ */
+static void lcd_main_drop_pending_messages(void)
 {
     lcd_main_msg_t dropped;
+
+    if (s_lcd_queue == NULL)
+    {
+        return;
+    }
+
+    while (osMessageQueueGet(s_lcd_queue, &dropped, NULL, 0U) == osOK)
+    {
+    }
+}
+
+static bool lcd_main_post_message(const lcd_main_msg_t *msg)
+{
     osStatus_t st;
 
     if ((msg == NULL) || (s_lcd_queue == NULL))
     {
         return false;
+    }
+
+    if (lcd_main_is_fullscreen_ui_message_type(msg->type))
+    {
+        lcd_main_drop_pending_messages();
     }
 
     st = osMessageQueuePut(s_lcd_queue, msg, 0U, 0U);
@@ -430,14 +554,16 @@ static bool lcd_main_post_message(const lcd_main_msg_t *msg)
 
     if (st == osErrorResource)
     {
-        if (msg->type != LCD_MAIN_MSG_PUSH_MONITOR)
+        if (lcd_main_is_monitor_message_type(msg->type))
         {
-            return (osMessageQueuePut(s_lcd_queue, msg, 0U, 5U) == osOK);
+            return false;
         }
 
-        if (osMessageQueueGet(s_lcd_queue, &dropped, NULL, 0U) == osOK)
+        lcd_main_drop_pending_messages();
+        st = osMessageQueuePut(s_lcd_queue, msg, 0U, 5U);
+        if (st == osOK)
         {
-            return (osMessageQueuePut(s_lcd_queue, msg, 0U, 0U) == osOK);
+            return true;
         }
     }
 

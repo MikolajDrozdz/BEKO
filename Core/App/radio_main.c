@@ -20,7 +20,7 @@
 #define RADIO_CMD_POLL_MS                    5U
 #define RADIO_MSG_BUF_MAX                    255U
 #define RADIO_AUTO_PING_PERIOD_MS            5000UL
-#define RADIO_HOP_PERIOD_MS                  2000UL
+#define RADIO_HOP_PERIOD_DEFAULT_MS          2000UL
 #define RADIO_DEDUP_WINDOW_MS                60000UL
 #define RADIO_PAIR_CODE_LEN                  6U
 #define RADIO_AUTH_TAG_LEN                   4U
@@ -35,6 +35,7 @@ typedef enum
     RADIO_MAIN_CMD_SET_MOD_BW,
     RADIO_MAIN_CMD_SET_OPTION,
     RADIO_MAIN_CMD_SET_FH,
+    RADIO_MAIN_CMD_SET_FH_PERIOD,
     RADIO_MAIN_CMD_SET_CODING,
     RADIO_MAIN_CMD_SET_AUTO_PING,
     RADIO_MAIN_CMD_START_PAIRING,
@@ -98,6 +99,7 @@ typedef struct
     radio_main_modulation_t modulation_id;
     bool initialized;
     bool fh_enabled;
+    uint32_t fh_period_ms;
     bool coding_enabled;
     bool auto_ping_enabled;
     uint8_t lora_preset;
@@ -149,6 +151,7 @@ static bool radio_main_validate_tx_power(int32_t tx_power_dbm);
 static bool radio_main_validate_bitrate(uint32_t bitrate_bps);
 static bool radio_main_validate_preamble(uint32_t preamble_len);
 static bool radio_main_is_supported_bw(uint8_t bw_code);
+static bool radio_main_validate_hop_period(uint32_t period_ms);
 static bool radio_main_reconfigure_radio(void);
 static bool radio_main_send_system_frame(uint8_t type,
                                          uint32_t dst_id,
@@ -316,6 +319,17 @@ bool radio_main_cmd_set_fh(bool enabled)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
+bool radio_main_cmd_set_fh_period(uint32_t period_ms)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SET_FH_PERIOD;
+    cmd.u.set_u32.value = period_ms;
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
 bool radio_main_cmd_set_coding(bool enabled)
 {
     radio_main_cmd_t cmd;
@@ -441,6 +455,7 @@ static void radio_main_task_fn(void *argument)
     {
         s_ctx.coding_enabled = sec_cfg.coding_enabled;
         s_ctx.fh_enabled = sec_cfg.fh_enabled;
+        s_ctx.fh_period_ms = sec_cfg.fh_period_ms;
         s_ctx.auto_ping_enabled = sec_cfg.auto_ping_enabled;
         s_ctx.lora_preset = sec_cfg.lora_preset;
         if (sec_cfg.radio_profiles_persisted)
@@ -454,9 +469,15 @@ static void radio_main_task_fn(void *argument)
     else
     {
         s_ctx.fh_enabled = false;
+        s_ctx.fh_period_ms = RADIO_HOP_PERIOD_DEFAULT_MS;
         s_ctx.coding_enabled = false;
         s_ctx.auto_ping_enabled = false;
         s_ctx.lora_preset = 2U;
+    }
+
+    if (!radio_main_validate_hop_period(s_ctx.fh_period_ms))
+    {
+        s_ctx.fh_period_ms = RADIO_HOP_PERIOD_DEFAULT_MS;
     }
 
     if (!sec_cfg.radio_profiles_persisted)
@@ -561,6 +582,15 @@ static void radio_main_task_fn(void *argument)
                     s_ctx.fh_enabled = cmd.u.set_bool.enabled;
                     s_ctx.last_hop_ms = radio_main_now_ms();
                     cmd_result = true;
+                    break;
+
+                case RADIO_MAIN_CMD_SET_FH_PERIOD:
+                    if (radio_main_validate_hop_period(cmd.u.set_u32.value))
+                    {
+                        s_ctx.fh_period_ms = cmd.u.set_u32.value;
+                        s_ctx.last_hop_ms = radio_main_now_ms();
+                        cmd_result = true;
+                    }
                     break;
 
                 case RADIO_MAIN_CMD_SET_CODING:
@@ -828,6 +858,7 @@ static void radio_main_sync_snapshot(radio_main_runtime_cfg_t *cfg)
     cfg->fsk = s_ctx.fsk_cfg;
     cfg->ook = s_ctx.ook_cfg;
     cfg->fh_enabled = s_ctx.fh_enabled;
+    cfg->fh_period_ms = s_ctx.fh_period_ms;
     cfg->coding_enabled = s_ctx.coding_enabled;
     cfg->auto_ping_enabled = s_ctx.auto_ping_enabled;
 }
@@ -988,6 +1019,11 @@ static bool radio_main_validate_preamble(uint32_t preamble_len)
 {
     return ((preamble_len >= 1UL) &&
             (preamble_len <= 65535UL));
+}
+
+static bool radio_main_validate_hop_period(uint32_t period_ms)
+{
+    return ((period_ms >= 250UL) && (period_ms <= 60000UL));
 }
 
 static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
@@ -1344,6 +1380,7 @@ static bool radio_main_send_system_frame(uint8_t type,
     uint8_t raw[RADIO_MSG_BUF_MAX];
     uint16_t raw_len = 0U;
     uint8_t key[16];
+    bool have_user_key = false;
 
     if (!s_ctx.initialized)
     {
@@ -1372,18 +1409,25 @@ static bool radio_main_send_system_frame(uint8_t type,
     {
         uint32_t tag;
 
-        if (dst_id == BEKO_NET_BROADCAST_ID)
-        {
-            return false;
-        }
         if ((uint16_t)(payload_len + RADIO_AUTH_TAG_LEN) > BEKO_NET_MAX_PAYLOAD)
         {
             return false;
         }
-        if (!security_main_get_peer_link_key(s_ctx.node_id, dst_id, key))
+
+        /*
+         * USER traffic is secured with the shared network key so any node belonging to the same
+         * BEKO network can receive and relay the message, even without a trusted-device entry.
+         */
+        if (security_main_get_network_key(key))
+        {
+            have_user_key = true;
+        }
+
+        if (!have_user_key)
         {
             return false;
         }
+
         beko_net_xtea_ctr_crypt(frame.payload, frame.payload_len, key, frame.msg_id);
         tag = radio_main_auth_tag_compute(key, &frame, frame.payload, frame.payload_len);
         memmove(&frame.payload[RADIO_AUTH_TAG_LEN], frame.payload, frame.payload_len);
@@ -1413,40 +1457,6 @@ static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, 
 
     msg = s_template_groups[group_id][msg_id];
     len = (uint16_t)strlen(msg);
-
-    if (s_ctx.coding_enabled && (dst_id == BEKO_NET_BROADCAST_ID))
-    {
-        trusted_info_t info;
-        uint8_t idx;
-        bool sent_any = false;
-
-        for (idx = 0U; idx < 16U; idx++)
-        {
-            if (security_main_cmd_get_device(idx, &info) && info.in_use)
-            {
-                uint32_t wait_start = radio_main_now_ms();
-
-                while (radio_get_state() == RADIO_STATE_TX)
-                {
-                    radio_process();
-                    if ((radio_main_now_ms() - wait_start) > 250U)
-                    {
-                        break;
-                    }
-                    osDelay(2U);
-                }
-
-                if (radio_main_send_system_frame(BEKO_NET_TYPE_USER,
-                                                 info.node_id,
-                                                 (const uint8_t *)msg,
-                                                 len))
-                {
-                    sent_any = true;
-                }
-            }
-        }
-        return sent_any;
-    }
 
     return radio_main_send_system_frame(BEKO_NET_TYPE_USER, dst_id, (const uint8_t *)msg, len);
 }
@@ -1492,6 +1502,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     bool is_beko;
     bool duplicate;
     bool for_me;
+    bool network_frame = false;
     uint8_t key[16];
     uint8_t tx_buf[RADIO_MSG_BUF_MAX];
     uint16_t tx_len = 0U;
@@ -1510,6 +1521,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     if (is_beko)
     {
         frame_decoded = frame;
+        network_frame = true;
         if ((frame.flags & BEKO_NET_FLAG_CODED) != 0U)
         {
             if (frame_decoded.type == BEKO_NET_TYPE_USER)
@@ -1517,13 +1529,8 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 uint16_t cipher_len;
                 uint32_t rx_tag;
                 uint32_t expected_tag;
+                bool auth_ok = false;
 
-                if (!security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
-                {
-                    printf("RADIO RX coded from unknown src=0x%08lX\r\n",
-                           (unsigned long)frame_decoded.src_id);
-                    return;
-                }
                 if (((frame.flags & BEKO_NET_FLAG_AUTH) == 0U) ||
                     (frame_decoded.payload_len < RADIO_AUTH_TAG_LEN))
                 {
@@ -1534,11 +1541,26 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
                 cipher_len = (uint16_t)(frame_decoded.payload_len - RADIO_AUTH_TAG_LEN);
                 rx_tag = radio_main_auth_tag_read_be(frame_decoded.payload);
-                expected_tag = radio_main_auth_tag_compute(key,
-                                                           &frame_decoded,
-                                                           &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
-                                                           cipher_len);
-                if ((rx_tag ^ expected_tag) != 0UL)
+
+                if (security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
+                {
+                    expected_tag = radio_main_auth_tag_compute(key,
+                                                               &frame_decoded,
+                                                               &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
+                                                               cipher_len);
+                    auth_ok = ((rx_tag ^ expected_tag) == 0UL);
+                }
+
+                if (!auth_ok && security_main_get_network_key(key))
+                {
+                    expected_tag = radio_main_auth_tag_compute(key,
+                                                               &frame_decoded,
+                                                               &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
+                                                               cipher_len);
+                    auth_ok = ((rx_tag ^ expected_tag) == 0UL);
+                }
+
+                if (!auth_ok)
                 {
                     printf("RADIO RX auth mismatch src=0x%08lX\r\n",
                            (unsigned long)frame_decoded.src_id);
@@ -1704,7 +1726,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         }
     }
 
-    if (!duplicate && beko_net_should_forward(&frame, s_ctx.node_id))
+    if (network_frame && !duplicate && beko_net_should_forward(&frame, s_ctx.node_id))
     {
         frame.ttl--;
         if (beko_net_encode(&frame, tx_buf, sizeof(tx_buf), &tx_len))
@@ -1728,13 +1750,17 @@ static void radio_main_handle_hopping(void)
     {
         return;
     }
+    if (s_ctx.modulation_id != RADIO_MAIN_MODULATION_LORA)
+    {
+        return;
+    }
     if (!s_ctx.initialized)
     {
         return;
     }
 
     now = radio_main_now_ms();
-    if ((now - s_ctx.last_hop_ms) < RADIO_HOP_PERIOD_MS)
+    if ((now - s_ctx.last_hop_ms) < s_ctx.fh_period_ms)
     {
         return;
     }

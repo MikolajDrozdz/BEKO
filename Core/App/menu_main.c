@@ -13,15 +13,16 @@
 #include "task.h"
 #include "tof_main.h"
 
-#include <stdio.h>
 #include <string.h>
 
-#define MENU_TASK_STACK_SIZE                6144U
+#define MENU_TASK_STACK_SIZE                8192U
 #define MENU_TASK_STACK_WORDS               (MENU_TASK_STACK_SIZE / sizeof(StackType_t))
-#define MENU_NOTIFY_QUEUE_DEPTH             8U
+#define MENU_NOTIFY_QUEUE_DEPTH             64U
 #define MENU_INACTIVITY_TIMEOUT_MS          60000UL
 #define MENU_DISPLAY_ROWS                   4U
 #define MENU_ITEMS_VISIBLE                  3U
+#define MENU_LINE_CHARS                     20U
+#define MENU_LINE_BUF_SIZE                  (MENU_LINE_CHARS + 1U)
 
 typedef enum
 {
@@ -34,6 +35,7 @@ typedef enum
     MENU_PAGE_MAIN,
     MENU_PAGE_DEVICES,
     MENU_PAGE_SECURITY,
+    MENU_PAGE_SECURITY_FH,
     MENU_PAGE_HARDWARE,
     MENU_PAGE_MODULATION,
     MENU_PAGE_MOD_LORA,
@@ -92,6 +94,12 @@ typedef enum
     MENU_ACTION_DEVICE_DELETE,
     MENU_ACTION_DEVICE_INFO,
     MENU_ACTION_SEC_TOGGLE_FH,
+    MENU_ACTION_SEC_FH_ENABLE,
+    MENU_ACTION_SEC_FH_DISABLE,
+    MENU_ACTION_SEC_FH_PERIOD_1000,
+    MENU_ACTION_SEC_FH_PERIOD_2000,
+    MENU_ACTION_SEC_FH_PERIOD_5000,
+    MENU_ACTION_SEC_FH_PERIOD_10000,
     MENU_ACTION_SEC_TPM_INFO,
     MENU_ACTION_SEC_ROTATE_KEYS,
     MENU_ACTION_SEC_TOGGLE_CODING,
@@ -295,19 +303,24 @@ typedef struct
     uint8_t item_count;
 } menu_page_t;
 
+typedef enum
+{
+    MENU_MODAL_NONE = 0,
+    MENU_MODAL_INFO,
+    MENU_MODAL_PAIR_REQUEST,
+    MENU_MODAL_PAIR_SETUP,
+    MENU_MODAL_SEND_CONFIRM
+} menu_modal_t;
+
 typedef struct
 {
-    bool popup_active;
-    bool pairing_prompt;
-    bool pair_setup_prompt;
-    bool send_prompt;
-    menu_action_t pending_send_action;
-    menu_page_id_t page_before_popup;
-    bool popup_enabled;
-    uint32_t last_input_ms;
     menu_page_id_t current_page;
     uint8_t selected_idx;
     uint8_t led_mode;
+    bool popup_enabled;
+    uint32_t last_input_ms;
+    menu_modal_t modal;
+    menu_action_t pending_action;
 } menu_state_t;
 
 typedef struct
@@ -334,14 +347,34 @@ static void menu_render(menu_state_t *st);
 static void menu_render_popup(const char *l0, const char *l1, const char *l2, const char *l3);
 static void menu_enter_monitor(menu_state_t *st);
 static void menu_open_page(menu_state_t *st, menu_page_id_t page_id);
+static void menu_open_info_modal(menu_state_t *st,
+                                 const char *l0,
+                                 const char *l1,
+                                 const char *l2,
+                                 const char *l3);
+static void menu_close_modal(menu_state_t *st);
 static void menu_handle_button(menu_state_t *st, button_event_t evt);
+static void menu_handle_modal_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n);
 static void menu_execute_action(menu_state_t *st, menu_action_t action);
 static void menu_notify_text(menu_notification_type_t type, const char *text);
-static bool menu_execute_radio_action(menu_action_t action);
+static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text);
+static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text, const char *err_text);
+static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action);
 static bool menu_is_send_action(menu_action_t action);
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label);
 static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req);
+static void menu_line_clear(char *dst);
+static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars);
+static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value);
+static uint8_t menu_line_append_i32(char *dst, uint8_t offset, int32_t value);
+static uint8_t menu_line_append_hex32(char *dst, uint8_t offset, uint32_t value);
+static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, const char *suffix);
+static void menu_line_format_i32(char *dst, const char *prefix, int32_t value, const char *suffix);
+static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value);
+static void menu_line_format_fixed2(char *dst, const char *prefix, float value, const char *suffix);
+static void menu_line_copy_or_default(char *dst, const char *text, const char *fallback);
+static const char *menu_pair_code_text(const char *text, uint8_t prefix_len);
 
 static const menu_item_t s_page_pager_items[] =
 {
@@ -403,12 +436,23 @@ static const menu_item_t s_page_devices_items[] =
 
 static const menu_item_t s_page_security_items[] =
 {
-    { "Frequency hopping", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_FH },
+    { "Frequency hopping", MENU_PAGE_SECURITY_FH, MENU_ACTION_NONE },
     { "TPM", MENU_PAGE_NONE, MENU_ACTION_SEC_TPM_INFO },
     { "Keys", MENU_PAGE_NONE, MENU_ACTION_SEC_ROTATE_KEYS },
     { "Coding", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_CODING },
     { "Notif mode", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_NOTIFY_MODE },
     { "Auto ping", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_AUTOPING },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_security_fh_items[] =
+{
+    { "Enable FH", MENU_PAGE_NONE, MENU_ACTION_SEC_FH_ENABLE },
+    { "Disable FH", MENU_PAGE_NONE, MENU_ACTION_SEC_FH_DISABLE },
+    { "Cycle 1 sec", MENU_PAGE_NONE, MENU_ACTION_SEC_FH_PERIOD_1000 },
+    { "Cycle 2 sec", MENU_PAGE_NONE, MENU_ACTION_SEC_FH_PERIOD_2000 },
+    { "Cycle 5 sec", MENU_PAGE_NONE, MENU_ACTION_SEC_FH_PERIOD_5000 },
+    { "Cycle 10 sec", MENU_PAGE_NONE, MENU_ACTION_SEC_FH_PERIOD_10000 },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -817,6 +861,7 @@ static const menu_page_t s_pages[] =
     { "MAIN MENU", MENU_PAGE_PAGER, s_page_main_items, (uint8_t)(sizeof(s_page_main_items) / sizeof(s_page_main_items[0])) },
     { "DEVICES", MENU_PAGE_MAIN, s_page_devices_items, (uint8_t)(sizeof(s_page_devices_items) / sizeof(s_page_devices_items[0])) },
     { "SECURITY", MENU_PAGE_MAIN, s_page_security_items, (uint8_t)(sizeof(s_page_security_items) / sizeof(s_page_security_items[0])) },
+    { "SEC FH", MENU_PAGE_SECURITY, s_page_security_fh_items, (uint8_t)(sizeof(s_page_security_fh_items) / sizeof(s_page_security_fh_items[0])) },
     { "HARDWARE", MENU_PAGE_MAIN, s_page_hardware_items, (uint8_t)(sizeof(s_page_hardware_items) / sizeof(s_page_hardware_items[0])) },
     { "MODULATION", MENU_PAGE_MAIN, s_page_modulation_items, (uint8_t)(sizeof(s_page_modulation_items) / sizeof(s_page_modulation_items[0])) },
     { "LORA", MENU_PAGE_MODULATION, s_page_mod_lora_items, (uint8_t)(sizeof(s_page_mod_lora_items) / sizeof(s_page_mod_lora_items[0])) },
@@ -1063,7 +1108,6 @@ void menu_main_create_task(void)
         s_menu_notify_queue = osMessageQueueNew(MENU_NOTIFY_QUEUE_DEPTH, sizeof(menu_notification_t), NULL);
         if (s_menu_notify_queue == NULL)
         {
-            printf("MENU: notify queue create failed\r\n");
             return;
         }
     }
@@ -1071,10 +1115,6 @@ void menu_main_create_task(void)
     if (s_menu_task == NULL)
     {
         s_menu_task = osThreadNew(menu_main_task_fn, NULL, &s_menu_task_attr);
-        if (s_menu_task == NULL)
-        {
-            printf("MENU: task create failed\r\n");
-        }
     }
 }
 
@@ -1109,7 +1149,6 @@ static void menu_main_task_fn(void *argument)
 
     (void)argument;
     memset(&st, 0, sizeof(st));
-    st.current_page = MENU_PAGE_NONE;
     st.popup_enabled = true;
     st.last_input_ms = HAL_GetTick();
 
@@ -1128,24 +1167,22 @@ static void menu_main_task_fn(void *argument)
             menu_handle_button(&st, evt);
         }
 
-        if (s_menu_notify_queue != NULL)
+        while ((s_menu_notify_queue != NULL) &&
+               (osMessageQueueGet(s_menu_notify_queue, &notify, NULL, 0U) == osOK))
         {
-            if (osMessageQueueGet(s_menu_notify_queue, &notify, NULL, 0U) == osOK)
-            {
-                menu_handle_notification(&st, &notify);
-            }
+            menu_handle_notification(&st, &notify);
         }
 
-        if ((st.current_page != MENU_PAGE_NONE) && (!st.popup_active))
+        if ((st.current_page != MENU_PAGE_NONE) &&
+            (st.modal == MENU_MODAL_NONE) &&
+            ((HAL_GetTick() - st.last_input_ms) >= MENU_INACTIVITY_TIMEOUT_MS))
         {
-            if ((HAL_GetTick() - st.last_input_ms) >= MENU_INACTIVITY_TIMEOUT_MS)
-            {
-                menu_enter_monitor(&st);
-            }
+            menu_enter_monitor(&st);
         }
     }
 }
 
+/* Returns the UI to passive monitor mode and clears transient menu state. */
 static void menu_enter_monitor(menu_state_t *st)
 {
     if (st == NULL)
@@ -1155,14 +1192,12 @@ static void menu_enter_monitor(menu_state_t *st)
 
     st->current_page = MENU_PAGE_NONE;
     st->selected_idx = 0U;
-    st->popup_active = false;
-    st->pairing_prompt = false;
-    st->pair_setup_prompt = false;
-    st->send_prompt = false;
-    st->pending_send_action = MENU_ACTION_NONE;
+    st->modal = MENU_MODAL_NONE;
+    st->pending_action = MENU_ACTION_NONE;
     (void)lcd_main_set_mode(LCD_MODE_MONITOR);
 }
 
+/* Opens a normal page and resets selection/modal context. */
 static void menu_open_page(menu_state_t *st, menu_page_id_t page_id)
 {
     if (st == NULL)
@@ -1172,21 +1207,257 @@ static void menu_open_page(menu_state_t *st, menu_page_id_t page_id)
 
     st->current_page = page_id;
     st->selected_idx = 0U;
-    st->popup_active = false;
-    st->pairing_prompt = false;
-    st->pair_setup_prompt = false;
-    st->send_prompt = false;
-    st->pending_send_action = MENU_ACTION_NONE;
-    (void)lcd_main_set_mode(LCD_MODE_MENU);
+    st->modal = MENU_MODAL_NONE;
+    st->pending_action = MENU_ACTION_NONE;
     menu_render(st);
+}
+
+/* Shows an informational modal without changing the underlying page. */
+static void menu_open_info_modal(menu_state_t *st,
+                                 const char *l0,
+                                 const char *l1,
+                                 const char *l2,
+                                 const char *l3)
+{
+    if (st == NULL)
+    {
+        return;
+    }
+
+    st->modal = MENU_MODAL_INFO;
+    st->pending_action = MENU_ACTION_NONE;
+    menu_render_popup(l0, l1, l2, l3);
+}
+
+/* Closes the active modal and redraws the underlying page or monitor. */
+static void menu_close_modal(menu_state_t *st)
+{
+    if (st == NULL)
+    {
+        return;
+    }
+
+    st->modal = MENU_MODAL_NONE;
+    st->pending_action = MENU_ACTION_NONE;
+
+    if (st->current_page == MENU_PAGE_NONE)
+    {
+        (void)lcd_main_set_mode(LCD_MODE_MONITOR);
+    }
+    else
+    {
+        menu_render(st);
+    }
+}
+
+static void menu_line_clear(char *dst)
+{
+    uint8_t i;
+
+    if (dst == NULL)
+    {
+        return;
+    }
+
+    for (i = 0U; i < MENU_LINE_CHARS; i++)
+    {
+        dst[i] = ' ';
+    }
+    dst[MENU_LINE_CHARS] = '\0';
+}
+
+static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars)
+{
+    uint8_t copied = 0U;
+
+    if ((dst == NULL) || (src == NULL) || (offset >= MENU_LINE_CHARS))
+    {
+        return offset;
+    }
+
+    while ((offset < MENU_LINE_CHARS) &&
+           (copied < max_chars) &&
+           (src[copied] != '\0'))
+    {
+        dst[offset++] = src[copied++];
+    }
+
+    return offset;
+}
+
+static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value)
+{
+    char digits[10];
+    uint8_t count = 0U;
+
+    if ((dst == NULL) || (offset >= MENU_LINE_CHARS))
+    {
+        return offset;
+    }
+
+    do
+    {
+        digits[count++] = (char)('0' + (value % 10UL));
+        value /= 10UL;
+    } while ((value != 0UL) && (count < sizeof(digits)));
+
+    while ((count > 0U) && (offset < MENU_LINE_CHARS))
+    {
+        dst[offset++] = digits[--count];
+    }
+
+    return offset;
+}
+
+static uint8_t menu_line_append_i32(char *dst, uint8_t offset, int32_t value)
+{
+    uint32_t magnitude;
+
+    if ((dst == NULL) || (offset >= MENU_LINE_CHARS))
+    {
+        return offset;
+    }
+
+    if (value < 0)
+    {
+        dst[offset++] = '-';
+        magnitude = (uint32_t)(-(int64_t)value);
+    }
+    else
+    {
+        magnitude = (uint32_t)value;
+    }
+
+    return menu_line_append_u32(dst, offset, magnitude);
+}
+
+static uint8_t menu_line_append_hex32(char *dst, uint8_t offset, uint32_t value)
+{
+    static const char hex[] = "0123456789ABCDEF";
+    int8_t nibble;
+
+    if ((dst == NULL) || (offset >= MENU_LINE_CHARS))
+    {
+        return offset;
+    }
+
+    for (nibble = 7; (nibble >= 0) && (offset < MENU_LINE_CHARS); nibble--)
+    {
+        dst[offset++] = hex[(value >> ((uint32_t)nibble * 4UL)) & 0x0FU];
+    }
+
+    return offset;
+}
+
+static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, const char *suffix)
+{
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
+    offset = menu_line_append_u32(dst, offset, value);
+    (void)menu_line_copy(dst, offset, suffix, MENU_LINE_CHARS);
+}
+
+static void menu_line_format_i32(char *dst, const char *prefix, int32_t value, const char *suffix)
+{
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
+    offset = menu_line_append_i32(dst, offset, value);
+    (void)menu_line_copy(dst, offset, suffix, MENU_LINE_CHARS);
+}
+
+static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value)
+{
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
+    offset = menu_line_copy(dst, offset, "0x", 2U);
+    (void)menu_line_append_hex32(dst, offset, value);
+}
+
+static void menu_line_format_fixed2(char *dst, const char *prefix, float value, const char *suffix)
+{
+    int32_t scaled;
+    uint32_t magnitude;
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
+
+    if (value >= 0.0f)
+    {
+        scaled = (int32_t)((value * 100.0f) + 0.5f);
+    }
+    else
+    {
+        scaled = (int32_t)((value * 100.0f) - 0.5f);
+    }
+
+    if (scaled < 0)
+    {
+        magnitude = (uint32_t)(-(int64_t)scaled);
+    }
+    else
+    {
+        magnitude = (uint32_t)scaled;
+    }
+
+    if (scaled < 0)
+    {
+        offset = menu_line_copy(dst, offset, "-", 1U);
+    }
+
+    offset = menu_line_append_u32(dst, offset, magnitude / 100UL);
+    offset = menu_line_copy(dst, offset, ".", 1U);
+    if ((magnitude % 100UL) < 10UL)
+    {
+        offset = menu_line_copy(dst, offset, "0", 1U);
+    }
+    offset = menu_line_append_u32(dst, offset, magnitude % 100UL);
+    (void)menu_line_copy(dst, offset, suffix, MENU_LINE_CHARS);
+}
+
+static void menu_line_copy_or_default(char *dst, const char *text, const char *fallback)
+{
+    if (dst == NULL)
+    {
+        return;
+    }
+
+    menu_line_clear(dst);
+
+    if (text != NULL)
+    {
+        (void)menu_line_copy(dst, 0U, text, MENU_LINE_CHARS);
+        return;
+    }
+
+    if (fallback != NULL)
+    {
+        (void)menu_line_copy(dst, 0U, fallback, MENU_LINE_CHARS);
+    }
+}
+
+static const char *menu_pair_code_text(const char *text, uint8_t prefix_len)
+{
+    if ((text != NULL) && (text[prefix_len] == ' '))
+    {
+        return &text[prefix_len + 1U];
+    }
+
+    return "----";
 }
 
 static void menu_render(menu_state_t *st)
 {
-    char line[21];
+    char screen[MENU_DISPLAY_ROWS][MENU_LINE_BUF_SIZE];
+    const menu_page_t *page;
     uint8_t row;
     uint8_t start_idx;
-    const menu_page_t *page;
 
     if (st == NULL)
     {
@@ -1199,148 +1470,237 @@ static void menu_render(menu_state_t *st)
         return;
     }
 
-    (void)lcd_main_set_mode(LCD_MODE_MENU);
-    (void)lcd_main_set_line(0U, page->title);
+    for (row = 0U; row < MENU_DISPLAY_ROWS; row++)
+    {
+        menu_line_clear(screen[row]);
+    }
+
+    (void)menu_line_copy(screen[0], 0U, page->title, MENU_LINE_CHARS);
 
     start_idx = (uint8_t)((st->selected_idx / MENU_ITEMS_VISIBLE) * MENU_ITEMS_VISIBLE);
     for (row = 0U; row < MENU_ITEMS_VISIBLE; row++)
     {
         uint8_t item_idx = (uint8_t)(start_idx + row);
+        uint8_t dst_row = (uint8_t)(row + 1U);
+        const char *label;
 
-        memset(line, 0, sizeof(line));
         if (item_idx < page->item_count)
         {
-            snprintf(line,
-                     sizeof(line),
-                     "%c%-19s",
-                     (item_idx == st->selected_idx) ? '>' : ' ',
-                     page->items[item_idx].label);
-            line[20] = '\0';
-            (void)lcd_main_set_line((uint8_t)(row + 1U), line);
-        }
-        else
-        {
-            (void)lcd_main_set_line((uint8_t)(row + 1U), "");
+            screen[dst_row][0] = ' ';
+            if (item_idx == st->selected_idx)
+            {
+                screen[dst_row][0] = '>';
+            }
+
+            label = "";
+            if (page->items[item_idx].label != NULL)
+            {
+                label = page->items[item_idx].label;
+            }
+
+            (void)menu_line_copy(screen[dst_row],
+                                 1U,
+                                 label,
+                                 (uint8_t)(MENU_LINE_CHARS - 1U));
         }
     }
+
+    (void)lcd_main_show_menu(screen[0], screen[1], screen[2], screen[3]);
 }
 
 static void menu_render_popup(const char *l0, const char *l1, const char *l2, const char *l3)
 {
-    (void)lcd_main_show_popup(l0, l1, l2, l3);
+    char line0[MENU_LINE_BUF_SIZE];
+    char line1[MENU_LINE_BUF_SIZE];
+    char line2[MENU_LINE_BUF_SIZE];
+    char line3[MENU_LINE_BUF_SIZE];
+
+    menu_line_copy_or_default(line0, l0, "");
+    menu_line_copy_or_default(line1, l1, "");
+    menu_line_copy_or_default(line2, l2, "");
+    menu_line_copy_or_default(line3, l3, "");
+
+    (void)lcd_main_show_popup(line0, line1, line2, line3);
+}
+
+static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text)
+{
+    const char *title = "NOTICE";
+    char body[MENU_LINE_BUF_SIZE];
+
+    if (type == MENU_NOTIFICATION_WARNING)
+    {
+        title = "WARNING";
+    }
+    else if (type == MENU_NOTIFICATION_ERROR)
+    {
+        title = "ERROR";
+    }
+    else if (type == MENU_NOTIFICATION_SECURITY)
+    {
+        title = "SECURITY";
+    }
+    else if (type == MENU_NOTIFICATION_PAIRING)
+    {
+        title = "PAIRING";
+    }
+
+    menu_line_copy_or_default(body, text, "(empty)");
+    menu_open_info_modal(st, title, body, "Any key=back", "");
+}
+
+static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text, const char *err_text)
+{
+    char selected[MENU_LINE_BUF_SIZE];
+
+    if (ok)
+    {
+        menu_line_copy_or_default(selected, ok_text, "");
+        menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, selected);
+        return;
+    }
+
+    menu_line_copy_or_default(selected, err_text, "");
+    menu_show_action_result(st, MENU_NOTIFICATION_ERROR, selected);
 }
 
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n)
 {
+    char code_line[MENU_LINE_BUF_SIZE];
+    char text_safe[MENU_LINE_BUF_SIZE];
     bool has_text;
-    bool force_popup;
 
     if ((st == NULL) || (n == NULL))
     {
         return;
     }
-
     if (st->current_page == MENU_PAGE_NONE)
     {
         return;
     }
-
-    if (st->pairing_prompt || st->pair_setup_prompt || st->send_prompt)
+    if (st->modal != MENU_MODAL_NONE)
+    {
+        return;
+    }
+    if (n->type == MENU_NOTIFICATION_RX)
+    {
+        return;
+    }
+    if ((!st->popup_enabled) && (n->type != MENU_NOTIFICATION_PAIRING))
     {
         return;
     }
 
-    has_text = (n->text[0] != '\0');
-    force_popup = ((n->type == MENU_NOTIFICATION_RX) || (n->type == MENU_NOTIFICATION_PAIRING));
-
-    /*
-     * Zwykłe komunikaty typu NOTICE/WARNING/SECURITY potrafiły zasłaniać ekran
-     * konfiguracji w trakcie poruszania się po menu. W UI menu pokazujemy tylko
-     * powiadomienia krytyczne dla interakcji radiowej: RX oraz pairing.
-     */
-    if (!force_popup)
-    {
-        return;
-    }
-
-    if (!st->popup_enabled && !force_popup)
-    {
-        return;
-    }
+    memset(text_safe, 0, sizeof(text_safe));
+    (void)menu_line_copy(text_safe, 0U, n->text, MENU_LINE_CHARS);
+    has_text = (text_safe[0] != '\0');
     if (!has_text && (n->type != MENU_NOTIFICATION_PAIRING))
     {
         return;
     }
 
+    if ((n->type == MENU_NOTIFICATION_PAIRING) &&
+        (strncmp(text_safe, "JOIN_REQ", 8U) == 0))
     {
-        char rx_line0[21];
-        char rx_line1[21];
-        char code_line[21];
-        char text_safe[21];
-        const char *title = "NOTICE";
+        st->modal = MENU_MODAL_PAIR_REQUEST;
+        menu_line_clear(code_line);
+        (void)menu_line_copy(code_line, 0U, "Code: ", 6U);
+        (void)menu_line_copy(code_line, 6U, menu_pair_code_text(text_safe, 8U), 11U);
+        menu_render_popup("PAIR REQUEST", code_line, "OK=accept", "Hold OK=reject");
+        return;
+    }
 
-        memcpy(text_safe, n->text, sizeof(text_safe));
-        text_safe[sizeof(text_safe) - 1U] = '\0';
+    if ((n->type == MENU_NOTIFICATION_PAIRING) &&
+        (strncmp(text_safe, "JOIN_SENT", 9U) == 0))
+    {
+        menu_line_clear(code_line);
+        (void)menu_line_copy(code_line, 0U, "Code: ", 6U);
+        (void)menu_line_copy(code_line, 6U, menu_pair_code_text(text_safe, 9U), 11U);
+        menu_open_info_modal(st, "JOIN REQ SENT", code_line, "Wait for JOIN_OK", "");
+        return;
+    }
 
-        switch (n->type)
-        {
-            case MENU_NOTIFICATION_RX:
-                title = "RX";
-                break;
-            case MENU_NOTIFICATION_WARNING:
-                title = "WARNING";
-                break;
-            case MENU_NOTIFICATION_ERROR:
-                title = "ERROR";
-                break;
-            case MENU_NOTIFICATION_PAIRING:
-                title = "PAIRING";
-                break;
-            case MENU_NOTIFICATION_SECURITY:
-                title = "SECURITY";
-                break;
-            default:
-                break;
-        }
+    if ((n->type == MENU_NOTIFICATION_PAIRING) &&
+        (strncmp(text_safe, "JOIN_OK", 7U) == 0))
+    {
+        menu_line_clear(code_line);
+        (void)menu_line_copy(code_line, 0U, "Code: ", 6U);
+        (void)menu_line_copy(code_line, 6U, menu_pair_code_text(text_safe, 7U), 11U);
+        menu_open_info_modal(st, "PAIRING OK", code_line, "Device trusted", "");
+        return;
+    }
 
-        st->popup_active = true;
-        st->pairing_prompt = false;
-        st->pair_setup_prompt = false;
-        st->send_prompt = false;
-        st->pending_send_action = MENU_ACTION_NONE;
-        st->page_before_popup = st->current_page;
+    if ((n->type == MENU_NOTIFICATION_PAIRING) &&
+        (strncmp(text_safe, "JOIN_REJECT", 11U) == 0))
+    {
+        menu_open_info_modal(st, "PAIRING", "JOIN rejected", "Any key=back", "");
+        return;
+    }
 
-        if (n->type == MENU_NOTIFICATION_RX)
-        {
-            memset(rx_line0, 0, sizeof(rx_line0));
-            memset(rx_line1, 0, sizeof(rx_line1));
-            snprintf(rx_line0, sizeof(rx_line0), "RX: %.16s", has_text ? text_safe : "");
-            snprintf(rx_line1, sizeof(rx_line1), "RSSI: %d dBm", (int)n->rssi_dbm);
-            menu_render_popup(rx_line0, rx_line1, "", "");
-        }
-        else if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-            (strncmp(text_safe, "JOIN_REQ", 8U) == 0))
-        {
-            st->pairing_prompt = true;
-            snprintf(code_line, sizeof(code_line), "Code: %.11s", (text_safe[8] == ' ') ? &text_safe[9] : "----");
-            menu_render_popup("PAIR REQUEST", code_line, "OK=accept", "Hold OK=reject");
-        }
-        else if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-                 (strncmp(text_safe, "JOIN_SENT", 9U) == 0))
-        {
-            snprintf(code_line, sizeof(code_line), "Code: %.11s", (text_safe[9] == ' ') ? &text_safe[10] : "----");
-            menu_render_popup("JOIN REQ SENT", code_line, "Wait for JOIN_OK", "");
-        }
-        else if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-                 (strncmp(text_safe, "JOIN_OK", 7U) == 0))
-        {
-            snprintf(code_line, sizeof(code_line), "Code: %.11s", (text_safe[7] == ' ') ? &text_safe[8] : "----");
-            menu_render_popup("PAIRING OK", code_line, "Device trusted", "");
-        }
-        else
-        {
-            menu_render_popup(title, has_text ? text_safe : "(empty)", "", "");
-        }
+    if (has_text)
+    {
+        menu_show_action_result(st, n->type, text_safe);
+    }
+    else
+    {
+        menu_show_action_result(st, n->type, "(empty)");
+    }
+}
+
+static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
+{
+    menu_action_t action;
+    bool ok;
+    bool send_join_req;
+
+    if ((st == NULL) || (evt == BUTTON_EVENT_NONE))
+    {
+        return;
+    }
+
+    switch (st->modal)
+    {
+        case MENU_MODAL_PAIR_REQUEST:
+            if (evt == BUTTON_EVENT_OK_SHORT)
+            {
+                (void)radio_main_cmd_pairing_accept(true);
+                menu_close_modal(st);
+            }
+            else if (evt == BUTTON_EVENT_OK_LONG)
+            {
+                (void)radio_main_cmd_pairing_accept(false);
+                menu_close_modal(st);
+            }
+            break;
+
+        case MENU_MODAL_PAIR_SETUP:
+            send_join_req = (evt == BUTTON_EVENT_OK_LONG);
+            if ((evt != BUTTON_EVENT_OK_SHORT) && (evt != BUTTON_EVENT_OK_LONG))
+            {
+                menu_close_modal(st);
+                return;
+            }
+
+            ok = menu_start_pairing_session(st, send_join_req);
+            if (!ok)
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Pairing start failed");
+            }
+            break;
+
+        case MENU_MODAL_SEND_CONFIRM:
+            action = st->pending_action;
+            menu_close_modal(st);
+            if (evt == BUTTON_EVENT_OK_SHORT)
+            {
+                menu_execute_action(st, action);
+            }
+            break;
+
+        case MENU_MODAL_INFO:
+        default:
+            menu_close_modal(st);
+            break;
     }
 }
 
@@ -1348,91 +1708,20 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
 {
     const menu_page_t *page;
 
-    if (st == NULL)
+    if ((st == NULL) || (evt == BUTTON_EVENT_NONE))
     {
         return;
     }
 
-    if (st->popup_active)
+    if (st->modal != MENU_MODAL_NONE)
     {
-        if (st->pairing_prompt)
-        {
-            if (evt == BUTTON_EVENT_OK_SHORT)
-            {
-                (void)radio_main_cmd_pairing_accept(true);
-            }
-            else if (evt == BUTTON_EVENT_OK_LONG)
-            {
-                (void)radio_main_cmd_pairing_accept(false);
-            }
-            else
-            {
-                return;
-            }
-            st->pairing_prompt = false;
-        }
-        else if (st->pair_setup_prompt)
-        {
-            bool ok = false;
-            bool send_join_req = false;
-
-            st->pair_setup_prompt = false;
-            st->popup_active = false;
-            st->current_page = st->page_before_popup;
-
-            if (evt == BUTTON_EVENT_OK_SHORT)
-            {
-                send_join_req = false;
-            }
-            else if (evt == BUTTON_EVENT_OK_LONG)
-            {
-                send_join_req = true;
-            }
-            else
-            {
-                menu_render(st);
-                return;
-            }
-
-            ok = menu_start_pairing_session(st, send_join_req);
-            if (!ok)
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "Pairing start failed");
-                menu_render(st);
-            }
-            return;
-        }
-        else if (st->send_prompt)
-        {
-            menu_action_t action = st->pending_send_action;
-            st->send_prompt = false;
-            st->pending_send_action = MENU_ACTION_NONE;
-            st->popup_active = false;
-            st->current_page = st->page_before_popup;
-
-            if (evt == BUTTON_EVENT_OK_SHORT)
-            {
-                menu_execute_action(st, action);
-            }
-            else
-            {
-                menu_render(st);
-            }
-            return;
-        }
-
-        st->popup_active = false;
-        st->current_page = st->page_before_popup;
-        menu_render(st);
+        menu_handle_modal_button(st, evt);
         return;
     }
 
     if (st->current_page == MENU_PAGE_NONE)
     {
-        if (evt != BUTTON_EVENT_NONE)
-        {
-            menu_open_page(st, MENU_PAGE_PAGER);
-        }
+        menu_open_page(st, MENU_PAGE_PAGER);
         return;
     }
 
@@ -1454,7 +1743,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                 }
                 else
                 {
-                    st->selected_idx--;
+                    st->selected_idx = (uint8_t)(st->selected_idx - 1U);
                 }
                 menu_render(st);
             }
@@ -1463,11 +1752,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
         case BUTTON_EVENT_DOWN_SHORT:
             if (page->item_count > 0U)
             {
-                st->selected_idx++;
-                if (st->selected_idx >= page->item_count)
-                {
-                    st->selected_idx = 0U;
-                }
+                st->selected_idx = (uint8_t)((st->selected_idx + 1U) % page->item_count);
                 menu_render(st);
             }
             break;
@@ -1476,6 +1761,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
             if (st->selected_idx < page->item_count)
             {
                 const menu_item_t *item = &page->items[st->selected_idx];
+
                 if (item->child_page != MENU_PAGE_NONE)
                 {
                     menu_open_page(st, item->child_page);
@@ -1509,21 +1795,28 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
 
 static void menu_execute_action(menu_state_t *st, menu_action_t action)
 {
-    char line0[21];
-    char line1[21];
+    char line0[MENU_LINE_BUF_SIZE];
+    char line1[MENU_LINE_BUF_SIZE];
     security_runtime_cfg_t cfg;
+    radio_main_runtime_cfg_t radio_cfg;
     trusted_info_t info;
-    bool tpm_ready;
     bmp280_api_data_t bmp;
-    int32_t distance_mm;
+    bool tpm_ready;
+    bool send_ok;
+    bool ok;
+    bool have_radio_cfg;
     uint8_t idx;
     uint8_t count;
-    bool send_ok;
+    int32_t distance_mm;
 
-    memset(line0, 0, sizeof(line0));
-    memset(line1, 0, sizeof(line1));
+    menu_line_clear(line0);
+    menu_line_clear(line1);
+    memset(&cfg, 0, sizeof(cfg));
+    memset(&radio_cfg, 0, sizeof(radio_cfg));
+    memset(&info, 0, sizeof(info));
+    have_radio_cfg = radio_main_get_runtime_cfg(&radio_cfg);
 
-    if (menu_execute_radio_action(action))
+    if (menu_execute_radio_action(st, action))
     {
         return;
     }
@@ -1533,6 +1826,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
         case MENU_ACTION_BACK:
         {
             const menu_page_t *page = menu_get_page(st->current_page);
+
             if ((page == NULL) || (page->parent == MENU_PAGE_NONE))
             {
                 menu_enter_monitor(st);
@@ -1550,66 +1844,58 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
 
         case MENU_ACTION_SEND_DEFAULT:
             send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent STS:OK" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent STS:OK", "Send failed");
             break;
 
         case MENU_ACTION_SEND_ALERT_FIRE:
             send_ok = radio_main_cmd_send_template(0U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent ALR:FIRE" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent ALR:FIRE", "Send failed");
             break;
+
         case MENU_ACTION_SEND_ALERT_INTR:
             send_ok = radio_main_cmd_send_template(0U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent ALR:INTR" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent ALR:INTR", "Send failed");
             break;
+
         case MENU_ACTION_SEND_ALERT_LOWBATT:
             send_ok = radio_main_cmd_send_template(0U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent ALR:LOW" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent ALR:LOW", "Send failed");
             break;
 
         case MENU_ACTION_SEND_STATUS_OK:
             send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent STS:OK" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent STS:OK", "Send failed");
             break;
+
         case MENU_ACTION_SEND_STATUS_BUSY:
             send_ok = radio_main_cmd_send_template(1U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent STS:BUSY" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent STS:BUSY", "Send failed");
             break;
+
         case MENU_ACTION_SEND_STATUS_IDLE:
             send_ok = radio_main_cmd_send_template(1U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent STS:IDLE" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent STS:IDLE", "Send failed");
             break;
 
         case MENU_ACTION_SEND_SERVICE_PING:
             send_ok = radio_main_cmd_send_template(2U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent SRV:PING" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent SRV:PING", "Send failed");
             break;
+
         case MENU_ACTION_SEND_SERVICE_RESET:
             send_ok = radio_main_cmd_send_template(2U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent SRV:RESET" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent SRV:RESET", "Send failed");
             break;
+
         case MENU_ACTION_SEND_SERVICE_SYNC:
             send_ok = radio_main_cmd_send_template(2U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_notify_text(send_ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                             send_ok ? "Sent SRV:SYNC" : "Send failed");
+            menu_show_ok_or_error(st, send_ok, "Sent SRV:SYNC", "Send failed");
             break;
 
         case MENU_ACTION_DEVICE_ADD:
-            menu_render_popup("PAIR MODE 60s", "OK=listen", "Hold OK=JOIN_REQ", "Any=cancel");
-            st->popup_active = true;
-            st->pairing_prompt = false;
-            st->pair_setup_prompt = true;
-            st->send_prompt = false;
-            st->pending_send_action = MENU_ACTION_NONE;
-            st->page_before_popup = st->current_page;
+            st->modal = MENU_MODAL_PAIR_SETUP;
+            st->pending_action = MENU_ACTION_NONE;
+            menu_render_popup("PAIR MODE 60s", "OK=listen", "Hold OK=JOIN_REQ", "Any key=cancel");
             break;
 
         case MENU_ACTION_DEVICE_DELETE:
@@ -1627,21 +1913,21 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
 
                     if (!deleted)
                     {
-                        menu_notify_text(MENU_NOTIFICATION_ERROR, "Delete failed");
+                        menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Delete failed");
                     }
                     else if (notified)
                     {
-                        snprintf(line0, sizeof(line0), "Deleted slot %u", idx);
-                        menu_notify_text(MENU_NOTIFICATION_SECURITY, line0);
+                        menu_line_format_u32(line0, "Deleted slot ", idx, "");
+                        menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, line0);
                     }
                     else
                     {
-                        menu_notify_text(MENU_NOTIFICATION_WARNING, "Deleted local only");
+                        menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Deleted local only");
                     }
                     return;
                 }
             }
-            menu_notify_text(MENU_NOTIFICATION_WARNING, "No device");
+            menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "No device");
             break;
 
         case MENU_ACTION_DEVICE_INFO:
@@ -1653,118 +1939,181 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
                     count++;
                 }
             }
-            snprintf(line0, sizeof(line0), "Trusted count=%u", count);
-            menu_render_popup("DEVICE INFO", line0, "", "");
-            st->popup_active = true;
-            st->pairing_prompt = false;
-            st->pair_setup_prompt = false;
-            st->page_before_popup = st->current_page;
+            menu_line_format_u32(line0, "Trusted count=", count, "");
+            menu_open_info_modal(st, "DEVICE INFO", line0, "Any key=back", "");
             break;
 
         case MENU_ACTION_SEC_TOGGLE_FH:
             if (security_main_cmd_get_runtime_cfg(&cfg))
             {
+                const char *state_text = "FH OFF";
+
                 bool new_state = !cfg.fh_enabled;
-                (void)security_main_cmd_set_fh(new_state);
-                (void)radio_main_cmd_set_fh(new_state);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, new_state ? "FH ON" : "FH OFF");
+                ok = security_main_cmd_set_fh(new_state) && radio_main_cmd_set_fh(new_state);
+                if (new_state)
+                {
+                    state_text = "FH ON";
+                }
+                menu_show_ok_or_error(st, ok, state_text, "FH set failed");
             }
+            break;
+
+        case MENU_ACTION_SEC_FH_ENABLE:
+            if (have_radio_cfg && (radio_cfg.active_modulation != RADIO_MAIN_MODULATION_LORA))
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "FH needs LoRa mode");
+                break;
+            }
+            ok = security_main_cmd_set_fh(true) && radio_main_cmd_set_fh(true);
+            menu_show_ok_or_error(st, ok, "FH enabled", "FH enable failed");
+            break;
+
+        case MENU_ACTION_SEC_FH_DISABLE:
+            ok = security_main_cmd_set_fh(false) && radio_main_cmd_set_fh(false);
+            menu_show_ok_or_error(st, ok, "FH disabled", "FH disable failed");
+            break;
+
+        case MENU_ACTION_SEC_FH_PERIOD_1000:
+            ok = security_main_cmd_set_fh_period(1000UL) && radio_main_cmd_set_fh_period(1000UL);
+            menu_show_ok_or_error(st, ok, "FH cycle 1 sec", "FH cycle failed");
+            break;
+
+        case MENU_ACTION_SEC_FH_PERIOD_2000:
+            ok = security_main_cmd_set_fh_period(2000UL) && radio_main_cmd_set_fh_period(2000UL);
+            menu_show_ok_or_error(st, ok, "FH cycle 2 sec", "FH cycle failed");
+            break;
+
+        case MENU_ACTION_SEC_FH_PERIOD_5000:
+            ok = security_main_cmd_set_fh_period(5000UL) && radio_main_cmd_set_fh_period(5000UL);
+            menu_show_ok_or_error(st, ok, "FH cycle 5 sec", "FH cycle failed");
+            break;
+
+        case MENU_ACTION_SEC_FH_PERIOD_10000:
+            ok = security_main_cmd_set_fh_period(10000UL) && radio_main_cmd_set_fh_period(10000UL);
+            menu_show_ok_or_error(st, ok, "FH cycle 10 sec", "FH cycle failed");
             break;
 
         case MENU_ACTION_SEC_TPM_INFO:
             if (security_main_get_tpm_ready(&tpm_ready))
             {
-                menu_render_popup("TPM", tpm_ready ? "Ready" : "Not ready", "", "");
-                st->popup_active = true;
-                st->pairing_prompt = false;
-                st->pair_setup_prompt = false;
-                st->page_before_popup = st->current_page;
+                if (tpm_ready)
+                {
+                    menu_open_info_modal(st, "TPM", "Ready", "Any key=back", "");
+                }
+                else
+                {
+                    menu_open_info_modal(st, "TPM", "Not ready", "Any key=back", "");
+                }
+            }
+            else
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "TPM query failed");
             }
             break;
 
         case MENU_ACTION_SEC_ROTATE_KEYS:
-            if (security_main_cmd_rotate_key())
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "Key rotated");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "Key rotate failed");
-            }
+            ok = security_main_cmd_rotate_key();
+            menu_show_ok_or_error(st, ok, "Key rotated", "Keys: not ready");
             break;
 
         case MENU_ACTION_SEC_TOGGLE_CODING:
             if (security_main_cmd_get_runtime_cfg(&cfg))
             {
+                const char *state_text = "Coding OFF";
+
                 bool new_state = !cfg.coding_enabled;
-                (void)security_main_cmd_set_coding(new_state);
-                (void)radio_main_cmd_set_coding(new_state);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, new_state ? "Coding ON" : "Coding OFF");
+                ok = security_main_cmd_set_coding(new_state) && radio_main_cmd_set_coding(new_state);
+                if (new_state)
+                {
+                    state_text = "Coding ON";
+                }
+                menu_show_ok_or_error(st, ok, state_text, "Coding set failed");
             }
             break;
 
         case MENU_ACTION_SEC_TOGGLE_NOTIFY_MODE:
             if (security_main_cmd_get_runtime_cfg(&cfg))
             {
-                security_notify_mode_t mode = (cfg.notify_mode == SECURITY_NOTIFY_POPUP) ?
-                                              SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
-                (void)security_main_cmd_set_notify_mode(mode);
-                st->popup_enabled = (mode == SECURITY_NOTIFY_POPUP);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, st->popup_enabled ? "Notif POPUP" : "Notif BADGE");
+                security_notify_mode_t mode = SECURITY_NOTIFY_POPUP;
+
+                if (cfg.notify_mode == SECURITY_NOTIFY_POPUP)
+                {
+                    mode = SECURITY_NOTIFY_BADGE;
+                }
+                ok = security_main_cmd_set_notify_mode(mode);
+                if (ok)
+                {
+                    if (mode == SECURITY_NOTIFY_POPUP)
+                    {
+                        st->popup_enabled = true;
+                    }
+                    else
+                    {
+                        st->popup_enabled = false;
+                    }
+                }
+
+                if (ok)
+                {
+                    if (st->popup_enabled)
+                    {
+                        menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "Notif POPUP");
+                    }
+                    else
+                    {
+                        menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "Notif BADGE");
+                    }
+                }
+                else
+                {
+                    menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Notif set failed");
+                }
             }
             break;
 
         case MENU_ACTION_SEC_TOGGLE_AUTOPING:
             if (security_main_cmd_get_runtime_cfg(&cfg))
             {
+                const char *state_text = "AutoPing OFF";
+
                 bool new_state = !cfg.auto_ping_enabled;
-                (void)security_main_cmd_set_auto_ping(new_state);
-                (void)radio_main_cmd_set_auto_ping(new_state);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, new_state ? "AutoPing ON" : "AutoPing OFF");
+                ok = security_main_cmd_set_auto_ping(new_state) && radio_main_cmd_set_auto_ping(new_state);
+                if (new_state)
+                {
+                    state_text = "AutoPing ON";
+                }
+                menu_show_ok_or_error(st, ok, state_text, "AutoPing failed");
             }
             break;
 
         case MENU_ACTION_HW_MEASURE_DIST:
             distance_mm = tof_main_get_last_distance();
-            snprintf(line0, sizeof(line0), "Distance");
-            snprintf(line1, sizeof(line1), "%ld mm", (long)distance_mm);
-            menu_render_popup(line0, line1, "", "");
-            st->popup_active = true;
-            st->pairing_prompt = false;
-            st->pair_setup_prompt = false;
-            st->page_before_popup = st->current_page;
+            menu_line_format_i32(line1, "", distance_mm, " mm");
+            menu_open_info_modal(st, "Distance", line1, "Any key=back", "");
             break;
 
         case MENU_ACTION_HW_MEASURE_TEMP:
             if (bmp280_main_get_last(&bmp))
             {
-                snprintf(line0, sizeof(line0), "Temp %.2f C", bmp.temperature_c);
-                menu_render_popup("BMP280", line0, "", "");
+                menu_line_format_fixed2(line0, "Temp ", bmp.temperature_c, " C");
+                menu_open_info_modal(st, "BMP280", line0, "Any key=back", "");
             }
             else
             {
-                menu_render_popup("BMP280", "No data", "", "");
+                menu_open_info_modal(st, "BMP280", "No data", "Any key=back", "");
             }
-            st->popup_active = true;
-            st->pairing_prompt = false;
-            st->pair_setup_prompt = false;
-            st->page_before_popup = st->current_page;
             break;
 
         case MENU_ACTION_HW_MEASURE_PRESS:
             if (bmp280_main_get_last(&bmp))
             {
-                snprintf(line0, sizeof(line0), "Press %.2f hPa", bmp.pressure_hpa);
-                menu_render_popup("BMP280", line0, "", "");
+                menu_line_format_fixed2(line0, "Press ", bmp.pressure_hpa, " hPa");
+                menu_open_info_modal(st, "BMP280", line0, "Any key=back", "");
             }
             else
             {
-                menu_render_popup("BMP280", "No data", "", "");
+                menu_open_info_modal(st, "BMP280", "No data", "Any key=back", "");
             }
-            st->popup_active = true;
-            st->pairing_prompt = false;
-            st->pair_setup_prompt = false;
-            st->page_before_popup = st->current_page;
             break;
 
         case MENU_ACTION_HW_LED_MODE:
@@ -1772,210 +2121,55 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             if (st->led_mode == 0U)
             {
                 (void)led_array_start_rainbow(15U, 5U, 100U);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "LED rainbow");
+                menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED rainbow");
             }
             else if (st->led_mode == 1U)
             {
                 (void)led_array_start_breath(LED_ARRAY_LED_ALL, 1200U, 5U, 100U);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "LED breath");
+                menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED breath");
             }
             else
             {
                 (void)led_array_stop_effect();
                 (void)led_array_off(LED_ARRAY_LED_ALL);
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "LED off");
+                menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED off");
             }
             break;
 
         case MENU_ACTION_MOD_LORA_STD:
-            (void)radio_main_cmd_set_modulation(0U);
-            (void)radio_main_cmd_set_lora_preset(0U);
-            (void)security_main_cmd_set_lora_preset(0U);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "LoRa STD");
+            ok = radio_main_cmd_set_modulation((uint8_t)RADIO_MAIN_MODULATION_LORA) &&
+                 radio_main_cmd_set_lora_preset(0U) &&
+                 security_main_cmd_set_lora_preset(0U);
+            menu_show_ok_or_error(st, ok, "LoRa STD", "LoRa preset failed");
             break;
+
         case MENU_ACTION_MOD_LORA_RANGE:
-            (void)radio_main_cmd_set_modulation(0U);
-            (void)radio_main_cmd_set_lora_preset(1U);
-            (void)security_main_cmd_set_lora_preset(1U);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "LoRa RANGE");
+            ok = radio_main_cmd_set_modulation((uint8_t)RADIO_MAIN_MODULATION_LORA) &&
+                 radio_main_cmd_set_lora_preset(1U) &&
+                 security_main_cmd_set_lora_preset(1U);
+            menu_show_ok_or_error(st, ok, "LoRa RANGE", "LoRa preset failed");
             break;
+
         case MENU_ACTION_MOD_LORA_FAST:
-            (void)radio_main_cmd_set_modulation(0U);
-            (void)radio_main_cmd_set_lora_preset(2U);
-            (void)security_main_cmd_set_lora_preset(2U);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "LoRa FAST");
-            break;
-
-        case MENU_ACTION_MOD_FSK_ENABLE:
-            if (radio_main_cmd_set_modulation(1U))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK mode");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK set failed");
-            }
-            break;
-        case MENU_ACTION_MOD_FSK_FREQ_8681:
-            (void)radio_main_cmd_set_modulation(1U);
-            if (radio_main_cmd_set_modulation_freq(868100000UL))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK F=868.1");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK freq failed");
-            }
-            break;
-        case MENU_ACTION_MOD_FSK_FREQ_8683:
-            (void)radio_main_cmd_set_modulation(1U);
-            if (radio_main_cmd_set_modulation_freq(868300000UL))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK F=868.3");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK freq failed");
-            }
-            break;
-        case MENU_ACTION_MOD_FSK_FREQ_8685:
-            (void)radio_main_cmd_set_modulation(1U);
-            if (radio_main_cmd_set_modulation_freq(868500000UL))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK F=868.5");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK freq failed");
-            }
-            break;
-        case MENU_ACTION_MOD_FSK_BW_125:
-            (void)radio_main_cmd_set_modulation(1U);
-            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_125_KHZ))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK BW125");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK bw failed");
-            }
-            break;
-        case MENU_ACTION_MOD_FSK_BW_250:
-            (void)radio_main_cmd_set_modulation(1U);
-            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_250_KHZ))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK BW250");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK bw failed");
-            }
-            break;
-        case MENU_ACTION_MOD_FSK_BW_500:
-            (void)radio_main_cmd_set_modulation(1U);
-            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_500_KHZ))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK BW500");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "FSK bw failed");
-            }
-            break;
-
-        case MENU_ACTION_MOD_OOK_ENABLE:
-            if (radio_main_cmd_set_modulation(2U))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK mode");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK set failed");
-            }
-            break;
-        case MENU_ACTION_MOD_OOK_FREQ_8681:
-            (void)radio_main_cmd_set_modulation(2U);
-            if (radio_main_cmd_set_modulation_freq(868100000UL))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK F=868.1");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK freq failed");
-            }
-            break;
-        case MENU_ACTION_MOD_OOK_FREQ_8683:
-            (void)radio_main_cmd_set_modulation(2U);
-            if (radio_main_cmd_set_modulation_freq(868300000UL))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK F=868.3");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK freq failed");
-            }
-            break;
-        case MENU_ACTION_MOD_OOK_FREQ_8685:
-            (void)radio_main_cmd_set_modulation(2U);
-            if (radio_main_cmd_set_modulation_freq(868500000UL))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK F=868.5");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK freq failed");
-            }
-            break;
-        case MENU_ACTION_MOD_OOK_BW_125:
-            (void)radio_main_cmd_set_modulation(2U);
-            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_125_KHZ))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK BW125");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK bw failed");
-            }
-            break;
-        case MENU_ACTION_MOD_OOK_BW_250:
-            (void)radio_main_cmd_set_modulation(2U);
-            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_250_KHZ))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK BW250");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK bw failed");
-            }
-            break;
-        case MENU_ACTION_MOD_OOK_BW_500:
-            (void)radio_main_cmd_set_modulation(2U);
-            if (radio_main_cmd_set_modulation_bw((uint8_t)RADIO_LORA_BW_500_KHZ))
-            {
-                menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK BW500");
-            }
-            else
-            {
-                menu_notify_text(MENU_NOTIFICATION_ERROR, "OOK bw failed");
-            }
+            ok = radio_main_cmd_set_modulation((uint8_t)RADIO_MAIN_MODULATION_LORA) &&
+                 radio_main_cmd_set_lora_preset(2U) &&
+                 security_main_cmd_set_lora_preset(2U);
+            menu_show_ok_or_error(st, ok, "LoRa FAST", "LoRa preset failed");
             break;
 
         case MENU_ACTION_MOD_FSK:
-            (void)radio_main_cmd_set_modulation(1U);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "FSK mode");
+            ok = radio_main_cmd_set_modulation((uint8_t)RADIO_MAIN_MODULATION_FSK);
+            menu_show_ok_or_error(st, ok, "FSK mode", "FSK set failed");
             break;
+
         case MENU_ACTION_MOD_OOK:
-            (void)radio_main_cmd_set_modulation(2U);
-            menu_notify_text(MENU_NOTIFICATION_SECURITY, "OOK mode");
+            ok = radio_main_cmd_set_modulation((uint8_t)RADIO_MAIN_MODULATION_OOK);
+            menu_show_ok_or_error(st, ok, "OOK mode", "OOK set failed");
             break;
 
         case MENU_ACTION_INFO_SHOW:
-            snprintf(line0, sizeof(line0), "Node 0x%08lX", (unsigned long)radio_main_get_node_id());
-            menu_render_popup("BEKO W1", line0, "Codex build", "Menu/Sec active");
-            st->popup_active = true;
-            st->pairing_prompt = false;
-            st->pair_setup_prompt = false;
-            st->page_before_popup = st->current_page;
+            menu_line_format_hex32(line0, "Node ", radio_main_get_node_id());
+            menu_open_info_modal(st, "BEKO W1", line0, "Menu/Sec active", "Any key=back");
             break;
 
         default:
@@ -1983,19 +2177,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
     }
 }
 
-/**
- * @brief Obsługuje całą rodzinę akcji konfiguracji radiowej przez tablicę wiązań.
- *
- * Dzięki temu dodanie nowej opcji w menu sprowadza się do:
- * 1. dodania pozycji do strony LCD,
- * 2. dopisania jednej linijki w `s_radio_action_bindings`.
- *
- * Sama logika aplikacji nie jest już powielana w dużym `switch`.
- *
- * @param action Akcja wybrana z menu.
- * @return `true`, jeśli akcja została rozpoznana i obsłużona.
- */
-static bool menu_execute_radio_action(menu_action_t action)
+static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action)
 {
     size_t idx;
 
@@ -2003,7 +2185,6 @@ static bool menu_execute_radio_action(menu_action_t action)
     {
         const menu_radio_action_binding_t *binding = &s_radio_action_bindings[idx];
         radio_main_runtime_cfg_t runtime_cfg;
-        bool have_runtime = false;
         bool ok = true;
 
         if (binding->action != action)
@@ -2011,10 +2192,11 @@ static bool menu_execute_radio_action(menu_action_t action)
             continue;
         }
 
-        have_runtime = radio_main_get_runtime_cfg(&runtime_cfg);
+        memset(&runtime_cfg, 0, sizeof(runtime_cfg));
         if (binding->set_modulation)
         {
-            if (!have_runtime || (runtime_cfg.active_modulation != binding->modulation))
+            if (!radio_main_get_runtime_cfg(&runtime_cfg) ||
+                (runtime_cfg.active_modulation != binding->modulation))
             {
                 ok = radio_main_cmd_set_modulation((uint8_t)binding->modulation);
             }
@@ -2035,8 +2217,7 @@ static bool menu_execute_radio_action(menu_action_t action)
             ok = security_main_cmd_set_radio_runtime_cfg(&runtime_cfg);
         }
 
-        menu_notify_text(ok ? MENU_NOTIFICATION_SECURITY : MENU_NOTIFICATION_ERROR,
-                         ok ? binding->ok_text : binding->err_text);
+        menu_show_ok_or_error(st, ok, binding->ok_text, binding->err_text);
         return true;
     }
 
@@ -2061,6 +2242,7 @@ static const menu_page_t *menu_get_page(menu_page_id_t page_id)
     return &s_pages[idx];
 }
 
+/* Only send-type actions require a confirmation modal. */
 static bool menu_is_send_action(menu_action_t action)
 {
     switch (action)
@@ -2083,23 +2265,29 @@ static bool menu_is_send_action(menu_action_t action)
 
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label)
 {
-    char msg[21];
+    char msg[MENU_LINE_BUF_SIZE];
 
     if (st == NULL)
     {
         return;
     }
 
-    snprintf(msg, sizeof(msg), "%s", (label != NULL) ? label : "Message");
-    st->popup_active = true;
-    st->pairing_prompt = false;
-    st->pair_setup_prompt = false;
-    st->send_prompt = true;
-    st->pending_send_action = action;
-    st->page_before_popup = st->current_page;
-    menu_render_popup("SEND MESSAGE?", msg, "OK=send", "Hold OK=back");
+    menu_line_clear(msg);
+    if (label != NULL)
+    {
+        (void)menu_line_copy(msg, 0U, label, MENU_LINE_CHARS);
+    }
+    else
+    {
+        (void)menu_line_copy(msg, 0U, "Message", MENU_LINE_CHARS);
+    }
+
+    st->modal = MENU_MODAL_SEND_CONFIRM;
+    st->pending_action = action;
+    menu_render_popup("SEND MESSAGE?", msg, "OK=send", "Any key=back");
 }
 
+/* Starts pairing and reports the mode/result through a modal message. */
 static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
 {
     bool send_ok = true;
@@ -2108,7 +2296,6 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
     {
         return false;
     }
-
     if (!radio_main_cmd_start_pairing(60000U))
     {
         return false;
@@ -2119,20 +2306,24 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
         send_ok = radio_main_cmd_send_join_req();
     }
 
-    st->popup_active = true;
-    st->pairing_prompt = false;
-    st->pair_setup_prompt = false;
-    st->send_prompt = false;
-    st->pending_send_action = MENU_ACTION_NONE;
-    st->page_before_popup = st->current_page;
-
     if (send_join_req)
     {
-        menu_render_popup("PAIR MODE", "60s active", send_ok ? "JOIN_REQ sent" : "JOIN_REQ failed", "Any key=close");
+        const char *status_line = "JOIN_REQ failed";
+
+        if (send_ok)
+        {
+            status_line = "JOIN_REQ sent";
+        }
+
+        menu_open_info_modal(st,
+                             "PAIR MODE",
+                             "60s active",
+                             status_line,
+                             "Any key=close");
     }
     else
     {
-        menu_render_popup("PAIR MODE", "60s active", "Listening...", "Any key=close");
+        menu_open_info_modal(st, "PAIR MODE", "60s active", "Listening...", "Any key=close");
     }
 
     return true;
@@ -2146,7 +2337,20 @@ static void menu_notify_text(menu_notification_type_t type, const char *text)
     n.type = type;
     if (text != NULL)
     {
-        snprintf(n.text, sizeof(n.text), "%s", text);
+        size_t i;
+
+        for (i = 0U; (i < MENU_LINE_CHARS) && (text[i] != '\0'); i++)
+        {
+            n.text[i] = text[i];
+        }
+        if (i < MENU_LINE_CHARS)
+        {
+            n.text[i] = '\0';
+        }
+        else
+        {
+            n.text[MENU_LINE_CHARS] = '\0';
+        }
     }
     (void)menu_main_post_notification(&n);
 }

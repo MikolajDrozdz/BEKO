@@ -1,304 +1,571 @@
-// Code adapted from the example described here:
-// https://embeddedthere.com/interfacing-stm32-with-i2c-lcd-with-hal-code-example/
-// P. Korpas
-
-/* Includes */
 #include "lcd.h"
 
 #include "../app.h"
 #include "app_delay.h"
-#include "main.h"
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 
-#define I2C_ADDR                 0x27U
-#define LCD_I2C_ADDR_8BIT        (I2C_ADDR << 1)
-#define RS_BIT                   0U
-#define EN_BIT                   2U
-#define BL_BIT                   3U
-#define D4_BIT                   4U
+#define LCD_I2C_ADDR_7BIT                0x27U
+#define LCD_I2C_ADDR_8BIT                (LCD_I2C_ADDR_7BIT << 1)
 
-#define LCD_ROWS                 4U
-#define LCD_COLS                 20U
+#define LCD_RS_MASK                      0x01U
+#define LCD_EN_MASK                      0x04U
+#define LCD_BL_MASK                      0x08U
 
-#define LCD_TX_TIMEOUT_MS        20U
-#define LCD_DMA_TIMEOUT_MS       20U
-#define LCD_USE_I2C_DMA          0U
+#define LCD_ROWS                         4U
+#define LCD_COLS                         20U
 
-/* Private variables */
+#define LCD_I2C_TIMEOUT_MS               20U
+#define LCD_INIT_RETRY_COUNT             3U
+
+#define LCD_CMD_CLEAR                    0x01U
+#define LCD_CMD_HOME                     0x02U
+#define LCD_CMD_ENTRY_MODE               0x06U
+#define LCD_CMD_DISPLAY_ON               0x0CU
+#define LCD_CMD_DISPLAY_OFF              0x08U
+#define LCD_CMD_FUNCTION_SET             0x28U
+#define LCD_CMD_SET_DDRAM                0x80U
+
+typedef struct
+{
+    bool initialized;
+    uint8_t backlight;
+} lcd_state_t;
+
 extern I2C_HandleTypeDef hi2c1;
 
-static uint8_t backlight_state = 1U;
+static lcd_state_t s_lcd_state =
+{
+    .initialized = false,
+    .backlight = LCD_BL_MASK
+};
 
-/* Private function prototypes */
-static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t len);
-static bool lcd_write_nibble_locked(uint8_t nibble, uint8_t rs);
-static bool lcd_send_cmd_locked(uint8_t cmd);
+static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t length);
+static bool lcd_write_nibble_locked(uint8_t nibble, bool rs);
+static bool lcd_write_byte_locked(uint8_t value, bool rs);
+static bool lcd_send_command_locked(uint8_t command);
 static bool lcd_send_data_locked(uint8_t data);
 static uint8_t lcd_ddram_base(uint8_t row);
+static bool lcd_init_locked(void);
+static bool lcd_ensure_ready(void);
+static void lcd_animation_clear_frame(char frame[LCD_ROWS][LCD_COLS + 1U]);
+static void lcd_animation_put_text(char frame[LCD_ROWS][LCD_COLS + 1U],
+                                   uint8_t row,
+                                   uint8_t col,
+                                   const char *text);
+static void lcd_animation_put_char(char frame[LCD_ROWS][LCD_COLS + 1U],
+                                   int8_t row,
+                                   int8_t col,
+                                   char ch);
+static void lcd_animation_render_frame(char frame[LCD_ROWS][LCD_COLS + 1U], uint32_t hold_ms);
+
+static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t length)
+{
+    if ((data == NULL) || (length == 0U))
+    {
+        return false;
+    }
+
+    return (app_i2c_master_transmit(&hi2c1,
+                                    LCD_I2C_ADDR_8BIT,
+                                    data,
+                                    length,
+                                    LCD_I2C_TIMEOUT_MS) == HAL_OK);
+}
 
 /**
-  * @brief  The demo function (infinite loop)
-  */
-void lcd_demo(void)
+ * @brief Send one 4-bit nibble through the PCF8574-style expander.
+ *
+ * The enable pulse is packed into a single I2C burst. This matches the behavior of common
+ * backpack modules better than sending separate start/stop transactions for each edge.
+ */
+static bool lcd_write_nibble_locked(uint8_t nibble, bool rs)
 {
-  char int_to_str[12];
-  int count = 0;
+    uint8_t bus;
+    uint8_t frame[3];
 
-  lcd_init();
-  lcd_backlight(1U);
-
-  while (1)
-  {
-    snprintf(int_to_str, sizeof(int_to_str), "%d", count);
-    lcd_clear();
-    lcd_write_line(0U, "Hello BEKO studs", LCD_COLS);
-    lcd_write_line(1U, int_to_str, LCD_COLS);
-    count++;
-    app_delay_ms(100U);
-  }
-}
-
-void lcd_write_nibble(uint8_t nibble, uint8_t rs)
-{
-  if (!app_i2c_lock(0U))
-  {
-    return;
-  }
-
-  (void)lcd_write_nibble_locked(nibble, rs);
-
-  app_i2c_unlock();
-}
-
-static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t len)
-{
-  HAL_StatusTypeDef st;
-
-  if ((data == NULL) || (len == 0U))
-  {
-    return false;
-  }
-
-#if (LCD_USE_I2C_DMA == 1)
-  if (hi2c1.hdmatx != NULL)
-  {
-    st = HAL_I2C_Master_Transmit_DMA(&hi2c1, LCD_I2C_ADDR_8BIT, (uint8_t *)data, len);
-    if (st == HAL_OK)
+    bus = (uint8_t)((nibble & 0x0FU) << 4);
+    bus |= s_lcd_state.backlight;
+    if (rs)
     {
-      uint32_t start = HAL_GetTick();
-
-      while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY)
-      {
-        if ((HAL_GetTick() - start) >= LCD_DMA_TIMEOUT_MS)
-        {
-          return false;
-        }
-      }
-
-      return true;
+        bus |= LCD_RS_MASK;
     }
-  }
-#endif
 
-  st = app_i2c_master_transmit(&hi2c1, LCD_I2C_ADDR_8BIT, data, len, LCD_TX_TIMEOUT_MS);
-  return (st == HAL_OK);
+    frame[0] = bus;
+    frame[1] = (uint8_t)(bus | LCD_EN_MASK);
+    frame[2] = bus;
+
+    return lcd_i2c_tx_locked(frame, (uint16_t)sizeof(frame));
 }
 
-static bool lcd_write_nibble_locked(uint8_t nibble, uint8_t rs)
+static bool lcd_write_byte_locked(uint8_t value, bool rs)
 {
-  uint8_t bus = (uint8_t)((nibble & 0x0FU) << D4_BIT);
-  uint8_t frame[2];
+    if (!lcd_write_nibble_locked((uint8_t)(value >> 4), rs))
+    {
+        return false;
+    }
 
-  bus |= (uint8_t)((rs & 0x01U) << RS_BIT);
-  bus |= (uint8_t)((backlight_state & 0x01U) << BL_BIT);
+    if (!lcd_write_nibble_locked((uint8_t)(value & 0x0FU), rs))
+    {
+        return false;
+    }
 
-  frame[0] = (uint8_t)(bus | (1U << EN_BIT));
-  frame[1] = (uint8_t)(bus & (uint8_t)~(1U << EN_BIT));
-
-  return lcd_i2c_tx_locked(frame, (uint16_t)sizeof(frame));
+    return true;
 }
 
-static bool lcd_send_cmd_locked(uint8_t cmd)
+static bool lcd_send_command_locked(uint8_t command)
 {
-  if (!lcd_write_nibble_locked((uint8_t)(cmd >> 4), 0U))
-  {
-    return false;
-  }
+    if (!lcd_write_byte_locked(command, false))
+    {
+        return false;
+    }
 
-  if (!lcd_write_nibble_locked((uint8_t)(cmd & 0x0FU), 0U))
-  {
-    return false;
-  }
+    if ((command == LCD_CMD_CLEAR) || (command == LCD_CMD_HOME))
+    {
+        app_delay_ms(3U);
+    }
+    else
+    {
+        app_delay_ms(1U);
+    }
 
-  if ((cmd == 0x01U) || (cmd == 0x02U))
-  {
-    app_delay_ms(2U);
-  }
-
-  return true;
+    return true;
 }
 
 static bool lcd_send_data_locked(uint8_t data)
 {
-  if (!lcd_write_nibble_locked((uint8_t)(data >> 4), 1U))
-  {
-    return false;
-  }
+    if (!lcd_write_byte_locked(data, true))
+    {
+        return false;
+    }
 
-  return lcd_write_nibble_locked((uint8_t)(data & 0x0FU), 1U);
-}
-
-void lcd_send_cmd(uint8_t cmd)
-{
-  if (!app_i2c_lock(0U))
-  {
-    return;
-  }
-
-  (void)lcd_send_cmd_locked(cmd);
-
-  app_i2c_unlock();
-}
-
-void lcd_send_data(uint8_t data)
-{
-  if (!app_i2c_lock(0U))
-  {
-    return;
-  }
-
-  (void)lcd_send_data_locked(data);
-
-  app_i2c_unlock();
-}
-
-void lcd_init(void)
-{
-  app_delay_ms(50U);
-  lcd_write_nibble(0x03U, 0U);
-  app_delay_ms(5U);
-  lcd_write_nibble(0x03U, 0U);
-  app_delay_ms(1U);
-  lcd_write_nibble(0x03U, 0U);
-  app_delay_ms(1U);
-  lcd_write_nibble(0x02U, 0U);
-
-  lcd_send_cmd(0x28U);
-  lcd_send_cmd(0x0CU);
-  lcd_send_cmd(0x06U);
-  lcd_send_cmd(0x01U);
-  app_delay_ms(2U);
-}
-
-void lcd_write_string(uint8_t *str)
-{
-  if (str == NULL)
-  {
-    return;
-  }
-
-  while (*str != '\0')
-  {
-    lcd_send_data(*str++);
-  }
+    app_delay_ms(1U);
+    return true;
 }
 
 static uint8_t lcd_ddram_base(uint8_t row)
 {
-  switch (row)
-  {
-    case 0U:
-      return 0x00U;
-    case 1U:
-      return 0x40U;
-    case 2U:
-      return 0x14U;
-    case 3U:
-      return 0x54U;
-    default:
-      return 0x00U;
-  }
+    switch (row)
+    {
+        case 0U:
+            return 0x00U;
+        case 1U:
+            return 0x40U;
+        case 2U:
+            return 0x14U;
+        case 3U:
+            return 0x54U;
+        default:
+            return 0x00U;
+    }
+}
+
+/**
+ * @brief Initialize a 20x4 HD44780 controller in 4-bit mode.
+ *
+ * The sequence is intentionally conservative. Many 20x4 modules need longer delays after
+ * power-up and become unstable if the first mode-set is sent too early.
+ */
+static bool lcd_init_locked(void)
+{
+    uint32_t attempt;
+
+    for (attempt = 0U; attempt < LCD_INIT_RETRY_COUNT; attempt++)
+    {
+        app_delay_ms(60U);
+
+        if (!lcd_i2c_tx_locked(&s_lcd_state.backlight, 1U))
+        {
+            continue;
+        }
+
+        app_delay_ms(5U);
+
+        if (!lcd_write_nibble_locked(0x03U, false))
+        {
+            continue;
+        }
+        app_delay_ms(5U);
+
+        if (!lcd_write_nibble_locked(0x03U, false))
+        {
+            continue;
+        }
+        app_delay_ms(5U);
+
+        if (!lcd_write_nibble_locked(0x03U, false))
+        {
+            continue;
+        }
+        app_delay_ms(2U);
+
+        if (!lcd_write_nibble_locked(0x02U, false))
+        {
+            continue;
+        }
+        app_delay_ms(2U);
+
+        if (!lcd_send_command_locked(LCD_CMD_FUNCTION_SET))
+        {
+            continue;
+        }
+
+        if (!lcd_send_command_locked(LCD_CMD_FUNCTION_SET))
+        {
+            continue;
+        }
+
+        if (!lcd_send_command_locked(LCD_CMD_DISPLAY_OFF))
+        {
+            continue;
+        }
+
+        if (!lcd_send_command_locked(LCD_CMD_CLEAR))
+        {
+            continue;
+        }
+
+        if (!lcd_send_command_locked(LCD_CMD_ENTRY_MODE))
+        {
+            continue;
+        }
+
+        if (!lcd_send_command_locked(LCD_CMD_DISPLAY_ON))
+        {
+            continue;
+        }
+
+        if (!lcd_send_command_locked(LCD_CMD_HOME))
+        {
+            continue;
+        }
+
+        s_lcd_state.initialized = true;
+        return true;
+    }
+
+    s_lcd_state.initialized = false;
+    return false;
+}
+
+/**
+ * @brief Ensure that the LCD controller is initialized before any write operation.
+ *
+ * Re-initialization is attempted automatically because brown-out or backpack glitches can leave
+ * the display in an undefined state while the MCU keeps running.
+ */
+static bool lcd_ensure_ready(void)
+{
+    bool ok;
+
+    if (s_lcd_state.initialized)
+    {
+        return true;
+    }
+
+    ok = false;
+
+    if (app_i2c_lock(0U))
+    {
+        ok = lcd_init_locked();
+        app_i2c_unlock();
+    }
+
+    return ok;
+}
+
+static void lcd_animation_clear_frame(char frame[LCD_ROWS][LCD_COLS + 1U])
+{
+    uint8_t row;
+    uint8_t col;
+
+    for (row = 0U; row < LCD_ROWS; row++)
+    {
+        for (col = 0U; col < LCD_COLS; col++)
+        {
+            frame[row][col] = ' ';
+        }
+        frame[row][LCD_COLS] = '\0';
+    }
+}
+
+static void lcd_animation_put_text(char frame[LCD_ROWS][LCD_COLS + 1U],
+                                   uint8_t row,
+                                   uint8_t col,
+                                   const char *text)
+{
+    uint8_t idx;
+
+    if ((text == NULL) || (row >= LCD_ROWS) || (col >= LCD_COLS))
+    {
+        return;
+    }
+
+    idx = 0U;
+    while ((text[idx] != '\0') && ((uint8_t)(col + idx) < LCD_COLS))
+    {
+        frame[row][col + idx] = text[idx];
+        idx++;
+    }
+}
+
+static void lcd_animation_put_char(char frame[LCD_ROWS][LCD_COLS + 1U],
+                                   int8_t row,
+                                   int8_t col,
+                                   char ch)
+{
+    if ((row < 0) || (col < 0))
+    {
+        return;
+    }
+
+    if (((uint8_t)row >= LCD_ROWS) || ((uint8_t)col >= LCD_COLS))
+    {
+        return;
+    }
+
+    frame[(uint8_t)row][(uint8_t)col] = ch;
+}
+
+static void lcd_animation_render_frame(char frame[LCD_ROWS][LCD_COLS + 1U], uint32_t hold_ms)
+{
+    uint8_t row;
+
+    lcd_clear();
+    for (row = 0U; row < LCD_ROWS; row++)
+    {
+        (void)lcd_write_line(row, frame[row], LCD_COLS);
+    }
+    app_delay_ms(hold_ms);
+}
+
+void lcd_demo(void)
+{
+    char number[12];
+    int count;
+
+    lcd_init();
+    lcd_backlight(1U);
+
+    count = 0;
+    while (1)
+    {
+        (void)snprintf(number, sizeof(number), "%d", count);
+        lcd_clear();
+        (void)lcd_write_line(0U, "Hello BEKO studs", LCD_COLS);
+        (void)lcd_write_line(1U, number, LCD_COLS);
+        count++;
+        app_delay_ms(100U);
+    }
+}
+
+void lcd_init(void)
+{
+    s_lcd_state.initialized = false;
+    (void)lcd_ensure_ready();
+}
+
+void lcd_write_string(uint8_t *str)
+{
+    if ((str == NULL) || (!lcd_ensure_ready()))
+    {
+        return;
+    }
+
+    if (!app_i2c_lock(0U))
+    {
+        return;
+    }
+
+    while (*str != '\0')
+    {
+        if (!lcd_send_data_locked(*str))
+        {
+            s_lcd_state.initialized = false;
+            break;
+        }
+
+        str++;
+    }
+
+    app_i2c_unlock();
 }
 
 void lcd_set_cursor(uint8_t row, uint8_t column)
 {
-  uint8_t address;
+    uint8_t address;
 
-  if ((row >= LCD_ROWS) || (column >= LCD_COLS))
-  {
-    return;
-  }
+    if ((row >= LCD_ROWS) || (column >= LCD_COLS) || (!lcd_ensure_ready()))
+    {
+        return;
+    }
 
-  address = (uint8_t)(lcd_ddram_base(row) + column);
-  lcd_send_cmd((uint8_t)(0x80U | address));
-}
+    address = (uint8_t)(lcd_ddram_base(row) + column);
 
-bool lcd_write_line(uint8_t row, const char *text, uint8_t width)
-{
-  uint8_t i;
-  bool ok = true;
+    if (!app_i2c_lock(0U))
+    {
+        return;
+    }
 
-  if (row >= LCD_ROWS)
-  {
-    return false;
-  }
+    if (!lcd_send_command_locked((uint8_t)(LCD_CMD_SET_DDRAM | address)))
+    {
+        s_lcd_state.initialized = false;
+    }
 
-  if (width > LCD_COLS)
-  {
-    width = LCD_COLS;
-  }
-
-  if (!app_i2c_lock(0U))
-  {
-    return false;
-  }
-
-  if (!lcd_send_cmd_locked((uint8_t)(0x80U | lcd_ddram_base(row))))
-  {
     app_i2c_unlock();
-    return false;
-  }
-
-  for (i = 0U; i < width; i++)
-  {
-    uint8_t c = ' ';
-
-    if ((text != NULL) && (text[i] != '\0'))
-    {
-      c = (uint8_t)text[i];
-    }
-
-    if (!lcd_send_data_locked(c))
-    {
-      ok = false;
-      break;
-    }
-  }
-
-  app_i2c_unlock();
-  return ok;
 }
 
 void lcd_clear(void)
 {
-  lcd_send_cmd(0x01U);
-  app_delay_ms(2U);
+    if (!lcd_ensure_ready())
+    {
+        return;
+    }
+
+    if (!app_i2c_lock(0U))
+    {
+        return;
+    }
+
+    if (!lcd_send_command_locked(LCD_CMD_CLEAR) ||
+        !lcd_send_command_locked(LCD_CMD_HOME))
+    {
+        s_lcd_state.initialized = false;
+    }
+
+    app_i2c_unlock();
 }
 
 void lcd_backlight(uint8_t state)
 {
-  backlight_state = (state != 0U) ? 1U : 0U;
+    s_lcd_state.backlight = (state != 0U) ? LCD_BL_MASK : 0U;
+
+    if (!app_i2c_lock(0U))
+    {
+        return;
+    }
+
+    if (!lcd_i2c_tx_locked(&s_lcd_state.backlight, 1U))
+    {
+        s_lcd_state.initialized = false;
+    }
+
+    app_i2c_unlock();
+}
+
+/**
+ * @brief Write one logical LCD row and blank the remaining characters.
+ *
+ * Writing the whole row every time avoids leftover characters when a shorter string replaces a
+ * longer one, which is especially visible in menu screens and popup overlays.
+ */
+bool lcd_write_line(uint8_t row, const char *text, uint8_t width)
+{
+    uint8_t i;
+
+    if ((row >= LCD_ROWS) || (!lcd_ensure_ready()))
+    {
+        return false;
+    }
+
+    if (width > LCD_COLS)
+    {
+        width = LCD_COLS;
+    }
+
+    if (!app_i2c_lock(0U))
+    {
+        return false;
+    }
+
+    if (!lcd_send_command_locked((uint8_t)(LCD_CMD_SET_DDRAM | lcd_ddram_base(row))))
+    {
+        s_lcd_state.initialized = false;
+        app_i2c_unlock();
+        return false;
+    }
+
+    for (i = 0U; i < width; i++)
+    {
+        uint8_t ch;
+
+        ch = ' ';
+        if ((text != NULL) && (text[i] != '\0'))
+        {
+            ch = (uint8_t)text[i];
+        }
+
+        if (!lcd_send_data_locked(ch))
+        {
+            s_lcd_state.initialized = false;
+            app_i2c_unlock();
+            return false;
+        }
+    }
+
+    app_i2c_unlock();
+    return true;
 }
 
 void lcd_animation_hello_beko(void)
 {
-  lcd_clear();
-  lcd_write_line(0U, "HELLO BEKO", LCD_COLS);
-  lcd_write_line(1U, "RX monitor...", LCD_COLS);
-  lcd_write_line(2U, "", LCD_COLS);
-  lcd_write_line(3U, "", LCD_COLS);
-  app_delay_ms(250U);
+    char frame[LCD_ROWS][LCD_COLS + 1U];
+    static const char title[] = "HELLO BEKO";
+    static const char subtitle[] = "RX monitor...";
+    static const int8_t blast_offsets[][2] =
+    {
+        {  0,  0 }, { -1,  0 }, {  1,  0 }, {  0, -3 }, {  0,  3 },
+        { -1, -5 }, { -1,  5 }, {  1, -5 }, {  1,  5 }, { -2,  0 },
+        {  2,  0 }, { -2, -7 }, { -2,  7 }, {  2, -7 }, {  2,  7 }
+    };
+    uint8_t frame_idx;
+    int8_t center_row = 1;
+    int8_t center_col = 10;
+
+    /* 8 x 250 ms gives a simple 2 second boot animation without blocking too long. */
+    for (frame_idx = 0U; frame_idx < 8U; frame_idx++)
+    {
+        uint8_t i;
+        uint8_t active_count = (uint8_t)((frame_idx + 1U) * 2U);
+        char spark = '.';
+
+        if (active_count > (sizeof(blast_offsets) / sizeof(blast_offsets[0])))
+        {
+            active_count = (uint8_t)(sizeof(blast_offsets) / sizeof(blast_offsets[0]));
+        }
+
+        if (frame_idx >= 2U)
+        {
+            spark = '*';
+        }
+        if (frame_idx >= 5U)
+        {
+            spark = '+';
+        }
+
+        lcd_animation_clear_frame(frame);
+
+        for (i = 0U; i < active_count; i++)
+        {
+            lcd_animation_put_char(frame,
+                                   (int8_t)(center_row + blast_offsets[i][0]),
+                                   (int8_t)(center_col + blast_offsets[i][1]),
+                                   spark);
+        }
+
+        if (frame_idx >= 1U)
+        {
+            lcd_animation_put_text(frame, 1U, 5U, title);
+        }
+
+        if (frame_idx >= 6U)
+        {
+            lcd_animation_put_text(frame, 2U, 3U, subtitle);
+        }
+
+        lcd_animation_render_frame(frame, 250U);
+    }
 }

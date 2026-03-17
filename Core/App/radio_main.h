@@ -177,6 +177,7 @@ typedef struct
     radio_main_fsk_cfg_t fsk;                  /**< Profil FSK/GFSK/MSK/GMSK. */
     radio_main_ook_cfg_t ook;                  /**< Profil OOK. */
     bool fh_enabled;                           /**< Flaga frequency hopping. */
+    uint32_t fh_period_ms;                     /**< Okres przeskoku kanału [ms] dla FH w LoRa. */
     bool coding_enabled;                       /**< Flaga szyfrowania ruchu `USER`. */
     bool auto_ping_enabled;                    /**< Flaga automatycznego `PING`. */
 } radio_main_runtime_cfg_t;
@@ -190,6 +191,7 @@ bool radio_main_cmd_set_modulation_freq(uint32_t frequency_hz);
 bool radio_main_cmd_set_modulation_bw(uint8_t bandwidth_code);
 bool radio_main_cmd_set_option(radio_main_option_t option, uint32_t value);
 bool radio_main_cmd_set_fh(bool enabled);
+bool radio_main_cmd_set_fh_period(uint32_t period_ms);
 bool radio_main_cmd_set_coding(bool enabled);
 bool radio_main_cmd_set_auto_ping(bool enabled);
 

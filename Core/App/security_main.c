@@ -21,7 +21,7 @@
 #define SECURITY_STORE_RADIO_SLOT           1U
 #define SECURITY_TRUSTED_SLOT_BASE          2U
 #define SECURITY_STORE_MAGIC                0xA5U
-#define SECURITY_STORE_VERSION              2U
+#define SECURITY_STORE_VERSION              3U
 #define SECURITY_LEGACY_SETTINGS_SLOT       0U
 #define SECURITY_LEGACY_KEY_SEED_SLOT       1U
 #define SECURITY_SETTINGS_MAGIC             0x5345U
@@ -39,6 +39,7 @@ typedef enum
     SECURITY_CMD_GET_DEVICE,
     SECURITY_CMD_SET_CODING,
     SECURITY_CMD_SET_FH,
+    SECURITY_CMD_SET_FH_PERIOD,
     SECURITY_CMD_ROTATE_KEY,
     SECURITY_CMD_SET_NOTIFY,
     SECURITY_CMD_SET_PRESET,
@@ -82,6 +83,10 @@ typedef struct
         } set_bool;
         struct
         {
+            uint32_t value;
+        } set_u32;
+        struct
+        {
             security_notify_mode_t mode;
         } set_notify;
         struct
@@ -117,6 +122,7 @@ typedef struct
     uint8_t notify_mode;
     uint8_t lora_preset;
     uint8_t active_modulation;
+    uint8_t fh_period_idx;
     uint8_t seed[SECURITY_KEY_SEED_BYTES];
 } security_store_wire_t;
 
@@ -162,6 +168,7 @@ static security_runtime_cfg_t s_runtime_cfg =
 {
     .coding_enabled = true,
     .fh_enabled = false,
+    .fh_period_ms = 2000UL,
     .auto_ping_enabled = false,
     .notify_mode = SECURITY_NOTIFY_POPUP,
     .lora_preset = 2U,
@@ -207,6 +214,10 @@ static const uint8_t s_sync_len_options[] =
 static const uint8_t s_ook_threshold_options[] =
 {
     4U, 8U, 12U, 16U, 24U, 32U, 48U, 64U
+};
+static const uint32_t s_fh_period_options_ms[] =
+{
+    1000UL, 2000UL, 5000UL, 10000UL
 };
 
 static void security_main_task_fn(void *argument);
@@ -375,6 +386,17 @@ bool security_main_cmd_set_fh(bool enabled)
     memset(&cmd, 0, sizeof(cmd));
     cmd.id = SECURITY_CMD_SET_FH;
     cmd.u.set_bool.enabled = enabled;
+    return security_main_enqueue_sync(&cmd, &sync);
+}
+
+bool security_main_cmd_set_fh_period(uint32_t period_ms)
+{
+    security_cmd_t cmd;
+    security_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = SECURITY_CMD_SET_FH_PERIOD;
+    cmd.u.set_u32.value = period_ms;
     return security_main_enqueue_sync(&cmd, &sync);
 }
 
@@ -649,6 +671,11 @@ static void security_main_task_fn(void *argument)
                     cmd.sync->result = security_save_runtime_and_seed_to_store();
                     break;
 
+                case SECURITY_CMD_SET_FH_PERIOD:
+                    s_runtime_cfg.fh_period_ms = cmd.u.set_u32.value;
+                    cmd.sync->result = security_save_runtime_and_seed_to_store();
+                    break;
+
                 case SECURITY_CMD_ROTATE_KEY:
                     cmd.sync->result = security_rotate_key_internal();
                     break;
@@ -820,6 +847,7 @@ static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
     cfg->ook.sync_word = 0x00002DD4UL;
     cfg->ook.threshold = RADIO_MAIN_OOK_THRESHOLD_PEAK;
     cfg->ook.threshold_value = 12U;
+    cfg->fh_period_ms = 2000UL;
     cfg->active_modulation = RADIO_MAIN_MODULATION_LORA;
     cfg->radio_profiles_persisted = false;
 }
@@ -1030,14 +1058,16 @@ static bool security_load_runtime_and_seed_from_store(void)
     }
 
     rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_STORE_SLOT, buf, sizeof(buf), &len);
-    if ((rc != I2C_MEM_STORE_OK) || ((len != 13U) && (len != sizeof(w))))
+    if ((rc != I2C_MEM_STORE_OK) ||
+        ((len != 13U) && (len != 14U) && (len != sizeof(w))))
     {
         return false;
     }
 
-    memcpy(&w, buf, sizeof(w));
+    memset(&w, 0, sizeof(w));
+    memcpy(&w, buf, len);
     if ((w.magic != SECURITY_STORE_MAGIC) ||
-        ((w.version != 1U) && (w.version != SECURITY_STORE_VERSION)))
+        ((w.version != 1U) && (w.version != 2U) && (w.version != SECURITY_STORE_VERSION)))
     {
         return false;
     }
@@ -1048,13 +1078,20 @@ static bool security_load_runtime_and_seed_from_store(void)
     s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
                                 SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
     s_runtime_cfg.lora_preset = w.lora_preset;
-    s_runtime_cfg.active_modulation = (w.version >= SECURITY_STORE_VERSION) ?
+    s_runtime_cfg.active_modulation = (w.version >= 2U) ?
                                       (radio_main_modulation_t)w.active_modulation :
                                       RADIO_MAIN_MODULATION_LORA;
+    s_runtime_cfg.fh_period_ms = (w.version >= SECURITY_STORE_VERSION) ?
+                                 security_u32_from_index(w.fh_period_idx,
+                                                         s_fh_period_options_ms,
+                                                         (uint8_t)(sizeof(s_fh_period_options_ms) /
+                                                                   sizeof(s_fh_period_options_ms[0])),
+                                                         2000UL) :
+                                 2000UL;
     s_runtime_cfg.radio_profiles_persisted = false;
     memcpy(s_key_seed_cached, w.seed, SECURITY_KEY_SEED_BYTES);
 
-    if (w.version >= SECURITY_STORE_VERSION)
+    if (w.version >= 2U)
     {
         s_runtime_cfg.radio_profiles_persisted = security_load_radio_profiles_from_store();
     }
@@ -1090,6 +1127,11 @@ static bool security_save_runtime_and_seed_to_store(void)
     w.notify_mode = (uint8_t)s_runtime_cfg.notify_mode;
     w.lora_preset = s_runtime_cfg.lora_preset;
     w.active_modulation = (uint8_t)s_runtime_cfg.active_modulation;
+    w.fh_period_idx = security_index_from_u32(s_runtime_cfg.fh_period_ms,
+                                              s_fh_period_options_ms,
+                                              (uint8_t)(sizeof(s_fh_period_options_ms) /
+                                                        sizeof(s_fh_period_options_ms[0])),
+                                              1U);
     memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
 
     if (i2c_mem_store_secret_write(&s_mem_store,
@@ -1356,6 +1398,7 @@ static bool security_load_settings_legacy_from_store(void)
     s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
                                 SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
     s_runtime_cfg.lora_preset = w.lora_preset;
+    s_runtime_cfg.fh_period_ms = 2000UL;
     return true;
 }
 

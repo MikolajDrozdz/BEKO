@@ -30,6 +30,7 @@ typedef struct
 {
     bool coding_enabled;
     bool fh_enabled;
+    uint32_t fh_period_ms;
     bool auto_ping_enabled;
     security_notify_mode_t notify_mode;
     uint8_t lora_preset;
@@ -48,6 +49,7 @@ bool security_main_cmd_get_device(uint8_t idx, trusted_info_t *out);
 bool security_main_cmd_set_coding(bool enabled);
 bool security_main_cmd_rotate_key(void);
 bool security_main_cmd_set_fh(bool enabled);
+bool security_main_cmd_set_fh_period(uint32_t period_ms);
 
 bool security_main_cmd_set_notify_mode(security_notify_mode_t mode);
 bool security_main_cmd_set_lora_preset(uint8_t preset_id);
