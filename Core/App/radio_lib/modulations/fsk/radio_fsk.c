@@ -13,12 +13,13 @@
 
 #include <string.h>
 
-#define RADIO_FSK_FIFO_THRESH_LEVEL        15U
+#define RADIO_FSK_FIFO_THRESH_LEVEL        31U
 #define RADIO_FSK_RESET_LOW_DELAY_MS       2U
 #define RADIO_FSK_RESET_HIGH_DELAY_MS      10U
 #define RADIO_FSK_NODE_ADDRESS_DEFAULT     0x01U
 #define RADIO_FSK_BROADCAST_ADDRESS        0xFFU
 #define RADIO_FSK_TX_GUARD_MS              40UL
+#define RADIO_FSK_FIFO_MAX_BYTES           64U
 
 typedef struct
 {
@@ -160,6 +161,40 @@ static uint32_t radio_get_frequency_deviation(const radio_fsk_cfg_t *cfg)
     return (cfg->bitrate_bps / 2UL);
 }
 
+/*
+ * Waits until the FSK modem reports ModeReady after leaving RX.
+ * Semtech fixed a known SX127x issue around FSK transmissions started while the
+ * radio was still in RX, so this helper makes the RX->STDBY transition explicit.
+ */
+static bool radio_set_op_mode_ready(uint8_t op_mode)
+{
+    uint8_t irq1;
+    uint8_t retry;
+
+    if (!sx1276_set_op_mode(&s_radio.bus, op_mode))
+    {
+        return false;
+    }
+
+    if ((op_mode & SX1276_OPMODE_MODE_MASK) == SX1276_MODE_SLEEP)
+    {
+        app_delay_ms(1U);
+        return true;
+    }
+
+    for (retry = 0U; retry < 5U; retry++)
+    {
+        if (sx1276_read_reg(&s_radio.bus, SX1276_REG_IRQ_FLAGS_1, &irq1) &&
+            ((irq1 & SX1276_IRQ1_MODE_READY) != 0U))
+        {
+            return true;
+        }
+        app_delay_ms(1U);
+    }
+
+    return false;
+}
+
 static uint8_t radio_get_packet_config_1(const radio_fsk_cfg_t *cfg)
 {
     uint8_t value = SX1276_PACKET_FORMAT_VARIABLE;
@@ -240,7 +275,7 @@ static bool radio_apply_fsk_config(const radio_fsk_cfg_t *cfg)
                         radio_get_shaping_bits(cfg) |
                         SX1276_MODE_SLEEP);
 
-    return sx1276_set_op_mode(&s_radio.bus, op_mode) &&
+    return radio_set_op_mode_ready(op_mode) &&
            sx1276_set_frequency(&s_radio.bus, cfg->frequency_hz) &&
            sx1276_set_pa_output_power(&s_radio.bus, cfg->tx_power_dbm) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_BITRATE_MSB, (uint8_t)((bitrate_reg >> 8) & 0xFFU)) &&
@@ -267,8 +302,9 @@ static bool radio_apply_fsk_config(const radio_fsk_cfg_t *cfg)
                                       (RADIO_FSK_FIFO_THRESH_LEVEL & 0x3FU))) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_DIO_MAPPING_1, 0x00U) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_DIO_MAPPING_2, 0x00U) &&
-           sx1276_set_op_mode(&s_radio.bus,
-                              (uint8_t)(SX1276_OPMODE_MODULATION_FSK | radio_get_shaping_bits(cfg) | SX1276_MODE_STDBY));
+           radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_FSK |
+                                             radio_get_shaping_bits(cfg) |
+                                             SX1276_MODE_STDBY));
 }
 
 static void radio_set_state(radio_state_t state)
@@ -308,8 +344,14 @@ static uint32_t radio_tx_timeout_ms(uint8_t payload_len)
 {
     uint64_t timeout_ms;
     uint32_t total_bytes;
+    uint32_t crc_len = (s_radio.cfg.crc_type == RADIO_PACKET_CRC_OFF) ? 0UL : 2UL;
 
-    total_bytes = (uint32_t)payload_len + 1UL;
+    total_bytes = (uint32_t)s_radio.cfg.preamble_len +
+                  (uint32_t)s_radio.cfg.sync_word_len +
+                  (uint32_t)payload_len +
+                  crc_len +
+                  1UL + /* variable-length byte */
+                  2UL;  /* guard for packet engine overhead */
     timeout_ms = ((uint64_t)total_bytes * 8ULL * 1000ULL) / s_radio.cfg.bitrate_bps;
     if ((((uint64_t)total_bytes * 8ULL * 1000ULL) % s_radio.cfg.bitrate_bps) != 0ULL)
     {
@@ -470,7 +512,7 @@ radio_status_t radio_fsk_init(const radio_hw_cfg_t *hw,
 
     radio_hw_reset();
 
-    if (!sx1276_set_op_mode(&s_radio.bus, (uint8_t)(SX1276_OPMODE_MODULATION_FSK | SX1276_MODE_SLEEP)))
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_FSK | SX1276_MODE_SLEEP)))
     {
         return RADIO_EHW;
     }
@@ -573,6 +615,11 @@ radio_status_t radio_fsk_send_async(const uint8_t *data, uint8_t len)
     {
         return RADIO_EINVAL;
     }
+    if (((uint16_t)len + 1U) > RADIO_FSK_FIFO_MAX_BYTES)
+    {
+        /* Chunked FIFO TX is not implemented in this backend yet. */
+        return RADIO_EINVAL;
+    }
 
     if (s_radio.state == RADIO_STATE_TX)
     {
@@ -583,10 +630,9 @@ radio_status_t radio_fsk_send_async(const uint8_t *data, uint8_t len)
     memcpy(&fifo_buf[1], data, len);
     s_radio.tx_resume_state = s_radio.state;
 
-    if (!sx1276_set_op_mode(&s_radio.bus,
-                            (uint8_t)(SX1276_OPMODE_MODULATION_FSK |
-                                      radio_get_shaping_bits(&s_radio.cfg) |
-                                      SX1276_MODE_STDBY)) ||
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_FSK |
+                                           radio_get_shaping_bits(&s_radio.cfg) |
+                                           SX1276_MODE_STDBY)) ||
         !sx1276_write_reg(&s_radio.bus, SX1276_REG_DIO_MAPPING_1, 0x00U) ||
         !sx1276_write_burst(&s_radio.bus, SX1276_REG_FIFO, fifo_buf, (uint8_t)(len + 1U)) ||
         !sx1276_set_op_mode(&s_radio.bus,
@@ -597,6 +643,11 @@ radio_status_t radio_fsk_send_async(const uint8_t *data, uint8_t len)
         return RADIO_EHW;
     }
 
+    {
+        uint32_t key = radio_irq_save();
+        s_radio.dio_pending_mask = 0U;
+        radio_irq_restore(key);
+    }
     radio_set_state(RADIO_STATE_TX);
     s_radio.tx_deadline_ms = HAL_GetTick() + radio_tx_timeout_ms(len);
     return RADIO_OK;
@@ -609,10 +660,9 @@ radio_status_t radio_fsk_standby(void)
         return RADIO_ESTATE;
     }
 
-    if (!sx1276_set_op_mode(&s_radio.bus,
-                            (uint8_t)(SX1276_OPMODE_MODULATION_FSK |
-                                      radio_get_shaping_bits(&s_radio.cfg) |
-                                      SX1276_MODE_STDBY)))
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_FSK |
+                                           radio_get_shaping_bits(&s_radio.cfg) |
+                                           SX1276_MODE_STDBY)))
     {
         return RADIO_EHW;
     }
@@ -628,10 +678,9 @@ radio_status_t radio_fsk_sleep(void)
         return RADIO_ESTATE;
     }
 
-    if (!sx1276_set_op_mode(&s_radio.bus,
-                            (uint8_t)(SX1276_OPMODE_MODULATION_FSK |
-                                      radio_get_shaping_bits(&s_radio.cfg) |
-                                      SX1276_MODE_SLEEP)))
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_FSK |
+                                           radio_get_shaping_bits(&s_radio.cfg) |
+                                           SX1276_MODE_SLEEP)))
     {
         return RADIO_EHW;
     }

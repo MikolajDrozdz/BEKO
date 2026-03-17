@@ -1571,10 +1571,20 @@ static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_te
 {
     char line0[MENU_LINE_BUF_SIZE];
     char line1[MENU_LINE_BUF_SIZE];
+    char radio_error[MENU_LINE_BUF_SIZE];
 
     if (!ok)
     {
-        menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Send failed");
+        menu_line_clear(radio_error);
+        if (radio_main_get_last_error_text(radio_error, (uint8_t)sizeof(radio_error)) &&
+            (radio_error[0] != '\0'))
+        {
+            menu_show_action_result(st, MENU_NOTIFICATION_ERROR, radio_error);
+        }
+        else
+        {
+            menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Send failed");
+        }
         return;
     }
 

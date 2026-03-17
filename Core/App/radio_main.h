@@ -201,6 +201,7 @@ bool radio_main_cmd_pairing_accept(bool accept);
 bool radio_main_cmd_send_join_req(void);
 bool radio_main_cmd_send_trust_removed(uint32_t dst_id);
 bool radio_main_get_runtime_cfg(radio_main_runtime_cfg_t *cfg_out);
+bool radio_main_get_last_error_text(char *out, uint8_t out_size);
 
 uint32_t radio_main_get_node_id(void);
 

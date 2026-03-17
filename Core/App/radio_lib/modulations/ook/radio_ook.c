@@ -13,10 +13,11 @@
 
 #include <string.h>
 
-#define RADIO_OOK_FIFO_THRESH_LEVEL        15U
+#define RADIO_OOK_FIFO_THRESH_LEVEL        31U
 #define RADIO_OOK_RESET_LOW_DELAY_MS       2U
 #define RADIO_OOK_RESET_HIGH_DELAY_MS      10U
 #define RADIO_OOK_TX_GUARD_MS              40UL
+#define RADIO_OOK_FIFO_MAX_BYTES           64U
 typedef struct
 {
     bool initialized;
@@ -136,6 +137,39 @@ static bool radio_write_sync_word(const radio_ook_cfg_t *cfg)
            sx1276_write_burst(&s_radio.bus, SX1276_REG_SYNC_VALUE_1, sync_bytes, cfg->sync_word_len);
 }
 
+/*
+ * Waits for ModeReady after OOK/FSK-mode transitions. This keeps the packet
+ * engine from being reconfigured while the modem still exits RX.
+ */
+static bool radio_set_op_mode_ready(uint8_t op_mode)
+{
+    uint8_t irq1;
+    uint8_t retry;
+
+    if (!sx1276_set_op_mode(&s_radio.bus, op_mode))
+    {
+        return false;
+    }
+
+    if ((op_mode & SX1276_OPMODE_MODE_MASK) == SX1276_MODE_SLEEP)
+    {
+        app_delay_ms(1U);
+        return true;
+    }
+
+    for (retry = 0U; retry < 5U; retry++)
+    {
+        if (sx1276_read_reg(&s_radio.bus, SX1276_REG_IRQ_FLAGS_1, &irq1) &&
+            ((irq1 & SX1276_IRQ1_MODE_READY) != 0U))
+        {
+            return true;
+        }
+        app_delay_ms(1U);
+    }
+
+    return false;
+}
+
 static bool radio_apply_threshold(const radio_ook_cfg_t *cfg)
 {
     switch (cfg->threshold)
@@ -164,7 +198,7 @@ static bool radio_apply_ook_config(const radio_ook_cfg_t *cfg)
     rx_bw = radio_get_rx_bw_reg_value(cfg->rx_bandwidth);
     op_mode = (uint8_t)(SX1276_OPMODE_MODULATION_OOK | SX1276_OPMODE_SHAPING_NONE | SX1276_MODE_SLEEP);
 
-    return sx1276_set_op_mode(&s_radio.bus, op_mode) &&
+    return radio_set_op_mode_ready(op_mode) &&
            sx1276_set_frequency(&s_radio.bus, cfg->frequency_hz) &&
            sx1276_set_pa_output_power(&s_radio.bus, cfg->tx_power_dbm) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_BITRATE_MSB, (uint8_t)((bitrate_reg >> 8) & 0xFFU)) &&
@@ -188,10 +222,9 @@ static bool radio_apply_ook_config(const radio_ook_cfg_t *cfg)
                                       (RADIO_OOK_FIFO_THRESH_LEVEL & 0x3FU))) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_DIO_MAPPING_1, 0x00U) &&
            sx1276_write_reg(&s_radio.bus, SX1276_REG_DIO_MAPPING_2, 0x00U) &&
-           sx1276_set_op_mode(&s_radio.bus,
-                              (uint8_t)(SX1276_OPMODE_MODULATION_OOK |
-                                        SX1276_OPMODE_SHAPING_NONE |
-                                        SX1276_MODE_STDBY));
+           radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_OOK |
+                                             SX1276_OPMODE_SHAPING_NONE |
+                                             SX1276_MODE_STDBY));
 }
 
 static void radio_set_state(radio_state_t state)
@@ -232,7 +265,11 @@ static uint32_t radio_tx_timeout_ms(uint8_t payload_len)
     uint64_t timeout_ms;
     uint32_t total_bytes;
 
-    total_bytes = (uint32_t)payload_len + 1UL;
+    total_bytes = (uint32_t)s_radio.cfg.preamble_len +
+                  (uint32_t)s_radio.cfg.sync_word_len +
+                  (uint32_t)payload_len +
+                  1UL + /* variable-length byte */
+                  2UL;  /* guard for packet engine overhead */
     timeout_ms = ((uint64_t)total_bytes * 8ULL * 1000ULL) / s_radio.cfg.bitrate_bps;
     if ((((uint64_t)total_bytes * 8ULL * 1000ULL) % s_radio.cfg.bitrate_bps) != 0ULL)
     {
@@ -393,7 +430,7 @@ radio_status_t radio_ook_init(const radio_hw_cfg_t *hw,
 
     radio_hw_reset();
 
-    if (!sx1276_set_op_mode(&s_radio.bus, (uint8_t)(SX1276_OPMODE_MODULATION_OOK | SX1276_MODE_SLEEP)))
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_OOK | SX1276_MODE_SLEEP)))
     {
         return RADIO_EHW;
     }
@@ -496,6 +533,11 @@ radio_status_t radio_ook_send_async(const uint8_t *data, uint8_t len)
     {
         return RADIO_EINVAL;
     }
+    if (((uint16_t)len + 1U) > RADIO_OOK_FIFO_MAX_BYTES)
+    {
+        /* Chunked FIFO TX is not implemented in this backend yet. */
+        return RADIO_EINVAL;
+    }
 
     if (s_radio.state == RADIO_STATE_TX)
     {
@@ -506,10 +548,9 @@ radio_status_t radio_ook_send_async(const uint8_t *data, uint8_t len)
     memcpy(&fifo_buf[1], data, len);
     s_radio.tx_resume_state = s_radio.state;
 
-    if (!sx1276_set_op_mode(&s_radio.bus,
-                            (uint8_t)(SX1276_OPMODE_MODULATION_OOK |
-                                      SX1276_OPMODE_SHAPING_NONE |
-                                      SX1276_MODE_STDBY)) ||
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_OOK |
+                                           SX1276_OPMODE_SHAPING_NONE |
+                                           SX1276_MODE_STDBY)) ||
         !sx1276_write_reg(&s_radio.bus, SX1276_REG_DIO_MAPPING_1, 0x00U) ||
         !sx1276_write_burst(&s_radio.bus, SX1276_REG_FIFO, fifo_buf, (uint8_t)(len + 1U)) ||
         !sx1276_set_op_mode(&s_radio.bus,
@@ -520,6 +561,11 @@ radio_status_t radio_ook_send_async(const uint8_t *data, uint8_t len)
         return RADIO_EHW;
     }
 
+    {
+        uint32_t key = radio_irq_save();
+        s_radio.dio_pending_mask = 0U;
+        radio_irq_restore(key);
+    }
     radio_set_state(RADIO_STATE_TX);
     s_radio.tx_deadline_ms = HAL_GetTick() + radio_tx_timeout_ms(len);
     return RADIO_OK;
@@ -532,10 +578,9 @@ radio_status_t radio_ook_standby(void)
         return RADIO_ESTATE;
     }
 
-    if (!sx1276_set_op_mode(&s_radio.bus,
-                            (uint8_t)(SX1276_OPMODE_MODULATION_OOK |
-                                      SX1276_OPMODE_SHAPING_NONE |
-                                      SX1276_MODE_STDBY)))
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_OOK |
+                                           SX1276_OPMODE_SHAPING_NONE |
+                                           SX1276_MODE_STDBY)))
     {
         return RADIO_EHW;
     }
@@ -551,10 +596,9 @@ radio_status_t radio_ook_sleep(void)
         return RADIO_ESTATE;
     }
 
-    if (!sx1276_set_op_mode(&s_radio.bus,
-                            (uint8_t)(SX1276_OPMODE_MODULATION_OOK |
-                                      SX1276_OPMODE_SHAPING_NONE |
-                                      SX1276_MODE_SLEEP)))
+    if (!radio_set_op_mode_ready((uint8_t)(SX1276_OPMODE_MODULATION_OOK |
+                                           SX1276_OPMODE_SHAPING_NONE |
+                                           SX1276_MODE_SLEEP)))
     {
         return RADIO_EHW;
     }

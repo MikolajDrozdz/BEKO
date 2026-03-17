@@ -19,7 +19,6 @@
 #define RADIO_CMD_WAIT_MS                    1500U
 #define RADIO_CMD_POLL_MS                    5U
 #define RADIO_MSG_BUF_MAX                    255U
-#define RADIO_AUTO_PING_PERIOD_MS            5000UL
 #define RADIO_HOP_PERIOD_DEFAULT_MS          10000UL
 #define RADIO_DEDUP_WINDOW_MS                60000UL
 #define RADIO_PAIR_CODE_LEN                  6U
@@ -30,6 +29,17 @@
 #define RADIO_TX_GUARD_MIN_MS                200UL
 #define RADIO_TX_GUARD_LORA_MS               20000UL
 #define RADIO_TX_GUARD_MARGIN_MS             64UL
+#define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
+#define RADIO_LORA_BW_HZ_7_8                 7800UL
+#define RADIO_LORA_BW_HZ_10_4                10400UL
+#define RADIO_LORA_BW_HZ_15_6                15600UL
+#define RADIO_LORA_BW_HZ_20_8                20800UL
+#define RADIO_LORA_BW_HZ_31_25               31250UL
+#define RADIO_LORA_BW_HZ_41_7                41700UL
+#define RADIO_LORA_BW_HZ_62_5                62500UL
+#define RADIO_LORA_BW_HZ_125                 125000UL
+#define RADIO_LORA_BW_HZ_250                 250000UL
+#define RADIO_LORA_BW_HZ_500                 500000UL
 
 typedef enum
 {
@@ -128,6 +138,7 @@ typedef struct
     uint8_t pairing_outgoing_code_len;
     bool tx_in_progress;
     uint32_t tx_deadline_ms;
+    char last_error_text[21];
     beko_net_dedup_cache_t dedup;
 } radio_main_ctx_t;
 
@@ -178,6 +189,12 @@ static void radio_main_ensure_rx_continuous(void);
 static void radio_main_watchdog_tx(void);
 static void radio_main_notify(menu_notification_type_t type, const char *text);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
+static void radio_main_print_tx_ascii(const uint8_t *data, uint8_t len);
+static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len);
+static void radio_main_print_generated_pattern(const char *label, uint8_t value, uint16_t len);
+static void radio_main_print_fsk_sync_word(uint64_t sync_word, uint8_t sync_len, const char *label);
+static void radio_main_print_ook_sync_word(uint32_t sync_word, uint8_t sync_len, const char *label);
+static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool retry_attempt);
 static bool radio_main_finish_pairing(bool accept);
 static bool radio_main_send_join_request_internal(void);
 static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
@@ -193,6 +210,15 @@ static uint32_t radio_main_tx_timeout_ms(uint16_t payload_len);
 static void radio_main_tx_mark_started(uint16_t payload_len);
 static void radio_main_tx_clear(void);
 static bool radio_main_tx_timed_out(void);
+static void radio_main_set_last_error(const char *text);
+static void radio_main_clear_last_error(void);
+static uint32_t radio_main_current_frequency_hz(void);
+static uint16_t radio_main_current_duty_cycle_permille(uint32_t frequency_hz);
+static uint32_t radio_main_lora_bw_hz(radio_lora_bw_t bw);
+static uint32_t radio_main_auto_ping_airtime_ms(void);
+static uint32_t radio_main_estimate_lora_airtime_ms(uint16_t payload_len);
+static uint32_t radio_main_estimate_fsk_ook_airtime_ms(uint16_t payload_len, bool ook_mode);
+static uint32_t radio_main_auto_ping_period_ms(void);
 
 static const uint32_t s_hop_channels_hz[3] =
 {
@@ -441,6 +467,26 @@ bool radio_main_get_runtime_cfg(radio_main_runtime_cfg_t *cfg_out)
     return ok;
 }
 
+bool radio_main_get_last_error_text(char *out, uint8_t out_size)
+{
+    bool ok = false;
+
+    if ((out == NULL) || (out_size == 0U) || (s_radio_state_mutex == NULL))
+    {
+        return false;
+    }
+
+    if (osMutexAcquire(s_radio_state_mutex, 100U) == osOK)
+    {
+        strncpy(out, s_ctx.last_error_text, out_size - 1U);
+        out[out_size - 1U] = '\0';
+        (void)osMutexRelease(s_radio_state_mutex);
+        ok = true;
+    }
+
+    return ok;
+}
+
 uint32_t radio_main_get_node_id(void)
 {
     uint32_t node_id = 0U;
@@ -471,6 +517,7 @@ static void radio_main_task_fn(void *argument)
     s_ctx.next_msg_id = 1U;
     s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
     s_ctx.lora_preset = 2U;
+    radio_main_clear_last_error();
     beko_net_dedup_init(&s_ctx.dedup, RADIO_DEDUP_WINDOW_MS);
 
     radio_default_hw_cfg(&s_ctx.hw, &hspi1);
@@ -534,6 +581,7 @@ static void radio_main_task_fn(void *argument)
             switch (cmd.id)
             {
                 case RADIO_MAIN_CMD_SEND_TEMPLATE:
+                    radio_main_clear_last_error();
                     cmd_result = radio_main_send_template_internal(cmd.u.send_template.group_id,
                                                                    cmd.u.send_template.msg_id,
                                                                    cmd.u.send_template.dst_id);
@@ -806,6 +854,296 @@ static bool radio_main_tx_timed_out(void)
 {
     return (s_ctx.tx_in_progress &&
             ((int32_t)(radio_main_now_ms() - s_ctx.tx_deadline_ms) >= 0));
+}
+
+static void radio_main_set_last_error(const char *text)
+{
+    if (text == NULL)
+    {
+        s_ctx.last_error_text[0] = '\0';
+        return;
+    }
+
+    strncpy(s_ctx.last_error_text, text, sizeof(s_ctx.last_error_text) - 1U);
+    s_ctx.last_error_text[sizeof(s_ctx.last_error_text) - 1U] = '\0';
+}
+
+static void radio_main_clear_last_error(void)
+{
+    s_ctx.last_error_text[0] = '\0';
+}
+
+static uint32_t radio_main_current_frequency_hz(void)
+{
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        return s_ctx.fsk_cfg.frequency_hz;
+    }
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        return s_ctx.ook_cfg.frequency_hz;
+    }
+
+    return s_ctx.lora_cfg.frequency_hz;
+}
+
+/*
+ * Returns the ETSI-style duty-cycle limit for the current ISM sub-band in
+ * permille. The auto-ping scheduler later uses half of that duty cycle to keep
+ * a safety margin instead of driving the channel at the legal maximum.
+ */
+static uint16_t radio_main_current_duty_cycle_permille(uint32_t frequency_hz)
+{
+    if ((frequency_hz >= 868700000UL) && (frequency_hz <= 869200000UL))
+    {
+        return 1U;   /* 0.1% */
+    }
+    if ((frequency_hz >= 869400000UL) && (frequency_hz <= 869650000UL))
+    {
+        return 100U; /* 10% */
+    }
+    if ((frequency_hz >= 863000000UL) && (frequency_hz < 868700000UL))
+    {
+        return 10U;  /* 1% */
+    }
+    if ((frequency_hz > 869650000UL) && (frequency_hz <= 870000000UL))
+    {
+        return 10U;  /* 1% */
+    }
+
+    return 10U;
+}
+
+static uint32_t radio_main_lora_bw_hz(radio_lora_bw_t bw)
+{
+    switch (bw)
+    {
+        case RADIO_LORA_BW_7_8_KHZ:
+            return RADIO_LORA_BW_HZ_7_8;
+        case RADIO_LORA_BW_10_4_KHZ:
+            return RADIO_LORA_BW_HZ_10_4;
+        case RADIO_LORA_BW_15_6_KHZ:
+            return RADIO_LORA_BW_HZ_15_6;
+        case RADIO_LORA_BW_20_8_KHZ:
+            return RADIO_LORA_BW_HZ_20_8;
+        case RADIO_LORA_BW_31_25_KHZ:
+            return RADIO_LORA_BW_HZ_31_25;
+        case RADIO_LORA_BW_41_7_KHZ:
+            return RADIO_LORA_BW_HZ_41_7;
+        case RADIO_LORA_BW_62_5_KHZ:
+            return RADIO_LORA_BW_HZ_62_5;
+        case RADIO_LORA_BW_250_KHZ:
+            return RADIO_LORA_BW_HZ_250;
+        case RADIO_LORA_BW_500_KHZ:
+            return RADIO_LORA_BW_HZ_500;
+        case RADIO_LORA_BW_125_KHZ:
+        default:
+            return RADIO_LORA_BW_HZ_125;
+    }
+}
+
+/*
+ * Estimates LoRa packet airtime using the standard SX127x packet formula.
+ * The result is intentionally conservative, because auto-ping should stay
+ * clearly below the band occupancy limit.
+ */
+static uint32_t radio_main_estimate_lora_airtime_ms(uint16_t payload_len)
+{
+    uint32_t bw_hz = radio_main_lora_bw_hz(s_ctx.lora_cfg.bandwidth);
+    uint32_t sf = s_ctx.lora_cfg.spreading_factor;
+    uint32_t cr = (uint32_t)(s_ctx.lora_cfg.coding_rate - 4U);
+    uint32_t de = ((bw_hz <= RADIO_LORA_BW_HZ_125) && (sf >= 11U)) ? 1U : 0U;
+    uint32_t ih = s_ctx.lora_cfg.implicit_header ? 1U : 0U;
+    uint32_t crc = s_ctx.lora_cfg.crc_on ? 1U : 0U;
+    uint64_t tsym_us;
+    uint64_t preamble_us;
+    int32_t numerator;
+    int32_t denominator;
+    int32_t ceil_term = 0;
+    uint32_t payload_symbols;
+    uint64_t payload_us;
+    uint64_t total_ms;
+
+    if ((bw_hz == 0UL) || (sf < 6U))
+    {
+        return RADIO_TX_GUARD_LORA_MS;
+    }
+
+    tsym_us = (((uint64_t)1ULL << sf) * 1000000ULL) / (uint64_t)bw_hz;
+    if ((((uint64_t)1ULL << sf) * 1000000ULL) % (uint64_t)bw_hz)
+    {
+        tsym_us++;
+    }
+
+    preamble_us = ((uint64_t)s_ctx.lora_cfg.preamble_len * tsym_us) +
+                  ((17ULL * tsym_us) / 4ULL);
+    if (((17ULL * tsym_us) % 4ULL) != 0ULL)
+    {
+        preamble_us++;
+    }
+
+    numerator = (int32_t)(8UL * payload_len) - (int32_t)(4UL * sf) + 28 +
+                (int32_t)(16UL * crc) - (int32_t)(20UL * ih);
+    denominator = (int32_t)(4UL * (sf - (2UL * de)));
+    if ((numerator > 0) && (denominator > 0))
+    {
+        ceil_term = (numerator + denominator - 1) / denominator;
+    }
+
+    payload_symbols = 8U;
+    if (ceil_term > 0)
+    {
+        payload_symbols += (uint32_t)ceil_term * (cr + 4U);
+    }
+
+    payload_us = (uint64_t)payload_symbols * tsym_us;
+    total_ms = (preamble_us + payload_us + 999ULL) / 1000ULL;
+    if (total_ms == 0ULL)
+    {
+        total_ms = 1ULL;
+    }
+    if (total_ms > 0xFFFFFFFFULL)
+    {
+        return 0xFFFFFFFFUL;
+    }
+
+    return (uint32_t)total_ms;
+}
+
+/*
+ * Estimates on-air time for FSK/OOK by accounting for preamble, sync word,
+ * packet-length byte, optional CRC and a small extra guard for packet-engine
+ * framing overhead. This is conservative on purpose for auto-ping throttling.
+ */
+static uint32_t radio_main_estimate_fsk_ook_airtime_ms(uint16_t payload_len, bool ook_mode)
+{
+    uint32_t bitrate_bps;
+    uint32_t preamble_len;
+    uint32_t sync_len;
+    uint32_t crc_len = 0U;
+    uint32_t total_bytes;
+    uint64_t total_ms;
+
+    if (ook_mode)
+    {
+        bitrate_bps = s_ctx.ook_cfg.bitrate_bps;
+        preamble_len = s_ctx.ook_cfg.preamble_len;
+        sync_len = s_ctx.ook_cfg.sync_word_len;
+    }
+    else
+    {
+        bitrate_bps = s_ctx.fsk_cfg.bitrate_bps;
+        preamble_len = s_ctx.fsk_cfg.preamble_len;
+        sync_len = s_ctx.fsk_cfg.sync_word_len;
+        if (s_ctx.fsk_cfg.crc_type != RADIO_MAIN_CRC_OFF)
+        {
+            crc_len = 2U;
+        }
+    }
+
+    if (bitrate_bps == 0UL)
+    {
+        return RADIO_TX_GUARD_MIN_MS;
+    }
+
+    total_bytes = preamble_len + sync_len + 1UL + payload_len + crc_len + 2UL;
+    total_ms = ((uint64_t)total_bytes * 8ULL * 1000ULL) / bitrate_bps;
+    if ((((uint64_t)total_bytes * 8ULL * 1000ULL) % bitrate_bps) != 0ULL)
+    {
+        total_ms++;
+    }
+    total_ms += RADIO_TX_GUARD_MARGIN_MS;
+
+    if (total_ms < RADIO_TX_GUARD_MIN_MS)
+    {
+        total_ms = RADIO_TX_GUARD_MIN_MS;
+    }
+    if (total_ms > 0xFFFFFFFFULL)
+    {
+        return 0xFFFFFFFFUL;
+    }
+
+    return (uint32_t)total_ms;
+}
+
+/*
+ * Builds the same BEKO_NET frame shape as the periodic service ping and uses
+ * that exact encoded size to derive airtime for the current modulation.
+ */
+static uint32_t radio_main_auto_ping_airtime_ms(void)
+{
+    beko_net_frame_t frame;
+    uint8_t raw[RADIO_MSG_BUF_MAX];
+    uint16_t raw_len = 0U;
+    const char *msg = s_template_groups[2][0];
+    uint16_t payload_len = (uint16_t)strlen(msg);
+
+    memset(&frame, 0, sizeof(frame));
+    frame.type = BEKO_NET_TYPE_USER;
+    frame.flags = 0U;
+    frame.ttl = BEKO_NET_DEFAULT_TTL;
+    frame.src_id = s_ctx.node_id;
+    frame.dst_id = BEKO_NET_BROADCAST_ID;
+    frame.msg_id = s_ctx.next_msg_id;
+    frame.payload_len = payload_len;
+    memcpy(frame.payload, msg, payload_len);
+
+    if (s_ctx.coding_enabled)
+    {
+        frame.flags |= BEKO_NET_FLAG_CODED;
+        frame.flags |= BEKO_NET_FLAG_AUTH;
+        frame.payload_len = (uint16_t)(frame.payload_len + RADIO_AUTH_TAG_LEN);
+    }
+
+    if (!beko_net_encode(&frame, raw, sizeof(raw), &raw_len))
+    {
+        raw_len = (uint16_t)(20U + frame.payload_len + 2U);
+    }
+
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        return radio_main_estimate_fsk_ook_airtime_ms(raw_len, false);
+    }
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        return radio_main_estimate_fsk_ook_airtime_ms(raw_len, true);
+    }
+
+    return radio_main_estimate_lora_airtime_ms(raw_len);
+}
+
+/*
+ * Converts current packet airtime and band duty-cycle limit into an automatic
+ * ping period. The scheduler uses half of the legal duty cycle as a ceiling,
+ * so the node stays below the maximum occupancy even after timing jitter.
+ */
+static uint32_t radio_main_auto_ping_period_ms(void)
+{
+    uint16_t duty_permille = radio_main_current_duty_cycle_permille(radio_main_current_frequency_hz());
+    uint32_t airtime_ms = radio_main_auto_ping_airtime_ms();
+    uint64_t period_ms;
+
+    if (duty_permille == 0U)
+    {
+        return RADIO_AUTO_PING_MIN_PERIOD_MS;
+    }
+
+    period_ms = ((uint64_t)airtime_ms * 2000ULL) / duty_permille;
+    if ((((uint64_t)airtime_ms * 2000ULL) % duty_permille) != 0ULL)
+    {
+        period_ms++;
+    }
+
+    if (period_ms < RADIO_AUTO_PING_MIN_PERIOD_MS)
+    {
+        period_ms = RADIO_AUTO_PING_MIN_PERIOD_MS;
+    }
+    if (period_ms > 0xFFFFFFFFULL)
+    {
+        return 0xFFFFFFFFUL;
+    }
+
+    return (uint32_t)period_ms;
 }
 
 static bool radio_main_radio_init_and_start(void)
@@ -1640,6 +1978,26 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
         return false;
     }
 
+    if ((s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK) &&
+        (((uint16_t)len + 1U) > 64U))
+    {
+        printf("RADIO FSK TX ERROR: message too long (%u B raw, max 63 B payload FIFO path)\r\n",
+               (unsigned int)len);
+        radio_main_set_last_error("FSK msg too long");
+        radio_main_notify(MENU_NOTIFICATION_ERROR, "FSK msg too long");
+        return false;
+    }
+
+    if ((s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK) &&
+        (((uint16_t)len + 1U) > 64U))
+    {
+        printf("RADIO OOK TX ERROR: message too long (%u B raw, max 63 B payload FIFO path)\r\n",
+               (unsigned int)len);
+        radio_main_set_last_error("OOK msg too long");
+        radio_main_notify(MENU_NOTIFICATION_ERROR, "OOK msg too long");
+        return false;
+    }
+
     if (!s_ctx.initialized && !radio_main_force_recover_radio("send while uninitialized"))
     {
         return false;
@@ -1648,6 +2006,7 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
     st = radio_send_async(data, len);
     if (st == RADIO_OK)
     {
+        radio_main_print_tx_frame(data, len, false);
         radio_main_tx_mark_started(len);
         return true;
     }
@@ -1672,6 +2031,7 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
     st = radio_send_async(data, len);
     if (st == RADIO_OK)
     {
+        radio_main_print_tx_frame(data, len, true);
         radio_main_tx_mark_started(len);
         return true;
     }
@@ -2003,6 +2363,7 @@ static void radio_main_handle_hopping(void)
 static void radio_main_handle_auto_ping(void)
 {
     uint32_t now;
+    uint32_t period_ms;
 
     if (!s_ctx.auto_ping_enabled)
     {
@@ -2014,7 +2375,8 @@ static void radio_main_handle_auto_ping(void)
     }
 
     now = radio_main_now_ms();
-    if ((now - s_ctx.last_ping_ms) < RADIO_AUTO_PING_PERIOD_MS)
+    period_ms = radio_main_auto_ping_period_ms();
+    if ((now - s_ctx.last_ping_ms) < period_ms)
     {
         return;
     }
@@ -2090,6 +2452,76 @@ static void radio_main_notify(menu_notification_type_t type, const char *text)
     (void)menu_main_post_notification(&n);
 }
 
+static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len)
+{
+    uint16_t i;
+
+    printf("%s", (label != NULL) ? label : "");
+    for (i = 0U; i < len; i++)
+    {
+        printf("%02X", data[i]);
+        if ((uint16_t)(i + 1U) < len)
+        {
+            printf(" ");
+        }
+    }
+    printf("\r\n");
+}
+
+static void radio_main_print_generated_pattern(const char *label, uint8_t value, uint16_t len)
+{
+    uint16_t i;
+
+    printf("%s", (label != NULL) ? label : "");
+    for (i = 0U; i < len; i++)
+    {
+        printf("%02X", value);
+        if ((uint16_t)(i + 1U) < len)
+        {
+            printf(" ");
+        }
+    }
+    printf("\r\n");
+}
+
+static void radio_main_print_fsk_sync_word(uint64_t sync_word, uint8_t sync_len, const char *label)
+{
+    uint8_t bytes[8];
+    uint8_t i;
+
+    if (sync_len == 0U)
+    {
+        printf("%sOFF\r\n", (label != NULL) ? label : "");
+        return;
+    }
+
+    for (i = 0U; i < sync_len; i++)
+    {
+        uint8_t shift = (uint8_t)(((sync_len - 1U - i) * 8U) & 0x3FU);
+        bytes[i] = (uint8_t)((sync_word >> shift) & 0xFFU);
+    }
+    radio_main_print_hex_bytes(label, bytes, sync_len);
+}
+
+static void radio_main_print_ook_sync_word(uint32_t sync_word, uint8_t sync_len, const char *label)
+{
+    uint8_t bytes[4];
+    uint8_t i;
+
+    if (sync_len == 0U)
+    {
+        printf("%sOFF\r\n", (label != NULL) ? label : "");
+        return;
+    }
+
+    for (i = 0U; i < sync_len; i++)
+    {
+        uint8_t shift = (uint8_t)(((sync_len - 1U - i) * 8U) & 0x1FU);
+        bytes[i] = (uint8_t)((sync_word >> shift) & 0xFFU);
+    }
+    radio_main_print_hex_bytes(label, bytes, sync_len);
+}
+
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len)
 {
     uint8_t i;
@@ -2101,6 +2533,100 @@ static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len)
         printf("%c", isprint((unsigned char)c) ? c : '.');
     }
     printf("\r\n");
+}
+
+static void radio_main_print_tx_ascii(const uint8_t *data, uint8_t len)
+{
+    uint8_t i;
+
+    printf("RADIO TX TEXT: ");
+    for (i = 0U; i < len; i++)
+    {
+        char c = (char)data[i];
+        printf("%c", isprint((unsigned char)c) ? c : '.');
+    }
+    printf("\r\n");
+}
+
+/*
+ * Prints a terminal-side view of the radio packet as it is emitted by the
+ * current backend. Hardware-generated elements such as preamble, sync or CRC
+ * are logged explicitly from the active configuration so diagnostics include
+ * more than just the BEKO payload bytes.
+ */
+static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool retry_attempt)
+{
+    const char *prefix = retry_attempt ? "RADIO TX RETRY" : "RADIO TX";
+
+    if ((data == NULL) || (len == 0U))
+    {
+        return;
+    }
+
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        uint8_t length_byte = len;
+
+        printf("%s FSK freq=%luHz bitrate=%lubps power=%ddBm bw=%u\r\n",
+               prefix,
+               (unsigned long)s_ctx.fsk_cfg.frequency_hz,
+               (unsigned long)s_ctx.fsk_cfg.bitrate_bps,
+               (int)s_ctx.fsk_cfg.tx_power_dbm,
+               (unsigned int)s_ctx.fsk_cfg.rx_bandwidth);
+        printf("%s FSK PREAMBLE(%uB HW): ",
+               prefix,
+               (unsigned int)s_ctx.fsk_cfg.preamble_len);
+        radio_main_print_generated_pattern("", 0xAAU, s_ctx.fsk_cfg.preamble_len);
+        printf("%s FSK SYNC(%uB HW): ", prefix, (unsigned int)s_ctx.fsk_cfg.sync_word_len);
+        radio_main_print_fsk_sync_word(s_ctx.fsk_cfg.sync_word, s_ctx.fsk_cfg.sync_word_len, "");
+        printf("%s FSK LEN(HW): %02X\r\n", prefix, length_byte);
+        radio_main_print_hex_bytes("RADIO TX FSK PAYLOAD: ", data, len);
+        printf("%s FSK CRC(HW): %s\r\n",
+               prefix,
+               (s_ctx.fsk_cfg.crc_type == RADIO_MAIN_CRC_OFF) ? "OFF" :
+               ((s_ctx.fsk_cfg.crc_type == RADIO_MAIN_CRC_IBM) ? "IBM" : "CCITT"));
+        radio_main_print_tx_ascii(data, len);
+        return;
+    }
+
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        uint8_t length_byte = len;
+
+        printf("%s OOK freq=%luHz bitrate=%lubps power=%ddBm bw=%u thr=%u/%u\r\n",
+               prefix,
+               (unsigned long)s_ctx.ook_cfg.frequency_hz,
+               (unsigned long)s_ctx.ook_cfg.bitrate_bps,
+               (int)s_ctx.ook_cfg.tx_power_dbm,
+               (unsigned int)s_ctx.ook_cfg.rx_bandwidth,
+               (unsigned int)s_ctx.ook_cfg.threshold,
+               (unsigned int)s_ctx.ook_cfg.threshold_value);
+        printf("%s OOK PREAMBLE(%uB HW): ",
+               prefix,
+               (unsigned int)s_ctx.ook_cfg.preamble_len);
+        radio_main_print_generated_pattern("", 0xAAU, s_ctx.ook_cfg.preamble_len);
+        printf("%s OOK SYNC(%uB HW): ", prefix, (unsigned int)s_ctx.ook_cfg.sync_word_len);
+        radio_main_print_ook_sync_word(s_ctx.ook_cfg.sync_word, s_ctx.ook_cfg.sync_word_len, "");
+        printf("%s OOK LEN(HW): %02X\r\n", prefix, length_byte);
+        radio_main_print_hex_bytes("RADIO TX OOK PAYLOAD: ", data, len);
+        printf("%s OOK CRC(HW): OFF\r\n", prefix);
+        radio_main_print_tx_ascii(data, len);
+        return;
+    }
+
+    printf("%s LORA freq=%luHz bw=%u sf=%u cr=4/%u preamble=%u sym sync=%02X crc=%s hdr=%s iq=%s\r\n",
+           prefix,
+           (unsigned long)s_ctx.lora_cfg.frequency_hz,
+           (unsigned int)s_ctx.lora_cfg.bandwidth,
+           (unsigned int)s_ctx.lora_cfg.spreading_factor,
+           (unsigned int)s_ctx.lora_cfg.coding_rate,
+           (unsigned int)s_ctx.lora_cfg.preamble_len,
+           (unsigned int)s_ctx.lora_cfg.sync_word,
+           s_ctx.lora_cfg.crc_on ? "ON" : "OFF",
+           s_ctx.lora_cfg.implicit_header ? "implicit" : "explicit",
+           s_ctx.lora_cfg.invert_iq ? "invert" : "normal");
+    radio_main_print_hex_bytes("RADIO TX LORA PAYLOAD: ", data, len);
+    radio_main_print_tx_ascii(data, len);
 }
 
 static bool radio_main_finish_pairing(bool accept)
