@@ -194,6 +194,7 @@ bool radio_main_cmd_set_fh(bool enabled);
 bool radio_main_cmd_set_fh_period(uint32_t period_ms);
 bool radio_main_cmd_set_coding(bool enabled);
 bool radio_main_cmd_set_auto_ping(bool enabled);
+bool radio_main_cmd_reset_module(void);
 
 bool radio_main_cmd_start_pairing(uint32_t timeout_ms);
 bool radio_main_cmd_pairing_accept(bool accept);

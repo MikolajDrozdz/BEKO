@@ -109,6 +109,7 @@ typedef enum
     MENU_ACTION_HW_MEASURE_TEMP,
     MENU_ACTION_HW_MEASURE_PRESS,
     MENU_ACTION_HW_LED_MODE,
+    MENU_ACTION_HW_RADIO_RESET,
     MENU_ACTION_MOD_LORA_ENABLE,
     MENU_ACTION_MOD_LORA_STD,
     MENU_ACTION_MOD_LORA_RANGE,
@@ -462,6 +463,7 @@ static const menu_item_t s_page_hardware_items[] =
     { "Temperature", MENU_PAGE_NONE, MENU_ACTION_HW_MEASURE_TEMP },
     { "Pressure", MENU_PAGE_NONE, MENU_ACTION_HW_MEASURE_PRESS },
     { "Led", MENU_PAGE_NONE, MENU_ACTION_HW_LED_MODE },
+    { "Reset SX1276", MENU_PAGE_NONE, MENU_ACTION_HW_RADIO_RESET },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -2134,6 +2136,11 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
                 (void)led_array_off(LED_ARRAY_LED_ALL);
                 menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED off");
             }
+            break;
+
+        case MENU_ACTION_HW_RADIO_RESET:
+            ok = radio_main_cmd_reset_module();
+            menu_show_ok_or_error(st, ok, "SX1276 reset OK", "SX1276 reset fail");
             break;
 
         case MENU_ACTION_MOD_LORA_STD:
