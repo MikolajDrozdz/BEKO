@@ -24,6 +24,12 @@
 #define RADIO_DEDUP_WINDOW_MS                60000UL
 #define RADIO_PAIR_CODE_LEN                  6U
 #define RADIO_AUTH_TAG_LEN                   4U
+#define RADIO_RECOVERY_RESET_PULSE_MS        2U
+#define RADIO_RECOVERY_RESET_BOOT_MS         10U
+#define RADIO_RECOVERY_RETRY_COUNT           2U
+#define RADIO_TX_GUARD_MIN_MS                200UL
+#define RADIO_TX_GUARD_LORA_MS               20000UL
+#define RADIO_TX_GUARD_MARGIN_MS             64UL
 
 typedef enum
 {
@@ -120,6 +126,8 @@ typedef struct
     bool pairing_outgoing_pending;
     uint8_t pairing_outgoing_code[8];
     uint8_t pairing_outgoing_code_len;
+    bool tx_in_progress;
+    uint32_t tx_deadline_ms;
     beko_net_dedup_cache_t dedup;
 } radio_main_ctx_t;
 
@@ -155,16 +163,19 @@ static bool radio_main_is_supported_bw(uint8_t bw_code);
 static bool radio_main_validate_hop_period(uint32_t period_ms);
 static bool radio_main_reconfigure_radio(void);
 static bool radio_main_reset_module_internal(void);
+static bool radio_main_force_recover_radio(const char *reason);
 static bool radio_main_send_system_frame(uint8_t type,
                                          uint32_t dst_id,
                                          const uint8_t *payload,
                                          uint16_t payload_len);
+static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len);
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
 static void radio_main_handle_events(void);
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt);
 static void radio_main_handle_hopping(void);
 static void radio_main_handle_auto_ping(void);
 static void radio_main_ensure_rx_continuous(void);
+static void radio_main_watchdog_tx(void);
 static void radio_main_notify(menu_notification_type_t type, const char *text);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
 static bool radio_main_finish_pairing(bool accept);
@@ -178,6 +189,10 @@ static uint32_t radio_main_auth_tag_read_be(const uint8_t in[RADIO_AUTH_TAG_LEN]
 static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len);
 static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char *out, uint8_t out_size);
 static uint32_t radio_main_now_ms(void);
+static uint32_t radio_main_tx_timeout_ms(uint16_t payload_len);
+static void radio_main_tx_mark_started(uint16_t payload_len);
+static void radio_main_tx_clear(void);
+static bool radio_main_tx_timed_out(void);
 
 static const uint32_t s_hop_channels_hz[3] =
 {
@@ -666,6 +681,7 @@ static void radio_main_task_fn(void *argument)
         {
             radio_process();
             radio_main_handle_events();
+            radio_main_watchdog_tx();
             radio_main_handle_hopping();
             radio_main_handle_auto_ping();
             radio_main_ensure_rx_continuous();
@@ -725,6 +741,73 @@ static bool radio_main_wait_sync(radio_main_cmd_sync_t *sync, uint32_t timeout_m
     return sync->result;
 }
 
+/*
+ * Computes a conservative TX watchdog window for the active modulation.
+ * FSK/OOK use bitrate-derived timing, while LoRa uses a generous fixed window
+ * because the airtime depends on SF/BW/CR/header mode and should not be
+ * cut short by the safety watchdog.
+ */
+static uint32_t radio_main_tx_timeout_ms(uint16_t payload_len)
+{
+    uint64_t timeout_ms = RADIO_TX_GUARD_LORA_MS;
+    uint32_t bitrate_bps = 0U;
+    uint32_t total_bytes = (payload_len == 0U) ? 1UL : (uint32_t)payload_len;
+
+    if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        bitrate_bps = s_ctx.fsk_cfg.bitrate_bps;
+        total_bytes++;
+    }
+    else if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        bitrate_bps = s_ctx.ook_cfg.bitrate_bps;
+        total_bytes++;
+    }
+
+    if (bitrate_bps > 0UL)
+    {
+        timeout_ms = ((uint64_t)total_bytes * 8ULL * 1000ULL) / bitrate_bps;
+        if ((((uint64_t)total_bytes * 8ULL * 1000ULL) % bitrate_bps) != 0ULL)
+        {
+            timeout_ms++;
+        }
+        timeout_ms += RADIO_TX_GUARD_MARGIN_MS;
+        if (timeout_ms < RADIO_TX_GUARD_MIN_MS)
+        {
+            timeout_ms = RADIO_TX_GUARD_MIN_MS;
+        }
+    }
+
+    if (timeout_ms > 0xFFFFFFFFULL)
+    {
+        return 0xFFFFFFFFUL;
+    }
+
+    return (uint32_t)timeout_ms;
+}
+
+/*
+ * Marks a locally initiated TX so the application layer can recover even if the
+ * backend reports HW_ERROR but keeps exposing RADIO_STATE_TX for a short time.
+ */
+static void radio_main_tx_mark_started(uint16_t payload_len)
+{
+    s_ctx.tx_in_progress = true;
+    s_ctx.tx_deadline_ms = radio_main_now_ms() + radio_main_tx_timeout_ms(payload_len);
+}
+
+static void radio_main_tx_clear(void)
+{
+    s_ctx.tx_in_progress = false;
+    s_ctx.tx_deadline_ms = 0U;
+}
+
+static bool radio_main_tx_timed_out(void)
+{
+    return (s_ctx.tx_in_progress &&
+            ((int32_t)(radio_main_now_ms() - s_ctx.tx_deadline_ms) >= 0));
+}
+
 static bool radio_main_radio_init_and_start(void)
 {
     radio_status_t st;
@@ -748,6 +831,7 @@ static bool radio_main_radio_init_and_start(void)
     }
 
     s_ctx.initialized = true;
+    radio_main_tx_clear();
     return true;
 }
 
@@ -1044,7 +1128,12 @@ static bool radio_main_validate_hop_period(uint32_t period_ms)
 
 static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
 {
+    radio_main_ctx_t saved_ctx;
     bool reconfigure_now = false;
+    bool was_initialized;
+
+    saved_ctx = s_ctx;
+    was_initialized = s_ctx.initialized;
 
     switch (option)
     {
@@ -1132,8 +1221,20 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
             {
                 return false;
             }
+            if ((value == (uint32_t)RADIO_MAIN_HEADER_EXPLICIT) &&
+                (s_ctx.lora_cfg.spreading_factor == 6U))
+            {
+                return false;
+            }
             s_ctx.lora_cfg.implicit_header = (value == (uint32_t)RADIO_MAIN_HEADER_IMPLICIT);
-            s_ctx.lora_cfg.payload_len = s_ctx.lora_cfg.implicit_header ? BEKO_NET_MAX_PAYLOAD : 0U;
+            if (s_ctx.lora_cfg.implicit_header)
+            {
+                s_ctx.lora_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
+            }
+            else
+            {
+                s_ctx.lora_cfg.payload_len = 0U;
+            }
             reconfigure_now = (s_ctx.modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
 
@@ -1353,7 +1454,26 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
     }
 
     radio_main_apply_modulation_cfg();
-    return (s_ctx.initialized && reconfigure_now) ? radio_main_reconfigure_radio() : true;
+    if (!was_initialized || !reconfigure_now)
+    {
+        return true;
+    }
+
+    if (radio_main_reconfigure_radio())
+    {
+        return true;
+    }
+
+    /*
+     * Roll back the in-memory profile when the hardware rejects the new setting.
+     * Without this, one bad combination leaves the app with a broken runtime config
+     * and every later send/change keeps failing until a manual reset.
+     */
+    s_ctx = saved_ctx;
+    radio_main_apply_modulation_cfg();
+    s_ctx.initialized = false;
+    (void)radio_main_radio_init_and_start();
+    return false;
 }
 
 static bool radio_main_is_supported_bw(uint8_t bw_code)
@@ -1378,13 +1498,62 @@ static bool radio_main_reconfigure_radio(void)
     }
     if (radio_get_state() == RADIO_STATE_TX)
     {
-        return false;
+        if (!radio_main_tx_timed_out())
+        {
+            return false;
+        }
+        return radio_main_force_recover_radio("reconfigure while TX stuck");
     }
 
+    radio_main_tx_clear();
     (void)radio_standby();
     (void)radio_deinit();
     s_ctx.initialized = false;
     return radio_main_radio_init_and_start();
+}
+
+/*
+ * Forces a full backend teardown and optional hardware reset of SX1276.
+ * This path is used when TX appears stuck, so it deliberately ignores the
+ * normal "don't touch radio during TX" guard and rebuilds the runtime state
+ * from the currently selected profile.
+ */
+static bool radio_main_force_recover_radio(const char *reason)
+{
+    uint8_t attempt;
+
+    printf("RADIO: recovery start (%s) state=%d backend=%u\r\n",
+           (reason != NULL) ? reason : "unknown",
+           (int)radio_get_state(),
+           (unsigned int)radio_get_backend());
+
+    radio_main_tx_clear();
+
+    for (attempt = 0U; attempt < RADIO_RECOVERY_RETRY_COUNT; attempt++)
+    {
+        (void)radio_sleep();
+        (void)radio_standby();
+        (void)radio_deinit();
+        s_ctx.initialized = false;
+
+        if ((s_ctx.hw.reset.port != NULL) && (s_ctx.hw.reset.pin != 0U))
+        {
+            HAL_GPIO_WritePin(s_ctx.hw.reset.port, s_ctx.hw.reset.pin, GPIO_PIN_RESET);
+            osDelay(RADIO_RECOVERY_RESET_PULSE_MS);
+            HAL_GPIO_WritePin(s_ctx.hw.reset.port, s_ctx.hw.reset.pin, GPIO_PIN_SET);
+            osDelay(RADIO_RECOVERY_RESET_BOOT_MS);
+        }
+
+        radio_main_apply_modulation_cfg();
+        if (radio_main_radio_init_and_start())
+        {
+            printf("RADIO: recovery OK attempt=%u\r\n", (unsigned int)(attempt + 1U));
+            return true;
+        }
+    }
+
+    printf("RADIO: recovery FAILED\r\n");
+    return false;
 }
 
 /*
@@ -1393,25 +1562,7 @@ static bool radio_main_reconfigure_radio(void)
  */
 static bool radio_main_reset_module_internal(void)
 {
-    if ((s_ctx.hw.reset.port == NULL) || (s_ctx.hw.reset.pin == 0U))
-    {
-        return false;
-    }
-    if (radio_get_state() == RADIO_STATE_TX)
-    {
-        return false;
-    }
-
-    (void)radio_standby();
-    (void)radio_deinit();
-    s_ctx.initialized = false;
-
-    HAL_GPIO_WritePin(s_ctx.hw.reset.port, s_ctx.hw.reset.pin, GPIO_PIN_RESET);
-    osDelay(2U);
-    HAL_GPIO_WritePin(s_ctx.hw.reset.port, s_ctx.hw.reset.pin, GPIO_PIN_SET);
-    osDelay(10U);
-
-    return radio_main_radio_init_and_start();
+    return radio_main_force_recover_radio("manual reset");
 }
 
 static bool radio_main_send_system_frame(uint8_t type,
@@ -1451,15 +1602,11 @@ static bool radio_main_send_system_frame(uint8_t type,
     {
         uint32_t tag;
 
-        if (dst_id == BEKO_NET_BROADCAST_ID)
-        {
-            return false;
-        }
         if ((uint16_t)(payload_len + RADIO_AUTH_TAG_LEN) > BEKO_NET_MAX_PAYLOAD)
         {
             return false;
         }
-        if (!security_main_get_peer_link_key(s_ctx.node_id, dst_id, key))
+        if (!security_main_get_network_key(key))
         {
             return false;
         }
@@ -1477,7 +1624,59 @@ static bool radio_main_send_system_frame(uint8_t type,
         return false;
     }
 
-    return (radio_send_async(raw, (uint8_t)raw_len) == RADIO_OK);
+    return radio_main_send_raw_with_retry(raw, (uint8_t)raw_len);
+}
+
+/*
+ * Starts TX and retries once after a forced radio recovery if the backend looks
+ * wedged. This protects the user-facing send path from leaving SX1276 stuck in TX.
+ */
+static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
+{
+    radio_status_t st;
+
+    if ((data == NULL) || (len == 0U))
+    {
+        return false;
+    }
+
+    if (!s_ctx.initialized && !radio_main_force_recover_radio("send while uninitialized"))
+    {
+        return false;
+    }
+
+    st = radio_send_async(data, len);
+    if (st == RADIO_OK)
+    {
+        radio_main_tx_mark_started(len);
+        return true;
+    }
+
+    if ((st == RADIO_EBUS) &&
+        (radio_get_state() == RADIO_STATE_TX) &&
+        !radio_main_tx_timed_out())
+    {
+        return false;
+    }
+
+    if ((st != RADIO_EBUS) && (st != RADIO_EHW) && (st != RADIO_ESTATE))
+    {
+        return false;
+    }
+
+    if (!radio_main_force_recover_radio("tx start failed"))
+    {
+        return false;
+    }
+
+    st = radio_send_async(data, len);
+    if (st == RADIO_OK)
+    {
+        radio_main_tx_mark_started(len);
+        return true;
+    }
+
+    return false;
 }
 
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id)
@@ -1492,40 +1691,6 @@ static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, 
 
     msg = s_template_groups[group_id][msg_id];
     len = (uint16_t)strlen(msg);
-
-    if (s_ctx.coding_enabled && (dst_id == BEKO_NET_BROADCAST_ID))
-    {
-        trusted_info_t info;
-        uint8_t idx;
-        bool sent_any = false;
-
-        for (idx = 0U; idx < 16U; idx++)
-        {
-            if (security_main_cmd_get_device(idx, &info) && info.in_use)
-            {
-                uint32_t wait_start = radio_main_now_ms();
-
-                while (radio_get_state() == RADIO_STATE_TX)
-                {
-                    radio_process();
-                    if ((radio_main_now_ms() - wait_start) > 250U)
-                    {
-                        break;
-                    }
-                    osDelay(2U);
-                }
-
-                if (radio_main_send_system_frame(BEKO_NET_TYPE_USER,
-                                                 info.node_id,
-                                                 (const uint8_t *)msg,
-                                                 len))
-                {
-                    sent_any = true;
-                }
-            }
-        }
-        return sent_any;
-    }
 
     return radio_main_send_system_frame(BEKO_NET_TYPE_USER, dst_id, (const uint8_t *)msg, len);
 }
@@ -1546,6 +1711,7 @@ static void radio_main_handle_events(void)
     if ((events & RADIO_EVENT_TX_DONE) != 0U)
     {
         printf("RADIO EVT: TX_DONE\r\n");
+        radio_main_tx_clear();
         radio_main_ensure_rx_continuous();
     }
     if ((events & RADIO_EVENT_CRC_ERR) != 0U)
@@ -1559,7 +1725,10 @@ static void radio_main_handle_events(void)
     if ((events & RADIO_EVENT_HW_ERROR) != 0U)
     {
         printf("RADIO EVT: HW_ERROR\r\n");
-        radio_main_ensure_rx_continuous();
+        if (!radio_main_force_recover_radio("backend HW error"))
+        {
+            radio_main_notify(MENU_NOTIFICATION_ERROR, "Radio recovery failed");
+        }
     }
 }
 
@@ -1597,11 +1766,14 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 uint32_t rx_tag;
                 uint32_t expected_tag;
 
-                if (!security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
+                if (!security_main_get_network_key(key))
                 {
-                    printf("RADIO RX coded from unknown src=0x%08lX\r\n",
-                           (unsigned long)frame_decoded.src_id);
-                    return;
+                    if (!security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
+                    {
+                        printf("RADIO RX coded from unknown src=0x%08lX\r\n",
+                               (unsigned long)frame_decoded.src_id);
+                        return;
+                    }
                 }
                 if (((frame.flags & BEKO_NET_FLAG_AUTH) == 0U) ||
                     (frame_decoded.payload_len < RADIO_AUTH_TAG_LEN))
@@ -1788,7 +1960,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         frame.ttl--;
         if (beko_net_encode(&frame, tx_buf, sizeof(tx_buf), &tx_len))
         {
-            if (radio_send_async(tx_buf, (uint8_t)tx_len) == RADIO_OK)
+            if (radio_main_send_raw_with_retry(tx_buf, (uint8_t)tx_len))
             {
                 printf("RADIO relay src=0x%08lX msg=0x%08lX ttl=%u\r\n",
                        (unsigned long)frame.src_id,
@@ -1854,6 +2026,28 @@ static void radio_main_handle_auto_ping(void)
     }
 }
 
+/*
+ * Secondary application-layer watchdog. Backend watchdogs should catch TX stalls
+ * first, but this guard keeps the app recoverable if the backend state machine
+ * or IRQ path still leaves the radio reported as TX.
+ */
+static void radio_main_watchdog_tx(void)
+{
+    if (!s_ctx.initialized)
+    {
+        return;
+    }
+    if (!radio_main_tx_timed_out())
+    {
+        return;
+    }
+
+    if (!radio_main_force_recover_radio("application TX watchdog"))
+    {
+        radio_main_notify(MENU_NOTIFICATION_ERROR, "TX watchdog failed");
+    }
+}
+
 static void radio_main_ensure_rx_continuous(void)
 {
     if (!s_ctx.initialized)
@@ -1862,6 +2056,11 @@ static void radio_main_ensure_rx_continuous(void)
     }
     if (radio_get_state() == RADIO_STATE_TX)
     {
+        if (radio_main_tx_timed_out() &&
+            !radio_main_force_recover_radio("ensure RX while TX stuck"))
+        {
+            radio_main_notify(MENU_NOTIFICATION_ERROR, "Radio stuck in TX");
+        }
         return;
     }
     if (radio_get_state() == RADIO_STATE_RX_CONT)
@@ -1869,7 +2068,13 @@ static void radio_main_ensure_rx_continuous(void)
         return;
     }
 
-    (void)radio_start_rx_continuous();
+    if (radio_start_rx_continuous() != RADIO_OK)
+    {
+        if (!radio_main_force_recover_radio("restart RX failed"))
+        {
+            radio_main_notify(MENU_NOTIFICATION_ERROR, "RX restart failed");
+        }
+    }
 }
 
 static void radio_main_notify(menu_notification_type_t type, const char *text)

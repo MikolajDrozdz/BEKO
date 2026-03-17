@@ -361,6 +361,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action);
 static void menu_notify_text(menu_notification_type_t type, const char *text);
 static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text);
 static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text, const char *err_text);
+static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_text);
 static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action);
 static bool menu_is_send_action(menu_action_t action);
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label);
@@ -1566,6 +1567,22 @@ static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text
     menu_show_action_result(st, MENU_NOTIFICATION_ERROR, selected);
 }
 
+static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_text)
+{
+    char line0[MENU_LINE_BUF_SIZE];
+    char line1[MENU_LINE_BUF_SIZE];
+
+    if (!ok)
+    {
+        menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Send failed");
+        return;
+    }
+
+    menu_line_copy_or_default(line0, sent_text, "Message sent");
+    menu_line_copy_or_default(line1, "No delivery ACK", "");
+    menu_open_info_modal(st, "TX SENT", line0, line1, "Any key=back");
+}
+
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n)
 {
     char code_line[MENU_LINE_BUF_SIZE];
@@ -1846,52 +1863,52 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
 
         case MENU_ACTION_SEND_DEFAULT:
             send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent STS:OK", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent STS:OK");
             break;
 
         case MENU_ACTION_SEND_ALERT_FIRE:
             send_ok = radio_main_cmd_send_template(0U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent ALR:FIRE", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent ALR:FIRE");
             break;
 
         case MENU_ACTION_SEND_ALERT_INTR:
             send_ok = radio_main_cmd_send_template(0U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent ALR:INTR", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent ALR:INTR");
             break;
 
         case MENU_ACTION_SEND_ALERT_LOWBATT:
             send_ok = radio_main_cmd_send_template(0U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent ALR:LOW", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent ALR:LOW");
             break;
 
         case MENU_ACTION_SEND_STATUS_OK:
             send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent STS:OK", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent STS:OK");
             break;
 
         case MENU_ACTION_SEND_STATUS_BUSY:
             send_ok = radio_main_cmd_send_template(1U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent STS:BUSY", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent STS:BUSY");
             break;
 
         case MENU_ACTION_SEND_STATUS_IDLE:
             send_ok = radio_main_cmd_send_template(1U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent STS:IDLE", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent STS:IDLE");
             break;
 
         case MENU_ACTION_SEND_SERVICE_PING:
             send_ok = radio_main_cmd_send_template(2U, 0U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent SRV:PING", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent SRV:PING");
             break;
 
         case MENU_ACTION_SEND_SERVICE_RESET:
             send_ok = radio_main_cmd_send_template(2U, 1U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent SRV:RESET", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent SRV:RESET");
             break;
 
         case MENU_ACTION_SEND_SERVICE_SYNC:
             send_ok = radio_main_cmd_send_template(2U, 2U, BEKO_NET_BROADCAST_ID);
-            menu_show_ok_or_error(st, send_ok, "Sent SRV:SYNC", "Send failed");
+            menu_show_send_result(st, send_ok, "Sent SRV:SYNC");
             break;
 
         case MENU_ACTION_DEVICE_ADD:

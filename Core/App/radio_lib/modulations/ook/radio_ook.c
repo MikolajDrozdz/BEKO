@@ -16,6 +16,7 @@
 #define RADIO_OOK_FIFO_THRESH_LEVEL        15U
 #define RADIO_OOK_RESET_LOW_DELAY_MS       2U
 #define RADIO_OOK_RESET_HIGH_DELAY_MS      10U
+#define RADIO_OOK_TX_GUARD_MS              40UL
 typedef struct
 {
     bool initialized;
@@ -29,6 +30,7 @@ typedef struct
     radio_state_t state;
     radio_state_t tx_resume_state;
     uint32_t rx_single_deadline_ms;
+    uint32_t tx_deadline_ms;
     radio_packet_t last_packet;
 } radio_ook_context_t;
 
@@ -223,6 +225,31 @@ static void radio_resume_after_tx(void)
                                            SX1276_MODE_STDBY));
         radio_set_state(RADIO_STATE_STANDBY);
     }
+}
+
+static uint32_t radio_tx_timeout_ms(uint8_t payload_len)
+{
+    uint64_t timeout_ms;
+    uint32_t total_bytes;
+
+    total_bytes = (uint32_t)payload_len + 1UL;
+    timeout_ms = ((uint64_t)total_bytes * 8ULL * 1000ULL) / s_radio.cfg.bitrate_bps;
+    if ((((uint64_t)total_bytes * 8ULL * 1000ULL) % s_radio.cfg.bitrate_bps) != 0ULL)
+    {
+        timeout_ms++;
+    }
+
+    timeout_ms += RADIO_OOK_TX_GUARD_MS;
+    if (timeout_ms < RADIO_OOK_TX_GUARD_MS)
+    {
+        timeout_ms = RADIO_OOK_TX_GUARD_MS;
+    }
+    if (timeout_ms > 0xFFFFFFFFULL)
+    {
+        return 0xFFFFFFFFUL;
+    }
+
+    return (uint32_t)timeout_ms;
 }
 
 static uint32_t radio_rx_single_timeout_ms(uint32_t symbol_timeout)
@@ -494,6 +521,7 @@ radio_status_t radio_ook_send_async(const uint8_t *data, uint8_t len)
     }
 
     radio_set_state(RADIO_STATE_TX);
+    s_radio.tx_deadline_ms = HAL_GetTick() + radio_tx_timeout_ms(len);
     return RADIO_OK;
 }
 
@@ -574,6 +602,16 @@ void radio_ook_process(void)
         }
     }
 
+    if ((pending == 0U) &&
+        (s_radio.state == RADIO_STATE_TX) &&
+        ((int32_t)(HAL_GetTick() - s_radio.tx_deadline_ms) >= 0))
+    {
+        (void)radio_ook_standby();
+        radio_resume_after_tx();
+        events |= RADIO_EVENT_HW_ERROR;
+        goto done;
+    }
+
     if (!sx1276_read_reg(&s_radio.bus, SX1276_REG_IRQ_FLAGS_1, &irq1) ||
         !sx1276_read_reg(&s_radio.bus, SX1276_REG_IRQ_FLAGS_2, &irq2))
     {
@@ -621,6 +659,7 @@ void radio_ook_process(void)
     {
         events |= RADIO_EVENT_TX_DONE;
         radio_resume_after_tx();
+        s_radio.tx_deadline_ms = 0U;
     }
 
 done:
