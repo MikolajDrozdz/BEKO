@@ -14,6 +14,7 @@
 typedef struct
 {
     bool in_use;
+    bool is_master;
     uint8_t slot;
     uint32_t node_id;
     uint8_t code_len;

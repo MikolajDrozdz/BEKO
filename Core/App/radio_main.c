@@ -31,6 +31,9 @@
 #define RADIO_TX_GUARD_LORA_MS               20000UL
 #define RADIO_TX_GUARD_MARGIN_MS             64UL
 #define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
+#define RADIO_NETWORK_PAIR_MARKER            0xA1U
+#define RADIO_NETWORK_PAIR_RSSI_MIN_DBM      (-20)
+#define RADIO_NETWORK_PAIR_PAYLOAD_LEN       (2U + RADIO_PAIR_CODE_LEN)
 #define RADIO_LORA_BW_HZ_7_8                 7800UL
 #define RADIO_LORA_BW_HZ_10_4                10400UL
 #define RADIO_LORA_BW_HZ_15_6                15600UL
@@ -46,6 +49,7 @@ typedef enum
 {
     RADIO_MAIN_CMD_NONE = 0,
     RADIO_MAIN_CMD_SEND_TEMPLATE,
+    RADIO_MAIN_CMD_SEND_USER_TEXT,
     RADIO_MAIN_CMD_SET_PRESET,
     RADIO_MAIN_CMD_SET_MODULATION,
     RADIO_MAIN_CMD_SET_MOD_FREQ,
@@ -57,8 +61,10 @@ typedef enum
     RADIO_MAIN_CMD_SET_AUTO_PING,
     RADIO_MAIN_CMD_RESET_MODULE,
     RADIO_MAIN_CMD_START_PAIRING,
+    RADIO_MAIN_CMD_START_NETWORK_PAIRING,
     RADIO_MAIN_CMD_PAIRING_ACCEPT,
     RADIO_MAIN_CMD_SEND_JOIN_REQ,
+    RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ,
     RADIO_MAIN_CMD_SEND_TRUST_REMOVED
 } radio_main_cmd_id_t;
 
@@ -83,6 +89,12 @@ typedef struct
         } send_template;
         struct
         {
+            uint32_t dst_id;
+            uint8_t len;
+            char text[21];
+        } send_text;
+        struct
+        {
             uint8_t value;
         } set_u8;
         struct
@@ -101,6 +113,7 @@ typedef struct
         struct
         {
             uint32_t timeout_ms;
+            bool network_mode;
         } pairing;
         struct
         {
@@ -129,15 +142,20 @@ typedef struct
     uint32_t last_ping_ms;
     uint32_t node_id;
     uint32_t next_msg_id;
+    uint8_t network_default_ttl;
     bool pairing_active;
+    bool pairing_network_mode;
     uint32_t pairing_until_ms;
     bool pairing_pending;
     uint32_t pairing_pending_node;
     uint8_t pairing_pending_code[8];
     uint8_t pairing_pending_code_len;
+    bool pairing_pending_network;
+    uint8_t pairing_pending_ttl;
     bool pairing_outgoing_pending;
     uint8_t pairing_outgoing_code[8];
     uint8_t pairing_outgoing_code_len;
+    bool pairing_outgoing_network;
     bool tx_in_progress;
     uint32_t tx_deadline_ms;
     char last_error_text[21];
@@ -203,6 +221,18 @@ static void radio_main_log_runtime_profile(const char *reason);
 static void radio_main_log_hw_registers(const char *reason);
 static bool radio_main_finish_pairing(bool accept);
 static bool radio_main_send_join_request_internal(void);
+static bool radio_main_pair_payload_parse(const uint8_t *payload,
+                                          uint8_t payload_len,
+                                          bool *network_mode_out,
+                                          const uint8_t **code_out,
+                                          uint8_t *code_len_out,
+                                          uint8_t *ttl_out);
+static uint8_t radio_main_pair_payload_build(bool network_mode,
+                                             const uint8_t *code,
+                                             uint8_t code_len,
+                                             uint8_t ttl,
+                                             uint8_t *payload_out,
+                                             uint8_t payload_capacity);
 static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
                                             const beko_net_frame_t *frame,
                                             const uint8_t *cipher_payload,
@@ -292,6 +322,32 @@ bool radio_main_cmd_send_template(uint8_t group_id, uint8_t msg_id, uint32_t dst
     cmd.u.send_template.group_id = group_id;
     cmd.u.send_template.msg_id = msg_id;
     cmd.u.send_template.dst_id = dst_id;
+
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
+bool radio_main_cmd_send_user_text(const char *text, uint32_t dst_id)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+    size_t len;
+
+    if (text == NULL)
+    {
+        return false;
+    }
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SEND_USER_TEXT;
+    cmd.u.send_text.dst_id = dst_id;
+    len = strlen(text);
+    if (len > 20U)
+    {
+        len = 20U;
+    }
+    cmd.u.send_text.len = (uint8_t)len;
+    memcpy(cmd.u.send_text.text, text, len);
+    cmd.u.send_text.text[len] = '\0';
 
     return radio_main_enqueue_sync(&cmd, &sync);
 }
@@ -419,6 +475,19 @@ bool radio_main_cmd_start_pairing(uint32_t timeout_ms)
     memset(&cmd, 0, sizeof(cmd));
     cmd.id = RADIO_MAIN_CMD_START_PAIRING;
     cmd.u.pairing.timeout_ms = timeout_ms;
+    cmd.u.pairing.network_mode = false;
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
+bool radio_main_cmd_start_network_pairing(uint32_t timeout_ms)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_START_NETWORK_PAIRING;
+    cmd.u.pairing.timeout_ms = timeout_ms;
+    cmd.u.pairing.network_mode = true;
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
@@ -440,6 +509,16 @@ bool radio_main_cmd_send_join_req(void)
 
     memset(&cmd, 0, sizeof(cmd));
     cmd.id = RADIO_MAIN_CMD_SEND_JOIN_REQ;
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
+bool radio_main_cmd_send_network_join_req(void)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ;
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
@@ -466,6 +545,26 @@ bool radio_main_get_runtime_cfg(radio_main_runtime_cfg_t *cfg_out)
     if (osMutexAcquire(s_radio_state_mutex, 100U) == osOK)
     {
         radio_main_sync_snapshot(cfg_out);
+        (void)osMutexRelease(s_radio_state_mutex);
+        ok = true;
+    }
+
+    return ok;
+}
+
+bool radio_main_get_auto_ping_period_ms(uint32_t *period_ms_out)
+{
+    bool ok = false;
+
+    if (period_ms_out == NULL)
+    {
+        return false;
+    }
+
+    if ((s_radio_state_mutex != NULL) &&
+        (osMutexAcquire(s_radio_state_mutex, 100U) == osOK))
+    {
+        *period_ms_out = radio_main_auto_ping_period_ms();
         (void)osMutexRelease(s_radio_state_mutex);
         ok = true;
     }
@@ -521,6 +620,7 @@ static void radio_main_task_fn(void *argument)
     memset(&sec_cfg, 0, sizeof(sec_cfg));
     s_ctx.node_id = beko_net_local_node_id();
     s_ctx.next_msg_id = 1U;
+    s_ctx.network_default_ttl = BEKO_NET_DEFAULT_TTL;
     s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
     s_ctx.backend_modulation_id = s_ctx.modulation_id;
     s_ctx.lora_preset = 2U;
@@ -608,6 +708,14 @@ static void radio_main_task_fn(void *argument)
                     cmd_result = radio_main_send_template_internal(cmd.u.send_template.group_id,
                                                                    cmd.u.send_template.msg_id,
                                                                    cmd.u.send_template.dst_id);
+                    break;
+
+                case RADIO_MAIN_CMD_SEND_USER_TEXT:
+                    radio_main_clear_last_error();
+                    cmd_result = radio_main_send_system_frame(BEKO_NET_TYPE_USER,
+                                                              cmd.u.send_text.dst_id,
+                                                              (const uint8_t *)cmd.u.send_text.text,
+                                                              cmd.u.send_text.len);
                     break;
 
                 case RADIO_MAIN_CMD_SET_PRESET:
@@ -719,10 +827,14 @@ static void radio_main_task_fn(void *argument)
                     break;
 
                 case RADIO_MAIN_CMD_START_PAIRING:
+                case RADIO_MAIN_CMD_START_NETWORK_PAIRING:
                     cmd_result = s_ctx.initialized || radio_main_force_recover_radio("start pairing");
                     s_ctx.pairing_active = true;
+                    s_ctx.pairing_network_mode = cmd.u.pairing.network_mode;
                     s_ctx.pairing_pending = false;
+                    s_ctx.pairing_pending_network = false;
                     s_ctx.pairing_outgoing_pending = false;
+                    s_ctx.pairing_outgoing_network = false;
                     s_ctx.pairing_until_ms = radio_main_now_ms() + cmd.u.pairing.timeout_ms;
                     if (cmd_result &&
                         s_ctx.initialized &&
@@ -740,6 +852,8 @@ static void radio_main_task_fn(void *argument)
                     break;
 
                 case RADIO_MAIN_CMD_SEND_JOIN_REQ:
+                case RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ:
+                    s_ctx.pairing_network_mode = (cmd.id == RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ);
                     cmd_result = radio_main_send_join_request_internal();
                     break;
 
@@ -774,8 +888,11 @@ static void radio_main_task_fn(void *argument)
         if (s_ctx.pairing_active && (radio_main_now_ms() >= s_ctx.pairing_until_ms))
         {
             s_ctx.pairing_active = false;
+            s_ctx.pairing_network_mode = false;
             s_ctx.pairing_pending = false;
+            s_ctx.pairing_pending_network = false;
             s_ctx.pairing_outgoing_pending = false;
+            s_ctx.pairing_outgoing_network = false;
             radio_main_notify(MENU_NOTIFICATION_PAIRING, "Pairing timeout");
         }
 
@@ -1117,7 +1234,7 @@ static uint32_t radio_main_auto_ping_airtime_ms(void)
     memset(&frame, 0, sizeof(frame));
     frame.type = BEKO_NET_TYPE_USER;
     frame.flags = 0U;
-    frame.ttl = BEKO_NET_DEFAULT_TTL;
+    frame.ttl = (s_ctx.network_default_ttl != 0U) ? s_ctx.network_default_ttl : BEKO_NET_DEFAULT_TTL;
     frame.src_id = s_ctx.node_id;
     frame.dst_id = BEKO_NET_BROADCAST_ID;
     frame.msg_id = s_ctx.next_msg_id;
@@ -2024,7 +2141,7 @@ static bool radio_main_send_system_frame(uint8_t type,
     memset(&frame, 0, sizeof(frame));
     frame.type = type;
     frame.flags = 0U;
-    frame.ttl = BEKO_NET_DEFAULT_TTL;
+    frame.ttl = (s_ctx.network_default_ttl != 0U) ? s_ctx.network_default_ttl : BEKO_NET_DEFAULT_TTL;
     frame.src_id = s_ctx.node_id;
     frame.dst_id = dst_id;
     frame.msg_id = s_ctx.next_msg_id++;
@@ -2037,13 +2154,24 @@ static bool radio_main_send_system_frame(uint8_t type,
     if ((type == BEKO_NET_TYPE_USER) &&
         s_ctx.coding_enabled)
     {
+        bool have_key = false;
         uint32_t tag;
 
         if ((uint16_t)(payload_len + RADIO_AUTH_TAG_LEN) > BEKO_NET_MAX_PAYLOAD)
         {
             return false;
         }
-        if (!security_main_get_network_key(key))
+
+        if ((dst_id != BEKO_NET_BROADCAST_ID) &&
+            security_main_get_peer_link_key(s_ctx.node_id, dst_id, key))
+        {
+            have_key = true;
+        }
+        if (!have_key && security_main_get_network_key(key))
+        {
+            have_key = true;
+        }
+        if (!have_key)
         {
             return false;
         }
@@ -2239,19 +2367,11 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         {
             if (frame_decoded.type == BEKO_NET_TYPE_USER)
             {
+                bool auth_ok = false;
                 uint16_t cipher_len;
                 uint32_t rx_tag;
                 uint32_t expected_tag;
 
-                if (!security_main_get_network_key(key))
-                {
-                    if (!security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
-                    {
-                        printf("RADIO RX coded from unknown src=0x%08lX\r\n",
-                               (unsigned long)frame_decoded.src_id);
-                        return;
-                    }
-                }
                 if (((frame.flags & BEKO_NET_FLAG_AUTH) == 0U) ||
                     (frame_decoded.payload_len < RADIO_AUTH_TAG_LEN))
                 {
@@ -2262,14 +2382,39 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
                 cipher_len = (uint16_t)(frame_decoded.payload_len - RADIO_AUTH_TAG_LEN);
                 rx_tag = radio_main_auth_tag_read_be(frame_decoded.payload);
-                expected_tag = radio_main_auth_tag_compute(key,
-                                                           &frame_decoded,
-                                                           &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
-                                                           cipher_len);
-                if ((rx_tag ^ expected_tag) != 0UL)
+
+                if (security_main_get_network_key(key))
                 {
-                    printf("RADIO RX auth mismatch src=0x%08lX\r\n",
-                           (unsigned long)frame_decoded.src_id);
+                    expected_tag = radio_main_auth_tag_compute(key,
+                                                               &frame_decoded,
+                                                               &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
+                                                               cipher_len);
+                    if ((rx_tag ^ expected_tag) == 0UL)
+                    {
+                        auth_ok = true;
+                    }
+                }
+
+                if (!auth_ok &&
+                    (frame_decoded.dst_id != BEKO_NET_BROADCAST_ID) &&
+                    (frame_decoded.dst_id == s_ctx.node_id) &&
+                    security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
+                {
+                    expected_tag = radio_main_auth_tag_compute(key,
+                                                               &frame_decoded,
+                                                               &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
+                                                               cipher_len);
+                    if ((rx_tag ^ expected_tag) == 0UL)
+                    {
+                        auth_ok = true;
+                    }
+                }
+
+                if (!auth_ok)
+                {
+                    printf("RADIO RX auth mismatch src=0x%08lX dst=0x%08lX\r\n",
+                           (unsigned long)frame_decoded.src_id,
+                           (unsigned long)frame_decoded.dst_id);
                     return;
                 }
 
@@ -2345,12 +2490,47 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             {
                 char pair_note[21];
                 char code_text[12];
+                const uint8_t *pair_code = NULL;
+                uint8_t pair_code_len = 0U;
+                uint8_t pair_ttl = BEKO_NET_DEFAULT_TTL;
+                bool pair_network = false;
+
+                if (!radio_main_pair_payload_parse(frame_decoded.payload,
+                                                   (uint8_t)frame_decoded.payload_len,
+                                                   &pair_network,
+                                                   &pair_code,
+                                                   &pair_code_len,
+                                                   &pair_ttl))
+                {
+                    return;
+                }
+
+                if (pair_network)
+                {
+                    if (!s_ctx.pairing_network_mode)
+                    {
+                        radio_main_notify(MENU_NOTIFICATION_WARNING, "Net pair only");
+                        return;
+                    }
+                    if (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM)
+                    {
+                        radio_main_notify(MENU_NOTIFICATION_WARNING, "Net pair RSSI low");
+                        return;
+                    }
+                }
+                else if (s_ctx.pairing_network_mode)
+                {
+                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Use network pair");
+                    return;
+                }
 
                 s_ctx.pairing_pending = true;
+                s_ctx.pairing_pending_network = pair_network;
+                s_ctx.pairing_pending_ttl = pair_ttl;
                 s_ctx.pairing_pending_node = frame_decoded.src_id;
-                s_ctx.pairing_pending_code_len = (frame_decoded.payload_len > sizeof(s_ctx.pairing_pending_code)) ?
-                                                 sizeof(s_ctx.pairing_pending_code) : (uint8_t)frame_decoded.payload_len;
-                memcpy(s_ctx.pairing_pending_code, frame_decoded.payload, s_ctx.pairing_pending_code_len);
+                s_ctx.pairing_pending_code_len = (pair_code_len > sizeof(s_ctx.pairing_pending_code)) ?
+                                                 sizeof(s_ctx.pairing_pending_code) : pair_code_len;
+                memcpy(s_ctx.pairing_pending_code, pair_code, s_ctx.pairing_pending_code_len);
 
                 radio_main_pair_code_to_text(s_ctx.pairing_pending_code,
                                              s_ctx.pairing_pending_code_len,
@@ -2366,10 +2546,42 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             {
                 bool code_match = false;
                 char code_text[12];
+                const uint8_t *pair_code = NULL;
+                uint8_t pair_code_len = 0U;
+                uint8_t pair_ttl = BEKO_NET_DEFAULT_TTL;
+                bool pair_network = false;
 
-                if ((frame_decoded.payload_len == s_ctx.pairing_outgoing_code_len) &&
-                    (frame_decoded.payload_len > 0U) &&
-                    (memcmp(frame_decoded.payload, s_ctx.pairing_outgoing_code, frame_decoded.payload_len) == 0))
+                if (!radio_main_pair_payload_parse(frame_decoded.payload,
+                                                   (uint8_t)frame_decoded.payload_len,
+                                                   &pair_network,
+                                                   &pair_code,
+                                                   &pair_code_len,
+                                                   &pair_ttl))
+                {
+                    return;
+                }
+
+                if (s_ctx.pairing_outgoing_network)
+                {
+                    if (!pair_network)
+                    {
+                        radio_main_notify(MENU_NOTIFICATION_ERROR, "Join mode mismatch");
+                        s_ctx.pairing_outgoing_pending = false;
+                        s_ctx.pairing_outgoing_network = false;
+                        return;
+                    }
+                    if (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM)
+                    {
+                        radio_main_notify(MENU_NOTIFICATION_WARNING, "Net pair RSSI low");
+                        s_ctx.pairing_outgoing_pending = false;
+                        s_ctx.pairing_outgoing_network = false;
+                        return;
+                    }
+                }
+
+                if ((pair_code_len == s_ctx.pairing_outgoing_code_len) &&
+                    (pair_code_len > 0U) &&
+                    (memcmp(pair_code, s_ctx.pairing_outgoing_code, pair_code_len) == 0))
                 {
                     code_match = true;
                 }
@@ -2384,6 +2596,10 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                                                s_ctx.pairing_outgoing_code_len))
                 {
                     char pair_note[21];
+                    if (pair_network)
+                    {
+                        s_ctx.network_default_ttl = pair_ttl;
+                    }
                     snprintf(pair_note, sizeof(pair_note), "JOIN_OK %s", code_text);
                     radio_main_notify(MENU_NOTIFICATION_PAIRING, pair_note);
                     s_ctx.pairing_active = false;
@@ -2394,6 +2610,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 }
 
                 s_ctx.pairing_outgoing_pending = false;
+                s_ctx.pairing_outgoing_network = false;
             }
         }
         else if (frame_decoded.type == BEKO_NET_TYPE_JOIN_REJECT)
@@ -2899,6 +3116,8 @@ static bool radio_main_finish_pairing(bool accept)
     uint8_t code_len;
     const uint8_t *code;
     char code_text[12];
+    uint8_t payload[16];
+    uint8_t payload_len;
 
     if (!s_ctx.pairing_pending)
     {
@@ -2920,6 +3139,7 @@ static bool radio_main_finish_pairing(bool accept)
         snprintf(n.text, sizeof(n.text), "Device rejected");
         (void)menu_main_post_notification(&n);
         s_ctx.pairing_pending = false;
+        s_ctx.pairing_pending_network = false;
         return true;
     }
 
@@ -2928,10 +3148,28 @@ static bool radio_main_finish_pairing(bool accept)
     {
         radio_main_notify(MENU_NOTIFICATION_ERROR, "Pairing save failed");
         s_ctx.pairing_pending = false;
+        s_ctx.pairing_pending_network = false;
         return false;
     }
 
-    (void)radio_main_send_system_frame(BEKO_NET_TYPE_JOIN_ACCEPT, node_id, code, code_len);
+    payload_len = radio_main_pair_payload_build(s_ctx.pairing_pending_network,
+                                                code,
+                                                code_len,
+                                                s_ctx.pairing_pending_ttl,
+                                                payload,
+                                                (uint8_t)sizeof(payload));
+    if (payload_len == 0U)
+    {
+        s_ctx.pairing_pending = false;
+        s_ctx.pairing_pending_network = false;
+        return false;
+    }
+    if (s_ctx.pairing_pending_network)
+    {
+        s_ctx.network_default_ttl = s_ctx.pairing_pending_ttl;
+    }
+
+    (void)radio_main_send_system_frame(BEKO_NET_TYPE_JOIN_ACCEPT, node_id, payload, payload_len);
 
     radio_main_pair_code_to_text(code, code_len, code_text, (uint8_t)sizeof(code_text));
 
@@ -2940,7 +3178,9 @@ static bool radio_main_finish_pairing(bool accept)
     snprintf(n.text, sizeof(n.text), "JOIN_OK %s", code_text);
     (void)menu_main_post_notification(&n);
     s_ctx.pairing_pending = false;
+    s_ctx.pairing_pending_network = false;
     s_ctx.pairing_active = false;
+    s_ctx.pairing_network_mode = false;
     return true;
 }
 
@@ -2948,6 +3188,8 @@ static bool radio_main_send_join_request_internal(void)
 {
     char note[21];
     char code_text[12];
+    uint8_t payload[16];
+    uint8_t payload_len;
 
     if (!s_ctx.pairing_active)
     {
@@ -2955,16 +3197,27 @@ static bool radio_main_send_join_request_internal(void)
     }
     s_ctx.pairing_outgoing_code_len = RADIO_PAIR_CODE_LEN;
     radio_main_make_pair_code(s_ctx.pairing_outgoing_code, s_ctx.pairing_outgoing_code_len);
+    payload_len = radio_main_pair_payload_build(s_ctx.pairing_network_mode,
+                                                s_ctx.pairing_outgoing_code,
+                                                s_ctx.pairing_outgoing_code_len,
+                                                s_ctx.network_default_ttl,
+                                                payload,
+                                                (uint8_t)sizeof(payload));
+    if (payload_len == 0U)
+    {
+        return false;
+    }
 
     if (!radio_main_send_system_frame(BEKO_NET_TYPE_JOIN_REQ,
                                       BEKO_NET_BROADCAST_ID,
-                                      s_ctx.pairing_outgoing_code,
-                                      s_ctx.pairing_outgoing_code_len))
+                                      payload,
+                                      payload_len))
     {
         return false;
     }
 
     s_ctx.pairing_outgoing_pending = true;
+    s_ctx.pairing_outgoing_network = s_ctx.pairing_network_mode;
     radio_main_pair_code_to_text(s_ctx.pairing_outgoing_code,
                                  s_ctx.pairing_outgoing_code_len,
                                  code_text,
@@ -3098,6 +3351,78 @@ static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char 
         out[i] = isprint((unsigned char)c) ? c : '.';
     }
     out[max_copy] = '\0';
+}
+
+static bool radio_main_pair_payload_parse(const uint8_t *payload,
+                                          uint8_t payload_len,
+                                          bool *network_mode_out,
+                                          const uint8_t **code_out,
+                                          uint8_t *code_len_out,
+                                          uint8_t *ttl_out)
+{
+    if ((network_mode_out == NULL) || (code_out == NULL) || (code_len_out == NULL) || (ttl_out == NULL))
+    {
+        return false;
+    }
+
+    *network_mode_out = false;
+    *code_out = NULL;
+    *code_len_out = 0U;
+    *ttl_out = BEKO_NET_DEFAULT_TTL;
+
+    if ((payload == NULL) || (payload_len == 0U))
+    {
+        return false;
+    }
+
+    if ((payload_len == RADIO_NETWORK_PAIR_PAYLOAD_LEN) &&
+        (payload[0] == RADIO_NETWORK_PAIR_MARKER) &&
+        (payload[1] != 0U))
+    {
+        *network_mode_out = true;
+        *ttl_out = payload[1];
+        *code_out = &payload[2];
+        *code_len_out = RADIO_PAIR_CODE_LEN;
+        return true;
+    }
+
+    *code_out = payload;
+    *code_len_out = payload_len;
+    return true;
+}
+
+static uint8_t radio_main_pair_payload_build(bool network_mode,
+                                             const uint8_t *code,
+                                             uint8_t code_len,
+                                             uint8_t ttl,
+                                             uint8_t *payload_out,
+                                             uint8_t payload_capacity)
+{
+    if ((payload_out == NULL) || (code == NULL) || (code_len == 0U))
+    {
+        return 0U;
+    }
+
+    if (network_mode)
+    {
+        if ((code_len != RADIO_PAIR_CODE_LEN) || (payload_capacity < RADIO_NETWORK_PAIR_PAYLOAD_LEN))
+        {
+            return 0U;
+        }
+
+        payload_out[0] = RADIO_NETWORK_PAIR_MARKER;
+        payload_out[1] = (ttl != 0U) ? ttl : BEKO_NET_DEFAULT_TTL;
+        memcpy(&payload_out[2], code, RADIO_PAIR_CODE_LEN);
+        return RADIO_NETWORK_PAIR_PAYLOAD_LEN;
+    }
+
+    if (payload_capacity < code_len)
+    {
+        return 0U;
+    }
+
+    memcpy(payload_out, code, code_len);
+    return code_len;
 }
 
 static uint32_t radio_main_now_ms(void)

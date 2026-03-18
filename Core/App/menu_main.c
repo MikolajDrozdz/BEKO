@@ -23,20 +23,33 @@
 #define MENU_ITEMS_VISIBLE                  3U
 #define MENU_LINE_CHARS                     20U
 #define MENU_LINE_BUF_SIZE                  (MENU_LINE_CHARS + 1U)
+#define MENU_TRUSTED_DEVICE_SLOTS           16U
+#define MENU_DEVICE_SLOT_INVALID            0xFFU
 
 typedef enum
 {
     MENU_PAGE_NONE = 0,
     MENU_PAGE_PAGER,
+    MENU_PAGE_RADIO_SETTINGS,
+    MENU_PAGE_SEND_OPTIONS,
+    MENU_PAGE_SEND_DIRECT_LIST,
+    MENU_PAGE_SEND_TARGET_LIST,
     MENU_PAGE_MSG_GROUPS,
     MENU_PAGE_GROUP_ALERT,
     MENU_PAGE_GROUP_STATUS,
     MENU_PAGE_GROUP_SERVICE,
+    MENU_PAGE_GROUP_QUICK,
     MENU_PAGE_MAIN,
     MENU_PAGE_DEVICES,
+    MENU_PAGE_DEVICE_DELETE_LIST,
+    MENU_PAGE_DEVICE_DELETE_ACTION,
     MENU_PAGE_SECURITY,
     MENU_PAGE_SECURITY_FH,
+    MENU_PAGE_SECURITY_CODING,
+    MENU_PAGE_SECURITY_NOTIFY,
+    MENU_PAGE_SECURITY_AUTOPING,
     MENU_PAGE_HARDWARE,
+    MENU_PAGE_HARDWARE_LED,
     MENU_PAGE_MODULATION,
     MENU_PAGE_MOD_LORA,
     MENU_PAGE_MOD_LORA_FREQ,
@@ -81,6 +94,7 @@ typedef enum
     MENU_ACTION_BACK,
     MENU_ACTION_EXIT_TO_MONITOR,
     MENU_ACTION_SEND_DEFAULT,
+    MENU_ACTION_SEND_DIRECT_DEFAULT,
     MENU_ACTION_SEND_ALERT_FIRE,
     MENU_ACTION_SEND_ALERT_INTR,
     MENU_ACTION_SEND_ALERT_LOWBATT,
@@ -90,8 +104,14 @@ typedef enum
     MENU_ACTION_SEND_SERVICE_PING,
     MENU_ACTION_SEND_SERVICE_RESET,
     MENU_ACTION_SEND_SERVICE_SYNC,
+    MENU_ACTION_SEND_ASK_DONE,
+    MENU_ACTION_SEND_ACT_COME_OVER,
+    MENU_ACTION_SEND_ACT_STOP,
+    MENU_ACTION_SEND_ASK_READY,
     MENU_ACTION_DEVICE_ADD,
+    MENU_ACTION_DEVICE_ADD_NETWORK,
     MENU_ACTION_DEVICE_DELETE,
+    MENU_ACTION_DEVICE_DELETE_CONFIRM,
     MENU_ACTION_DEVICE_INFO,
     MENU_ACTION_SEC_TOGGLE_FH,
     MENU_ACTION_SEC_FH_ENABLE,
@@ -102,12 +122,21 @@ typedef enum
     MENU_ACTION_SEC_FH_PERIOD_10000,
     MENU_ACTION_SEC_TPM_INFO,
     MENU_ACTION_SEC_ROTATE_KEYS,
+    MENU_ACTION_SEC_CODING_ON,
+    MENU_ACTION_SEC_CODING_OFF,
+    MENU_ACTION_SEC_NOTIFY_POPUP,
+    MENU_ACTION_SEC_NOTIFY_BADGE,
+    MENU_ACTION_SEC_AUTOPING_ON,
+    MENU_ACTION_SEC_AUTOPING_OFF,
     MENU_ACTION_SEC_TOGGLE_CODING,
     MENU_ACTION_SEC_TOGGLE_NOTIFY_MODE,
     MENU_ACTION_SEC_TOGGLE_AUTOPING,
     MENU_ACTION_HW_MEASURE_DIST,
     MENU_ACTION_HW_MEASURE_TEMP,
     MENU_ACTION_HW_MEASURE_PRESS,
+    MENU_ACTION_HW_LED_RAINBOW,
+    MENU_ACTION_HW_LED_BREATH,
+    MENU_ACTION_HW_LED_OFF,
     MENU_ACTION_HW_LED_MODE,
     MENU_ACTION_HW_RADIO_RESET,
     MENU_ACTION_MOD_LORA_ENABLE,
@@ -310,7 +339,8 @@ typedef enum
     MENU_MODAL_INFO,
     MENU_MODAL_PAIR_REQUEST,
     MENU_MODAL_PAIR_SETUP,
-    MENU_MODAL_SEND_CONFIRM
+    MENU_MODAL_SEND_CONFIRM,
+    MENU_MODAL_QUICK_REPLY
 } menu_modal_t;
 
 typedef struct
@@ -318,6 +348,15 @@ typedef struct
     menu_page_id_t current_page;
     uint8_t selected_idx;
     uint8_t led_mode;
+    uint8_t selected_device_slot;
+    uint32_t pending_target_node_id;
+    menu_action_t send_target_action;
+    menu_page_id_t transient_parent_page;
+    bool pairing_network_mode;
+    uint32_t quick_reply_src_id;
+    uint32_t quick_reply_deadline_ms;
+    uint32_t quick_reply_last_seconds;
+    char quick_reply_text[MENU_LINE_BUF_SIZE];
     bool popup_enabled;
     uint32_t last_input_ms;
     menu_modal_t modal;
@@ -346,6 +385,7 @@ static void menu_main_task_fn(void *argument);
 static const menu_page_t *menu_get_page(menu_page_id_t page_id);
 static void menu_render(menu_state_t *st);
 static void menu_render_popup(const char *l0, const char *l1, const char *l2, const char *l3);
+static void menu_render_quick_reply(menu_state_t *st);
 static void menu_enter_monitor(menu_state_t *st);
 static void menu_open_page(menu_state_t *st, menu_page_id_t page_id);
 static void menu_open_info_modal(menu_state_t *st,
@@ -363,26 +403,117 @@ static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text
 static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_text);
 static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action);
 static bool menu_is_send_action(menu_action_t action);
+static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx);
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label);
-static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req);
+static void menu_open_send_target_page(menu_state_t *st, menu_action_t action);
+static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, bool network_mode);
+static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot);
+static bool menu_should_open_quick_reply(const char *text);
 static void menu_line_clear(char *dst);
 static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars);
 static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value);
 static uint8_t menu_line_append_i32(char *dst, uint8_t offset, int32_t value);
 static uint8_t menu_line_append_hex32(char *dst, uint8_t offset, uint32_t value);
+static uint8_t menu_line_append_freq_mhz(char *dst, uint8_t offset, uint32_t freq_hz);
 static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, const char *suffix);
 static void menu_line_format_i32(char *dst, const char *prefix, int32_t value, const char *suffix);
 static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value);
+static void menu_line_format_freq(char *dst, const char *prefix, uint32_t freq_hz);
 static void menu_line_format_fixed2(char *dst, const char *prefix, float value, const char *suffix);
 static void menu_line_copy_or_default(char *dst, const char *text, const char *fallback);
 static const char *menu_pair_code_text(const char *text, uint8_t prefix_len);
+static const char *menu_lora_bw_text(radio_lora_bw_t bw);
+static const char *menu_lora_cr_text(uint8_t denominator);
+static const char *menu_fsk_shape_text(radio_main_fsk_shaping_t shaping);
+static const char *menu_filter_text(radio_main_filter_t filter);
+static const char *menu_crc_text(radio_main_crc_type_t crc_type);
+static const char *menu_ook_threshold_text(radio_main_ook_threshold_t threshold);
+static const char *menu_address_filter_text(radio_main_address_filter_t filter);
+static void menu_build_page_title(const menu_state_t *st, const menu_page_t *page, char *dst);
+static void menu_build_item_label(const menu_state_t *st,
+                                  const menu_page_t *page,
+                                  uint8_t item_idx,
+                                  char *dst);
+static uint8_t menu_radio_settings_item_count(const radio_main_runtime_cfg_t *cfg);
+static void menu_build_radio_settings_item(const radio_main_runtime_cfg_t *cfg,
+                                           uint8_t item_idx,
+                                           char *dst);
 
 static const menu_item_t s_page_pager_items[] =
 {
-    { "Send message", MENU_PAGE_NONE, MENU_ACTION_SEND_DEFAULT },
+    { "Radio settings", MENU_PAGE_RADIO_SETTINGS, MENU_ACTION_NONE },
+    { "Send message", MENU_PAGE_SEND_OPTIONS, MENU_ACTION_NONE },
     { "Message groups", MENU_PAGE_MSG_GROUPS, MENU_ACTION_NONE },
     { "Main menu", MENU_PAGE_MAIN, MENU_ACTION_NONE },
     { "Exit", MENU_PAGE_NONE, MENU_ACTION_EXIT_TO_MONITOR }
+};
+
+static const menu_item_t s_page_radio_settings_items[] =
+{
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_send_options_items[] =
+{
+    { "STS:OK", MENU_PAGE_NONE, MENU_ACTION_SEND_DEFAULT },
+    { "Send msg directly", MENU_PAGE_SEND_DIRECT_LIST, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_send_direct_list_items[] =
+{
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_send_target_list_items[] =
+{
+    { "Broadcast", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
 static const menu_item_t s_page_msg_groups_items[] =
@@ -390,6 +521,7 @@ static const menu_item_t s_page_msg_groups_items[] =
     { "ALERT", MENU_PAGE_GROUP_ALERT, MENU_ACTION_NONE },
     { "STATUS", MENU_PAGE_GROUP_STATUS, MENU_ACTION_NONE },
     { "SERVICE", MENU_PAGE_GROUP_SERVICE, MENU_ACTION_NONE },
+    { "ASK/ACT", MENU_PAGE_GROUP_QUICK, MENU_ACTION_NONE },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -417,6 +549,15 @@ static const menu_item_t s_page_group_service_items[] =
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
+static const menu_item_t s_page_group_quick_items[] =
+{
+    { "ASK: Is done?", MENU_PAGE_NONE, MENU_ACTION_SEND_ASK_DONE },
+    { "ACT Come over.", MENU_PAGE_NONE, MENU_ACTION_SEND_ACT_COME_OVER },
+    { "ACT: Stop!", MENU_PAGE_NONE, MENU_ACTION_SEND_ACT_STOP },
+    { "ASK: Is ready?", MENU_PAGE_NONE, MENU_ACTION_SEND_ASK_READY },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
 static const menu_item_t s_page_main_items[] =
 {
     { "Devices", MENU_PAGE_DEVICES, MENU_ACTION_NONE },
@@ -430,8 +571,37 @@ static const menu_item_t s_page_main_items[] =
 static const menu_item_t s_page_devices_items[] =
 {
     { "Add new device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD },
-    { "Delete device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_DELETE },
+    { "Pair with network", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD_NETWORK },
+    { "Delete device", MENU_PAGE_DEVICE_DELETE_LIST, MENU_ACTION_NONE },
     { "Info device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_INFO },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_device_delete_list_items[] =
+{
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_device_delete_action_items[] =
+{
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "Wyrzuc", MENU_PAGE_NONE, MENU_ACTION_DEVICE_DELETE_CONFIRM },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -440,9 +610,9 @@ static const menu_item_t s_page_security_items[] =
     { "Frequency hopping", MENU_PAGE_SECURITY_FH, MENU_ACTION_NONE },
     { "TPM", MENU_PAGE_NONE, MENU_ACTION_SEC_TPM_INFO },
     { "Keys", MENU_PAGE_NONE, MENU_ACTION_SEC_ROTATE_KEYS },
-    { "Coding", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_CODING },
-    { "Notif mode", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_NOTIFY_MODE },
-    { "Auto ping", MENU_PAGE_NONE, MENU_ACTION_SEC_TOGGLE_AUTOPING },
+    { "Coding", MENU_PAGE_SECURITY_CODING, MENU_ACTION_NONE },
+    { "Notif mode", MENU_PAGE_SECURITY_NOTIFY, MENU_ACTION_NONE },
+    { "Auto ping", MENU_PAGE_SECURITY_AUTOPING, MENU_ACTION_NONE },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -457,13 +627,43 @@ static const menu_item_t s_page_security_fh_items[] =
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
+static const menu_item_t s_page_security_coding_items[] =
+{
+    { "Coding ON", MENU_PAGE_NONE, MENU_ACTION_SEC_CODING_ON },
+    { "Coding OFF", MENU_PAGE_NONE, MENU_ACTION_SEC_CODING_OFF },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_security_notify_items[] =
+{
+    { "Popup", MENU_PAGE_NONE, MENU_ACTION_SEC_NOTIFY_POPUP },
+    { "Badge", MENU_PAGE_NONE, MENU_ACTION_SEC_NOTIFY_BADGE },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_security_autoping_items[] =
+{
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
+    { "Auto ping ON", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_ON },
+    { "Auto ping OFF", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_OFF },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
 static const menu_item_t s_page_hardware_items[] =
 {
     { "Dist measure", MENU_PAGE_NONE, MENU_ACTION_HW_MEASURE_DIST },
     { "Temperature", MENU_PAGE_NONE, MENU_ACTION_HW_MEASURE_TEMP },
     { "Pressure", MENU_PAGE_NONE, MENU_ACTION_HW_MEASURE_PRESS },
-    { "Led", MENU_PAGE_NONE, MENU_ACTION_HW_LED_MODE },
+    { "Led", MENU_PAGE_HARDWARE_LED, MENU_ACTION_NONE },
     { "Reset SX1276", MENU_PAGE_NONE, MENU_ACTION_HW_RADIO_RESET },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_hardware_led_items[] =
+{
+    { "Rainbow", MENU_PAGE_NONE, MENU_ACTION_HW_LED_RAINBOW },
+    { "Breath", MENU_PAGE_NONE, MENU_ACTION_HW_LED_BREATH },
+    { "Off", MENU_PAGE_NONE, MENU_ACTION_HW_LED_OFF },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -856,15 +1056,26 @@ static const menu_item_t s_page_info_items[] =
 static const menu_page_t s_pages[] =
 {
     { "PAGER", MENU_PAGE_NONE, s_page_pager_items, (uint8_t)(sizeof(s_page_pager_items) / sizeof(s_page_pager_items[0])) },
+    { "RADIO SETTINGS", MENU_PAGE_PAGER, s_page_radio_settings_items, (uint8_t)(sizeof(s_page_radio_settings_items) / sizeof(s_page_radio_settings_items[0])) },
+    { "SEND", MENU_PAGE_PAGER, s_page_send_options_items, (uint8_t)(sizeof(s_page_send_options_items) / sizeof(s_page_send_options_items[0])) },
+    { "SEND DIRECT", MENU_PAGE_SEND_OPTIONS, s_page_send_direct_list_items, (uint8_t)(sizeof(s_page_send_direct_list_items) / sizeof(s_page_send_direct_list_items[0])) },
+    { "SEND TO", MENU_PAGE_SEND_OPTIONS, s_page_send_target_list_items, (uint8_t)(sizeof(s_page_send_target_list_items) / sizeof(s_page_send_target_list_items[0])) },
     { "MSG GROUPS", MENU_PAGE_PAGER, s_page_msg_groups_items, (uint8_t)(sizeof(s_page_msg_groups_items) / sizeof(s_page_msg_groups_items[0])) },
     { "ALERT", MENU_PAGE_MSG_GROUPS, s_page_group_alert_items, (uint8_t)(sizeof(s_page_group_alert_items) / sizeof(s_page_group_alert_items[0])) },
     { "STATUS", MENU_PAGE_MSG_GROUPS, s_page_group_status_items, (uint8_t)(sizeof(s_page_group_status_items) / sizeof(s_page_group_status_items[0])) },
     { "SERVICE", MENU_PAGE_MSG_GROUPS, s_page_group_service_items, (uint8_t)(sizeof(s_page_group_service_items) / sizeof(s_page_group_service_items[0])) },
+    { "ASK/ACT", MENU_PAGE_MSG_GROUPS, s_page_group_quick_items, (uint8_t)(sizeof(s_page_group_quick_items) / sizeof(s_page_group_quick_items[0])) },
     { "MAIN MENU", MENU_PAGE_PAGER, s_page_main_items, (uint8_t)(sizeof(s_page_main_items) / sizeof(s_page_main_items[0])) },
     { "DEVICES", MENU_PAGE_MAIN, s_page_devices_items, (uint8_t)(sizeof(s_page_devices_items) / sizeof(s_page_devices_items[0])) },
+    { "DELETE DEV", MENU_PAGE_DEVICES, s_page_device_delete_list_items, (uint8_t)(sizeof(s_page_device_delete_list_items) / sizeof(s_page_device_delete_list_items[0])) },
+    { "DELETE DEV", MENU_PAGE_DEVICE_DELETE_LIST, s_page_device_delete_action_items, (uint8_t)(sizeof(s_page_device_delete_action_items) / sizeof(s_page_device_delete_action_items[0])) },
     { "SECURITY", MENU_PAGE_MAIN, s_page_security_items, (uint8_t)(sizeof(s_page_security_items) / sizeof(s_page_security_items[0])) },
     { "SEC FH", MENU_PAGE_SECURITY, s_page_security_fh_items, (uint8_t)(sizeof(s_page_security_fh_items) / sizeof(s_page_security_fh_items[0])) },
+    { "CODING", MENU_PAGE_SECURITY, s_page_security_coding_items, (uint8_t)(sizeof(s_page_security_coding_items) / sizeof(s_page_security_coding_items[0])) },
+    { "NOTIFY", MENU_PAGE_SECURITY, s_page_security_notify_items, (uint8_t)(sizeof(s_page_security_notify_items) / sizeof(s_page_security_notify_items[0])) },
+    { "AUTOPING", MENU_PAGE_SECURITY, s_page_security_autoping_items, (uint8_t)(sizeof(s_page_security_autoping_items) / sizeof(s_page_security_autoping_items[0])) },
     { "HARDWARE", MENU_PAGE_MAIN, s_page_hardware_items, (uint8_t)(sizeof(s_page_hardware_items) / sizeof(s_page_hardware_items[0])) },
+    { "LED", MENU_PAGE_HARDWARE, s_page_hardware_led_items, (uint8_t)(sizeof(s_page_hardware_led_items) / sizeof(s_page_hardware_led_items[0])) },
     { "MODULATION", MENU_PAGE_MAIN, s_page_modulation_items, (uint8_t)(sizeof(s_page_modulation_items) / sizeof(s_page_modulation_items[0])) },
     { "LORA", MENU_PAGE_MODULATION, s_page_mod_lora_items, (uint8_t)(sizeof(s_page_mod_lora_items) / sizeof(s_page_mod_lora_items[0])) },
     { "LORA FREQ", MENU_PAGE_MOD_LORA, s_page_mod_lora_freq_items, (uint8_t)(sizeof(s_page_mod_lora_freq_items) / sizeof(s_page_mod_lora_freq_items[0])) },
@@ -1152,6 +1363,7 @@ static void menu_main_task_fn(void *argument)
     (void)argument;
     memset(&st, 0, sizeof(st));
     st.popup_enabled = true;
+    st.selected_device_slot = MENU_DEVICE_SLOT_INVALID;
     st.last_input_ms = HAL_GetTick();
 
     if (security_main_cmd_get_runtime_cfg(&cfg))
@@ -1175,6 +1387,24 @@ static void menu_main_task_fn(void *argument)
             menu_handle_notification(&st, &notify);
         }
 
+        if (st.modal == MENU_MODAL_QUICK_REPLY)
+        {
+            uint32_t now_ms = HAL_GetTick();
+            uint32_t remaining_ms = (st.quick_reply_deadline_ms > now_ms) ?
+                                    (st.quick_reply_deadline_ms - now_ms) : 0U;
+            uint32_t remaining_seconds = (remaining_ms + 999U) / 1000U;
+
+            if (remaining_ms == 0U)
+            {
+                menu_show_action_result(&st, MENU_NOTIFICATION_WARNING, "Reply timeout");
+            }
+            else if (remaining_seconds != st.quick_reply_last_seconds)
+            {
+                st.quick_reply_last_seconds = remaining_seconds;
+                menu_render_quick_reply(&st);
+            }
+        }
+
         if ((st.current_page != MENU_PAGE_NONE) &&
             (st.modal == MENU_MODAL_NONE) &&
             ((HAL_GetTick() - st.last_input_ms) >= MENU_INACTIVITY_TIMEOUT_MS))
@@ -1196,12 +1426,23 @@ static void menu_enter_monitor(menu_state_t *st)
     st->selected_idx = 0U;
     st->modal = MENU_MODAL_NONE;
     st->pending_action = MENU_ACTION_NONE;
+    st->selected_device_slot = MENU_DEVICE_SLOT_INVALID;
+    st->pending_target_node_id = 0U;
+    st->send_target_action = MENU_ACTION_NONE;
+    st->transient_parent_page = MENU_PAGE_NONE;
+    st->pairing_network_mode = false;
+    st->quick_reply_src_id = 0U;
+    st->quick_reply_deadline_ms = 0U;
+    st->quick_reply_last_seconds = 0U;
+    menu_line_clear(st->quick_reply_text);
     (void)lcd_main_set_mode(LCD_MODE_MONITOR);
 }
 
 /* Opens a normal page and resets selection/modal context. */
 static void menu_open_page(menu_state_t *st, menu_page_id_t page_id)
 {
+    const menu_page_t *page;
+
     if (st == NULL)
     {
         return;
@@ -1211,6 +1452,27 @@ static void menu_open_page(menu_state_t *st, menu_page_id_t page_id)
     st->selected_idx = 0U;
     st->modal = MENU_MODAL_NONE;
     st->pending_action = MENU_ACTION_NONE;
+    st->pending_target_node_id = 0U;
+    st->send_target_action = MENU_ACTION_NONE;
+    st->transient_parent_page = MENU_PAGE_NONE;
+    st->pairing_network_mode = false;
+    st->quick_reply_src_id = 0U;
+    st->quick_reply_deadline_ms = 0U;
+    st->quick_reply_last_seconds = 0U;
+    menu_line_clear(st->quick_reply_text);
+    page = menu_get_page(page_id);
+    if (page != NULL)
+    {
+        while ((st->selected_idx < page->item_count) &&
+               !menu_item_is_selectable(st, page, st->selected_idx))
+        {
+            st->selected_idx++;
+        }
+        if ((page->item_count > 0U) && (st->selected_idx >= page->item_count))
+        {
+            st->selected_idx = 0U;
+        }
+    }
     menu_render(st);
 }
 
@@ -1351,6 +1613,52 @@ static uint8_t menu_line_append_hex32(char *dst, uint8_t offset, uint32_t value)
     return offset;
 }
 
+static uint8_t menu_line_append_freq_mhz(char *dst, uint8_t offset, uint32_t freq_hz)
+{
+    uint32_t mhz;
+    uint32_t frac_hz;
+    char frac_digits[6];
+    uint8_t frac_len = 6U;
+    int8_t idx;
+
+    if ((dst == NULL) || (offset >= MENU_LINE_CHARS))
+    {
+        return offset;
+    }
+
+    mhz = freq_hz / 1000000UL;
+    frac_hz = freq_hz % 1000000UL;
+    offset = menu_line_append_u32(dst, offset, mhz);
+
+    if (frac_hz == 0UL)
+    {
+        return offset;
+    }
+
+    if (offset < MENU_LINE_CHARS)
+    {
+        dst[offset++] = '.';
+    }
+
+    for (idx = 5; idx >= 0; idx--)
+    {
+        frac_digits[idx] = (char)('0' + (frac_hz % 10UL));
+        frac_hz /= 10UL;
+    }
+
+    while ((frac_len > 1U) && (frac_digits[frac_len - 1U] == '0'))
+    {
+        frac_len--;
+    }
+
+    for (idx = 0; (idx < (int8_t)frac_len) && (offset < MENU_LINE_CHARS); idx++)
+    {
+        dst[offset++] = frac_digits[idx];
+    }
+
+    return offset;
+}
+
 static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, const char *suffix)
 {
     uint8_t offset = 0U;
@@ -1379,6 +1687,16 @@ static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value
     offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
     offset = menu_line_copy(dst, offset, "0x", 2U);
     (void)menu_line_append_hex32(dst, offset, value);
+}
+
+static void menu_line_format_freq(char *dst, const char *prefix, uint32_t freq_hz)
+{
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
+    offset = menu_line_append_freq_mhz(dst, offset, freq_hz);
+    (void)menu_line_copy(dst, offset, " MHz", 4U);
 }
 
 static void menu_line_format_fixed2(char *dst, const char *prefix, float value, const char *suffix)
@@ -1454,9 +1772,524 @@ static const char *menu_pair_code_text(const char *text, uint8_t prefix_len)
     return "----";
 }
 
+static const char *menu_lora_bw_text(radio_lora_bw_t bw)
+{
+    if (bw == RADIO_LORA_BW_7_8_KHZ)
+    {
+        return "7.8";
+    }
+    if (bw == RADIO_LORA_BW_10_4_KHZ)
+    {
+        return "10.4";
+    }
+    if (bw == RADIO_LORA_BW_15_6_KHZ)
+    {
+        return "15.6";
+    }
+    if (bw == RADIO_LORA_BW_20_8_KHZ)
+    {
+        return "20.8";
+    }
+    if (bw == RADIO_LORA_BW_31_25_KHZ)
+    {
+        return "31.25";
+    }
+    if (bw == RADIO_LORA_BW_41_7_KHZ)
+    {
+        return "41.7";
+    }
+    if (bw == RADIO_LORA_BW_62_5_KHZ)
+    {
+        return "62.5";
+    }
+    if (bw == RADIO_LORA_BW_125_KHZ)
+    {
+        return "125";
+    }
+    if (bw == RADIO_LORA_BW_250_KHZ)
+    {
+        return "250";
+    }
+    if (bw == RADIO_LORA_BW_500_KHZ)
+    {
+        return "500";
+    }
+
+    return "?";
+}
+
+static const char *menu_lora_cr_text(uint8_t denominator)
+{
+    if (denominator == 5U)
+    {
+        return "4/5";
+    }
+    if (denominator == 6U)
+    {
+        return "4/6";
+    }
+    if (denominator == 7U)
+    {
+        return "4/7";
+    }
+    if (denominator == 8U)
+    {
+        return "4/8";
+    }
+
+    return "?";
+}
+
+static const char *menu_fsk_shape_text(radio_main_fsk_shaping_t shaping)
+{
+    if (shaping == RADIO_MAIN_FSK_SHAPING_GFSK)
+    {
+        return "GFSK";
+    }
+    if (shaping == RADIO_MAIN_FSK_SHAPING_MSK)
+    {
+        return "MSK";
+    }
+    if (shaping == RADIO_MAIN_FSK_SHAPING_GMSK)
+    {
+        return "GMSK";
+    }
+
+    return "FSK";
+}
+
+static const char *menu_filter_text(radio_main_filter_t filter)
+{
+    if (filter == RADIO_MAIN_FILTER_BT_10)
+    {
+        return "BT1.0";
+    }
+    if (filter == RADIO_MAIN_FILTER_BT_07)
+    {
+        return "BT0.7";
+    }
+    if (filter == RADIO_MAIN_FILTER_BT_05)
+    {
+        return "BT0.5";
+    }
+    if (filter == RADIO_MAIN_FILTER_BT_03)
+    {
+        return "BT0.3";
+    }
+
+    return "OFF";
+}
+
+static const char *menu_crc_text(radio_main_crc_type_t crc_type)
+{
+    if (crc_type == RADIO_MAIN_CRC_SX1276)
+    {
+        return "SX";
+    }
+    if (crc_type == RADIO_MAIN_CRC_IBM)
+    {
+        return "IBM";
+    }
+    if (crc_type == RADIO_MAIN_CRC_CCITT)
+    {
+        return "CCITT";
+    }
+
+    return "OFF";
+}
+
+static const char *menu_ook_threshold_text(radio_main_ook_threshold_t threshold)
+{
+    if (threshold == RADIO_MAIN_OOK_THRESHOLD_PEAK)
+    {
+        return "Peak";
+    }
+    if (threshold == RADIO_MAIN_OOK_THRESHOLD_AVERAGE)
+    {
+        return "Avg";
+    }
+
+    return "Fix";
+}
+
+static const char *menu_address_filter_text(radio_main_address_filter_t filter)
+{
+    if (filter == RADIO_MAIN_ADDRESS_FILTER_NODE)
+    {
+        return "NODE";
+    }
+    if (filter == RADIO_MAIN_ADDRESS_FILTER_NODE_BROADCAST)
+    {
+        return "NODE+BC";
+    }
+
+    return "OFF";
+}
+
+static uint8_t menu_radio_settings_item_count(const radio_main_runtime_cfg_t *cfg)
+{
+    if (cfg == NULL)
+    {
+        return 1U;
+    }
+
+    if (cfg->active_modulation == RADIO_MAIN_MODULATION_FSK)
+    {
+        return 14U;
+    }
+
+    if (cfg->active_modulation == RADIO_MAIN_MODULATION_OOK)
+    {
+        return 12U;
+    }
+
+    return 13U;
+}
+
+static void menu_build_radio_settings_item(const radio_main_runtime_cfg_t *cfg,
+                                           uint8_t item_idx,
+                                           char *dst)
+{
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    if ((cfg == NULL) || (dst == NULL))
+    {
+        return;
+    }
+
+    if (cfg->active_modulation == RADIO_MAIN_MODULATION_FSK)
+    {
+        if (item_idx == 0U)
+        {
+            (void)menu_line_copy(dst, 0U, "Mode FSK/GxSK", MENU_LINE_CHARS);
+        }
+        else if (item_idx == 1U)
+        {
+            menu_line_format_freq(dst, "Freq ", cfg->fsk.frequency_hz);
+        }
+        else if (item_idx == 2U)
+        {
+            menu_line_format_i32(dst, "Power ", cfg->fsk.tx_power_dbm, " dBm");
+        }
+        else if (item_idx == 3U)
+        {
+            offset = menu_line_copy(dst, 0U, "Shape ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, menu_fsk_shape_text(cfg->fsk.shaping), 10U);
+        }
+        else if (item_idx == 4U)
+        {
+            menu_line_format_u32(dst, "Bitrate ", cfg->fsk.bitrate_bps, " bps");
+        }
+        else if (item_idx == 5U)
+        {
+            offset = menu_line_copy(dst, 0U, "RX BW ", MENU_LINE_CHARS);
+            offset = menu_line_copy(dst, offset, menu_lora_bw_text(cfg->fsk.rx_bandwidth), 8U);
+            (void)menu_line_copy(dst, offset, " kHz", 4U);
+        }
+        else if (item_idx == 6U)
+        {
+            offset = menu_line_copy(dst, 0U, "Filter ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, menu_filter_text(cfg->fsk.filter), 8U);
+        }
+        else if (item_idx == 7U)
+        {
+            menu_line_format_u32(dst, "Preamble ", cfg->fsk.preamble_len, " B");
+        }
+        else if (item_idx == 8U)
+        {
+            menu_line_format_u32(dst, "Sync len ", cfg->fsk.sync_word_len, " B");
+        }
+        else if (item_idx == 9U)
+        {
+            menu_line_format_hex32(dst, "Sync ", (uint32_t)cfg->fsk.sync_word);
+        }
+        else if (item_idx == 10U)
+        {
+            offset = menu_line_copy(dst, 0U, "Addr ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, menu_address_filter_text(cfg->fsk.address_filter), 10U);
+        }
+        else if (item_idx == 11U)
+        {
+            offset = menu_line_copy(dst, 0U, "CRC ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, menu_crc_text(cfg->fsk.crc_type), 10U);
+        }
+        else if (item_idx == 12U)
+        {
+            offset = menu_line_copy(dst, 0U, "Whitening ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, cfg->fsk.data_whitening ? "ON" : "OFF", 3U);
+        }
+        return;
+    }
+
+    if (cfg->active_modulation == RADIO_MAIN_MODULATION_OOK)
+    {
+        if (item_idx == 0U)
+        {
+            (void)menu_line_copy(dst, 0U, "Mode OOK", MENU_LINE_CHARS);
+        }
+        else if (item_idx == 1U)
+        {
+            menu_line_format_freq(dst, "Freq ", cfg->ook.frequency_hz);
+        }
+        else if (item_idx == 2U)
+        {
+            menu_line_format_i32(dst, "Power ", cfg->ook.tx_power_dbm, " dBm");
+        }
+        else if (item_idx == 3U)
+        {
+            menu_line_format_u32(dst, "Bitrate ", cfg->ook.bitrate_bps, " bps");
+        }
+        else if (item_idx == 4U)
+        {
+            offset = menu_line_copy(dst, 0U, "RX BW ", MENU_LINE_CHARS);
+            offset = menu_line_copy(dst, offset, menu_lora_bw_text(cfg->ook.rx_bandwidth), 8U);
+            (void)menu_line_copy(dst, offset, " kHz", 4U);
+        }
+        else if (item_idx == 5U)
+        {
+            menu_line_format_u32(dst, "Preamble ", cfg->ook.preamble_len, " B");
+        }
+        else if (item_idx == 6U)
+        {
+            menu_line_format_u32(dst, "Sync len ", cfg->ook.sync_word_len, " B");
+        }
+        else if (item_idx == 7U)
+        {
+            menu_line_format_hex32(dst, "Sync ", cfg->ook.sync_word);
+        }
+        else if (item_idx == 8U)
+        {
+            offset = menu_line_copy(dst, 0U, "Thresh ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, menu_ook_threshold_text(cfg->ook.threshold), 8U);
+        }
+        else if (item_idx == 9U)
+        {
+            menu_line_format_u32(dst, "Thr value ", cfg->ook.threshold_value, "");
+        }
+        else if (item_idx == 10U)
+        {
+            offset = menu_line_copy(dst, 0U, "Coding ", MENU_LINE_CHARS);
+            (void)menu_line_copy(dst, offset, cfg->coding_enabled ? "ON" : "OFF", 3U);
+        }
+        return;
+    }
+
+    if (item_idx == 0U)
+    {
+        (void)menu_line_copy(dst, 0U, "Mode LoRa", MENU_LINE_CHARS);
+    }
+    else if (item_idx == 1U)
+    {
+        menu_line_format_freq(dst, "Freq ", cfg->lora.frequency_hz);
+    }
+    else if (item_idx == 2U)
+    {
+        menu_line_format_i32(dst, "Power ", cfg->lora.tx_power_dbm, " dBm");
+    }
+    else if (item_idx == 3U)
+    {
+        offset = menu_line_copy(dst, 0U, "BW ", MENU_LINE_CHARS);
+        offset = menu_line_copy(dst, offset, menu_lora_bw_text(cfg->lora.bandwidth), 8U);
+        (void)menu_line_copy(dst, offset, " kHz", 4U);
+    }
+    else if (item_idx == 4U)
+    {
+        menu_line_format_u32(dst, "SF ", cfg->lora.spreading_factor, "");
+    }
+    else if (item_idx == 5U)
+    {
+        offset = menu_line_copy(dst, 0U, "CR ", MENU_LINE_CHARS);
+        (void)menu_line_copy(dst, offset, menu_lora_cr_text(cfg->lora.coding_rate), 6U);
+    }
+    else if (item_idx == 6U)
+    {
+        offset = menu_line_copy(dst, 0U, "CRC ", MENU_LINE_CHARS);
+        (void)menu_line_copy(dst, offset, cfg->lora.crc_on ? "ON" : "OFF", 3U);
+    }
+    else if (item_idx == 7U)
+    {
+        menu_line_format_u32(dst, "Preamble ", cfg->lora.preamble_len, " sym");
+    }
+    else if (item_idx == 8U)
+    {
+        offset = menu_line_copy(dst, 0U, "Header ", MENU_LINE_CHARS);
+        (void)menu_line_copy(dst, offset,
+                             cfg->lora.implicit_header ? "Implicit" : "Explicit",
+                             8U);
+    }
+    else if (item_idx == 9U)
+    {
+        offset = menu_line_copy(dst, 0U, "I/Q ", MENU_LINE_CHARS);
+        (void)menu_line_copy(dst, offset, cfg->lora.invert_iq ? "Invert" : "Normal", 6U);
+    }
+    else if (item_idx == 10U)
+    {
+        menu_line_format_hex32(dst, "Sync ", cfg->lora.sync_word);
+    }
+    else if (item_idx == 11U)
+    {
+        offset = menu_line_copy(dst, 0U, "Code ", MENU_LINE_CHARS);
+        offset = menu_line_copy(dst, offset, cfg->coding_enabled ? "ON" : "OFF", 3U);
+        offset = menu_line_copy(dst, offset, " FH ", 4U);
+        (void)menu_line_copy(dst, offset, cfg->fh_enabled ? "ON" : "OFF", 3U);
+    }
+}
+
+static void menu_build_page_title(const menu_state_t *st, const menu_page_t *page, char *dst)
+{
+    menu_line_clear(dst);
+    if ((st == NULL) || (page == NULL) || (dst == NULL))
+    {
+        return;
+    }
+
+    (void)menu_line_copy(dst, 0U, page->title, MENU_LINE_CHARS);
+}
+
+static void menu_build_item_label(const menu_state_t *st,
+                                  const menu_page_t *page,
+                                  uint8_t item_idx,
+                                  char *dst)
+{
+    radio_main_runtime_cfg_t radio_cfg;
+    trusted_info_t info;
+    uint32_t period_ms;
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    if ((st == NULL) || (page == NULL) || (dst == NULL))
+    {
+        return;
+    }
+
+    if ((st->current_page == MENU_PAGE_DEVICE_DELETE_LIST) &&
+        (item_idx < MENU_TRUSTED_DEVICE_SLOTS))
+    {
+        memset(&info, 0, sizeof(info));
+        if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
+        {
+            offset = menu_line_copy(dst, offset, info.is_master ? "M " : "D ", 2U);
+            offset = menu_line_append_u32(dst, offset, item_idx);
+            offset = menu_line_copy(dst, offset, " 0x", 3U);
+            (void)menu_line_append_hex32(dst, offset, info.node_id);
+        }
+        else
+        {
+            offset = menu_line_copy(dst, offset, "Slot ", 5U);
+            offset = menu_line_append_u32(dst, offset, item_idx);
+            offset = menu_line_copy(dst, offset, " ", 1U);
+            (void)menu_line_copy(dst, offset, "(empty)", 7U);
+        }
+        return;
+    }
+
+    if ((st->current_page == MENU_PAGE_SEND_DIRECT_LIST) &&
+        (item_idx < MENU_TRUSTED_DEVICE_SLOTS))
+    {
+        memset(&info, 0, sizeof(info));
+        if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
+        {
+            offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
+            offset = menu_line_copy(dst, offset, "0x", 2U);
+            (void)menu_line_append_hex32(dst, offset, info.node_id);
+        }
+        else
+        {
+            offset = menu_line_copy(dst, offset, "Slot ", 5U);
+            offset = menu_line_append_u32(dst, offset, item_idx);
+            offset = menu_line_copy(dst, offset, " ", 1U);
+            (void)menu_line_copy(dst, offset, "(empty)", 7U);
+        }
+        return;
+    }
+
+    if ((st->current_page == MENU_PAGE_SEND_TARGET_LIST) &&
+        (item_idx > 0U) &&
+        (item_idx <= MENU_TRUSTED_DEVICE_SLOTS))
+    {
+        memset(&info, 0, sizeof(info));
+        if (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) && info.in_use)
+        {
+            offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
+            offset = menu_line_copy(dst, offset, "0x", 2U);
+            (void)menu_line_append_hex32(dst, offset, info.node_id);
+        }
+        else
+        {
+            offset = menu_line_copy(dst, offset, "Slot ", 5U);
+            offset = menu_line_append_u32(dst, offset, (uint32_t)(item_idx - 1U));
+            offset = menu_line_copy(dst, offset, " ", 1U);
+            (void)menu_line_copy(dst, offset, "(empty)", 7U);
+        }
+        return;
+    }
+
+    if ((st->current_page == MENU_PAGE_RADIO_SETTINGS) &&
+        radio_main_get_runtime_cfg(&radio_cfg))
+    {
+        uint8_t item_count = menu_radio_settings_item_count(&radio_cfg);
+
+        if (item_idx < item_count)
+        {
+            if (item_idx == (uint8_t)(item_count - 1U))
+            {
+                (void)menu_line_copy(dst, 0U, "Back", MENU_LINE_CHARS);
+            }
+            else
+            {
+                menu_build_radio_settings_item(&radio_cfg, item_idx, dst);
+            }
+        }
+        return;
+    }
+
+    if ((st->current_page == MENU_PAGE_DEVICE_DELETE_ACTION) &&
+        (item_idx == 0U))
+    {
+        memset(&info, 0, sizeof(info));
+        if ((st->selected_device_slot != MENU_DEVICE_SLOT_INVALID) &&
+            security_main_cmd_get_device(st->selected_device_slot, &info) &&
+            info.in_use)
+        {
+            offset = menu_line_copy(dst, offset, info.is_master ? "M" : "S", 1U);
+            offset = menu_line_append_u32(dst, offset, st->selected_device_slot);
+            offset = menu_line_copy(dst, offset, " 0x", 3U);
+            offset = menu_line_append_hex32(dst, offset, info.node_id);
+        }
+        else
+        {
+            (void)menu_line_copy(dst, offset, "No device selected", 18U);
+        }
+        return;
+    }
+
+    if ((st->current_page == MENU_PAGE_SECURITY_AUTOPING) &&
+        (item_idx == 0U))
+    {
+        if (radio_main_get_auto_ping_period_ms(&period_ms))
+        {
+            offset = menu_line_copy(dst, offset, "Period ", 7U);
+            offset = menu_line_append_u32(dst, offset, period_ms);
+            (void)menu_line_copy(dst, offset, " ms", 3U);
+        }
+        else
+        {
+            (void)menu_line_copy(dst, offset, "Period unavailable", 18U);
+        }
+        return;
+    }
+
+    if ((item_idx < page->item_count) && (page->items[item_idx].label != NULL))
+    {
+        (void)menu_line_copy(dst, 0U, page->items[item_idx].label, MENU_LINE_CHARS);
+    }
+}
+
 static void menu_render(menu_state_t *st)
 {
     char screen[MENU_DISPLAY_ROWS][MENU_LINE_BUF_SIZE];
+    char label[MENU_LINE_BUF_SIZE];
     const menu_page_t *page;
     uint8_t row;
     uint8_t start_idx;
@@ -1477,14 +2310,13 @@ static void menu_render(menu_state_t *st)
         menu_line_clear(screen[row]);
     }
 
-    (void)menu_line_copy(screen[0], 0U, page->title, MENU_LINE_CHARS);
+    menu_build_page_title(st, page, screen[0]);
 
     start_idx = (uint8_t)((st->selected_idx / MENU_ITEMS_VISIBLE) * MENU_ITEMS_VISIBLE);
     for (row = 0U; row < MENU_ITEMS_VISIBLE; row++)
     {
         uint8_t item_idx = (uint8_t)(start_idx + row);
         uint8_t dst_row = (uint8_t)(row + 1U);
-        const char *label;
 
         if (item_idx < page->item_count)
         {
@@ -1494,11 +2326,7 @@ static void menu_render(menu_state_t *st)
                 screen[dst_row][0] = '>';
             }
 
-            label = "";
-            if (page->items[item_idx].label != NULL)
-            {
-                label = page->items[item_idx].label;
-            }
+            menu_build_item_label(st, page, item_idx, label);
 
             (void)menu_line_copy(screen[dst_row],
                                  1U,
@@ -1523,6 +2351,50 @@ static void menu_render_popup(const char *l0, const char *l1, const char *l2, co
     menu_line_copy_or_default(line3, l3, "");
 
     (void)lcd_main_show_popup(line0, line1, line2, line3);
+}
+
+static void menu_render_quick_reply(menu_state_t *st)
+{
+    char line1[MENU_LINE_BUF_SIZE];
+    char line2[MENU_LINE_BUF_SIZE];
+    char line3[MENU_LINE_BUF_SIZE];
+
+    if (st == NULL)
+    {
+        return;
+    }
+
+    menu_line_format_hex32(line1, "From ", st->quick_reply_src_id);
+    menu_line_copy_or_default(line2, "UP=no OK=ok DN=yes", "");
+    menu_line_format_u32(line3, "Reply in ", st->quick_reply_last_seconds, " s");
+    menu_render_popup(st->quick_reply_text, line1, line2, line3);
+}
+
+static bool menu_should_open_quick_reply(const char *text)
+{
+    if (text == NULL)
+    {
+        return false;
+    }
+
+    if (strcmp(text, "ASK: Is done?") == 0)
+    {
+        return true;
+    }
+    if (strcmp(text, "ACT Come over.") == 0)
+    {
+        return true;
+    }
+    if (strcmp(text, "ACT: Stop!") == 0)
+    {
+        return true;
+    }
+    if (strcmp(text, "ASK: Is ready?") == 0)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text)
@@ -1595,15 +2467,12 @@ static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_te
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n)
 {
     char code_line[MENU_LINE_BUF_SIZE];
+    char rssi_line[MENU_LINE_BUF_SIZE];
+    char source_line[MENU_LINE_BUF_SIZE];
     char text_safe[MENU_LINE_BUF_SIZE];
     bool has_text;
 
     if ((st == NULL) || (n == NULL))
-    {
-        return;
-    }
-    if ((st->current_page == MENU_PAGE_NONE) &&
-        (n->type != MENU_NOTIFICATION_PAIRING))
     {
         return;
     }
@@ -1619,19 +2488,40 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
             return;
         }
     }
-    if (n->type == MENU_NOTIFICATION_RX)
-    {
-        return;
-    }
-    if ((!st->popup_enabled) && (n->type != MENU_NOTIFICATION_PAIRING))
-    {
-        return;
-    }
 
     memset(text_safe, 0, sizeof(text_safe));
     (void)menu_line_copy(text_safe, 0U, n->text, MENU_LINE_CHARS);
     has_text = (text_safe[0] != '\0');
     if (!has_text && (n->type != MENU_NOTIFICATION_PAIRING))
+    {
+        return;
+    }
+
+    if (n->type == MENU_NOTIFICATION_RX)
+    {
+        if (menu_should_open_quick_reply(has_text ? text_safe : NULL))
+        {
+            st->modal = MENU_MODAL_QUICK_REPLY;
+            st->quick_reply_src_id = n->device_code;
+            st->quick_reply_deadline_ms = HAL_GetTick() + 30000UL;
+            st->quick_reply_last_seconds = 30U;
+            menu_line_copy_or_default(st->quick_reply_text, text_safe, "");
+            menu_render_quick_reply(st);
+            return;
+        }
+
+        if (!st->popup_enabled && (st->current_page == MENU_PAGE_NONE))
+        {
+            return;
+        }
+
+        menu_line_format_hex32(source_line, "From ", n->device_code);
+        menu_line_format_i32(rssi_line, "RSSI ", n->rssi_dbm, " dBm");
+        menu_open_info_modal(st, "RX MESSAGE", has_text ? text_safe : "(empty)", source_line, rssi_line);
+        return;
+    }
+
+    if ((!st->popup_enabled) && (n->type != MENU_NOTIFICATION_PAIRING))
     {
         return;
     }
@@ -1718,7 +2608,7 @@ static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
                 return;
             }
 
-            ok = menu_start_pairing_session(st, send_join_req);
+            ok = menu_start_pairing_session(st, send_join_req, st->pairing_network_mode);
             if (!ok)
             {
                 menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Pairing start failed");
@@ -1734,6 +2624,28 @@ static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
             }
             break;
 
+        case MENU_MODAL_QUICK_REPLY:
+            if (evt == BUTTON_EVENT_UP_SHORT)
+            {
+                ok = radio_main_cmd_send_user_text("NO", st->quick_reply_src_id);
+                menu_show_send_result(st, ok, "Sent NO");
+            }
+            else if (evt == BUTTON_EVENT_OK_SHORT)
+            {
+                ok = radio_main_cmd_send_user_text("OK", st->quick_reply_src_id);
+                menu_show_send_result(st, ok, "Sent OK");
+            }
+            else if (evt == BUTTON_EVENT_DOWN_SHORT)
+            {
+                ok = radio_main_cmd_send_user_text("YES", st->quick_reply_src_id);
+                menu_show_send_result(st, ok, "Sent YES");
+            }
+            else
+            {
+                menu_close_modal(st);
+            }
+            break;
+
         case MENU_MODAL_INFO:
         default:
             menu_close_modal(st);
@@ -1744,6 +2656,7 @@ static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
 static void menu_handle_button(menu_state_t *st, button_event_t evt)
 {
     const menu_page_t *page;
+    radio_main_runtime_cfg_t radio_cfg;
 
     if ((st == NULL) || (evt == BUTTON_EVENT_NONE))
     {
@@ -1758,7 +2671,18 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
 
     if (st->current_page == MENU_PAGE_NONE)
     {
-        menu_open_page(st, MENU_PAGE_PAGER);
+        if (evt == BUTTON_EVENT_UP_SHORT)
+        {
+            (void)lcd_main_monitor_scroll_up();
+        }
+        else if (evt == BUTTON_EVENT_DOWN_SHORT)
+        {
+            (void)lcd_main_monitor_scroll_down();
+        }
+        else if ((evt == BUTTON_EVENT_OK_SHORT) || (evt == BUTTON_EVENT_OK_LONG))
+        {
+            menu_open_page(st, MENU_PAGE_PAGER);
+        }
         return;
     }
 
@@ -1774,14 +2698,20 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
         case BUTTON_EVENT_UP_SHORT:
             if (page->item_count > 0U)
             {
-                if (st->selected_idx == 0U)
+                uint8_t start = st->selected_idx;
+
+                do
                 {
-                    st->selected_idx = (uint8_t)(page->item_count - 1U);
-                }
-                else
-                {
-                    st->selected_idx = (uint8_t)(st->selected_idx - 1U);
-                }
+                    if (st->selected_idx == 0U)
+                    {
+                        st->selected_idx = (uint8_t)(page->item_count - 1U);
+                    }
+                    else
+                    {
+                        st->selected_idx = (uint8_t)(st->selected_idx - 1U);
+                    }
+                } while ((st->selected_idx != start) &&
+                         !menu_item_is_selectable(st, page, st->selected_idx));
                 menu_render(st);
             }
             break;
@@ -1789,7 +2719,13 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
         case BUTTON_EVENT_DOWN_SHORT:
             if (page->item_count > 0U)
             {
-                st->selected_idx = (uint8_t)((st->selected_idx + 1U) % page->item_count);
+                uint8_t start = st->selected_idx;
+
+                do
+                {
+                    st->selected_idx = (uint8_t)((st->selected_idx + 1U) % page->item_count);
+                } while ((st->selected_idx != start) &&
+                         !menu_item_is_selectable(st, page, st->selected_idx));
                 menu_render(st);
             }
             break;
@@ -1799,13 +2735,109 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
             {
                 const menu_item_t *item = &page->items[st->selected_idx];
 
-                if (item->child_page != MENU_PAGE_NONE)
+                if (!menu_item_is_selectable(st, page, st->selected_idx))
+                {
+                    break;
+                }
+                if ((st->current_page == MENU_PAGE_RADIO_SETTINGS) &&
+                    radio_main_get_runtime_cfg(&radio_cfg))
+                {
+                    if (st->selected_idx == (uint8_t)(menu_radio_settings_item_count(&radio_cfg) - 1U))
+                    {
+                        menu_execute_action(st, MENU_ACTION_BACK);
+                        break;
+                    }
+                }
+                if ((st->current_page == MENU_PAGE_DEVICE_DELETE_LIST) &&
+                    (st->selected_idx < MENU_TRUSTED_DEVICE_SLOTS))
+                {
+                    trusted_info_t info;
+
+                    memset(&info, 0, sizeof(info));
+                    if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
+                    {
+                        menu_open_device_delete_action(st, st->selected_idx);
+                    }
+                    else
+                    {
+                        menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Empty slot");
+                    }
+                }
+                else if (st->current_page == MENU_PAGE_SEND_TARGET_LIST)
+                {
+                    if (st->selected_idx == 0U)
+                    {
+                        st->pending_target_node_id = BEKO_NET_BROADCAST_ID;
+                        menu_open_send_prompt(st, st->send_target_action, "Broadcast");
+                    }
+                    else if ((st->selected_idx > 0U) &&
+                             (st->selected_idx <= MENU_TRUSTED_DEVICE_SLOTS))
+                    {
+                        trusted_info_t info;
+                        char label[MENU_LINE_BUF_SIZE];
+
+                        memset(&info, 0, sizeof(info));
+                        if (security_main_cmd_get_device((uint8_t)(st->selected_idx - 1U), &info) && info.in_use)
+                        {
+                            st->pending_target_node_id = info.node_id;
+                            menu_line_clear(label);
+                            if (info.is_master)
+                            {
+                                (void)menu_line_copy(label, 0U, "Master ", 7U);
+                                (void)menu_line_append_hex32(label, 7U, info.node_id);
+                            }
+                            else
+                            {
+                                (void)menu_line_copy(label, 0U, "Node ", 5U);
+                                (void)menu_line_append_hex32(label, 5U, info.node_id);
+                            }
+                            menu_open_send_prompt(st, st->send_target_action, label);
+                        }
+                        else
+                        {
+                            menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Empty slot");
+                        }
+                    }
+                    else
+                    {
+                        menu_execute_action(st, MENU_ACTION_BACK);
+                    }
+                }
+                else if ((st->current_page == MENU_PAGE_SEND_DIRECT_LIST) &&
+                         (st->selected_idx < MENU_TRUSTED_DEVICE_SLOTS))
+                {
+                    trusted_info_t info;
+                    char label[MENU_LINE_BUF_SIZE];
+
+                    memset(&info, 0, sizeof(info));
+                    if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
+                    {
+                        st->pending_target_node_id = info.node_id;
+                        menu_line_clear(label);
+                        if (info.is_master)
+                        {
+                            (void)menu_line_copy(label, 0U, "Master ", 7U);
+                            (void)menu_line_append_hex32(label, 7U, info.node_id);
+                        }
+                        else
+                        {
+                            (void)menu_line_copy(label, 0U, "Node ", 5U);
+                            (void)menu_line_append_hex32(label, 5U, info.node_id);
+                        }
+                        menu_open_send_prompt(st, MENU_ACTION_SEND_DIRECT_DEFAULT, label);
+                    }
+                    else
+                    {
+                        menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Empty slot");
+                    }
+                }
+                else if (item->child_page != MENU_PAGE_NONE)
                 {
                     menu_open_page(st, item->child_page);
                 }
                 else if (menu_is_send_action(item->action))
                 {
-                    menu_open_send_prompt(st, item->action, item->label);
+                    menu_open_send_target_page(st, item->action);
                 }
                 else
                 {
@@ -1815,6 +2847,12 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
             break;
 
         case BUTTON_EVENT_OK_LONG:
+            if ((st->current_page == MENU_PAGE_SEND_TARGET_LIST) &&
+                (st->transient_parent_page != MENU_PAGE_NONE))
+            {
+                menu_open_page(st, st->transient_parent_page);
+                break;
+            }
             if (page->parent == MENU_PAGE_NONE)
             {
                 menu_enter_monitor(st);
@@ -1844,7 +2882,9 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
     bool have_radio_cfg;
     uint8_t idx;
     uint8_t count;
+    uint32_t auto_ping_ms;
     int32_t distance_mm;
+    uint32_t dst_id;
 
     menu_line_clear(line0);
     menu_line_clear(line1);
@@ -1861,110 +2901,213 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
     switch (action)
     {
         case MENU_ACTION_BACK:
-        {
-            const menu_page_t *page = menu_get_page(st->current_page);
-
-            if ((page == NULL) || (page->parent == MENU_PAGE_NONE))
+            if ((st->current_page == MENU_PAGE_SEND_TARGET_LIST) &&
+                (st->transient_parent_page != MENU_PAGE_NONE))
             {
-                menu_enter_monitor(st);
+                menu_open_page(st, st->transient_parent_page);
+                break;
             }
-            else
             {
-                menu_open_page(st, page->parent);
+                const menu_page_t *page = menu_get_page(st->current_page);
+
+                if ((page == NULL) || (page->parent == MENU_PAGE_NONE))
+                {
+                    menu_enter_monitor(st);
+                }
+                else
+                {
+                    menu_open_page(st, page->parent);
+                }
             }
             break;
-        }
 
         case MENU_ACTION_EXIT_TO_MONITOR:
             menu_enter_monitor(st);
             break;
 
         case MENU_ACTION_SEND_DEFAULT:
-            send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(1U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:OK");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
+            break;
+
+        case MENU_ACTION_SEND_DIRECT_DEFAULT:
+            if (st->pending_target_node_id == 0U)
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "No target");
+                break;
+            }
+            send_ok = radio_main_cmd_send_template(1U, 0U, st->pending_target_node_id);
+            menu_line_format_hex32(line0, "Sent to ", st->pending_target_node_id);
+            menu_show_send_result(st, send_ok, line0);
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_ALERT_FIRE:
-            send_ok = radio_main_cmd_send_template(0U, 0U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(0U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent ALR:FIRE");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_ALERT_INTR:
-            send_ok = radio_main_cmd_send_template(0U, 1U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(0U, 1U, dst_id);
             menu_show_send_result(st, send_ok, "Sent ALR:INTR");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_ALERT_LOWBATT:
-            send_ok = radio_main_cmd_send_template(0U, 2U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(0U, 2U, dst_id);
             menu_show_send_result(st, send_ok, "Sent ALR:LOW");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_STATUS_OK:
-            send_ok = radio_main_cmd_send_template(1U, 0U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(1U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:OK");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_STATUS_BUSY:
-            send_ok = radio_main_cmd_send_template(1U, 1U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(1U, 1U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:BUSY");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_STATUS_IDLE:
-            send_ok = radio_main_cmd_send_template(1U, 2U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(1U, 2U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:IDLE");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_SERVICE_PING:
-            send_ok = radio_main_cmd_send_template(2U, 0U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(2U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent SRV:PING");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_SERVICE_RESET:
-            send_ok = radio_main_cmd_send_template(2U, 1U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(2U, 1U, dst_id);
             menu_show_send_result(st, send_ok, "Sent SRV:RESET");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_SEND_SERVICE_SYNC:
-            send_ok = radio_main_cmd_send_template(2U, 2U, BEKO_NET_BROADCAST_ID);
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_template(2U, 2U, dst_id);
             menu_show_send_result(st, send_ok, "Sent SRV:SYNC");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
+            break;
+
+        case MENU_ACTION_SEND_ASK_DONE:
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_user_text("ASK: Is done?", dst_id);
+            menu_show_send_result(st, send_ok, "Sent ASK:DONE");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
+            break;
+
+        case MENU_ACTION_SEND_ACT_COME_OVER:
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_user_text("ACT Come over.", dst_id);
+            menu_show_send_result(st, send_ok, "Sent ACT:COME");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
+            break;
+
+        case MENU_ACTION_SEND_ACT_STOP:
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_user_text("ACT: Stop!", dst_id);
+            menu_show_send_result(st, send_ok, "Sent ACT:STOP");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
+            break;
+
+        case MENU_ACTION_SEND_ASK_READY:
+            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            send_ok = radio_main_cmd_send_user_text("ASK: Is ready?", dst_id);
+            menu_show_send_result(st, send_ok, "Sent ASK:READY");
+            st->pending_target_node_id = 0U;
+            st->send_target_action = MENU_ACTION_NONE;
             break;
 
         case MENU_ACTION_DEVICE_ADD:
+            st->pairing_network_mode = false;
             st->modal = MENU_MODAL_PAIR_SETUP;
             st->pending_action = MENU_ACTION_NONE;
             menu_render_popup("PAIR MODE 60s", "OK=listen", "Hold OK=JOIN_REQ", "Any key=cancel");
             break;
 
+        case MENU_ACTION_DEVICE_ADD_NETWORK:
+            st->pairing_network_mode = true;
+            st->modal = MENU_MODAL_PAIR_SETUP;
+            st->pending_action = MENU_ACTION_NONE;
+            menu_render_popup("NET PAIR >-20dBm", "OK=listen", "Hold OK=JOIN_REQ", "Any key=cancel");
+            break;
+
         case MENU_ACTION_DEVICE_DELETE:
-            for (idx = 0U; idx < 16U; idx++)
+            menu_open_page(st, MENU_PAGE_DEVICE_DELETE_LIST);
+            break;
+
+        case MENU_ACTION_DEVICE_DELETE_CONFIRM:
+            if (st->selected_device_slot >= MENU_TRUSTED_DEVICE_SLOTS)
             {
-                if (security_main_cmd_get_device(idx, &info) && info.in_use)
-                {
-                    bool deleted = security_main_cmd_delete_device(info.node_id);
-                    bool notified = false;
-
-                    if (deleted)
-                    {
-                        notified = radio_main_cmd_send_trust_removed(info.node_id);
-                    }
-
-                    if (!deleted)
-                    {
-                        menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Delete failed");
-                    }
-                    else if (notified)
-                    {
-                        menu_line_format_u32(line0, "Deleted slot ", idx, "");
-                        menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, line0);
-                    }
-                    else
-                    {
-                        menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Deleted local only");
-                    }
-                    return;
-                }
+                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "No device");
+                break;
             }
-            menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "No device");
+            if (!security_main_cmd_get_device(st->selected_device_slot, &info) || !info.in_use)
+            {
+                st->current_page = MENU_PAGE_DEVICE_DELETE_LIST;
+                st->selected_idx = 0U;
+                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Device gone");
+                break;
+            }
+
+            ok = security_main_cmd_delete_device(info.node_id);
+            if (ok)
+            {
+                send_ok = radio_main_cmd_send_trust_removed(info.node_id);
+            }
+            else
+            {
+                send_ok = false;
+            }
+
+            st->current_page = MENU_PAGE_DEVICE_DELETE_LIST;
+            st->selected_idx = 0U;
+            st->selected_device_slot = MENU_DEVICE_SLOT_INVALID;
+
+            if (!ok)
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Delete failed");
+            }
+            else if (send_ok)
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "Device removed");
+            }
+            else
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Removed local only");
+            }
             break;
 
         case MENU_ACTION_DEVICE_INFO:
@@ -2051,6 +3194,52 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
         case MENU_ACTION_SEC_ROTATE_KEYS:
             ok = security_main_cmd_rotate_key();
             menu_show_ok_or_error(st, ok, "Key rotated", "Keys: not ready");
+            break;
+
+        case MENU_ACTION_SEC_CODING_ON:
+            ok = security_main_cmd_set_coding(true) && radio_main_cmd_set_coding(true);
+            menu_show_ok_or_error(st, ok, "Coding ON", "Coding set failed");
+            break;
+
+        case MENU_ACTION_SEC_CODING_OFF:
+            ok = security_main_cmd_set_coding(false) && radio_main_cmd_set_coding(false);
+            menu_show_ok_or_error(st, ok, "Coding OFF", "Coding set failed");
+            break;
+
+        case MENU_ACTION_SEC_NOTIFY_POPUP:
+            ok = security_main_cmd_set_notify_mode(SECURITY_NOTIFY_POPUP);
+            if (ok)
+            {
+                st->popup_enabled = true;
+            }
+            menu_show_ok_or_error(st, ok, "Notif POPUP", "Notif set failed");
+            break;
+
+        case MENU_ACTION_SEC_NOTIFY_BADGE:
+            ok = security_main_cmd_set_notify_mode(SECURITY_NOTIFY_BADGE);
+            if (ok)
+            {
+                st->popup_enabled = false;
+            }
+            menu_show_ok_or_error(st, ok, "Notif BADGE", "Notif set failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_ON:
+            ok = security_main_cmd_set_auto_ping(true) && radio_main_cmd_set_auto_ping(true);
+            if (ok && radio_main_get_auto_ping_period_ms(&auto_ping_ms))
+            {
+                menu_line_format_u32(line1, "Period ", auto_ping_ms, " ms");
+                menu_open_info_modal(st, "AUTOPING ON", line1, "Any key=back", "");
+            }
+            else
+            {
+                menu_show_ok_or_error(st, ok, "AutoPing ON", "AutoPing failed");
+            }
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_OFF:
+            ok = security_main_cmd_set_auto_ping(false) && radio_main_cmd_set_auto_ping(false);
+            menu_show_ok_or_error(st, ok, "AutoPing OFF", "AutoPing failed");
             break;
 
         case MENU_ACTION_SEC_TOGGLE_CODING:
@@ -2151,6 +3340,25 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             {
                 menu_open_info_modal(st, "BMP280", "No data", "Any key=back", "");
             }
+            break;
+
+        case MENU_ACTION_HW_LED_RAINBOW:
+            st->led_mode = 0U;
+            (void)led_array_start_rainbow(15U, 5U, 100U);
+            menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED rainbow");
+            break;
+
+        case MENU_ACTION_HW_LED_BREATH:
+            st->led_mode = 1U;
+            (void)led_array_start_breath(LED_ARRAY_LED_ALL, 1200U, 5U, 100U);
+            menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED breath");
+            break;
+
+        case MENU_ACTION_HW_LED_OFF:
+            st->led_mode = 2U;
+            (void)led_array_stop_effect();
+            (void)led_array_off(LED_ARRAY_LED_ALL);
+            menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "LED off");
             break;
 
         case MENU_ACTION_HW_LED_MODE:
@@ -2299,10 +3507,62 @@ static bool menu_is_send_action(menu_action_t action)
         case MENU_ACTION_SEND_SERVICE_PING:
         case MENU_ACTION_SEND_SERVICE_RESET:
         case MENU_ACTION_SEND_SERVICE_SYNC:
+        case MENU_ACTION_SEND_ASK_DONE:
+        case MENU_ACTION_SEND_ACT_COME_OVER:
+        case MENU_ACTION_SEND_ACT_STOP:
+        case MENU_ACTION_SEND_ASK_READY:
             return true;
         default:
             return false;
     }
+}
+
+static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx)
+{
+    radio_main_runtime_cfg_t radio_cfg;
+
+    if ((st == NULL) || (page == NULL) || (item_idx >= page->item_count))
+    {
+        return false;
+    }
+
+    if ((st->current_page == MENU_PAGE_RADIO_SETTINGS) &&
+        radio_main_get_runtime_cfg(&radio_cfg))
+    {
+        return (item_idx < menu_radio_settings_item_count(&radio_cfg));
+    }
+
+    if (st->current_page == MENU_PAGE_SEND_TARGET_LIST)
+    {
+        if ((item_idx == 0U) || (item_idx == (uint8_t)(page->item_count - 1U)))
+        {
+            return true;
+        }
+
+        if ((item_idx > 0U) && (item_idx <= MENU_TRUSTED_DEVICE_SLOTS))
+        {
+            trusted_info_t info;
+
+            memset(&info, 0, sizeof(info));
+            return (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) && info.in_use);
+        }
+
+        return false;
+    }
+
+    if ((st->current_page == MENU_PAGE_SECURITY_AUTOPING) &&
+        (item_idx == 0U))
+    {
+        return false;
+    }
+
+    if ((st->current_page == MENU_PAGE_DEVICE_DELETE_ACTION) &&
+        (item_idx == 0U))
+    {
+        return false;
+    }
+
+    return true;
 }
 
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label)
@@ -2329,8 +3589,43 @@ static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const 
     menu_render_popup("SEND MESSAGE?", msg, "OK=send", "Any key=back");
 }
 
+static void menu_open_send_target_page(menu_state_t *st, menu_action_t action)
+{
+    menu_page_id_t previous_page;
+
+    if (st == NULL)
+    {
+        return;
+    }
+
+    previous_page = st->current_page;
+    st->current_page = MENU_PAGE_SEND_TARGET_LIST;
+    st->selected_idx = 0U;
+    st->modal = MENU_MODAL_NONE;
+    st->pending_action = MENU_ACTION_NONE;
+    st->pending_target_node_id = 0U;
+    st->send_target_action = action;
+    st->transient_parent_page = previous_page;
+    menu_render(st);
+}
+
+static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot)
+{
+    if (st == NULL)
+    {
+        return;
+    }
+
+    st->current_page = MENU_PAGE_DEVICE_DELETE_ACTION;
+    st->selected_idx = 1U;
+    st->modal = MENU_MODAL_NONE;
+    st->pending_action = MENU_ACTION_NONE;
+    st->selected_device_slot = slot;
+    menu_render(st);
+}
+
 /* Starts pairing and reports the mode/result through a modal message. */
-static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
+static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, bool network_mode)
 {
     bool send_ok = true;
 
@@ -2338,14 +3633,28 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
     {
         return false;
     }
-    if (!radio_main_cmd_start_pairing(60000U))
+    if (network_mode)
+    {
+        if (!radio_main_cmd_start_network_pairing(60000U))
+        {
+            return false;
+        }
+    }
+    else if (!radio_main_cmd_start_pairing(60000U))
     {
         return false;
     }
 
     if (send_join_req)
     {
-        send_ok = radio_main_cmd_send_join_req();
+        if (network_mode)
+        {
+            send_ok = radio_main_cmd_send_network_join_req();
+        }
+        else
+        {
+            send_ok = radio_main_cmd_send_join_req();
+        }
     }
 
     if (send_join_req)
@@ -2358,16 +3667,19 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req)
         }
 
         menu_open_info_modal(st,
-                             "PAIR MODE",
+                             network_mode ? "NET PAIR" : "PAIR MODE",
                              "60s active",
                              status_line,
                              "Any key=close");
     }
     else
     {
-        menu_open_info_modal(st, "PAIR MODE", "60s active", "Listening...", "Any key=close");
+        menu_open_info_modal(st,
+                             network_mode ? "NET PAIR" : "PAIR MODE",
+                             "60s active",
+                             network_mode ? "Need >-20 dBm" : "Listening...",
+                             "Any key=close");
     }
 
     return true;
 }
-

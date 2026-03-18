@@ -12,6 +12,7 @@
 #define LCD_MAIN_ROWS              4U
 #define LCD_MAIN_COLS              20U
 #define LCD_MAIN_QUEUE_LENGTH      256U
+#define LCD_MAIN_MONITOR_HISTORY   64U
 #define LCD_TASK_STACK_SIZE        8192U
 #define LCD_TASK_STACK_WORDS       (LCD_TASK_STACK_SIZE / sizeof(StackType_t))
 
@@ -24,7 +25,9 @@ typedef enum
     LCD_MAIN_MSG_SET_MODE,
     LCD_MAIN_MSG_SHOW_POPUP,
     LCD_MAIN_MSG_SHOW_BOOT,
-    LCD_MAIN_MSG_CLEAR
+    LCD_MAIN_MSG_CLEAR,
+    LCD_MAIN_MSG_MONITOR_SCROLL_UP,
+    LCD_MAIN_MSG_MONITOR_SCROLL_DOWN
 } lcd_main_msg_type_t;
 
 typedef struct
@@ -45,8 +48,12 @@ static StackType_t s_lcd_task_stack[LCD_TASK_STACK_WORDS];
 
 static lcd_main_mode_t s_mode = LCD_MODE_MONITOR;
 static char s_monitor_lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U];
+static char s_monitor_history[LCD_MAIN_MONITOR_HISTORY][LCD_MAIN_COLS + 1U];
 static char s_ui_lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U];
 static char s_rendered_lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U];
+static uint8_t s_monitor_history_head = 0U;
+static uint8_t s_monitor_history_count = 0U;
+static uint8_t s_monitor_view_offset = 0U;
 static bool s_render_cache_valid = false;
 
 static void lcd_main_task_fn(void *argument);
@@ -54,7 +61,8 @@ static void lcd_main_fill_line(char *dst, const char *src);
 static void lcd_main_write_rssi_field(char *dst, int16_t rssi_dbm);
 static void lcd_main_fill_line_from_payload(char *dst, int16_t rssi_dbm, const uint8_t *data, uint32_t length);
 static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
-static void lcd_main_shift_up_and_append(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U], const char *line);
+static void lcd_main_monitor_history_append(const char *line);
+static void lcd_main_monitor_rebuild_lines(void);
 static void lcd_main_render_mode(void);
 static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
 static void lcd_main_invalidate_render_cache(void);
@@ -188,6 +196,24 @@ bool lcd_main_show_boot_hello(void)
     return lcd_main_post_message(&msg);
 }
 
+bool lcd_main_monitor_scroll_up(void)
+{
+    lcd_main_msg_t msg;
+
+    memset(&msg, 0, sizeof(msg));
+    msg.type = LCD_MAIN_MSG_MONITOR_SCROLL_UP;
+    return lcd_main_post_message(&msg);
+}
+
+bool lcd_main_monitor_scroll_down(void)
+{
+    lcd_main_msg_t msg;
+
+    memset(&msg, 0, sizeof(msg));
+    msg.type = LCD_MAIN_MSG_MONITOR_SCROLL_DOWN;
+    return lcd_main_post_message(&msg);
+}
+
 static void lcd_main_task_fn(void *argument)
 {
     lcd_main_msg_t msg;
@@ -200,8 +226,12 @@ static void lcd_main_task_fn(void *argument)
     lcd_clear();
 
     lcd_main_clear_lines(s_monitor_lines);
+    lcd_main_clear_lines(s_monitor_history);
     lcd_main_clear_lines(s_ui_lines);
     lcd_main_clear_lines(s_rendered_lines);
+    s_monitor_history_head = 0U;
+    s_monitor_history_count = 0U;
+    s_monitor_view_offset = 0U;
     s_render_cache_valid = false;
 
     lcd_animation_hello_beko();
@@ -249,7 +279,7 @@ static void lcd_main_task_fn(void *argument)
                     break;
 
                 case LCD_MAIN_MSG_PUSH_MONITOR:
-                    lcd_main_shift_up_and_append(s_monitor_lines, msg.text0);
+                    lcd_main_monitor_history_append(msg.text0);
                     if (s_mode == LCD_MODE_MONITOR)
                     {
                         render_required = true;
@@ -262,6 +292,11 @@ static void lcd_main_task_fn(void *argument)
                         lcd_main_clear_lines(s_ui_lines);
                     }
                     s_mode = msg.mode;
+                    if (msg.mode == LCD_MODE_MONITOR)
+                    {
+                        s_monitor_view_offset = 0U;
+                        lcd_main_monitor_rebuild_lines();
+                    }
                     lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
@@ -280,15 +315,44 @@ static void lcd_main_task_fn(void *argument)
                 case LCD_MAIN_MSG_SHOW_BOOT:
                     lcd_animation_hello_beko();
                     s_mode = LCD_MODE_MONITOR;
+                    s_monitor_view_offset = 0U;
+                    lcd_main_monitor_rebuild_lines();
                     lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
 
                 case LCD_MAIN_MSG_CLEAR:
                     lcd_main_clear_lines(s_monitor_lines);
+                    lcd_main_clear_lines(s_monitor_history);
                     lcd_main_clear_lines(s_ui_lines);
+                    s_monitor_history_head = 0U;
+                    s_monitor_history_count = 0U;
+                    s_monitor_view_offset = 0U;
                     lcd_main_invalidate_render_cache();
                     render_required = true;
+                    break;
+
+                case LCD_MAIN_MSG_MONITOR_SCROLL_UP:
+                    if (s_monitor_history_count > LCD_MAIN_ROWS)
+                    {
+                        uint8_t max_offset = (uint8_t)(s_monitor_history_count - LCD_MAIN_ROWS);
+
+                        if (s_monitor_view_offset < max_offset)
+                        {
+                            s_monitor_view_offset++;
+                            lcd_main_monitor_rebuild_lines();
+                            render_required = (s_mode == LCD_MODE_MONITOR);
+                        }
+                    }
+                    break;
+
+                case LCD_MAIN_MSG_MONITOR_SCROLL_DOWN:
+                    if (s_monitor_view_offset > 0U)
+                    {
+                        s_monitor_view_offset--;
+                        lcd_main_monitor_rebuild_lines();
+                        render_required = (s_mode == LCD_MODE_MONITOR);
+                    }
                     break;
 
                 default:
@@ -422,15 +486,77 @@ static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U])
     }
 }
 
-static void lcd_main_shift_up_and_append(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U], const char *line)
+static void lcd_main_monitor_history_append(const char *line)
 {
-    uint8_t row;
+    uint8_t old_count = s_monitor_history_count;
+    uint8_t max_offset;
+    uint8_t idx = s_monitor_history_head;
 
-    for (row = 0U; row < (LCD_MAIN_ROWS - 1U); row++)
+    lcd_main_fill_line(s_monitor_history[idx], line);
+    s_monitor_history_head = (uint8_t)((s_monitor_history_head + 1U) % LCD_MAIN_MONITOR_HISTORY);
+    if (s_monitor_history_count < LCD_MAIN_MONITOR_HISTORY)
     {
-        memcpy(lines[row], lines[row + 1U], (LCD_MAIN_COLS + 1U));
+        s_monitor_history_count++;
     }
-    lcd_main_fill_line(lines[LCD_MAIN_ROWS - 1U], line);
+
+    if ((old_count >= LCD_MAIN_ROWS) && (s_monitor_view_offset > 0U))
+    {
+        max_offset = (s_monitor_history_count > LCD_MAIN_ROWS) ?
+                     (uint8_t)(s_monitor_history_count - LCD_MAIN_ROWS) : 0U;
+        if (s_monitor_view_offset < max_offset)
+        {
+            s_monitor_view_offset++;
+        }
+    }
+
+    lcd_main_monitor_rebuild_lines();
+}
+
+static void lcd_main_monitor_rebuild_lines(void)
+{
+    uint8_t oldest_idx;
+    uint8_t start;
+    uint8_t visible;
+    uint8_t row_base;
+    uint8_t i;
+    uint8_t max_offset;
+
+    lcd_main_clear_lines(s_monitor_lines);
+    if (s_monitor_history_count == 0U)
+    {
+        return;
+    }
+
+    max_offset = (s_monitor_history_count > LCD_MAIN_ROWS) ?
+                 (uint8_t)(s_monitor_history_count - LCD_MAIN_ROWS) : 0U;
+    if (s_monitor_view_offset > max_offset)
+    {
+        s_monitor_view_offset = max_offset;
+    }
+
+    if (s_monitor_history_count > LCD_MAIN_ROWS)
+    {
+        start = (uint8_t)(s_monitor_history_count - LCD_MAIN_ROWS - s_monitor_view_offset);
+        visible = LCD_MAIN_ROWS;
+        row_base = 0U;
+    }
+    else
+    {
+        start = 0U;
+        visible = s_monitor_history_count;
+        row_base = (uint8_t)(LCD_MAIN_ROWS - visible);
+    }
+
+    oldest_idx = (uint8_t)((s_monitor_history_head + LCD_MAIN_MONITOR_HISTORY - s_monitor_history_count) %
+                           LCD_MAIN_MONITOR_HISTORY);
+    for (i = 0U; i < visible; i++)
+    {
+        uint8_t history_idx = (uint8_t)((oldest_idx + start + i) % LCD_MAIN_MONITOR_HISTORY);
+
+        memcpy(s_monitor_lines[row_base + i],
+               s_monitor_history[history_idx],
+               (LCD_MAIN_COLS + 1U));
+    }
 }
 
 static void lcd_main_render_mode(void)
@@ -539,11 +665,6 @@ static bool lcd_main_post_message(const lcd_main_msg_t *msg)
     if ((msg == NULL) || (s_lcd_queue == NULL))
     {
         return false;
-    }
-
-    if (lcd_main_is_fullscreen_ui_message_type(msg->type))
-    {
-        lcd_main_drop_pending_messages();
     }
 
     st = osMessageQueuePut(s_lcd_queue, msg, 0U, 0U);

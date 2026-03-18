@@ -17,9 +17,7 @@
 #define SECURITY_CMD_WAIT_MS                3000U
 #define SECURITY_CMD_POLL_MS                5U
 #define SECURITY_TRUSTED_MAX                16U
-#define SECURITY_STORE_SLOT                 0U
-#define SECURITY_STORE_RADIO_SLOT           1U
-#define SECURITY_TRUSTED_SLOT_BASE          2U
+#define SECURITY_TRUSTED_SLOT_BASE          0U
 #define SECURITY_STORE_MAGIC                0xA5U
 #define SECURITY_STORE_VERSION              3U
 #define SECURITY_LEGACY_SETTINGS_SLOT       0U
@@ -109,6 +107,7 @@ typedef struct
 typedef struct
 {
     bool in_use;
+    bool is_master;
     uint32_t node_id;
     uint8_t code_len;
     uint8_t code[SECURITY_CODE_MAX];
@@ -161,6 +160,9 @@ static bool s_security_initialized = false;
 static bool s_tpm_ready = false;
 static i2c_mem_store_t s_mem_store;
 static bool s_mem_ready = false;
+static bool s_runtime_shadow_valid = false;
+static security_store_wire_t s_runtime_shadow_store;
+static security_radio_store_wire_t s_runtime_shadow_radio;
 static st33ktpm2x_t s_tpm;
 static security_trusted_entry_t s_trusted[SECURITY_TRUSTED_MAX];
 static security_runtime_cfg_t s_runtime_cfg =
@@ -223,7 +225,6 @@ static void security_main_task_fn(void *argument);
 static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_ms);
 static bool security_main_enqueue_sync(const security_cmd_t *cmd, security_cmd_sync_t *sync);
 
-static uint16_t security_crc16(const uint8_t *data, uint16_t len);
 static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16]);
 static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint32_t peer_node_id,
@@ -703,7 +704,7 @@ static void security_main_task_fn(void *argument)
                     s_runtime_cfg.lora = cmd.u.set_radio.cfg.lora;
                     s_runtime_cfg.fsk = cmd.u.set_radio.cfg.fsk;
                     s_runtime_cfg.ook = cmd.u.set_radio.cfg.ook;
-                    s_runtime_cfg.radio_profiles_persisted = true;
+                    s_runtime_cfg.radio_profiles_persisted = false;
                     cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
@@ -767,31 +768,6 @@ static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_
     }
 
     return sync->result;
-}
-
-static uint16_t security_crc16(const uint8_t *data, uint16_t len)
-{
-    uint16_t crc = 0xFFFFU;
-    uint16_t i;
-    uint8_t j;
-
-    for (i = 0U; i < len; i++)
-    {
-        crc ^= (uint16_t)((uint16_t)data[i] << 8);
-        for (j = 0U; j < 8U; j++)
-        {
-            if ((crc & 0x8000U) != 0U)
-            {
-                crc = (uint16_t)((crc << 1) ^ 0x1021U);
-            }
-            else
-            {
-                crc <<= 1;
-            }
-        }
-    }
-
-    return crc;
 }
 
 static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16])
@@ -1039,25 +1015,14 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
 
 static bool security_load_runtime_and_seed_from_store(void)
 {
-    uint8_t buf[sizeof(security_store_wire_t)];
-    uint8_t len = 0U;
     security_store_wire_t w;
-    i2c_mem_store_status_t rc;
 
-    if (!s_mem_ready)
+    if (!s_runtime_shadow_valid)
     {
         return false;
     }
 
-    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_STORE_SLOT, buf, sizeof(buf), &len);
-    if ((rc != I2C_MEM_STORE_OK) ||
-        ((len != 13U) && (len != 14U) && (len != sizeof(w))))
-    {
-        return false;
-    }
-
-    memset(&w, 0, sizeof(w));
-    memcpy(&w, buf, len);
+    w = s_runtime_shadow_store;
     if ((w.magic != SECURITY_STORE_MAGIC) ||
         ((w.version != 1U) && (w.version != 2U) && (w.version != SECURITY_STORE_VERSION)))
     {
@@ -1097,11 +1062,6 @@ static bool security_save_runtime_and_seed_to_store(void)
 {
     security_store_wire_t w;
 
-    if (!s_mem_ready)
-    {
-        return true;
-    }
-
     memset(&w, 0, sizeof(w));
     w.magic = SECURITY_STORE_MAGIC;
     w.version = SECURITY_STORE_VERSION;
@@ -1127,14 +1087,8 @@ static bool security_save_runtime_and_seed_to_store(void)
                                                                                     sizeof(s_fh_period_options_ms[0])),
                                                                           1U));
     memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
-
-    if (i2c_mem_store_secret_write(&s_mem_store,
-                                   SECURITY_STORE_SLOT,
-                                   (const uint8_t *)&w,
-                                   sizeof(w)) != I2C_MEM_STORE_OK)
-    {
-        return false;
-    }
+    s_runtime_shadow_store = w;
+    s_runtime_shadow_valid = true;
 
     if (!security_save_radio_profiles_to_store())
     {
@@ -1259,40 +1213,22 @@ static bool security_save_radio_profiles_to_store(void)
                              security_index_from_u8(s_runtime_cfg.ook.threshold_value,
                                                     s_ook_threshold_options,
                                                     8U, 2U), 3U);
-
-    return (i2c_mem_store_secret_write(&s_mem_store,
-                                       SECURITY_STORE_RADIO_SLOT,
-                                       (const uint8_t *)&w,
-                                       sizeof(w)) == I2C_MEM_STORE_OK);
+    s_runtime_shadow_radio = w;
+    s_runtime_shadow_valid = true;
+    return true;
 }
 
 static bool security_load_radio_profiles_from_store(void)
 {
-    uint8_t buf[sizeof(security_radio_store_wire_t)];
-    uint8_t len = 0U;
     security_radio_store_wire_t w;
     uint8_t bit_pos = 0U;
     uint32_t value = 0UL;
 
-    if (!s_mem_ready)
+    if (!s_runtime_shadow_valid)
     {
         return false;
     }
-
-    if (i2c_mem_store_secret_read(&s_mem_store,
-                                  SECURITY_STORE_RADIO_SLOT,
-                                  buf,
-                                  sizeof(buf),
-                                  &len) != I2C_MEM_STORE_OK)
-    {
-        return false;
-    }
-    if (len != sizeof(w))
-    {
-        return false;
-    }
-
-    memcpy(&w, buf, sizeof(w));
+    w = s_runtime_shadow_radio;
     if ((w.magic != SECURITY_STORE_MAGIC) || (w.version != SECURITY_STORE_VERSION))
     {
         return false;
@@ -1370,72 +1306,13 @@ static bool security_load_radio_profiles_from_store(void)
 
 static bool security_load_settings_legacy_from_store(void)
 {
-    uint8_t buf[sizeof(security_settings_wire_t)];
-    uint8_t len = 0U;
-    security_settings_wire_t w;
-    i2c_mem_store_status_t rc;
-
-    if (!s_mem_ready)
-    {
-        return false;
-    }
-
-    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_LEGACY_SETTINGS_SLOT, buf, sizeof(buf), &len);
-    if ((rc != I2C_MEM_STORE_OK) || (len != sizeof(w)))
-    {
-        return false;
-    }
-
-    memcpy(&w, buf, sizeof(w));
-    if ((w.magic != SECURITY_SETTINGS_MAGIC) || (w.version != SECURITY_SETTINGS_VERSION))
-    {
-        return false;
-    }
-    if (w.crc != security_crc16((const uint8_t *)&w, (uint16_t)(sizeof(w) - sizeof(w.crc))))
-    {
-        return false;
-    }
-
-    s_runtime_cfg.coding_enabled = ((w.flags & 0x01U) != 0U);
-    s_runtime_cfg.fh_enabled = ((w.flags & 0x02U) != 0U);
-    s_runtime_cfg.auto_ping_enabled = ((w.flags & 0x04U) != 0U);
-    s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
-                                SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
-    s_runtime_cfg.lora_preset = w.lora_preset;
-    s_runtime_cfg.fh_period_ms = 2000UL;
-    return true;
+    return false;
 }
 
 static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
-    uint8_t buf[sizeof(security_key_wire_t)];
-    uint8_t len = 0U;
-    security_key_wire_t w;
-    i2c_mem_store_status_t rc;
-
-    if ((!s_mem_ready) || (seed == NULL))
-    {
-        return false;
-    }
-
-    rc = i2c_mem_store_secret_read(&s_mem_store, SECURITY_LEGACY_KEY_SEED_SLOT, buf, sizeof(buf), &len);
-    if ((rc != I2C_MEM_STORE_OK) || (len != sizeof(w)))
-    {
-        return false;
-    }
-
-    memcpy(&w, buf, sizeof(w));
-    if (w.magic != SECURITY_KEY_MAGIC)
-    {
-        return false;
-    }
-    if (w.crc != security_crc16((const uint8_t *)&w, (uint16_t)(sizeof(w) - sizeof(w.crc))))
-    {
-        return false;
-    }
-
-    memcpy(seed, w.seed, SECURITY_KEY_SEED_BYTES);
-    return true;
+    (void)seed;
+    return false;
 }
 
 static void security_migrate_trusted_slot_v1_to_v2(void)
@@ -1643,6 +1520,7 @@ static void security_load_trusted_from_store(void)
         }
 
         s_trusted[idx].in_use = true;
+        s_trusted[idx].is_master = (idx == 0U);
         s_trusted[idx].node_id = node_id;
         s_trusted[idx].code_len = rec.code_len;
         if (s_trusted[idx].code_len > SECURITY_CODE_MAX)
@@ -1697,10 +1575,21 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
             }
             return true;
         }
+    }
 
-        if ((!s_trusted[i].in_use) && (free_idx == 0xFFU))
+    if ((max_slots > 0U) && !s_trusted[0].in_use)
+    {
+        free_idx = 0U;
+    }
+    else
+    {
+        for (i = 1U; i < max_slots; i++)
         {
-            free_idx = i;
+            if (!s_trusted[i].in_use)
+            {
+                free_idx = i;
+                break;
+            }
         }
     }
 
@@ -1710,6 +1599,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     }
 
     s_trusted[free_idx].in_use = true;
+    s_trusted[free_idx].is_master = (free_idx == 0U);
     s_trusted[free_idx].node_id = node_id;
     s_trusted[free_idx].code_len = len;
     memset(s_trusted[free_idx].code, 0, sizeof(s_trusted[free_idx].code));
@@ -1756,11 +1646,13 @@ static bool security_get_device_internal(uint8_t idx, trusted_info_t *out)
     if (!s_trusted[idx].in_use)
     {
         out->slot = idx;
+        out->is_master = (idx == 0U);
         out->in_use = false;
         return true;
     }
 
     out->in_use = true;
+    out->is_master = s_trusted[idx].is_master;
     out->slot = idx;
     out->node_id = s_trusted[idx].node_id;
     out->code_len = s_trusted[idx].code_len;
@@ -1806,7 +1698,7 @@ static void security_bootstrap_store(void)
     bool loaded_v1 = false;
 
     i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
-    /* M24C01-R has only 128 B, so prioritize settings + radio profiles + one trusted slot. */
+    /* M24C01-R has only 128 B, so keep EEPROM only for trusted devices. */
     mem_cfg.secret_area_bytes = 72U;
     memset(s_key_seed_cached, 0, sizeof(s_key_seed_cached));
     security_load_default_radio_profiles(&s_runtime_cfg);
