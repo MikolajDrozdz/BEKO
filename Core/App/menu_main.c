@@ -41,6 +41,7 @@ typedef enum
     MENU_PAGE_GROUP_QUICK,
     MENU_PAGE_MAIN,
     MENU_PAGE_DEVICES,
+    MENU_PAGE_NETWORK,
     MENU_PAGE_DEVICE_DELETE_LIST,
     MENU_PAGE_DEVICE_DELETE_ACTION,
     MENU_PAGE_SECURITY,
@@ -404,11 +405,20 @@ static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_te
 static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action);
 static bool menu_is_send_action(menu_action_t action);
 static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx);
+static bool menu_find_next_selectable(const menu_state_t *st,
+                                      const menu_page_t *page,
+                                      uint8_t from_idx,
+                                      uint8_t *out_idx);
+static bool menu_find_prev_selectable(const menu_state_t *st,
+                                      const menu_page_t *page,
+                                      uint8_t from_idx,
+                                      uint8_t *out_idx);
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label);
 static void menu_open_send_target_page(menu_state_t *st, menu_action_t action);
 static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, bool network_mode);
 static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot);
 static bool menu_should_open_quick_reply(const char *text);
+static bool menu_modal_is_preemptible(menu_modal_t modal);
 static void menu_line_clear(char *dst);
 static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars);
 static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value);
@@ -561,6 +571,7 @@ static const menu_item_t s_page_group_quick_items[] =
 static const menu_item_t s_page_main_items[] =
 {
     { "Devices", MENU_PAGE_DEVICES, MENU_ACTION_NONE },
+    { "Network", MENU_PAGE_NETWORK, MENU_ACTION_NONE },
     { "Security", MENU_PAGE_SECURITY, MENU_ACTION_NONE },
     { "Hardware", MENU_PAGE_HARDWARE, MENU_ACTION_NONE },
     { "Modulation", MENU_PAGE_MODULATION, MENU_ACTION_NONE },
@@ -571,9 +582,14 @@ static const menu_item_t s_page_main_items[] =
 static const menu_item_t s_page_devices_items[] =
 {
     { "Add new device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD },
-    { "Pair with network", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD_NETWORK },
     { "Delete device", MENU_PAGE_DEVICE_DELETE_LIST, MENU_ACTION_NONE },
     { "Info device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_INFO },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
+static const menu_item_t s_page_network_items[] =
+{
+    { "Pair with network", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD_NETWORK },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -1067,6 +1083,7 @@ static const menu_page_t s_pages[] =
     { "ASK/ACT", MENU_PAGE_MSG_GROUPS, s_page_group_quick_items, (uint8_t)(sizeof(s_page_group_quick_items) / sizeof(s_page_group_quick_items[0])) },
     { "MAIN MENU", MENU_PAGE_PAGER, s_page_main_items, (uint8_t)(sizeof(s_page_main_items) / sizeof(s_page_main_items[0])) },
     { "DEVICES", MENU_PAGE_MAIN, s_page_devices_items, (uint8_t)(sizeof(s_page_devices_items) / sizeof(s_page_devices_items[0])) },
+    { "NETWORK", MENU_PAGE_MAIN, s_page_network_items, (uint8_t)(sizeof(s_page_network_items) / sizeof(s_page_network_items[0])) },
     { "DELETE DEV", MENU_PAGE_DEVICES, s_page_device_delete_list_items, (uint8_t)(sizeof(s_page_device_delete_list_items) / sizeof(s_page_device_delete_list_items[0])) },
     { "DELETE DEV", MENU_PAGE_DEVICE_DELETE_LIST, s_page_device_delete_action_items, (uint8_t)(sizeof(s_page_device_delete_action_items) / sizeof(s_page_device_delete_action_items[0])) },
     { "SECURITY", MENU_PAGE_MAIN, s_page_security_items, (uint8_t)(sizeof(s_page_security_items) / sizeof(s_page_security_items[0])) },
@@ -2169,9 +2186,16 @@ static void menu_build_item_label(const menu_state_t *st,
         memset(&info, 0, sizeof(info));
         if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "M " : "D ", 2U);
-            offset = menu_line_append_u32(dst, offset, item_idx);
-            offset = menu_line_copy(dst, offset, " 0x", 3U);
+            if (info.is_master)
+            {
+                offset = menu_line_copy(dst, offset, "SIEC 0x", 7U);
+            }
+            else
+            {
+                offset = menu_line_copy(dst, offset, "DEV ", 4U);
+                offset = menu_line_append_u32(dst, offset, item_idx);
+                offset = menu_line_copy(dst, offset, " 0x", 3U);
+            }
             (void)menu_line_append_hex32(dst, offset, info.node_id);
         }
         else
@@ -2190,9 +2214,15 @@ static void menu_build_item_label(const menu_state_t *st,
         memset(&info, 0, sizeof(info));
         if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
-            offset = menu_line_copy(dst, offset, "0x", 2U);
-            (void)menu_line_append_hex32(dst, offset, info.node_id);
+            if (info.is_master)
+            {
+                (void)menu_line_copy(dst, 0U, "SIEC (network)", MENU_LINE_CHARS);
+            }
+            else
+            {
+                offset = menu_line_copy(dst, offset, "Node 0x", 7U);
+                (void)menu_line_append_hex32(dst, offset, info.node_id);
+            }
         }
         else
         {
@@ -2211,9 +2241,15 @@ static void menu_build_item_label(const menu_state_t *st,
         memset(&info, 0, sizeof(info));
         if (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) && info.in_use)
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
-            offset = menu_line_copy(dst, offset, "0x", 2U);
-            (void)menu_line_append_hex32(dst, offset, info.node_id);
+            if (info.is_master)
+            {
+                (void)menu_line_copy(dst, 0U, "SIEC (network)", MENU_LINE_CHARS);
+            }
+            else
+            {
+                offset = menu_line_copy(dst, offset, "Node 0x", 7U);
+                (void)menu_line_append_hex32(dst, offset, info.node_id);
+            }
         }
         else
         {
@@ -2252,9 +2288,16 @@ static void menu_build_item_label(const menu_state_t *st,
             security_main_cmd_get_device(st->selected_device_slot, &info) &&
             info.in_use)
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "M" : "S", 1U);
-            offset = menu_line_append_u32(dst, offset, st->selected_device_slot);
-            offset = menu_line_copy(dst, offset, " 0x", 3U);
+            if (info.is_master)
+            {
+                offset = menu_line_copy(dst, offset, "SIEC 0x", 7U);
+            }
+            else
+            {
+                offset = menu_line_copy(dst, offset, "DEV ", 4U);
+                offset = menu_line_append_u32(dst, offset, st->selected_device_slot);
+                offset = menu_line_copy(dst, offset, " 0x", 3U);
+            }
             offset = menu_line_append_hex32(dst, offset, info.node_id);
         }
         else
@@ -2293,6 +2336,7 @@ static void menu_render(menu_state_t *st)
     const menu_page_t *page;
     uint8_t row;
     uint8_t start_idx;
+    uint8_t item_idx;
 
     if (st == NULL)
     {
@@ -2312,13 +2356,25 @@ static void menu_render(menu_state_t *st)
 
     menu_build_page_title(st, page, screen[0]);
 
-    start_idx = (uint8_t)((st->selected_idx / MENU_ITEMS_VISIBLE) * MENU_ITEMS_VISIBLE);
+    start_idx = st->selected_idx;
+    for (row = 1U; row < MENU_ITEMS_VISIBLE; row++)
+    {
+        uint8_t prev_idx;
+
+        if (!menu_find_prev_selectable(st, page, start_idx, &prev_idx))
+        {
+            break;
+        }
+        start_idx = prev_idx;
+    }
+
+    item_idx = start_idx;
     for (row = 0U; row < MENU_ITEMS_VISIBLE; row++)
     {
-        uint8_t item_idx = (uint8_t)(start_idx + row);
         uint8_t dst_row = (uint8_t)(row + 1U);
 
-        if (item_idx < page->item_count)
+        if ((item_idx < page->item_count) &&
+            menu_item_is_selectable(st, page, item_idx))
         {
             screen[dst_row][0] = ' ';
             if (item_idx == st->selected_idx)
@@ -2332,6 +2388,11 @@ static void menu_render(menu_state_t *st)
                                  1U,
                                  label,
                                  (uint8_t)(MENU_LINE_CHARS - 1U));
+        }
+
+        if (!menu_find_next_selectable(st, page, item_idx, &item_idx))
+        {
+            break;
         }
     }
 
@@ -2390,6 +2451,21 @@ static bool menu_should_open_quick_reply(const char *text)
         return true;
     }
     if (strcmp(text, "ASK: Is ready?") == 0)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+static bool menu_modal_is_preemptible(menu_modal_t modal)
+{
+    if (modal == MENU_MODAL_INFO)
+    {
+        return true;
+    }
+
+    if (modal == MENU_MODAL_QUICK_REPLY)
     {
         return true;
     }
@@ -2478,8 +2554,7 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     }
     if (st->modal != MENU_MODAL_NONE)
     {
-        if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-            (st->modal == MENU_MODAL_INFO))
+        if (menu_modal_is_preemptible(st->modal))
         {
             st->modal = MENU_MODAL_NONE;
         }
@@ -2779,18 +2854,15 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                         memset(&info, 0, sizeof(info));
                         if (security_main_cmd_get_device((uint8_t)(st->selected_idx - 1U), &info) && info.in_use)
                         {
-                            st->pending_target_node_id = info.node_id;
-                            menu_line_clear(label);
                             if (info.is_master)
                             {
-                                (void)menu_line_copy(label, 0U, "Master ", 7U);
-                                (void)menu_line_append_hex32(label, 7U, info.node_id);
+                                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "SIEC is network");
+                                break;
                             }
-                            else
-                            {
-                                (void)menu_line_copy(label, 0U, "Node ", 5U);
-                                (void)menu_line_append_hex32(label, 5U, info.node_id);
-                            }
+                            st->pending_target_node_id = info.node_id;
+                            menu_line_clear(label);
+                            (void)menu_line_copy(label, 0U, "Node ", 5U);
+                            (void)menu_line_append_hex32(label, 5U, info.node_id);
                             menu_open_send_prompt(st, st->send_target_action, label);
                         }
                         else
@@ -2812,18 +2884,15 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                     memset(&info, 0, sizeof(info));
                     if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
                     {
-                        st->pending_target_node_id = info.node_id;
-                        menu_line_clear(label);
                         if (info.is_master)
                         {
-                            (void)menu_line_copy(label, 0U, "Master ", 7U);
-                            (void)menu_line_append_hex32(label, 7U, info.node_id);
+                            menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "SIEC is network");
+                            break;
                         }
-                        else
-                        {
-                            (void)menu_line_copy(label, 0U, "Node ", 5U);
-                            (void)menu_line_append_hex32(label, 5U, info.node_id);
-                        }
+                        st->pending_target_node_id = info.node_id;
+                        menu_line_clear(label);
+                        (void)menu_line_copy(label, 0U, "Node ", 5U);
+                        (void)menu_line_append_hex32(label, 5U, info.node_id);
                         menu_open_send_prompt(st, MENU_ACTION_SEND_DIRECT_DEFAULT, label);
                     }
                     else
@@ -3517,6 +3586,58 @@ static bool menu_is_send_action(menu_action_t action)
     }
 }
 
+static bool menu_find_next_selectable(const menu_state_t *st,
+                                      const menu_page_t *page,
+                                      uint8_t from_idx,
+                                      uint8_t *out_idx)
+{
+    uint8_t idx;
+
+    if ((st == NULL) || (page == NULL) || (out_idx == NULL) || (page->item_count == 0U))
+    {
+        return false;
+    }
+
+    idx = from_idx;
+    while ((uint8_t)(idx + 1U) < page->item_count)
+    {
+        idx++;
+        if (menu_item_is_selectable(st, page, idx))
+        {
+            *out_idx = idx;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool menu_find_prev_selectable(const menu_state_t *st,
+                                      const menu_page_t *page,
+                                      uint8_t from_idx,
+                                      uint8_t *out_idx)
+{
+    uint8_t idx;
+
+    if ((st == NULL) || (page == NULL) || (out_idx == NULL) || (page->item_count == 0U) || (from_idx == 0U))
+    {
+        return false;
+    }
+
+    idx = from_idx;
+    while (idx > 0U)
+    {
+        idx--;
+        if (menu_item_is_selectable(st, page, idx))
+        {
+            *out_idx = idx;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx)
 {
     radio_main_runtime_cfg_t radio_cfg;
@@ -3544,7 +3665,29 @@ static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *p
             trusted_info_t info;
 
             memset(&info, 0, sizeof(info));
-            return (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) && info.in_use);
+            return (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) &&
+                    info.in_use &&
+                    !info.is_master);
+        }
+
+        return false;
+    }
+
+    if (st->current_page == MENU_PAGE_SEND_DIRECT_LIST)
+    {
+        if (item_idx == (uint8_t)(page->item_count - 1U))
+        {
+            return true;
+        }
+
+        if (item_idx < MENU_TRUSTED_DEVICE_SLOTS)
+        {
+            trusted_info_t info;
+
+            memset(&info, 0, sizeof(info));
+            return (security_main_cmd_get_device(item_idx, &info) &&
+                    info.in_use &&
+                    !info.is_master);
         }
 
         return false;

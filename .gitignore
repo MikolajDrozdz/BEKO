@@ -9,3 +9,4 @@ Debug/
 *.xml
 *.prefs
 *makefile
+*.launch
