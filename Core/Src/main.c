@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "../App/app.h"
+#include "cmox_crypto.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +43,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+
+CRC_HandleTypeDef hcrc;
 
 I2C_HandleTypeDef hi2c1;
 
@@ -63,6 +67,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -81,6 +86,50 @@ int __io_putchar(int ch)
   HAL_UART_Transmit(&huart1, &c, 1, 0xFFFF);
   return ch;
 }
+
+void btox(uint8_t* hexbuf , uint8_t* binbuf, int n)
+{
+	  const char hex[] = "0123456789ABCDEF";
+  for (int i = 0; i < n; i++)
+  {
+	uint8_t val = binbuf[i];
+	hexbuf[2*i] = hex[(val >> 4) & 0x0F];
+	hexbuf[2*i + 1] = hex[val & 0x0F];
+  }
+  hexbuf[2*n] = '\0';
+}
+
+void text_hashing_example(void)
+{
+	  cmox_hash_retval_t retval;
+	  uint8_t data[] = "Alice has a cat.";
+	  uint8_t hash[CMOX_SHA256_SIZE];
+	  size_t computed_size;
+	  uint8_t buffer[2*CMOX_SHA256_SIZE+1];
+
+	  /* Initialize cryptographic library */
+	  if (cmox_initialize(NULL) != CMOX_INIT_SUCCESS)
+	  Error_Handler();
+
+	  retval = cmox_hash_compute(CMOX_SHA256_ALGO,
+	  data, strlen((char*)data),
+	  hash,
+	  CMOX_SHA256_SIZE,
+	  &computed_size);
+
+	  /* Verify API returned value */
+	  if (retval != CMOX_HASH_SUCCESS)
+	  Error_Handler();
+
+	  printf("Input data (ASCII): %s (length=%d)\n\r", data, strlen((char*)data));
+	  btox(buffer, data, strlen((char*)data));
+	  printf("Input data (hex) : %s\n\r", buffer);
+
+	  printf("Hash (ASCII): %s\n\r", hash);
+	  btox(buffer, hash, CMOX_SHA256_SIZE);
+	  printf("Hash (hex) : %s\n\r", buffer);
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -120,9 +169,31 @@ int main(void)
   MX_I2C1_Init();
   MX_RTC_Init();
   MX_SPI1_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
 
-  app_init();
+  //app_init();
+
+  uint8_t bbuf[16];
+  for (int i = 0; i < 16; i++)
+	  bbuf[i] = i;
+
+  uint8_t xbuf[33];
+
+  btox(xbuf, bbuf, 16);
+
+  printf("BBUF: ");
+  for (int i = 0; i < 16; i++)
+	  printf("%02X ", bbuf[i]);
+  printf("\nXBUF: %s\n\r", xbuf);
+  for (int i = 0; i < 16; i++)
+	  printf("%02X ", xbuf[i]);
+
+  // Zajęcia W5
+
+
+  text_hashing_example();
+
 
   /* USER CODE END 2 */
 
@@ -130,14 +201,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-
-	  app_main();
-
-
+	  //app_main();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+// Zajęcia W5
+	  HAL_Delay(1000);
+
   }
   /* USER CODE END 3 */
 }
@@ -240,6 +311,37 @@ static void SystemPower_Config(void)
   }
 /* USER CODE BEGIN PWR */
 /* USER CODE END PWR */
+}
+
+/**
+  * @brief CRC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CRC_Init(void)
+{
+
+  /* USER CODE BEGIN CRC_Init 0 */
+
+  /* USER CODE END CRC_Init 0 */
+
+  /* USER CODE BEGIN CRC_Init 1 */
+
+  /* USER CODE END CRC_Init 1 */
+  hcrc.Instance = CRC;
+  hcrc.Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
+  hcrc.Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_ENABLE;
+  hcrc.Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_NONE;
+  hcrc.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;
+  hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES;
+  if (HAL_CRC_Init(&hcrc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN CRC_Init 2 */
+
+  /* USER CODE END CRC_Init 2 */
+
 }
 
 /**
@@ -443,7 +545,7 @@ static void MX_USART1_UART_Init(void)
 
   /* USER CODE END USART1_Init 1 */
   huart1.Instance = USART1;
-  huart1.Init.BaudRate = 1000000;
+  huart1.Init.BaudRate = 115200;
   huart1.Init.WordLength = UART_WORDLENGTH_8B;
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
@@ -452,7 +554,8 @@ static void MX_USART1_UART_Init(void)
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT;
+  huart1.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
   if (HAL_UART_Init(&huart1) != HAL_OK)
   {
     Error_Handler();

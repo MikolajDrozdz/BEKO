@@ -1,0 +1,2955 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for X-CUBE-CRYPTOLIB Package</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<center>
+<h1 id="release-notes-for-x-cube-cryptolib-package">Release Notes for X-CUBE-CRYPTOLIB Package</h1>
+<p>Copyright © 2005 STMicroelectronics<br />
+</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
+</center>
+<h1 id="purpose">Purpose</h1>
+<ul>
+<li><p><strong>STM32 Cryptographic Firmware Library includes a set of cryptographic algorithms based on firmware implementation</strong> ready to use with all STM32 series. The main algorithms are :</p>
+<ul>
+<li><p>Cipher algorithms : AES (modes CBC, CCM, CFB, CTR, ECB, GCM, OFB, XTS, Keywrap), SM4, Chacha20-Poly1305</p></li>
+<li><p>Hash methods : SHA-1, SHA-2, SHA-3, SM3, SHAKE</p></li>
+<li><p>Message Authentication Code : CMAC, HMAC, KMAC</p></li>
+<li><p>ECC : ECDH, ECDSA, EdDSA, SM2</p></li>
+<li><p>RSA : PKCS#1 v1.5, PKCS#1 v2.2, Chinese remainder theorem (CRT) key representation</p></li>
+<li><p>DRBG</p></li>
+</ul></li>
+<li><p>Main Cryptographic algorithms and their individual components are validated by the NIST, following ACVP program. Refer to certification page on <a href="https://wiki.st.com/stm32mcu/wiki/Security:Cryptographic_library_Overview">Wiki pages for Cryptographic Library</a></p></li>
+<li><p>STM32 Cryptographic Firmware Library provides a <strong>rich set of examples</strong> covering the main features of main cryptographic algorithm.</p></li>
+</ul>
+<figure>
+<img src="_htmresc/architecture.PNG" alt="CryptographicArchitecture" /><figcaption>CryptographicArchitecture</figcaption>
+</figure>
+<p>STM32 Cryptographic package provide a set of examples covering all available algorithms for the most common development tools. Examples are available in source file format and provided with preconfigured projects for the supported boards. Please refer to readme.txt of each example for more details about its purpose.</p>
+<p>STM32 Cryptographic Firmware Library is located in middlewares level and support all STM32 series.</p>
+<h2 id="reference-documentation"><strong>Reference documentation</strong>:</h2>
+<ul>
+<li><a href="https://www.st.com/resource/en/data_brief/DM00223182.pdf">DB2660</a>: Databrief of STM32 Cryptographic library for STM32Cube</li>
+<li><a href="https://wiki.st.com/stm32mcu/wiki/Category:Cryptographic_library">Wiki pages for Cryptographic Library</a>: Overview, getting started, secure usage, performances, certification and migration guide.</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update history</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section8" checked aria-hidden="true"> <label for="collapse-section8" aria-hidden="true"><strong>V4.6.0 / 12-September-2025</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p>Add support of STM32N6 series</p>
+<p>Upgrade HAL/CMSIS/BSP drivers</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li>Update cryptographic application projects of STM32G0, STM32G4, STM32H5, STM32H7S, STM32H7, STM32L0, STM32L1, STM32L4, STM32L5, STM32N6, STM32U0, STM32U3, STM32U5, STM32WB, STM32WBA, STM32WL3 and STM32WL Series</li>
+</ul>
+<h3 id="sbom"><strong>SBOM</strong></h3>
+<ul>
+<li>Deliver SBOM in <a href="sbom_cdx.json">CycloneDX v1.5 format</a></li>
+</ul>
+<h2 id="components">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.6.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.5<span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Loader</td>
+<td style="text-align: left;">v1.1.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Loader/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Manager</td>
+<td style="text-align: left;">v1.2.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Manager/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">base_v6.0.0_dsp_v1.15.0_nn_v5.0.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/st_readme.txt">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.5<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7RSxx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7RSxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>;
+<td style="text-align: left;">V1.10.6<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.4<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.4<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.4<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32N6xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-add"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32N6xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U0xx CMSIS Device</td>
+<td style="text-align: left;">V1.3.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U3xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U3xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.2<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.12.3<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBAxx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBAxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WL3x CMSIS Device</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WL3X/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.5<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H5xx HAL Drivers</td>
+<td style="text-align: left;">V1.5.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32H5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7RSxx HAL Drivers</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32H7RSxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.11.5<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.7<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.6<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.13.5</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-add"></td>
+<td style="text-align: left;"><a href="Drivers/STM32N6xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U0xx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32U0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U3xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32U3xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.6.2<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.14.6<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx HAL Drivers</td>
+<td style="text-align: left;">V1.7.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32WBAxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WL3x HAL Drivers</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32WL3x_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.3.1<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.1<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.5</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H5xx_Nucleo</td>
+<td style="text-align: left;">V1.1.1<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H7RSxx_Nucleo</td>
+<td style="text-align: left;">V1.1.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7RSxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.8</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32N6xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0<span class="icon-st-add"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32N6xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32U3xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U3xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.2.3<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.8<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WBAxx_Nucleo</td>
+<td style="text-align: left;">V1.1.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WBAxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WL3x-Nucleo</td>
+<td style="text-align: left;">V1.2.0<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WL3x-Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.3.1<span class="icon-st-update"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>CVE-2022-37454 is applicable on this version, please refer to Security Advisory TN1491.</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain v9.40.1 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain v5.39 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.19.0</p></li>
+</ul>
+<h2 id="supported-hw-boards">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H563ZI</td>
+<td style="text-align: left;">MB1404 A-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-H7S3L8</td>
+<td style="text-align: left;">MB1737 A-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H753ZI</td>
+<td style="text-align: left;">MB1364 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-N657X0-Q</span><span class="icon-st-add"></td>
+<td style="text-align: left;">MB1940 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U083RC</td>
+<td style="text-align: left;">MB1932 B-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U385RG</td>
+<td style="text-align: left;">MB1841 E</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U575ZI-Q</td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WBA52CGB</td>
+<td style="text-align: left;">MB1801 A-01 + MB1845 A-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL33CC2</span></td>
+<td style="text-align: left;">MB1801-NoUSB-D03 + MB2029 lowband B01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true"><strong>V4.5.0 / 28-March-2025</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p>Add the support of STM32U3 Series in X-CUBE-CRYPTOLIB package</p>
+<p>Added HAL/CMSIS/BSP driver for STM32U3 Series in X-CUBE-CRYPTOLIB package</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><p>Application projects to demonstrate Cryptographic on STM32U3 Series</p></li>
+</ul>
+<h2 id="components">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.5.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.3</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Loader</td>
+<td style="text-align: left;">v1.1.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Loader/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Manager</td>
+<td style="text-align: left;">v1.2.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Manager/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V6.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/st_readme.txt">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx CMSIS Device</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7RSxx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7RSxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>;
+<td style="text-align: left;">V1.10.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.3</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.3</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.3</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U0xx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U3xx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0<span class="icon-st-add"></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U3xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.12.2</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBAxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WL3x CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WL3X/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7RSxx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7RSxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.11.3</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.5</td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.13.5</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U0xx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32U0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U3xx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0<span class="icon-st-add"></td>
+<td style="text-align: left;"><a href="Drivers/STM32U3xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.6.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.14.3</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBAxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WL3x HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WL3x_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.5</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H5xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7RSxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7RSxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.8</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32U3xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0<span class="icon-st-add"></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U3xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.2.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WBAxx_Nucleo</td>
+<td style="text-align: left;">V1.0.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WBAxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WL3x-Nucleo</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WL3x-Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>CVE-2022-37454 is applicable on this version, please refer to Security Advisory TN1491.</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain v9.40.1 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain v5.39 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.18.0</p></li>
+</ul>
+<h2 id="supported-hw-boards">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H563ZI</td>
+<td style="text-align: left;">MB1404 A-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-H7S3L8</td>
+<td style="text-align: left;">MB1737 A-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H753ZI</td>
+<td style="text-align: left;">MB1364 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U083RC</td>
+<td style="text-align: left;">MB1932 B-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U385RG</span><span class="icon-st-add"></td>
+<td style="text-align: left;">MB1841 E</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U575ZI-Q</td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WBA52CGB</td>
+<td style="text-align: left;">MB1801 A-01 + MB1845 A-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WL33CC2</span></td>
+<td style="text-align: left;">MB1801-NoUSB-D03 + MB2029 lowband B01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true"><strong>V4.4.0 / 24-February-2025</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p>Add the support of STM32WL3 Series in X-CUBE-CRYPTOLIB package</p>
+<p>Note: the STM32WL3 cryptographic library (libSTM32Cryptographic_CM0_CM0PLUS_4WL3.a) is located in the Lib folder of each NUCLEO-WL33CC application project.</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><p>Application projects to demonstrate Cryptographic on STM32WL3 Series</p></li>
+</ul>
+<h2 id="components">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.4.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.3</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Loader</td>
+<td style="text-align: left;">v1.1.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Loader/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Manager</td>
+<td style="text-align: left;">v1.2.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Manager/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V6.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/st_readme.txt">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx CMSIS Device</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7RSxx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7RSxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>;
+<td style="text-align: left;">V1.10.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.3</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.3</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.3</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U0xx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.12.2</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBAxx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBAxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WL3x CMSIS Device</td>
+<td style="text-align: left;">V1.0.0<span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WL3X/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H5xx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7RSxx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7RSxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.11.3</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.5</td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.13.5</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U0xx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32U0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.6.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.14.3</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBAxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WL3x HAL Drivers</td>
+<td style="text-align: left;">V1.0.0<span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WL3x_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.5</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H5xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H7RSxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7RSxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.8</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32U0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.2.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.6</td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WBAxx_Nucleo</td>
+<td style="text-align: left;">V1.0.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WBAxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WL3x-Nucleo</td>
+<td style="text-align: left;">V1.0.0<span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WL3x-Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.3.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>CVE-2022-37454 is applicable on this version, please refer to Security Advisory TN1491.</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain v9.20.4 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain v5.39 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.17.0</p></li>
+</ul>
+<h2 id="supported-hw-boards">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H563ZI</td>
+<td style="text-align: left;">MB1404 A-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-H7S3L8</td>
+<td style="text-align: left;">MB1737 A-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H753ZI</td>
+<td style="text-align: left;">MB1364 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U083RC</td>
+<td style="text-align: left;">MB1932 B-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U575ZI-Q</td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WBA52CGB</td>
+<td style="text-align: left;">MB1801 A-01 + MB1845 A-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL33CC2<span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1801-NoUSB-D03 + MB2029 lowband B01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true"><strong>V4.3.0 / 06-December-2024</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p>Added external flash memory support for STM32H7S3L8 in X-CUBE-CRYPTOLIB package</p>
+<p>Added External memory Manager and External memory loader in Middleware of X-CUBE-CRYPTOLIB package</p>
+<p>Updated HAL/CMSIS/BSP drivers for X-CUBE-CRYPTOLIB package</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><p>Updated cryptographic application projects of STM32G0, STM32G4, STM32H5, STM32H7, STM32L0, STM32L1, STM32L4, STM32U0, STM32L5, STM32U5, STM32WBA, STM32WL, STM32WB and STM32H7RS Series</p></li>
+<li><p>Performance of cryptographic library of all the above board series are illustrated in <a href="https://wiki.st.com/stm32mcu/wiki/Category:Cryptographic_Library_Performances">Wiki page</a></p></li>
+</ul>
+<h2 id="components">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.3.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.3 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Loader</td>
+<td style="text-align: left;">v1.1.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Loader/Release_Notes.html">release notes</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32_ExtMem_Manager</td>
+<td style="text-align: left;">v1.2.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_ExtMem_Manager/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V6.0.0 <span class="icon-st-update"></span> </td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/st_readme.txt">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx CMSIS Device</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7RSxx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7RSxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>;
+<td style="text-align: left;">V1.10.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.3 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.3 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.3 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.6 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U0xx CMSIS Device</td>
+<td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.12.2 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0 <span class="icon-st-update"></span></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBAxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.2.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.6 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H5xx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32H5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7RSxx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32H7RSxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.11.3 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.6 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.5 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.13.5 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.6 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U0xx HAL Drivers</td>
+<td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32U0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.6.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.14.3 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0 <span class="icon-st-update"></span></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WBAxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.2 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.5 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H5xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7RSxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7RSxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.8 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.4 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.0 <span class="icon-st-update"></span></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.2.2 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.6 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WBAxx_Nucleo</td>
+<td style="text-align: left;">V1.0.2 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WBAxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.3.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>CVE-2022-37454 is applicable on this version, please refer to Security Advisory TN1491.</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain v9.20.4 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain v5.39 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.16.0</p></li>
+</ul>
+<h2 id="supported-hw-boards">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H563ZI</td>
+<td style="text-align: left;">MB1404 A-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H7S3L8</td>
+<td style="text-align: left;">MB1737 A-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-H753ZI <span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1364 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U083RC</td>
+<td style="text-align: left;">MB1932 B-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U575ZI-Q</td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WBA52CGB</td>
+<td style="text-align: left;">MB1801 A-01 + MB1845 A-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4"  aria-hidden="true"> <label for="collapse-section4" aria-hidden="true"><strong>V4.2.0 / 11-April-2024</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p>Add the support of STM32H7RS and STM32U0 Series in X-CUBE-CRYPTOLIB package</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><p>Application projects to demonstrate Cryptographic on STM32H7RS and STM32U0 Series</p></li>
+<li><p>Performance of cryptographic library for STM32H7RS and STM32U0 Series are illustrated in <a href="https://wiki.st.com/stm32mcu/wiki/Category:Cryptographic_Library_Performances">Wiki page</a></p></li>
+</ul>
+<h2 id="components">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.2.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.1.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V5.6.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/README.md">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7RSxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7RSxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U0xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBAxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/STM32H5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7RSxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32H7RSxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.12.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U0xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32U0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBAxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WBAxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7RSxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7RSxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.6</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U0xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WBAxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WBAxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain V9.20.4 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.38 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.15.0</p></li>
+</ul>
+<h2 id="supported-hw-boards">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H563ZI</span></td>
+<td style="text-align: left;">MB1404 A-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H7S3L8 <span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1737 A-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-H743ZI</td>
+<td style="text-align: left;">MB1364 D-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U083RC <span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1932 B-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U575ZI-Q</td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WBA52CGB</span></td>
+<td style="text-align: left;">MB1801 A-01 + MB1845 A-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true"><strong>V4.1.0 / 13-March-2023</strong></label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<p>Add the support of STM32H5 andSTM32WBA Series in X-CUBE-CRYPTOLIB package</p>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><p>Application projects to demonstrate Cryptographic on STM32H5 and STM32WBA5 Series</p></li>
+<li><p>Performance of cryptographic library for STM32H5 and STM32WBA5 Series are illustrated in <a href="https://wiki.st.com/stm32mcu/wiki/Category:Cryptographic_Library_Performances">Wiki page</a></p></li>
+</ul>
+<h2 id="components">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.1.0 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.2 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V5.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/README.md">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBAxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBAxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32H5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.12.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBAxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32WBAxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.6</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WBAxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WBAxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain V9.20.1 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.37 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.12.0</p></li>
+</ul>
+<h2 id="supported-hw-boards">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H563ZI <span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1404 A-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-H743ZI</td>
+<td style="text-align: left;">MB1364 D-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-U575ZI-Q</td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WBA52CGB <span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1801 A-01 + MB1845 A-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true"><strong>V4.0.1 / 02-July-2021</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<p>Add the support of STM32U5 Series in X-Cube-CRYPTOLIB package</p>
+<h2 id="contents-1">Contents</h2>
+<ul>
+<li><p>Application projects to demonstrate Cryptographic on STM32U5 Series</p></li>
+<li><p>Performance of cryptographic library for STM32U5 Series are illustrated in <a href="https://wiki.st.com/stm32mcu/wiki/Category:Cryptographic_Library_Performances">Wiki page</a></p></li>
+</ul>
+<h2 id="components-1">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.0.1</td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.1 <span class="icon-st-update"></span></td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V5.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/README.md">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32U5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.12.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32U5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/STM32U5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.6</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32U5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.0 <span class="icon-st-add"></span></td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32U5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations-1">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain V8.50.6 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.32 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.7.0</p></li>
+</ul>
+<h2 id="supported-hw-boards-1">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H743ZI</td>
+<td style="text-align: left;">MB1364 D-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-U575ZI-Q <span class="icon-st-add"></span></td>
+<td style="text-align: left;">MB1549 B-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility-1">Backward Compatibility</h2>
+<ul>
+<li>Yes</li>
+</ul>
+<h2 id="dependencies-1">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V4.0.0 / 07-May-2021</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<p>Major evolution of Cryptographic libraries for STM32 Series. This version offers :</p>
+<ul>
+<li><p><strong>New features :</strong></p>
+<ul>
+<li><p>Cipher algorithm: <strong>SM4 (CBC, CFB, CTR, ECB, OFB)</strong></p></li>
+<li><p>HASH methods: <strong>SHA-3, SM3, SHAKE</strong></p></li>
+<li><p>Message Authentication Code: <strong>KMAC</strong></p></li>
+<li><p>Asymmetric algorithm: <strong>SM2, RSA (v2.2, Chinese remainder theorem (CRT) key representation, Bellcore Attack protection)</strong></p></li>
+</ul></li>
+<li><p><strong>ACVP certification of all libraries</strong>, for all Cortex-M architecture</p></li>
+<li><p>New User interface, simpler to use. Helpers are provided to ease the migration of user application from V3.x to V4.x version</p></li>
+<li><p>Better performances : optimised in memory size and in speed.</p></li>
+<li><p>Cryptographic libraries are compliant with MISRA C:2012 standard</p></li>
+</ul>
+<h2 id="contents-2">Contents</h2>
+<ul>
+<li><p>Cryptographic libraries for Cortex-M0/M0+, Cortex-M3, Cortex-M4, Cortex-M7 and Cortex-M33</p></li>
+<li><p>Application projects to demonstate Cryptographic on STM32G0 Series, STM32G4 Series, STM32H7 Series, STM32L0 Series, STM32L1 Series, STM32L4 Series, STM32L5 Series, STM32WB Series, STM32WL Series</p></li>
+<li><p>The exhaustive list of projects is provided in this table (<a href="Projects/STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>)</p></li>
+<li><p>Applications are ported on 3 toolchains : STM32CubeIDE, IAR and Keil</p></li>
+</ul>
+<h2 id="components-2">Components</h2>
+<p><small>The components flagged by “<span class="icon-st-update"></span>” have changed since the previous release. “<span class="icon-st-add"></span>” are new.</small></p>
+<p><strong>Projects</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Projects</td>
+<td style="text-align: left;">V4.0.0</td>
+<td style="text-align: left;"><a href="Projects/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Middlewares</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32_Cryptographic</td>
+<td style="text-align: left;">v4.0.0</td>
+<td style="text-align: left;"><a href="Middlewares/ST/STM32_Cryptographic/Release_Notes.html">release notes</a></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Drivers</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Release note</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CMSIS Core</td>
+<td style="text-align: left;">V5.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/README.md">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G0xx CMSIS Device</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G4xx CMSIS Device</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32G4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32H7xx CMSIS Device</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32H7xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L0xx CMSIS Device</td>
+<td style="text-align: left;">V1.9.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L0xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L1xx CMSIS Device</td>
+<td style="text-align: left;">V2.3.1</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L1xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L4xx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L4xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L5xx CMSIS Device</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32L5xx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WBxx CMSIS Device</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WBxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WLxx CMSIS Device</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/CMSIS/Device/ST/STM32WLxx/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32G0xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32G0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32G4xx HAL Drivers</td>
+<td style="text-align: left;">V1.2.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32G4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32H7xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32H7xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L0xx HAL Drivers</td>
+<td style="text-align: left;">V1.10.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L0xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L1xx HAL Drivers</td>
+<td style="text-align: left;">V1.4.1</td>
+<td style="text-align: left;"><a href="Drivers/STM32L1xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32L4xx HAL Drivers</td>
+<td style="text-align: left;">V1.12.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32L4xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32L5xx HAL Drivers</td>
+<td style="text-align: left;">V1.0.4</td>
+<td style="text-align: left;"><a href="Drivers/STM32L5xx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32WBxx HAL Drivers</td>
+<td style="text-align: left;">V1.7.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32WLxx HAL Drivers</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/STM32WLxx_HAL_Driver/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32G0xx_Nucleo</td>
+<td style="text-align: left;">V1.1.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32G4xx_Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32G4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32H7xx_Nucleo_144</td>
+<td style="text-align: left;">V1.2.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32H7xx_Nucleo_144/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L0xx_Nucleo</td>
+<td style="text-align: left;">V2.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L0xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L1xx_Nucleo</td>
+<td style="text-align: left;">V1.1.3</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L1xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP STM32L4xx_Nucleo</td>
+<td style="text-align: left;">V2.1.6</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L4xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32L5xx_Nucleo</td>
+<td style="text-align: left;">V1.0.2</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32L5xx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP P-NUCLEO-WB55.Nucleo</td>
+<td style="text-align: left;">V1.0.1</td>
+<td style="text-align: left;"><a href="Drivers/BSP/P-NUCLEO-WB55.Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BSP STM32WLxx_Nucleo</td>
+<td style="text-align: left;">V1.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/STM32WLxx_Nucleo/Release_Notes.html">release note</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BSP Common</td>
+<td style="text-align: left;">V7.0.0</td>
+<td style="text-align: left;"><a href="Drivers/BSP/Components/Common/Release_Notes.html">release note</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="known-limitations-2">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
+<ul>
+<li><p>IAR Embedded Workbench for ARM (EWARM) toolchain V8.50.6 + ST-Link</p></li>
+<li><p>RealView Microcontroller Development Kit (MDK-ARM) toolchain V5.32 + ST-Link</p></li>
+<li><p>STM32CubeIDE v1.6.0</p></li>
+</ul>
+<h2 id="supported-hw-boards-2">Supported HW boards</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Reference and revision</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-G071RB</td>
+<td style="text-align: left;">MB1360 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-G474RE</td>
+<td style="text-align: left;">MB1367 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-H743ZI</td>
+<td style="text-align: left;">MB1364 D-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L073RZ</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L152RE</td>
+<td style="text-align: left;">MB1136 C-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-L476RG</td>
+<td style="text-align: left;">MB1136 C-03</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-L552ZE-Q</td>
+<td style="text-align: left;">MB1361 C-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P-NUCLEO-WB55</td>
+<td style="text-align: left;">MB1355 C-02</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-WL55JC</td>
+<td style="text-align: left;">MB1389 C-01</td>
+</tr>
+</tbody>
+</table>
+<h2 id="backward-compatibility-2">Backward Compatibility</h2>
+<ul>
+<li><p>No compatibility with previous versions of X-Cube Cryptographic V3.x</p></li>
+<li><p>To ease the migration of applicative source code compatible with Cryptographic V3.x, helpers are provideded in STM32_Cryptographic Middleware (see “legacy_v3”)</p></li>
+</ul>
+<h2 id="dependencies-2">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<div class="columns">
+<div class="column" style="width:95%;">
+<p>For complete documentation on <strong>Security framework for STM32 series</strong> , visit: <a href="https://www.st.com/stm32trust">STM32 Trust</a></p>
+</div><div class="column" style="width:5%;">
+<p><abbr title="Based on template cx566953 version 2.0">Info</abbr></p>
+</div>
+</div>
+</footer>
+</body>
+</html>
