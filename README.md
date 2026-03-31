@@ -7,3 +7,4 @@ Programy inne takie....
 - **master**: inicjalizacja peryferiów, bez niczego w pętli głównej, podstawa do budowania projektów na każde zajęcia
 - **master-rtos**: to branch master przerobiony do użytku z freertos, żeby zrównoleglić działanie kodu. Jest lepsze do szybkiego dokładania kawałków kodu bez obawy o sprawność działania.
 - **pager-rtos**: Projekt grupy: Mikołaj Dróżdż, Piotr Wojciechowski, Wojciech Baka
+- **master-w5-cmox**: Program do zajęć w5 z biblioteką cmox na podstawie brancha **master**
