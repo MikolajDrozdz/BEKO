@@ -1,156 +1,387 @@
-# BEKO podstawowy program z inicjalizacjami peryferii
+# BEKO Pager Network (`pager-rtos`)
 
-## Struktura projektu
+## 1. Opis systemu
 
-Pliki są podzielone 2 części, te do pisania aplikacji i te automatycznie tworzone przez IDE.
+BEKO to bezprzewodowy system pagerowy pracujący w topologii **gwiazdy**.  
+W systemie występuje:
 
-Aplikacja:
-- /Core/App: **Tutaj pisze się program w stylu Arduino** (tj. inicjalizacja ~ app_init i pętra główna ~ app_main)
+- jeden węzeł centralny: **Raspberry Pi Gateway**,
+- do **254 node’ów STM32**,
+- komunikacja radiowa przez **SX1262**.
 
-Automatycznie stworzone przez IDE:
-- /Core/Src: defaultowa lokalizacja plików .c do projektu razem z *main.c*
-- /Core/Inc: defaultowa lokalizacja plików .h do projektu razem z *main.h*
+Gateway wysyła wiadomości do wybranego node’a albo do całej sieci.  
+Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez node ramką `ACK`.
 
-| Peryferium      | Status    | Uwagi |
-|:----------|:---------:| ------:|
-| LCD   | OK ✅ | |
-| BMP280 | OK ✅ | Nie jest dostępne na wszystkich płytkach, potrzebna naprawa |
-| TOF | OK ✅ | Uwaga! funckja blokująca na ok. 242 ms, może być zaimplenetowany w inny sposób. INT nie jest aktywny, jest zostawiony dla radia. |
-| RADIO | OK ✅ | |
-| MIC | NO ❌ | |
-| Speaker | In progess ⚒️ | Trzeba dodać głośnik |
-| ACC | NO ❌ | Trzeba podłączyć |
-| TMP | OK ✅ | |
-| BUTTON | OK ✅ | |
-| I2C MEM |  OK ✅ | Służy do zapamiętywania urządzeń |
-| HALL SENSOR | NO ❌ | |
-| LIGHT SENSOR| NO ❌ | |
-| OLED DISP | NO ❌ | |
-| SERVO | NO ❌ | |
-| LED DISP | NO ❌ | |
-| LED ARRAY | OK ✅  | |
+---
 
-## Bezpieczeństwo komunikacji (BEKO_NET_V1)
+## 2. Adresacja
 
-### Co jest chronione
+Adresacja w systemie jest 8-bitowa:
 
-- poufność wiadomości `USER` pomiędzy sparowanymi (zaufanymi) urządzeniami,
-- podstawowa kontrola integralności/uwierzytelnienia klucza przed odszyfrowaniem treści,
-- trwałość listy zaufanych urządzeń po restarcie (EEPROM),
-- rozróżnienie ruchu systemowego i użytkownika.
+- `0` – broadcast,
+- `1..254` – adresy node’ów,
+- `255` – adres zarezerwowany, na możliwy dalszy rozwój.
 
-### Przebieg transmisji `USER` (secure mode)
+W systemie może działać:
 
-1. Nadajnik buduje ramkę `BEKO_NET_V1` (`src_id`, `dst_id`, `msg_id`, `ttl`, `payload`).
-2. Dla `USER` pobiera klucz per-peer (z `security_main`, wyprowadzany z kodu parowania i ID węzłów).
-3. Treść wiadomości jest szyfrowana (`XTEA-CTR`).
-4. Po preambule/ramce radiowej pierwsze bajty danych aplikacyjnych to `AuthTag` (4B) wyliczony z:
-   - klucza per-peer,
-   - pól ramki (`type`, `src_id`, `dst_id`, `msg_id`),
-   - zaszyfrowanego payloadu.
-5. Dopiero po `AuthTag` idzie zaszyfrowana wiadomość.
-6. Odbiornik najpierw weryfikuje `AuthTag`; jeśli poprawny, odszyfrowuje payload i przekazuje dalej.
-7. Gdy tag nie pasuje, ramka jest odrzucana (bez deszyfrowania i bez wyświetlenia treści).
+- **1 gateway**,
+- **254 urządzenia końcowe**.
 
-### Zaufane urządzenia i parowanie
+---
 
-- Parowanie używa kodu jednorazowego (JOIN_REQ/JOIN_ACCEPT).
-- Po akceptacji urządzenie trafia do listy trusted i jest zapisywane do EEPROM (`i2c_mem_store`).
-- Po usunięciu trusted lokalnie wysyłana jest do drugiej strony ramka `TRUST_REMOVED`.
-- Kodowanie (`coding`) jest domyślnie aktywne po starcie, więc ruch `USER` bez poprawnego klucza jest ignorowany.
+## 3. Role użytkowników
 
-### TPM i klucze
+W systemie przewidziane są cztery role:
 
-- `security_main` inicjalizuje ST33KTPM2X i próbuje pobrać losowy seed z TPM.
-- Seed oraz runtime config są trzymane w EEPROM i odtwarzane po restarcie.
-- Z seeda wyprowadzany jest klucz sieciowy (dla ramek systemowych).
-- Dla ruchu `USER` używany jest klucz per-peer wyprowadzany z danych parowania.
+### Administrator
+Ma pełny dostęp do systemu.  
+Może zmieniać konfigurację gatewaya i node’ów, zarządzać parowaniem, licznikami bezpieczeństwa, kluczami i ustawieniami krytycznymi.  
+Dostęp wymaga podania odpowiedniego PIN-u administratora.
 
-## Przykładowy scenariusz komunikacji
+### Operator
+Ma ograniczony dostęp administracyjny.  
+Może wykonywać działania, które nie naruszają integralności całego systemu, np. wysyłać wiadomości, zmieniać wybrane ustawienia użytkowe i obsługiwać system operacyjnie.
 
-1. Urządzenie A uruchamia tryb parowania i wysyła `JOIN_REQ` z kodem jednorazowym.
-2. Urządzenie B odbiera `JOIN_REQ`, użytkownik akceptuje parowanie, B zapisuje A jako trusted i odsyła `JOIN_ACCEPT`.
-3. A odbiera `JOIN_ACCEPT`, weryfikuje kod, zapisuje B jako trusted (EEPROM).
-4. A wysyła wiadomość `USER` do B:
-   - wyznacza klucz per-peer,
-   - szyfruje payload (`XTEA-CTR`),
-   - oblicza `AuthTag` (4B) i dokleja go przed ciphertextem.
-5. B odbiera ramkę i wykonuje:
-   - sprawdzenie, czy nadawca jest trusted,
-   - weryfikację `AuthTag`,
-   - dopiero po poprawnej weryfikacji odszyfrowanie payloadu i wyświetlenie treści.
-6. Jeśli `AuthTag` się nie zgadza, B odrzuca ramkę (brak wyświetlenia i brak dalszego przetwarzania).
-7. Jeśli A usuwa B z trusted, A wysyła `TRUST_REMOVED`, a B usuwa A ze swojej listy po odebraniu tej ramki.
+### Użytkownik
+Ma dostęp tylko do podstawowych funkcji node’a.  
+Może odczytać wiadomość, wysłać odpowiedź przyciskami i korzystać z urządzenia w normalnym trybie pracy.
 
-## Przykładowa ramka `BEKO_NET_V1`
+### Serwisant
+Ma fizyczny dostęp do urządzenia.  
+Może podłączyć się do node’a lub gatewaya w celu diagnostyki, odczytu logów, testów i czynności serwisowych.  
+Dostęp serwisowy powinien być kontrolowany i logowany.
 
-Poniżej przykład logicznej ramki aplikacyjnej przed wysłaniem przez radio:
+---
 
-```text
-magic       = 'BK'                 // 2 B
-ver         = 0x01                 // 1 B
-type        = USER                 // 1 B
-flags       = 0x01                 // 1 B, np. coding enabled
-ttl         = 0x03                 // 1 B
-src_id      = 0x00000021           // 4 B
-dst_id      = 0x00000044           // 4 B
-msg_id      = 0x00001234           // 4 B
-payload_len = 0x000D               // 2 B
-payload     = "TEMP=23.4 C"        // N B
-crc16       = 0xA1B2               // 2 B
+## 4. Ochrona ustawień lokalnych
+
+Każdy node posiada lokalny tryb konfiguracji.  
+Dostęp do ustawień wymaga podania **4-cyfrowego PIN-u**.
+
+PIN:
+
+- chroni lokalną konfigurację,
+- może zostać zmieniony,
+- nie może być przechowywany w postaci jawnej.
+
+Powinien być przechowywany w postaci zabezpieczonej, np. jako wartość chroniona z użyciem HMAC lub materiału powiązanego z TPM.
+
+PIN służy do kontroli dostępu, a nie jako główny sekret kryptograficzny systemu.
+
+---
+
+## 5. Ramka `BEKO_FRAME_V1`
+
+System wykorzystuje zwartą ramkę aplikacyjną `BEKO_FRAME_V1`.
+
+### Struktura ramki
+
+- `ver_type` – 1 B
+- `flags` – 1 B
+- `src_id` – 2 B
+- `dst_id` – 2 B
+- `msg_id` – 2 B
+- `counter` – 4 B
+- `payload_len` – 1 B
+- `payload` – 0–16 B
+- `mac_tag` – 32 B
+
+### Rozmiar ramki
+
+Część stała zajmuje:
+
+- 1 + 1 + 2 + 2 + 2 + 4 + 1 + 32 = **45 B**
+
+Całkowity rozmiar ramki:
+
+- minimum: **45 B**
+- maksimum: **61 B**
+
+Ramka mieści się w limicie 64 B i zostawia **3 B rezerwy**.
+
+---
+
+## 6. Znaczenie pól `ver_type` i `flags`
+
+### `ver_type`
+Pole 1-bajtowe:
+
+- starsze 4 bity – wersja protokołu,
+- młodsze 4 bity – typ wiadomości.
+
+Przykładowe typy:
+
+- `0x1` – `DATA`
+- `0x2` – `ACK`
+- `0x3` – `RESP`
+- `0x4` – `PAIR_REQ`
+- `0x5` – `PAIR_RESP`
+- `0x6` – `CFG`
+- `0x7` – `COUNTER_SYNC`
+- `0x8` – `KEY_ROTATE`
+- `0x9` – `ERROR`
+- `0x10` - `ANNIHILATE`
+- `0x11` - `BRAKE_ERR`
+
+### `flags`
+Pole 1-bajtowe:
+
+- bit 0 – `ENCRYPTED`
+- bit 1 – `ACK_REQUIRED`
+- bit 2 – `IS_ACK`
+- bit 3 – `PAIRING`
+- bit 4 – `CONFIG_ACCESS`
+- bit 5 – `BROADCAST`
+- bit 6 – `COUNTER_OVERRIDE`
+- bit 7 – `KEY_UPDATE`
+- bit 8 – `REMOVE`
+
+---
+
+## 7. Zabezpieczenia
+
+System chroni:
+
+- poufność wiadomości,
+- integralność ramek,
+- autentyczność nadawcy,
+- licznik anti-replay,
+- konfigurację urządzenia,
+- klucze kryptograficzne.
+
+### HMAC-SHA256
+
+Każda ramka zawiera `mac_tag` o długości **32 B**.  
+Do uwierzytelniania i kontroli integralności używany jest **HMAC-SHA256**.
+
+HMAC liczony jest po:
+
+`ver_type || flags || src_id || dst_id || msg_id || counter || payload_len || payload`
+
+Obliczenia HMAC powinny wykorzystywać **sprzętowy blok HASH** mikrokontrolera STM32U545.
+
+### Szyfrowanie wiadomości
+
+Payload wiadomości szyfrowany z użyciem **sprzętowego AES** korzystający z dostępnego w STM32U545 bloku sprzętowego.
+
+Zalecany tryb pracy:
+
+- **AES-CTR**
+
+Zalety:
+
+- brak paddingu,
+- ciphertext ma taką samą długość jak plaintext,
+- dobrze pasuje do krótkiego payloadu 0–16 B.
+
+Jeżeli flaga `ENCRYPTED` jest ustawiona, odbiornik musi:
+
+1. zweryfikować HMAC,
+2. sprawdzić licznik `counter`,
+3. dopiero wtedy odszyfrować payload.
+
+---
+
+## 8. TPM i klucze
+
+TPM jest głównym punktem zaufania w systemie.
+
+Wszystkie operacje bezpieczeństwa, które mogą być wykonane w TPM i które są wspierane w przyjętej architekturze, powinny być wykonywane właśnie tam.
+
+TPM powinien być używany do:
+
+- przechowywania sekretu głównego urządzenia,
+- ochrony kluczy,
+- generowania danych losowych,
+- wsparcia parowania,
+- wsparcia rotacji kluczy,
+- odpieczętowywania materiału kryptograficznego.
+
+Klucze nie mogą być przechowywane w firmware w postaci jawnej.  
+Powinny być wyprowadzane lub ładowane bezpiecznie przy starcie, a następnie używane tylko tymczasowo.
+
+---
+
+## 9. Anti-replay i synchronizacja licznika
+
+Każda ramka zawiera pole `counter` o długości 4 B.
+
+Licznik:
+
+- rośnie monotonicznie,
+- służy do ochrony przed replay,
+- jest sprawdzany po stronie odbiorcy.
+
+Gateway może wysłać specjalną wiadomość `COUNTER_SYNC`, aby nadpisać licznik node’a.  
+Do tego celu używana jest flaga `COUNTER_OVERRIDE`.
+
+Taka operacja:
+
+- jest dostępna tylko dla gatewaya,
+- musi być zabezpieczona HMAC,
+- powinna być logowana.
+
+---
+
+## 10. Parowanie i rotacja kluczy
+
+### Parowanie
+
+Parowanie odbywa się wyłącznie z gatewayem. Warunkiem koniecznym podłączenia nowego urządzenia jest minimalna moc sygnału nie mniejsza niż -20 dBm mocy odbieranej przez węzeł centralny jak i parowany węzeł.
+
+Przebieg:
+
+1. Gateway wysyła `PAIR_REQ`.
+2. Node przechodzi w tryb parowania.
+3. Użytkownik lokalnie potwierdza operację.
+4. TPM wspiera ustanowienie materiału kryptograficznego.
+5. Zapisywana jest relacja zaufania.
+6. Wyprowadzane są klucze robocze.
+
+### Rotacja kluczy
+
+System powinien wspierać rotację kluczy z użyciem **Diffie–Hellman**.
+
+Rotacja może być uruchamiana:
+
+- okresowo,
+- po określonej liczbie wiadomości,
+- na żądanie administratora,
+- po incydencie bezpieczeństwa.
+
+---
+
+## 11. Logi UART i kontrola startu
+
+Podczas uruchamiania urządzenia przez UART powinny być wypisywane informacje o inicjalizacji:
+
+- MCU,
+- TPM,
+- SX1262,
+- wyświetlacza,
+- przycisków,
+- LED,
+- EEPROM,
+- materiału kluczowego,
+- konfiguracji bezpieczeństwa,
+- zgodności firmware.
+
+Dodatkowo czasy inicjalizacji ważnych modułów powinny być mierzone.  
+Jeżeli któryś element uruchamia się poza oczekiwanym zakresem czasowym, system powinien zgłosić anomalię na UART.
+
+---
+
+## 12. Główny graf systemu
+
+```mermaid
+graph TD
+    A["Administrator"] --> WEB["Panel / interfejs systemu"]
+    O["Operator"] --> WEB
+    U["Użytkownik"] --> NODE["Node STM32"]
+    S["Serwisant"] --> DEV["Dostęp fizyczny / UART / serwis"]
+
+    WEB --> GW["Raspberry Pi Gateway"]
+    GW --> RADIO["SX1262"]
+
+    RADIO --> N1["Node STM32 #1"]
+    RADIO --> N2["Node STM32 #2"]
+    RADIO --> N3["Node STM32 #3"]
+
+    N1 --> TPM1["TPM"]
+    N1 --> UI1["Wyświetlacz / Przyciski / LED"]
+    N1 --> MEM1["EEPROM"]
+
+    N2 --> TPM2["TPM"]
+    N2 --> UI2["Wyświetlacz / Przyciski / LED"]
+    N2 --> MEM2["EEPROM"]
+
+    N3 --> TPM3["TPM"]
+    N3 --> UI3["Wyświetlacz / Przyciski / LED"]
+    N3 --> MEM3["EEPROM"]
+
+    DEV --> GW
+    DEV --> N1
+    DEV --> N2
+    DEV --> N3
+````
+
+---
+
+## 13. Główne przepływy komunikacji
+
+### Zwykła wiadomość z ACK
+
+```mermaid
+sequenceDiagram
+    participant O as Operator / Administrator
+    participant GW as Raspberry Pi Gateway
+    participant N as Node STM32
+    participant U as Użytkownik
+
+    O->>GW: Wysłanie wiadomości
+    GW->>GW: Budowa ramki
+    GW->>GW: AES-CTR payload
+    GW->>GW: HMAC-SHA256
+    GW->>N: DATA
+    N->>N: Weryfikacja HMAC i counter
+    N->>N: Odszyfrowanie payloadu
+    N->>U: Wyświetlenie wiadomości
+    N->>GW: ACK
+    GW->>O: Wynik operacji
 ```
 
-### Elementy ramki
+### Parowanie
 
-| Pole | Rozmiar | Opis |
-|:-----|:--------|:-----|
-| `magic` | 2 B | Stały znacznik protokołu, pozwala rozpoznać ramkę `BEKO_NET_V1`. |
-| `ver` | 1 B | Wersja formatu ramki. |
-| `type` | 1 B | Typ wiadomości, np. `USER`, `JOIN_REQ`, `JOIN_ACCEPT`, `TRUST_REMOVED`. |
-| `flags` | 1 B | Flagi sterujące, np. informacja o aktywnym kodowaniu. |
-| `ttl` | 1 B | Licznik przeskoków lub limit dalszego forwardowania ramki. |
-| `src_id` | 4 B | Identyfikator nadawcy. |
-| `dst_id` | 4 B | Identyfikator odbiorcy. |
-| `msg_id` | 4 B | Identyfikator wiadomości używany m.in. do deduplikacji i anti-replay. |
-| `payload_len` | 2 B | Długość pola `payload` w bajtach. |
-| `payload` | N B | Dane użytkownika albo dane systemowe zależnie od `type`. |
-| `crc16` | 2 B | Suma kontrolna wykorzystywana do wykrywania błędów transmisji. |
+```mermaid
+sequenceDiagram
+    participant A as Administrator
+    participant GW as Raspberry Pi Gateway
+    participant N as Node STM32
+    participant TPM as TPM
+    participant U as Użytkownik
 
-### Uwaga dla trybu secure
-
-Dla wiadomości `USER` z aktywnym codingiem zawartość `payload` jest szyfrowana, a przed ciphertextem dokładany jest `AuthTag` 4 B. W praktyce oznacza to, że logiczne dane użytkownika:
-
-```text
-payload = "TEMP=23.4 C"
+    A->>GW: Uruchomienie parowania
+    GW->>N: PAIR_REQ
+    N->>U: Prośba o potwierdzenie
+    U->>N: Potwierdzenie lokalne
+    GW->>TPM: Operacje bezpieczeństwa
+    N->>TPM: Operacje bezpieczeństwa
+    GW->>N: Wymiana danych parowania
+    N->>GW: PAIR_RESP
+    GW->>A: Wynik operacji
 ```
 
-po zabezpieczeniu są przenoszone jako:
+### Synchronizacja licznika
 
-```text
-payload = [AuthTag 4 B] + [ciphertext N B]
+```mermaid
+sequenceDiagram
+    participant A as Administrator
+    participant GW as Raspberry Pi Gateway
+    participant N as Node STM32
+
+    A->>GW: Żądanie synchronizacji licznika
+    GW->>N: COUNTER_SYNC
+    N->>N: Weryfikacja HMAC
+    N->>N: Aktualizacja counter
+    N->>GW: ACK
+    GW->>A: Wynik operacji
 ```
 
-## Słabe punkty i możliwe ataki
+### Rotacja kluczy
 
-### Ograniczenia obecnej implementacji
+```mermaid
+sequenceDiagram
+    participant A as Administrator
+    participant GW as Raspberry Pi Gateway
+    participant N as Node STM32
+    participant TPM as TPM
 
-- `AuthTag` ma 32 bity i jest lekki obliczeniowo (nie jest pełnym MAC typu HMAC-SHA256).
-- Kod parowania ma małą entropię (krótki kod cyfr), więc przy przechwyceniu procesu parowania rośnie ryzyko ataku offline.
-- Brak pełnej ochrony przed aktywnym jammerem (zakłócanie pasma).
-- Brak forward secrecy: kompromitacja danych pairing/trusted może odsłonić historyczne wiadomości zapisane z eteru.
-- Anti-replay opiera się głównie o `msg_id` + dedup cache (okno czasowe), nie o globalny licznik kryptograficzny.
-
-### Przykładowe scenariusze ataku
-
-- `DoS/Jamming`: napastnik zagłusza kanał; brak skutecznego odbioru mimo poprawnej kryptografii.
-- `Replay w oknie`: ponowne nadanie tej samej ramki zanim dedup ją odfiltruje lub po wygaśnięciu okna.
-- `Podsłuch + analiza`: metadane (`src/dst/msg_id/typ`) są jawne, nawet gdy payload jest szyfrowany.
-- `Przejęcie parowania`: jeśli ktoś zna/zgadnie kod parowania w trakcie JOIN, może dodać nieautoryzowane urządzenie.
-
-### Rekomendacje hardeningu (kolejne kroki)
-
-1. Zastąpić obecny `AuthTag` silnym MAC (np. HMAC-SHA256, min. 64 bity tagu).
-2. Wydłużyć i losowość kodu parowania (np. 128-bit challenge zamiast krótkiego kodu cyfr).
-3. Dodać licznik anty-replay per-peer (monotoniczny, zapisywany w NVM).
-4. Ograniczyć metadane jawne lub dodać rotację identyfikatorów.
-5. Dodać politykę re-key (rotacja kluczy per-peer po czasie/liczbie ramek).
+    A->>GW: Uruchomienie rotacji kluczy
+    GW->>N: KEY_ROTATE
+    GW->>TPM: Operacje DH / materiał kluczowy
+    N->>TPM: Operacje DH / materiał kluczowy
+    GW->>N: Wymiana danych
+    N->>GW: Odpowiedź
+    N->>GW: ACK
+    GW->>A: Wynik operacji
+```
