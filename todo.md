@@ -1,662 +1,238 @@
-# Dokumentacja projektu – bezpieczna sieć pagerowa oparta o STM32, RFM95W i Raspberry Pi Zero
+# TODO – BEKO Pager Network (`pager-rtos`)
 
-## 1. Cel projektu
-
-Celem projektu jest implementacja lekkiej, bezprzewodowej sieci pagerowej umożliwiającej przesyłanie krótkich komunikatów tekstowych do urządzeń klienckich oraz odbieranie prostych odpowiedzi zwrotnych z poziomu fizycznych przycisków.
-
-Projekt ma odpowiadać na potrzeby dyskretnej i niezawodnej komunikacji w środowisku pracy, np. pomiędzy kuchnią i kelnerem w restauracji albo pomiędzy pracownikami hali produkcyjnej. Wiadomości są wysyłane z poziomu panelu webowego uruchomionego na Raspberry Pi Zero, a następnie rozsyłane drogą radiową do węzłów końcowych opartych o mikrokontrolery STM32 i moduły RFM95W-862S2.
-
-Najważniejszym założeniem projektu jest bezpieczeństwo transmisji. System ma zapewniać poufność wiadomości, ochronę przed modyfikacją ramek, podstawowe zabezpieczenie przed powtórzeniem starej transmisji oraz kontrolę listy zaufanych urządzeń. Dodatkowo każdy węzeł jest wyposażony w moduł ST33KTPM2X32DKG9, który ma wspierać generowanie i ochronę materiału kluczowego.
+Ten plik zastępuje starsze TODO związane z topologią mesh i wcześniejszą wersją dokumentacji.
+Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y STM32 w topologii gwiazdy**, ramki `BEKO_FRAME_V1`, obowiązkowego `ACK`, `AES-CTR`, `HMAC-SHA256`, `TPM-first` oraz maksymalnego `payload` 16 B.
 
 ---
 
-## 2. Scenariusz użycia systemu
+## 1. Spójność dokumentacji i protokołu
 
-W przykładowym scenariuszu Raspberry Pi Zero pełni rolę centralnego punktu zarządzania systemem. Na Raspberry Pi działa prosty panel webowy dostępny przez Wi-Fi, z którego operator może:
+- [ ] Poprawić dokumentację `README.md`, aby była całkowicie spójna z założeniami implementacyjnymi.
+- [ ] Usunąć z dokumentacji pozostałości po topologii mesh, TTL, forwarding i RFM95W tam, gdzie projekt docelowo używa gwiazdy i SX1262.
+- [ ] Ujednolicić nazwę ramki i protokołu: wszędzie stosować `BEKO_FRAME_V1`.
+- [ ] Zweryfikować wszystkie rozmiary pól i końcową długość ramki.
+- [ ] Dodać jeden tabelaryczny opis ramki używany jako źródło prawdy dla kodu i dokumentacji.
 
-- wybrać adresata wiadomości,
-- wpisać krótki komunikat tekstowy,
-- wysłać wiadomość do wybranego węzła,
-- śledzić status dostarczenia,
-- odebrać odpowiedź od użytkownika urządzenia końcowego.
-
-Urządzenie końcowe STM32 po odebraniu wiadomości:
-
-- sprawdza, czy wiadomość jest skierowana do niego,
-- weryfikuje jej autentyczność i integralność,
-- odszyfrowuje treść,
-- wyświetla komunikat na ekranie,
-- umożliwia odpowiedź jednym z trzech przycisków, np.:
-  - `TAK`,
-  - `NIE`,
-  - `OK` / `PRZYJĄŁEM`.
-
-Jeżeli wiadomość nie jest przeznaczona dla danego węzła, a jej licznik `TTL` jest większy od zera, węzeł może przekazać ją dalej. Dzięki temu system może działać w trybie prostego, wieloskokowego routingu typu WSN / mesh relay.
+### Rekomendacje
+- Pole `ver_type` ma 1 bajt, więc przy podziale 4 bity + 4 bity typ wiadomości może mieć tylko wartości `0x0..0xF`. W dokumentacji trzeba usunąć lub przeprojektować wpisy `0x10` i `0x11`.
+- Pole `flags` ma 1 bajt, więc dopuszczalne są tylko bity `0..7`. Wpis `bit 8 – REMOVE` jest błędny i trzeba go usunąć albo przenieść do innego pola.
+- Jeśli ma istnieć dodatkowa funkcja typu `REMOVE`, najlepiej przypisać ją do wolnego typu wiadomości zamiast do nieistniejącego bitu 8.
 
 ---
 
-## 3. Infrastruktura systemu
+## 2. Finalizacja formatu ramki `BEKO_FRAME_V1`
 
-## 3.1. Elementy sprzętowe
+- [ ] Zaimplementować finalny parser i serializer ramki zgodny z dokumentacją.
+- [ ] Rozdzielić logikę dla ramek `DATA`, `ACK`, `RESP`, `PAIR_REQ`, `PAIR_RESP`, `CFG`, `COUNTER_SYNC`, `KEY_ROTATE`, `ERROR`.
+- [ ] Zaimplementować walidację `payload_len` względem typu wiadomości.
+- [ ] Dodać sprawdzenie zgodności `flags` z typem wiadomości.
+- [ ] Dodać sprawdzanie dopuszczalnego `src_id`, `dst_id` i warunków broadcast.
 
-System składa się z następujących elementów:
-
-### Węzeł główny
-- **Raspberry Pi Zero**
-- moduł radiowy zgodny z rodziną **RFM95W-862S2**
-- interfejs Wi-Fi do obsługi panelu webowego
-- oprogramowanie zarządzające wysyłką i odbiorem komunikatów
-
-### Węzły klienckie
-- **STM32**
-- moduł radiowy **RFM95W-862S2**
-- wyświetlacz do prezentacji wiadomości
-- 3 przyciski do odpowiedzi predefiniowanych
-- pamięć EEPROM / NVM do przechowywania konfiguracji
-- moduł bezpieczeństwa **ST33KTPM2X32DKG9**
-- opcjonalnie buzzer / LED do sygnalizacji nowej wiadomości
-
-## 3.2. Topologia logiczna
-
-System ma charakter **hybrydowy**:
-
-- logicznie posiada punkt centralny zarządzania na Raspberry Pi,
-- radiowo działa jako **sieć wieloskokowa**, gdzie węzły mogą przekazywać dalej komunikaty.
-
-W praktyce Raspberry Pi jest źródłem większości wiadomości użytkowych, natomiast węzły STM32 pełnią jednocześnie role:
-
-- odbiorników końcowych,
-- przekaźników ramek,
-- nadajników odpowiedzi zwrotnych.
+### Rekomendacje
+- Dla `ACK` i prostych odpowiedzi warto przyjąć krótsze, jawnie opisane payloady, np. 0 B lub 1–2 B, zamiast traktować wszystkie typy identycznie.
+- Dla `CFG`, `COUNTER_SYNC` i `KEY_ROTATE` warto zdefiniować osobne mini-formaty payloadu, żeby uniknąć niejednoznacznej interpretacji danych.
+- Warto dodać pole lub stałą domenową do budowy nonce AES-CTR, aby nie mieszać przestrzeni wiadomości pomiędzy różnymi typami ramek.
 
 ---
 
-## 4. Założenia projektowe
+## 3. ACK i niezawodność dostarczenia
 
-W systemie przyjęto następujące założenia:
+- [ ] Wymusić `ACK` dla każdej poprawnie odebranej wiadomości z gatewaya.
+- [ ] Dodać timeout oczekiwania na `ACK` po stronie gatewaya.
+- [ ] Dodać retransmisję z limitem prób.
+- [ ] Dodać rozróżnienie: brak `ACK`, błędny `ACK`, spóźniony `ACK`, zduplikowany `ACK`.
+- [ ] Dodać logikę mapowania `ACK` do `msg_id` i `counter`.
 
-- bardzo krótka wiadomość użytkowa,
-- maksymalna długość ramki aplikacyjnej: **64 bajty**,
-- możliwość działania w paśmie radiowym z użyciem RFM95W,
-- wsparcie dla transmisji:
-  - **LoRa**,
-  - **FSK**,
-- obowiązkowe potwierdzenie odbioru wiadomości,
-- podstawowy mechanizm multi-hop,
-- wysoki priorytet bezpieczeństwa,
-- trwałość informacji o zaufanych urządzeniach po restarcie,
-- minimalna złożoność obsługi po stronie użytkownika końcowego.
+### Rekomendacje
+- `ACK` powinien być uwierzytelniany HMAC-em tak samo jak zwykła wiadomość.
+- Gateway powinien raportować operatorowi wynik: `dostarczono`, `brak ACK`, `błąd integralności`, `timeout`, `powtórzona ramka`.
+- Dobrze dodać licznik retransmisji w panelu i logach.
 
 ---
 
-## 5. Architektura systemu
+## 4. Szyfrowanie wiadomości – AES-CTR sprzętowo
 
-System można podzielić na 4 warstwy funkcjonalne:
+- [ ] Zastąpić wcześniejsze szyfrowanie rozwiązaniem opartym o sprzętowy blok AES w STM32U545.
+- [ ] Zaimplementować `AES-CTR` dla pola `payload`.
+- [ ] Zdefiniować jednoznaczny format nonce / counter block dla AES-CTR.
+- [ ] Zapewnić niepowtarzalność pary: klucz + nonce.
+- [ ] Dodać zerowanie buforów z plaintextem i kluczami po użyciu.
 
-## 5.1. Warstwa webowa
-Uruchomiona na Raspberry Pi Zero. Odpowiada za:
-
-- logowanie użytkownika do panelu,
-- tworzenie wiadomości,
-- wybór adresata,
-- podgląd statusów dostarczenia,
-- prezentację odpowiedzi z węzłów,
-- zarządzanie parowaniem urządzeń.
-
-## 5.2. Warstwa aplikacyjna
-Definiuje typy komunikatów, logikę routingu i zachowanie systemu. Przykładowe typy ramek:
-
-- `USER_MSG` – wiadomość tekstowa do użytkownika,
-- `ACK` – potwierdzenie odebrania,
-- `RESP` – odpowiedź z przycisku,
-- `JOIN_REQ` – żądanie parowania,
-- `JOIN_ACCEPT` – akceptacja parowania,
-- `TRUST_REMOVED` – usunięcie zaufania,
-- `HELLO` / `BEACON` – diagnostyka lub wykrywanie obecności.
-
-## 5.3. Warstwa bezpieczeństwa
-Zapewnia:
-
-- wyprowadzanie kluczy,
-- szyfrowanie danych,
-- generowanie i weryfikację MAC,
-- anti-replay,
-- przechowywanie zaufanych peerów,
-- współpracę z TPM.
-
-## 5.4. Warstwa radiowa
-Odpowiada za transmisję przez RFM95W, w tym:
-
-- konfigurację LoRa / FSK,
-- nadawanie i odbiór ramek,
-- retransmisję,
-- zarządzanie kanałem radiowym,
-- podstawowy mechanizm przekazywania dalej.
+### Rekomendacje
+- Najlepiej zbudować blok startowy AES-CTR z elementów takich jak `src_id`, `dst_id`, `msg_id`, `counter` oraz stała domenowa protokołu.
+- Nie używać CBC dla krótkich wiadomości – CTR jest lepszy, bo nie wymaga paddingu i nie zwiększa długości payloadu.
+- Najpierw należy zweryfikować HMAC, a dopiero potem odszyfrowywać payload.
 
 ---
 
-## 6. Działanie systemu
+## 5. HMAC-SHA256 – blok HASH sprzętowo
 
-## 6.1. Przepływ wiadomości od panelu webowego do węzła
+- [ ] Zaimplementować HMAC-SHA256 z użyciem sprzętowego bloku HASH w STM32U545.
+- [ ] Ujednolicić listę pól wchodzących do HMAC.
+- [ ] Dodać bezpieczne porównanie `mac_tag` po stronie odbiornika.
+- [ ] Dodać testy zgodności HMAC z wersją referencyjną programową.
 
-1. Operator otwiera panel webowy na Raspberry Pi.
-2. Wybiera urządzenie docelowe lub grupę urządzeń.
-3. Wpisuje krótki komunikat tekstowy.
-4. Raspberry Pi buduje ramkę aplikacyjną.
-5. Dla wiadomości typu `USER_MSG` dobierany jest klucz per-peer.
-6. Treść wiadomości zostaje zaszyfrowana.
-7. Do ramki dodawany jest MAC.
-8. Ramka zostaje nadana przez moduł radiowy.
-9. Węzeł pośredni:
-   - odbiera ramkę,
-   - sprawdza, czy już ją widział,
-   - zmniejsza `TTL`,
-   - przekazuje dalej, jeśli nie jest adresatem końcowym.
-10. Węzeł docelowy:
-   - weryfikuje autentyczność,
-   - sprawdza anti-replay,
-   - odszyfrowuje wiadomość,
-   - wyświetla ją użytkownikowi,
-   - odsyła `ACK`.
-11. Użytkownik może wysłać odpowiedź przez przycisk.
-12. Odpowiedź wraca do Raspberry Pi jako ramka `RESP`.
-
-## 6.2. Zachowanie węzła końcowego
-
-Po odebraniu poprawnej wiadomości węzeł:
-
-- zapisuje `msg_id` / `counter` do mechanizmu deduplikacji,
-- wyświetla treść,
-- generuje lokalny sygnał (np. buzzer / LED),
-- oczekuje na reakcję użytkownika,
-- po naciśnięciu przycisku wysyła odpowiedź.
-
-## 6.3. Forwarding wiadomości
-
-Jeśli węzeł nie jest adresem docelowym:
-
-- sprawdza, czy ramka nie została już przetworzona,
-- sprawdza `TTL`,
-- po krótkim losowym opóźnieniu retransmituje ramkę.
-
-Takie podejście zmniejsza ryzyko lawinowego floodingu przy większej liczbie urządzeń.
+### Rekomendacje
+- Źródłem prawdy dla HMAC powinno być: `ver_type || flags || src_id || dst_id || msg_id || counter || payload_len || payload`.
+- Jeżeli TPM może wspierać ochronę klucza HMAC, to klucz nie powinien być ładowany do firmware w postaci jawnej.
+- Dobrze utrzymywać osobne klucze dla szyfrowania i HMAC.
 
 ---
 
-## 7. Obecne mechanizmy zabezpieczające
+## 6. TPM-first i zarządzanie kluczami
 
-W obecnym systemie chronione są następujące obszary:
+- [ ] Zdefiniować finalny model przechowywania sekretów w TPM.
+- [ ] Zaimplementować inicjalizację TPM przy starcie.
+- [ ] Ustalić, które operacje są wykonywane bezpośrednio w TPM, a które tylko z jego wsparciem.
+- [ ] Zaimplementować bezpieczne ładowanie / wyprowadzanie kluczy roboczych przy starcie.
+- [ ] Wyczyścić z repo i kodu wszelkie jawne, stałe klucze testowe.
 
-- poufność wiadomości `USER`,
-- podstawowa integralność i uwierzytelnienie,
-- trwałość listy trusted po restarcie,
-- logiczne rozróżnienie ramek systemowych i użytkowych.
-
-## 7.1. Aktualny przebieg transmisji `USER`
-
-1. Nadajnik buduje ramkę `BEKO_NET_V1` zawierającą:
-   - `src_id`,
-   - `dst_id`,
-   - `msg_id`,
-   - `ttl`,
-   - `payload`.
-2. Pobierany jest klucz per-peer.
-3. Payload szyfrowany jest algorytmem `XTEA-CTR`.
-4. Wyliczany jest `AuthTag` 4B na podstawie:
-   - klucza per-peer,
-   - pól nagłówka,
-   - zaszyfrowanego payloadu.
-5. Do transmisji wysyłany jest `AuthTag`, a następnie ciphertext.
-6. Odbiornik najpierw weryfikuje `AuthTag`.
-7. Dopiero po poprawnej weryfikacji odszyfrowuje treść.
+### Rekomendacje
+- TPM powinien chronić sekret główny urządzenia i materiał do wyprowadzania kluczy sesyjnych.
+- W RAM powinny przebywać tylko tymczasowe klucze robocze, i to możliwie krótko.
+- Warto rozdzielić: klucz HMAC, klucz szyfrowania, materiał do pairingu i materiał do rotacji kluczy.
 
 ---
 
-## 8. Proponowane ulepszenia bezpieczeństwa
+## 7. Anti-replay i licznik bezpieczeństwa
 
-Ze względu na ograniczenia obecnej implementacji należy rozszerzyć system o kilka istotnych mechanizmów.
+- [ ] Zaimplementować monotoniczny `counter` per relacja komunikacyjna.
+- [ ] Zapisywać stan licznika w pamięci nieulotnej.
+- [ ] Zaimplementować bezpieczny mechanizm `COUNTER_SYNC` tylko dla gatewaya.
+- [ ] Dodać ochronę przed rollbackiem licznika po restarcie i zaniku zasilania.
+- [ ] Dodać testy replay attack.
 
-## 8.1. Silniejszy MAC
-
-Obecny `AuthTag` ma 32 bity, co jest zbyt małą wartością dla systemu, który ma być uznany za bezpieczny.
-
-### Propozycja
-Zastąpić `AuthTag` mechanizmem:
-- `HMAC-SHA256` z obcięciem do **8 bajtów**, albo
-- `AES-CMAC` z obcięciem do **8 bajtów**, jeśli implementacja AES będzie wygodniejsza.
-
-### Uzasadnienie
-8-bajtowy tag daje znacznie lepszą odporność niż 4 bajty, a nadal pozwala zmieścić się w limicie 64 bajtów.
-
-## 8.2. Silniejsze parowanie
-
-Zamiast krótkiego kodu cyfr należy zastosować:
-- losowy challenge 128-bit,
-- opcjonalnie wyświetlenie skrótu lub krótkiego kodu porównawczego dla użytkownika,
-- potwierdzenie parowania przez fizyczny przycisk.
-
-Takie podejście znacząco utrudnia atak offline.
-
-## 8.3. Anti-replay per-peer
-
-Należy dodać:
-- monotoniczny licznik nadawcy,
-- okno akceptacji po stronie odbiorcy,
-- zapis ostatniego zaakceptowanego licznika w NVM.
-
-To pozwoli blokować powtórne odtworzenie starszych ramek.
-
-## 8.4. Ograniczenie jawnych metadanych
-
-W obecnej wersji część pól nagłówka jest jawna. To upraszcza routing, ale ułatwia analizę ruchu.
-
-### Możliwe podejście
-- pozostawić jawne tylko pola niezbędne do routingu,
-- dodać pseudonimowe identyfikatory sesyjne,
-- okresowo rotować identyfikatory logiczne.
-
-## 8.5. Re-key
-
-Należy wprowadzić politykę rotacji kluczy per-peer:
-- po określonej liczbie ramek,
-- po określonym czasie,
-- po ponownym parowaniu,
-- po wykryciu incydentu bezpieczeństwa.
+### Rekomendacje
+- `COUNTER_SYNC` powinien być traktowany jako operacja administracyjna, logowana i ograniczona do administratora.
+- Aktualizacja licznika w NVM powinna być odporna na zanik zasilania, np. przez podwójny rekord lub wersjonowanie.
+- Przy odbiorze należy jasno rozróżnić: stary licznik, powtórzona ramka, przeskok licznika, ręczna synchronizacja.
 
 ---
 
-## 9. Ograniczenie 64 bajtów i konsekwencje projektowe
+## 8. Parowanie i relacja zaufania
 
-Najważniejsze ograniczenie projektu to maksymalny rozmiar ramki aplikacyjnej wynoszący **64 bajty**. Oznacza to, że wszystkie pola nagłówka, bezpieczeństwa i danych użytkownika muszą zmieścić się w tym limicie.
+- [ ] Zaimplementować finalny przebieg `PAIR_REQ` / `PAIR_RESP`.
+- [ ] Usunąć pozostałości po starym modelu mesh / peer-to-peer, jeśli nie są już potrzebne.
+- [ ] Zdecydować, czy warunek RSSI dla parowania rzeczywiście ma być częścią polityki bezpieczeństwa.
+- [ ] Zaimplementować zapis relacji trusted w pamięci nieulotnej.
+- [ ] Dodać procedurę usuwania zaufania i unieważnienia kluczy.
 
-W praktyce należy rozdzielić typy ramek na:
-
-- **ramki użytkowe** – zoptymalizowane pod krótkie komunikaty,
-- **ramki systemowe / parujące** – również mieszczące się w 64 bajtach, ale o mniejszym polu danych.
-
-Nie ma potrzeby, aby każda ramka przenosiła 128-bit challenge. Taki challenge powinien być obecny tylko w ramkach parowania.
-
----
-
-## 10. Proponowany format ramki
-
-Poniżej przedstawiono rekomendowaną ramkę aplikacyjną dla wiadomości użytkowych.
-
-## 10.1. Ramka `USER_MSG` / `ACK` / `RESP`
-
-| Pole | Rozmiar | Opis |
-|---|---:|---|
-| `ver_type` | 1 B | wersja protokołu + typ wiadomości |
-| `flags` | 1 B | bity sterujące: ACK required, forwarded, encrypted, response itp. |
-| `src_id` | 2 B | identyfikator źródła |
-| `dst_id` | 2 B | identyfikator celu |
-| `msg_id` | 2 B | identyfikator wiadomości |
-| `ttl` | 1 B | liczba pozostałych skoków |
-| `counter` | 4 B | licznik anty-replay per-peer |
-| `payload_len` | 1 B | długość payloadu |
-| `payload` | 0–34 B | dane użytkownika / odpowiedź |
-| `mac_tag` | 8 B | skrócony MAC, np. HMAC-SHA256-64 |
-| `reserved` | dopełnienie | opcjonalne pole przyszłej rozbudowy |
-
-### Suma przykładowa
-Nagłówek stały bez payloadu i bez rezerwy:
-- 1 + 1 + 2 + 2 + 2 + 1 + 4 + 1 + 8 = **22 bajty**
-
-Daje to:
-- **42 bajty** wolne w limicie 64 B,
-- praktycznie bezpiecznie można przyjąć **payload do 32–34 bajtów**.
-
-To jest rozsądna długość dla pagera tekstowego, np.:
-- `STANOWISKO 4`,
-- `PRZYJDZ TERAZ`,
-- `ZAMOWIENIE GOTOWE`,
-- `TAK`,
-- `NIE`,
-- `OK`.
-
-## 10.2. Ramka `JOIN_REQ` / `JOIN_ACCEPT`
-
-Dla ramek parowania można przyjąć osobny układ:
-
-| Pole | Rozmiar | Opis |
-|---|---:|---|
-| `ver_type` | 1 B | wersja + typ `JOIN_*` |
-| `flags` | 1 B | bity sterujące |
-| `src_id` | 2 B | identyfikator źródła |
-| `dst_id` | 2 B | identyfikator celu lub broadcast lokalny |
-| `msg_id` | 2 B | identyfikator |
-| `ttl` | 1 B | liczba skoków |
-| `pair_nonce` | 16 B | challenge 128-bit |
-| `pair_info` | 4–8 B | dane pomocnicze, np. capabilities |
-| `mac_tag` | 8 B | MAC |
-| `optional` | reszta | zależnie od etapu parowania |
-
-Taki układ nadal mieści się w 64 bajtach.
+### Rekomendacje
+- Wymóg `-20 dBm` dla parowania wygląda bardzo restrykcyjnie i może być trudny do spełnienia w praktyce; warto go zweryfikować eksperymentalnie albo zastąpić bardziej realistycznym warunkiem bliskości fizycznej lub trybem serwisowym.
+- Parowanie powinno wymagać lokalnego potwierdzenia użytkownika na nodzie.
+- Warto dodać timeout okna parowania i logowanie każdej próby parowania.
 
 ---
 
-## 11. Opis pól ramki
+## 9. Rotacja kluczy – Diffie–Hellman
 
-## 11.1. `ver_type`
-Pole łączy wersję protokołu i typ ramki. Pozwala rozróżnić:
-- `USER_MSG`,
-- `ACK`,
-- `RESP`,
-- `JOIN_REQ`,
-- `JOIN_ACCEPT`,
-- `TRUST_REMOVED`.
+- [ ] Zdecydować o finalnym wariancie wymiany kluczy (klasyczny DH, ECDH, wsparcie TPM/PKA).
+- [ ] Zaimplementować komunikaty `KEY_ROTATE`.
+- [ ] Zaimplementować wyprowadzenie nowych kluczy po wymianie sekretu.
+- [ ] Dodać mechanizm przełączenia ze starych kluczy na nowe.
+- [ ] Dodać logowanie operacji rotacji kluczy.
 
-## 11.2. `flags`
-Służy do sygnalizacji zachowania ramki:
-- czy wymaga potwierdzenia,
-- czy jest zaszyfrowana,
-- czy została forwardowana,
-- czy zawiera odpowiedź przycisku.
-
-## 11.3. `src_id` i `dst_id`
-Identyfikatory urządzeń. W przyszłości mogą zostać zastąpione przez pseudonimy sesyjne.
-
-## 11.4. `msg_id`
-Identyfikator logiczny wiadomości, używany m.in. do:
-- korelacji `ACK`,
-- deduplikacji,
-- śledzenia retransmisji.
-
-## 11.5. `ttl`
-Chroni sieć przed nieskończonym krążeniem ramek.
-
-## 11.6. `counter`
-Monotoniczny licznik bezpieczeństwa per-peer. Stanowi kluczowy element ochrony anti-replay.
-
-## 11.7. `payload_len`
-Umożliwia interpretację długości danych użytkowych.
-
-## 11.8. `payload`
-W przypadku `USER_MSG` zawiera wiadomość tekstową.
-W przypadku `RESP` może zawierać:
-- kod odpowiedzi,
-- opcjonalny krótki komentarz,
-- status.
-
-## 11.9. `mac_tag`
-Skrócony MAC zapewniający:
-- integralność,
-- uwierzytelnienie nadawcy,
-- powiązanie danych z nagłówkiem i ciphertextem.
+### Rekomendacje
+- Jeśli mikrokontroler lub TPM oferuje wygodniejsze wsparcie dla ECC, ECDH może być praktyczniejsze niż klasyczny DH.
+- Należy jasno określić, czy rotacja dotyczy wszystkich node’ów, pojedynczego node’a czy tylko aktywnej sesji.
+- Po rotacji stare klucze powinny być jawnie unieważnione i usunięte z RAM.
 
 ---
 
-## 12. Proponowane szyfrowanie i uwierzytelnianie
+## 10. Warstwa radiowa SX1262 i niezawodność transmisji
 
-## 12.1. Wariant minimalnej ingerencji
-Jeśli chcesz zachować obecną architekturę:
+- [ ] Uporządkować dokumentację i kod konfiguracji SX1262.
+- [ ] Zweryfikować, czy włączone jest CRC warstwy radiowej.
+- [ ] Opisać i udokumentować parametry modulacji: SF, BW, CR, preambuła, sync word, moc nadawania, timeout RX/TX.
+- [ ] Dodać testy w warunkach zakłóceń i słabego sygnału.
+- [ ] Dodać logi jakości sygnału: RSSI, SNR, błędy CRC, timeouty.
 
-- szyfrowanie: `XTEA-CTR`,
-- uwierzytelnianie: `HMAC-SHA256` obcięty do 8 bajtów.
-
-To podejście jest najłatwiejsze do wdrożenia jako ewolucja obecnego projektu.
-
-## 12.2. Wariant bardziej docelowy
-Jeżeli zasoby STM32 i złożoność implementacji na to pozwolą, lepiej rozważyć:
-- `AES-CTR + CMAC`,
-- albo nowoczesny AEAD, np. `Ascon-128a`, jeśli chcesz mieć szyfrowanie i integralność w jednym mechanizmie.
-
-Dla projektu studenckiego i istniejącej bazy kodu sensowne jest jednak podejście ewolucyjne, czyli pozostanie przy aktualnym szyfrowaniu i wzmocnienie MAC.
+### Rekomendacje
+- Warstwa radiowa powinna zapewniać wykrywanie błędów transmisji, a warstwa aplikacyjna – integralność kryptograficzną i uwierzytelnienie.
+- Dobrze udokumentować, czy system używa LoRa, FSK, czy obu trybów w różnych scenariuszach.
+- Warto oddzielić w logach: błąd radiowy, błąd HMAC, replay, brak ACK.
 
 ---
 
-## 13. Rola TPM ST33KTPM2X32DKG9
+## 11. Role i kontrola dostępu
 
-Moduł TPM może pełnić w systemie następujące role:
+- [ ] Zaimplementować rozdzielenie uprawnień: administrator, operator, użytkownik, serwisant.
+- [ ] Określić, które operacje są dozwolone dla każdej roli.
+- [ ] Dodać osobne PIN-y lub osobne polityki dostępu dla ról administracyjnych i serwisowych.
+- [ ] Logować działania uprzywilejowane.
 
-- źródło losowości do generowania seeda,
-- źródło nonce do parowania,
-- bezpieczne powiązanie urządzenia z materiałem kluczowym,
-- potwierdzanie działań administracyjnych przez przycisk `TPM_PP`,
-- wsparcie przy inicjalizacji zaufania po starcie.
-
-### Zalecany model
-TPM nie musi wykonywać całej kryptografii runtime dla każdej ramki. Wystarczy, że:
-- generuje seed,
-- uczestniczy w inicjalizacji kluczy,
-- zabezpiecza operacje krytyczne,
-- pomaga w budowaniu zaufania do urządzenia.
-
-To jest realistyczne dla projektu o ograniczonych zasobach.
+### Rekomendacje
+- Administrator powinien mieć dostęp do parowania, synchronizacji liczników, rotacji kluczy i ustawień krytycznych.
+- Operator powinien mieć dostęp tylko do funkcji operacyjnych, które nie naruszają integralności systemu.
+- Serwisant powinien działać w kontrolowanym trybie serwisowym z logowaniem dostępu fizycznego.
 
 ---
 
-## 14. Parowanie urządzeń
+## 12. UART, diagnostyka i integralność startu
 
-## 14.1. Cel parowania
-Parowanie służy do:
-- ustanowienia relacji zaufania,
-- uzgodnienia materiału wejściowego do klucza per-peer,
-- zapisania partnera na liście trusted.
+- [ ] Zaimplementować pełny log inicjalizacji po UART.
+- [ ] Dodać pomiar czasu inicjalizacji krytycznych modułów.
+- [ ] Dodać wykrywanie anomalii czasowych.
+- [ ] Dodać kontrolę zgodności firmware i konfiguracji bezpieczeństwa przy starcie.
+- [ ] Rozdzielić logi debug od logów produkcyjnych.
 
-## 14.2. Proponowany przebieg parowania
-
-1. Urządzenie A wchodzi w tryb parowania.
-2. Generuje `pair_nonce_A` z użyciem TPM lub RNG.
-3. Wysyła `JOIN_REQ`.
-4. Urządzenie B odbiera `JOIN_REQ`.
-5. Użytkownik B zatwierdza parowanie przyciskiem.
-6. B generuje `pair_nonce_B`.
-7. B wyprowadza wspólny materiał kluczowy z:
-   - `pair_nonce_A`,
-   - `pair_nonce_B`,
-   - `src_id`,
-   - `dst_id`,
-   - lokalnego seeda.
-8. B zapisuje A jako trusted.
-9. B odsyła `JOIN_ACCEPT`.
-10. A weryfikuje odpowiedź i zapisuje B jako trusted.
-11. Obie strony odkładają dane do EEPROM / NVM.
-
-## 14.3. Co zapisywać po parowaniu
-
-Dla każdego peer-a warto przechowywać:
-
-- `peer_id`,
-- status trusted,
-- materiał do wyprowadzenia klucza lub gotowy klucz per-peer,
-- ostatni zaakceptowany `counter_rx`,
-- ostatni użyty `counter_tx`,
-- znacznik czasu / licznik rotacji klucza,
-- flagi polityki bezpieczeństwa.
+### Rekomendacje
+- Nie logować kluczy ani pełnych danych wrażliwych.
+- Dobrze dodać kody błędów lub krótkie stany diagnostyczne do łatwego filtrowania po UART.
+- Warto wyraźnie oznaczać moduł, którego dotyczy błąd startu.
 
 ---
 
-## 15. Usuwanie parowania
+## 13. Panel webowy i warstwa gatewaya
 
-Usuwanie relacji trusted musi działać dwustronnie.
+- [ ] Zaimplementować prosty panel webowy na Raspberry Pi.
+- [ ] Dodać listę node’ów, ich statusów i adresów.
+- [ ] Dodać wysyłanie wiadomości do pojedynczego node’a i broadcast.
+- [ ] Dodać prezentację wyniku operacji: `ACK`, timeout, błąd, brak odpowiedzi.
+- [ ] Dodać historię wiadomości i odpowiedzi.
 
-## 15.1. Proponowany scenariusz
-
-1. Użytkownik na urządzeniu A usuwa B z listy trusted.
-2. A lokalnie kasuje zaufanie i materiał kluczowy związany z B.
-3. A wysyła do B ramkę `TRUST_REMOVED`.
-4. Po odebraniu i zweryfikowaniu tej ramki B usuwa A ze swojej listy trusted.
-5. Obie strony aktualizują EEPROM / NVM.
-
-## 15.2. Uwagi praktyczne
-Jeżeli `TRUST_REMOVED` nie zostanie dostarczone:
-- A i tak uznaje B za niezaufane,
-- B może nadal uważać A za trusted do czasu ręcznego usunięcia lub timeoutu polityki.
-
-Dlatego warto przewidzieć:
-- lokalne usuwanie natychmiastowe,
-- synchronizację z drugą stroną jako mechanizm dodatkowy.
+### Rekomendacje
+- Panel powinien rozróżniać role administratora i operatora.
+- Dobrze dodać czytelną prezentację ostatniego RSSI, czasu ostatniego ACK i stanu sparowania node’a.
+- Operacje krytyczne, takie jak `PAIR_REQ`, `COUNTER_SYNC`, `KEY_ROTATE`, powinny być oddzielone od zwykłego wysyłania wiadomości.
 
 ---
 
-## 16. Przykładowy scenariusz komunikacji użytkowej
+## 14. Testy i walidacja
 
-1. Raspberry Pi wysyła wiadomość do węzła `NODE_03`:
-   - treść: `PRZYJDZ DO STREFY A`.
-2. Budowana jest ramka `USER_MSG`.
-3. Dobierany jest klucz per-peer dla `RPI -> NODE_03`.
-4. Payload jest szyfrowany.
-5. Obliczany jest `mac_tag`.
-6. Ramka zostaje wysłana do sieci.
-7. `NODE_01` odbiera ramkę:
-   - widzi, że `dst_id != NODE_01`,
-   - zmniejsza `ttl`,
-   - przekazuje dalej.
-8. `NODE_03` odbiera ramkę:
-   - weryfikuje MAC,
-   - sprawdza `counter`,
-   - odszyfrowuje treść,
-   - wyświetla wiadomość,
-   - odsyła `ACK`.
-9. Użytkownik naciska przycisk `TAK`.
-10. `NODE_03` buduje ramkę `RESP`.
-11. Odpowiedź wraca do Raspberry Pi.
-12. Panel webowy pokazuje status:
-   - dostarczono,
-   - odpowiedź: `TAK`.
+- [ ] Przygotować testy poprawnego doręczenia wiadomości.
+- [ ] Przygotować testy ACK i retransmisji.
+- [ ] Przygotować testy HMAC: poprawny, błędny, uszkodzony payload.
+- [ ] Przygotować testy replay attack.
+- [ ] Przygotować testy parowania i usuwania trusted.
+- [ ] Przygotować testy restartu urządzenia i odtwarzania stanu z EEPROM / TPM.
+- [ ] Przygotować testy utraty zasilania podczas zapisu.
+- [ ] Przygotować testy radiowe z różnymi poziomami sygnału i zakłóceń.
+
+### Rekomendacje
+- Warto utrzymywać tabelę testów: scenariusz, warunki, wynik oczekiwany, wynik uzyskany.
+- Testy bezpieczeństwa powinny być rozdzielone od testów funkcjonalnych.
+- Dobrze dodać krótkie testy regresyjne dla parsera ramki i HMAC.
 
 ---
 
-## 17. Słabe punkty obecnej implementacji
+## 15. Najważniejsze korekty do wdrożenia w pierwszej kolejności
 
-Aktualna wersja systemu ma następujące ograniczenia:
-
-- `AuthTag` 32-bit jest zbyt krótki,
-- kod parowania ma zbyt małą entropię,
-- brak pełnego, trwałego anti-replay per-peer,
-- brak forward secrecy,
-- metadane w nagłówku są jawne,
-- aktywny jammer nadal może zakłócić komunikację,
-- forwarding może generować nadmiarowy ruch bez dodatkowych ograniczeń.
-
----
-
-## 18. Rekomendacje implementacyjne
-
-## 18.1. Co wdrożyć w pierwszej kolejności
-1. 8-bajtowy MAC.
-2. 4-bajtowy licznik anti-replay per-peer.
-3. potwierdzenia `ACK`.
-4. retransmisję z limitem prób.
-5. zapisywanie liczników i trusted do NVM.
-6. rozdzielenie formatów ramek użytkowych i parujących.
-
-## 18.2. Co wdrożyć w drugiej kolejności
-1. challenge 128-bit w parowaniu,
-2. pseudonimy sesyjne,
-3. rotację kluczy,
-4. bardziej zaawansowany routing niż prosty flood relay,
-5. politykę wygaszania starych peerów.
+1. Uporządkować dokumentację: usunąć niespójności w `ver_type` i `flags`.
+2. Zafinalizować format `BEKO_FRAME_V1` i parser ramki.
+3. Dokończyć `ACK` + timeout + retransmisję po stronie gatewaya.
+4. Wdrożyć sprzętowy `AES-CTR` i sprzętowy `HMAC-SHA256`.
+5. Dopięć model `TPM-first` i bezpieczne ładowanie kluczy.
+6. Wdrożyć trwały `counter` anti-replay i `COUNTER_SYNC`.
+7. Dopięć pairing tylko z gatewayem.
+8. Udokumentować i zweryfikować konfigurację SX1262.
+9. Dodać testy bezpieczeństwa i niezawodności.
 
 ---
 
-## 19. Proponowany plan realizacji projektu
+## 16. Elementy, które należy usunąć lub porzucić
 
-## Etap 1 – komunikacja podstawowa
-- uruchomienie łącza RFM95W pomiędzy Raspberry Pi i STM32,
-- obsługa nadawania / odbioru,
-- prosty format ramki,
-- wyświetlanie wiadomości na ekranie,
-- odpowiedzi przyciskami.
-
-## Etap 2 – potwierdzenia i forwarding
-- `ACK`,
-- retransmisja po timeout,
-- `TTL`,
-- deduplikacja ramek,
-- forwarding przez inne węzły.
-
-## Etap 3 – bezpieczeństwo obecnej wersji
-- integracja z TPM,
-- lista trusted,
-- szyfrowanie `USER`,
-- bieżący `AuthTag`,
-- zapis konfiguracji do EEPROM.
-
-## Etap 4 – wzmocnienie bezpieczeństwa
-- przejście na 64-bit MAC,
-- challenge 128-bit,
-- licznik anti-replay per-peer,
-- re-key.
-
-## Etap 5 – panel webowy
-- interfejs po Wi-Fi,
-- lista urządzeń,
-- wysyłanie wiadomości,
-- status dostarczenia,
-- historia odpowiedzi.
-
----
-
-## 20. Checklista rzeczy do wprowadzenia
-
-### Funkcjonalność podstawowa
-- [ ] zdefiniować finalny format ramki `USER_MSG`
-- [ ] zdefiniować finalny format ramki `ACK`
-- [ ] zdefiniować finalny format ramki `RESP`
-- [ ] zdefiniować finalny format ramek `JOIN_REQ` i `JOIN_ACCEPT`
-- [ ] wdrożyć obsługę `TTL`
-- [ ] wdrożyć forwarding wiadomości
-- [ ] wdrożyć deduplikację ramek
-- [ ] wdrożyć retransmisję po braku `ACK`
-- [ ] wdrożyć obsługę 3 przycisków i mapowanie odpowiedzi
-- [ ] wdrożyć wyświetlanie wiadomości na ekranie
-- [ ] wdrożyć status dostarczenia na Raspberry Pi
-
-### Bezpieczeństwo
-- [ ] zastąpić 4B `AuthTag` przez 8B MAC
-- [ ] zdecydować: `HMAC-SHA256-64` czy `AES-CMAC-64`
-- [ ] wdrożyć licznik anti-replay per-peer
-- [ ] zapisywać stan liczników do NVM
-- [ ] wdrożyć challenge 128-bit w parowaniu
-- [ ] wymusić fizyczne potwierdzenie parowania przyciskiem
-- [ ] dopracować sposób wyprowadzania klucza per-peer
-- [ ] wdrożyć politykę rotacji kluczy
-- [ ] ograniczyć liczbę jawnych metadanych
-- [ ] rozważyć pseudonimy sesyjne zamiast stałych ID
-
-### TPM / pamięć trwała
-- [ ] dopracować wykorzystanie RNG z TPM
-- [ ] określić, co dokładnie jest trzymane w EEPROM
-- [ ] zabezpieczyć aktualizację rekordów trusted przed uszkodzeniem zasilania
-- [ ] wdrożyć procedurę usuwania kluczy i trusted
-- [ ] sprawdzić, czy reset urządzenia nie powoduje niespójności liczników
-
-### Sieć i niezawodność
-- [ ] ustalić politykę retransmisji
-- [ ] dobrać wartości timeoutów
-- [ ] dobrać domyślny `TTL`
-- [ ] dodać losowe opóźnienie przed forwardingiem
-- [ ] ograniczyć floodowanie przy wielu węzłach
-- [ ] przetestować pracę w LoRa i FSK
-- [ ] porównać zasięg, opóźnienie i odporność dla obu trybów
-
-### Panel webowy
-- [ ] przygotować prosty backend na Raspberry Pi
-- [ ] przygotować formularz wysyłki wiadomości
-- [ ] dodać listę urządzeń i ich statusów
-- [ ] dodać historię wiadomości
-- [ ] dodać podgląd `ACK`
-- [ ] dodać podgląd odpowiedzi z przycisków
-
-### Testy
-- [ ] test poprawnego doręczenia
-- [ ] test utraty pojedynczej ramki
-- [ ] test retransmisji
-- [ ] test multi-hop
-- [ ] test duplicate frame
-- [ ] test replay attack
-- [ ] test błędnego MAC
-- [ ] test nieautoryzowanego urządzenia
-- [ ] test usuwania trusted
-- [ ] test restartu urządzenia i odtwarzania stanu
-- [ ] test zachowania po zaniku zasilania podczas zapisu NVM
-
----
-
-## 21. Podsumowanie
-
-Projekt stanowi bezpieczną, lekką sieć pagerową dla krótkich komunikatów tekstowych, w której Raspberry Pi Zero pełni rolę węzła zarządzającego z interfejsem webowym, a urządzenia STM32 z modułami RFM95W pełnią rolę odbiorników i przekaźników. Obecna wersja systemu posiada już podstawowe mechanizmy ochrony, takie jak szyfrowanie treści i weryfikacja tagu autentyczności, jednak wymaga dalszego wzmocnienia, szczególnie w obszarze MAC, anti-replay oraz procesu parowania.
-
-Najważniejszym kompromisem projektowym jest limit 64 bajtów. Z tego powodu format ramki musi być bardzo zwarty, a funkcje bezpieczeństwa powinny być dobierane tak, aby zapewnić realną ochronę bez nadmiernego narzutu. Zaproponowana architektura pozwala osiągnąć ten cel i jednocześnie zachować prostotę wdrożenia na platformie STM32 + RFM95W + Raspberry Pi Zero.
+- [ ] Stare założenia mesh / multi-hop / TTL.
+- [ ] Dokumentację opartą o `BEKO_NET_V1`, `AuthTag 4B`, `XTEA-CTR` i routing wieloskokowy.
+- [ ] Stare TODO związane z forwardingiem i flood relay.
+- [ ] Niespójne typy wiadomości i flagi wykraczające poza rozmiar pól.
