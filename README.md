@@ -119,9 +119,7 @@ Przykładowe typy:
 - `0x6` – `CFG`
 - `0x7` – `COUNTER_SYNC`
 - `0x8` – `KEY_ROTATE`
-- `0x9` – `ERROR`
-- `0x10` - `ANNIHILATE`
-- `0x11` - `BRAKE_ERR`
+- `0x0` – `ERROR`
 
 ### `flags`
 Pole 1-bajtowe:
