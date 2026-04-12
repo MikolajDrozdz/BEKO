@@ -111,6 +111,7 @@ Pole 1-bajtowe:
 
 Przykładowe typy:
 
+- `0x0` – `ERROR`
 - `0x1` – `DATA`
 - `0x2` – `ACK`
 - `0x3` – `RESP`
@@ -119,7 +120,6 @@ Przykładowe typy:
 - `0x6` – `CFG`
 - `0x7` – `COUNTER_SYNC`
 - `0x8` – `KEY_ROTATE`
-- `0x0` – `ERROR`
 
 ### `flags`
 Pole 1-bajtowe:
@@ -161,9 +161,6 @@ Obliczenia HMAC powinny wykorzystywać **sprzętowy blok HASH** mikrokontrolera 
 ### Szyfrowanie wiadomości
 
 Payload wiadomości szyfrowany z użyciem **sprzętowego AES** korzystający z dostępnego w STM32U545 bloku sprzętowego.
-
-Zalecany tryb pracy:
-
 - **AES-CTR**
 
 Zalety:
@@ -186,7 +183,7 @@ TPM jest głównym punktem zaufania w systemie.
 
 Wszystkie operacje bezpieczeństwa, które mogą być wykonane w TPM i które są wspierane w przyjętej architekturze, powinny być wykonywane właśnie tam.
 
-TPM powinien być używany do:
+TPM jest używany do:
 
 - przechowywania sekretu głównego urządzenia,
 - ochrony kluczy,
@@ -196,7 +193,7 @@ TPM powinien być używany do:
 - odpieczętowywania materiału kryptograficznego.
 
 Klucze nie mogą być przechowywane w firmware w postaci jawnej.  
-Powinny być wyprowadzane lub ładowane bezpiecznie przy starcie, a następnie używane tylko tymczasowo.
+Są wyprowadzane lub ładowane bezpiecznie przy starcie, a następnie używane tylko tymczasowo.
 
 ---
 
@@ -276,31 +273,23 @@ graph TD
     A["Administrator"] --> WEB["Panel / interfejs systemu"]
     O["Operator"] --> WEB
     U["Użytkownik"] --> NODE["Node STM32"]
+    A --> NODE
     S["Serwisant"] --> DEV["Dostęp fizyczny / UART / serwis"]
 
     WEB --> GW["Raspberry Pi Gateway"]
-    GW --> RADIO["SX1262"]
 
-    RADIO --> N1["Node STM32 #1"]
-    RADIO --> N2["Node STM32 #2"]
-    RADIO --> N3["Node STM32 #3"]
+    GW --> N1["Node STM32 #1"]
+    GW --> N2["Node STM32 #X"]
+    GW --> N3["Node STM32 #254"]
 
-    N1 --> TPM1["TPM"]
-    N1 --> UI1["Wyświetlacz / Przyciski / LED"]
-    N1 --> MEM1["EEPROM"]
+    N1 --> UI1["Wyświetlacz"]
 
-    N2 --> TPM2["TPM"]
-    N2 --> UI2["Wyświetlacz / Przyciski / LED"]
-    N2 --> MEM2["EEPROM"]
+    N2 --> UI2["Wyświetlacz"]
 
-    N3 --> TPM3["TPM"]
-    N3 --> UI3["Wyświetlacz / Przyciski / LED"]
-    N3 --> MEM3["EEPROM"]
+    N3 --> UI3["Wyświetlacz"]
 
     DEV --> GW
-    DEV --> N1
     DEV --> N2
-    DEV --> N3
 ````
 
 ---
