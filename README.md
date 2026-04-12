@@ -111,7 +111,6 @@ Pole 1-bajtowe:
 
 Przykładowe typy:
 
-- `0x0` – `ERROR`
 - `0x1` – `DATA`
 - `0x2` – `ACK`
 - `0x3` – `RESP`
@@ -132,7 +131,6 @@ Pole 1-bajtowe:
 - bit 5 – `BROADCAST`
 - bit 6 – `COUNTER_OVERRIDE`
 - bit 7 – `KEY_UPDATE`
-- bit 8 – `REMOVE`
 
 ---
 
