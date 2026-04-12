@@ -3,7 +3,6 @@
 *.elf
 *.s
 Debug/*
-*.ld
 *.mk
 Debug/
 *.xml
