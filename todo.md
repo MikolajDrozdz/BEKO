@@ -1,26 +1,11 @@
 # TODO – BEKO Pager Network (`pager-rtos`)
 
 Ten plik zastępuje starsze TODO związane z topologią mesh i wcześniejszą wersją dokumentacji.
-Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y STM32 w topologii gwiazdy**, ramki `BEKO_FRAME_V1`, obowiązkowego `ACK`, `AES-CTR`, `HMAC-SHA256`, `TPM-first` oraz maksymalnego `payload` 16 B.
+Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y STM32 w topologii gwiazdy**, ramki `LAVIET_FRAME_V1`, obowiązkowego `ACK`, `AES-CTR`, `HMAC-SHA256`, `TPM-first` oraz maksymalnego `payload` 16 B.
 
 ---
 
-## 1. Spójność dokumentacji i protokołu
-
-- [ ] Poprawić dokumentację `README.md`, aby była całkowicie spójna z założeniami implementacyjnymi.
-- [ ] Usunąć z dokumentacji pozostałości po topologii mesh, TTL, forwarding i RFM95W tam, gdzie projekt docelowo używa gwiazdy i SX1262.
-- [ ] Ujednolicić nazwę ramki i protokołu: wszędzie stosować `BEKO_FRAME_V1`.
-- [ ] Zweryfikować wszystkie rozmiary pól i końcową długość ramki.
-- [ ] Dodać jeden tabelaryczny opis ramki używany jako źródło prawdy dla kodu i dokumentacji.
-
-### Rekomendacje
-- Pole `ver_type` ma 1 bajt, więc przy podziale 4 bity + 4 bity typ wiadomości może mieć tylko wartości `0x0..0xF`. W dokumentacji trzeba usunąć lub przeprojektować wpisy `0x10` i `0x11`.
-- Pole `flags` ma 1 bajt, więc dopuszczalne są tylko bity `0..7`. Wpis `bit 8 – REMOVE` jest błędny i trzeba go usunąć albo przenieść do innego pola.
-- Jeśli ma istnieć dodatkowa funkcja typu `REMOVE`, najlepiej przypisać ją do wolnego typu wiadomości zamiast do nieistniejącego bitu 8.
-
----
-
-## 2. Finalizacja formatu ramki `BEKO_FRAME_V1`
+## 2. Finalizacja formatu ramki `LAVIET_FRAME_V1`
 
 - [ ] Zaimplementować finalny parser i serializer ramki zgodny z dokumentacją.
 - [ ] Rozdzielić logikę dla ramek `DATA`, `ACK`, `RESP`, `PAIR_REQ`, `PAIR_RESP`, `CFG`, `COUNTER_SYNC`, `KEY_ROTATE`, `ERROR`.
@@ -29,7 +14,6 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 - [ ] Dodać sprawdzanie dopuszczalnego `src_id`, `dst_id` i warunków broadcast.
 
 ### Rekomendacje
-- Dla `ACK` i prostych odpowiedzi warto przyjąć krótsze, jawnie opisane payloady, np. 0 B lub 1–2 B, zamiast traktować wszystkie typy identycznie.
 - Dla `CFG`, `COUNTER_SYNC` i `KEY_ROTATE` warto zdefiniować osobne mini-formaty payloadu, żeby uniknąć niejednoznacznej interpretacji danych.
 - Warto dodać pole lub stałą domenową do budowy nonce AES-CTR, aby nie mieszać przestrzeni wiadomości pomiędzy różnymi typami ramek.
 
@@ -219,7 +203,7 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 ## 15. Najważniejsze korekty do wdrożenia w pierwszej kolejności
 
 1. Uporządkować dokumentację: usunąć niespójności w `ver_type` i `flags`.
-2. Zafinalizować format `BEKO_FRAME_V1` i parser ramki.
+2. Zafinalizować format `LAVIET_FRAME_V1` i parser ramki.
 3. Dokończyć `ACK` + timeout + retransmisję po stronie gatewaya.
 4. Wdrożyć sprzętowy `AES-CTR` i sprzętowy `HMAC-SHA256`.
 5. Dopięć model `TPM-first` i bezpieczne ładowanie kluczy.
@@ -230,7 +214,7 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ---
 
-## 16. Elementy, które należy usunąć lub porzucić
+## 16. Elementy, które należy zarchiwizować
 
 - [ ] Stare założenia mesh / multi-hop / TTL.
 - [ ] Dokumentację opartą o `BEKO_NET_V1`, `AuthTag 4B`, `XTEA-CTR` i routing wieloskokowy.
