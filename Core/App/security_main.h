@@ -27,6 +27,13 @@ typedef enum
     SECURITY_NOTIFY_BADGE = 1
 } security_notify_mode_t;
 
+typedef enum
+{
+    SECURITY_FRAME_KEY_MODE_SHARED = 0,
+    SECURITY_FRAME_KEY_MODE_PAIR_V1_32 = 1,
+    SECURITY_FRAME_KEY_MODE_PAIR_V1_16 = 2
+} security_frame_key_mode_t;
+
 typedef struct
 {
     bool coding_enabled;
@@ -61,6 +68,11 @@ bool security_main_cmd_get_runtime_cfg(security_runtime_cfg_t *cfg_out);
 
 bool security_main_get_network_key(uint8_t key_out[16]);
 bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_id, uint8_t key_out[16]);
+bool security_main_get_frame_keys_mode(uint16_t local_id,
+                                       uint16_t peer_id,
+                                       security_frame_key_mode_t mode,
+                                       uint8_t enc_key_out[16],
+                                       uint8_t hmac_key_out[32]);
 bool security_main_get_frame_keys(uint16_t local_id,
                                   uint16_t peer_id,
                                   bool use_pair_link,

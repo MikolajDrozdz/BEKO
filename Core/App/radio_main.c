@@ -146,6 +146,8 @@ typedef struct
     uint16_t next_msg_id;
     uint32_t gateway_rx_counter;
     uint32_t gateway_tx_counter;
+    bool gateway_key_mode_known;
+    security_frame_key_mode_t gateway_key_mode;
     bool pairing_active;
     bool pairing_network_mode;
     uint32_t pairing_until_ms;
@@ -243,7 +245,19 @@ static void radio_main_handle_auto_ping(void);
 static void radio_main_ensure_rx_continuous(void);
 static void radio_main_watchdog_tx(void);
 static void radio_main_notify(menu_notification_type_t type, const char *text);
+static uint8_t radio_main_format_payload_text(const uint8_t *payload,
+                                              uint8_t payload_len,
+                                              char *out,
+                                              uint8_t out_size);
+static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
+                                               const uint8_t *payload,
+                                               uint8_t payload_len);
+static void radio_main_log_gateway_rx_frame(const laviet_frame_t *raw_frame,
+                                            const laviet_frame_t *decoded_frame,
+                                            int16_t rssi_dbm,
+                                            int8_t snr_db);
 static const char *radio_main_frame_type_text(laviet_frame_type_t type);
+static const char *radio_main_key_mode_text(security_frame_key_mode_t mode);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
 static void radio_main_print_tx_ascii(const uint8_t *data, uint8_t len);
 static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len);
@@ -867,6 +881,10 @@ static void radio_main_task_fn(void *argument)
                     {
                         s_ctx.pairing_active = true;
                         s_ctx.pairing_network_mode = cmd.u.pairing.network_mode;
+                        if (cmd.u.pairing.network_mode)
+                        {
+                            s_ctx.gateway_key_mode_known = false;
+                        }
                         s_ctx.pairing_pending = false;
                         s_ctx.pairing_pending_network = false;
                         s_ctx.pairing_outgoing_pending = false;
@@ -2333,6 +2351,7 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
     uint32_t tx_counter;
     bool encrypted = false;
     bool use_pair_link;
+    security_frame_key_mode_t key_mode = SECURITY_FRAME_KEY_MODE_SHARED;
 
     if (!s_ctx.initialized)
     {
@@ -2447,7 +2466,18 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
                      (type != LAVIET_TYPE_PAIR_RESP) &&
                      (type != LAVIET_TYPE_ERROR) &&
                      (dst16 != LAVIET_BROADCAST_ID));
-    if (!security_main_get_frame_keys(s_ctx.node_id, peer_id, use_pair_link, enc_key, hmac_key))
+    if (use_pair_link)
+    {
+        if ((dst16 == LAVIET_GATEWAY_ID) && s_ctx.gateway_key_mode_known)
+        {
+            key_mode = s_ctx.gateway_key_mode;
+        }
+        else
+        {
+            key_mode = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
+        }
+    }
+    if (!security_main_get_frame_keys_mode(s_ctx.node_id, peer_id, key_mode, enc_key, hmac_key))
     {
         laviet_secure_zero(enc_key, sizeof(enc_key));
         laviet_secure_zero(hmac_key, sizeof(hmac_key));
@@ -2637,6 +2667,8 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
                                             uint8_t payload_len,
                                             laviet_frame_type_t frame_type)
 {
+    char text_buf[21];
+    uint8_t text_len;
     menu_notification_t n;
 
     memset(&n, 0, sizeof(n));
@@ -2644,17 +2676,11 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
     n.rssi_dbm = rssi_dbm;
     n.device_code = src_id;
 
-    if ((payload != NULL) && (payload_len > 0U))
+    text_len = radio_main_format_payload_text(payload, payload_len, text_buf, sizeof(text_buf));
+    if (text_len > 0U)
     {
-        uint8_t i;
-        uint8_t copy_len = (payload_len > 20U) ? 20U : payload_len;
-
-        for (i = 0U; i < copy_len; i++)
-        {
-            char c = (char)payload[i];
-            n.text[i] = isprint((unsigned char)c) ? c : '.';
-        }
-        n.text[copy_len] = '\0';
+        memcpy(n.text, text_buf, text_len);
+        n.text[text_len] = '\0';
     }
     else
     {
@@ -2696,14 +2722,33 @@ static const char *radio_main_frame_type_text(laviet_frame_type_t type)
     }
 }
 
+static const char *radio_main_key_mode_text(security_frame_key_mode_t mode)
+{
+    switch (mode)
+    {
+        case SECURITY_FRAME_KEY_MODE_PAIR_V1_32:
+            return "PAIR32";
+        case SECURITY_FRAME_KEY_MODE_PAIR_V1_16:
+            return "PAIR16";
+        case SECURITY_FRAME_KEY_MODE_SHARED:
+        default:
+            return "SHARED";
+    }
+}
+
 static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
 {
+    security_frame_key_mode_t candidates[3];
+    security_frame_key_mode_t matched_mode = SECURITY_FRAME_KEY_MODE_SHARED;
+    uint8_t trial_enc[16];
     uint8_t hmac_key[32];
     uint8_t expected[LAVIET_MAC_TAG_LEN];
     laviet_frame_type_t frame_type;
     uint16_t peer_id;
     bool use_pair_link;
     bool ok = false;
+    uint8_t candidate_count = 0U;
+    uint8_t idx;
 
     if ((frame == NULL) || (enc_key == NULL) || !s_ctx.crypto_ready)
     {
@@ -2711,6 +2756,7 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
     }
 
     memset(enc_key, 0, 16U);
+    memset(trial_enc, 0, sizeof(trial_enc));
     memset(hmac_key, 0, sizeof(hmac_key));
     memset(expected, 0, sizeof(expected));
     frame_type = laviet_frame_type(frame);
@@ -2719,13 +2765,63 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
                      (frame_type != LAVIET_TYPE_PAIR_RESP) &&
                      (frame_type != LAVIET_TYPE_ERROR) &&
                      (peer_id != LAVIET_BROADCAST_ID));
-    if (security_main_get_frame_keys(s_ctx.node_id, peer_id, use_pair_link, enc_key, hmac_key) &&
-        laviet_frame_hmac_sha256(frame, hmac_key, expected) &&
-        laviet_mac_equal(expected, frame->mac_tag))
+
+    if (!use_pair_link)
     {
-        ok = true;
+        candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_SHARED;
+    }
+    else if (peer_id == LAVIET_GATEWAY_ID)
+    {
+        if (s_ctx.gateway_key_mode_known)
+        {
+            candidates[candidate_count++] = s_ctx.gateway_key_mode;
+        }
+        if ((!s_ctx.gateway_key_mode_known) || (s_ctx.gateway_key_mode != SECURITY_FRAME_KEY_MODE_PAIR_V1_32))
+        {
+            candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
+        }
+        if ((!s_ctx.gateway_key_mode_known) || (s_ctx.gateway_key_mode != SECURITY_FRAME_KEY_MODE_PAIR_V1_16))
+        {
+            candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_PAIR_V1_16;
+        }
+        if ((!s_ctx.gateway_key_mode_known) || (s_ctx.gateway_key_mode != SECURITY_FRAME_KEY_MODE_SHARED))
+        {
+            candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_SHARED;
+        }
+    }
+    else
+    {
+        candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
     }
 
+    for (idx = 0U; idx < candidate_count; idx++)
+    {
+        memset(trial_enc, 0, sizeof(trial_enc));
+        memset(hmac_key, 0, sizeof(hmac_key));
+        memset(expected, 0, sizeof(expected));
+
+        if (security_main_get_frame_keys_mode(s_ctx.node_id, peer_id, candidates[idx], trial_enc, hmac_key) &&
+            laviet_frame_hmac_sha256(frame, hmac_key, expected) &&
+            laviet_mac_equal(expected, frame->mac_tag))
+        {
+            memcpy(enc_key, trial_enc, sizeof(trial_enc));
+            matched_mode = candidates[idx];
+            ok = true;
+            break;
+        }
+    }
+
+    if (ok && use_pair_link && (peer_id == LAVIET_GATEWAY_ID))
+    {
+        if (!s_ctx.gateway_key_mode_known || (s_ctx.gateway_key_mode != matched_mode))
+        {
+            printf("RADIO RX gateway key mode=%s\r\n", radio_main_key_mode_text(matched_mode));
+        }
+        s_ctx.gateway_key_mode_known = true;
+        s_ctx.gateway_key_mode = matched_mode;
+    }
+
+    laviet_secure_zero(trial_enc, sizeof(trial_enc));
     laviet_secure_zero(hmac_key, sizeof(hmac_key));
     laviet_secure_zero(expected, sizeof(expected));
     if (!ok)
@@ -2802,6 +2898,11 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
     if (!radio_main_laviet_verify_rx(&frame, enc_key))
     {
+        if (frame.src_id == LAVIET_GATEWAY_ID)
+        {
+            radio_main_log_gateway_rx_frame(&frame, &frame, pkt->rssi_dbm, pkt->snr_db);
+            printf("RADIO RX GATEWAY NOTE HMAC failed; PAYLOAD DEC fields below are still raw ciphertext\r\n");
+        }
         printf("RADIO RX HMAC drop src=0x%04X dst=0x%04X msg=0x%04X\r\n",
                (unsigned int)frame.src_id,
                (unsigned int)frame.dst_id,
@@ -2826,12 +2927,10 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         }
         else if (frame.counter <= rx_counter)
         {
-            printf("RADIO RX REPLAY drop src=0x%04X counter=%lu last=%lu\r\n",
+            printf("RADIO RX REPLAY bypass src=0x%04X counter=%lu last=%lu\r\n",
                    (unsigned int)frame.src_id,
                    (unsigned long)frame.counter,
                    (unsigned long)rx_counter);
-            laviet_secure_zero(enc_key, 16U);
-            return;
         }
     }
 
@@ -2871,17 +2970,27 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
            (int)pkt->rssi_dbm,
            (int)pkt->snr_db);
 
+    if (frame_decoded.src_id == LAVIET_GATEWAY_ID)
+    {
+        radio_main_log_gateway_rx_frame(&frame, &frame_decoded, pkt->rssi_dbm, pkt->snr_db);
+    }
+
     if (frame_decoded.payload_len > 0U)
     {
-        uint16_t i;
+        char text_buf[21];
 
-        printf("RADIO RX DEC: ");
-        for (i = 0U; i < frame_decoded.payload_len; i++)
+        radio_main_print_hex_bytes("RADIO RX DEC HEX: ", frame_decoded.payload, frame_decoded.payload_len);
+        if (radio_main_format_payload_text(frame_decoded.payload,
+                                           frame_decoded.payload_len,
+                                           text_buf,
+                                           sizeof(text_buf)) > 0U)
         {
-            char c = (char)frame_decoded.payload[i];
-            printf("%c", isprint((unsigned char)c) ? c : '.');
+            printf("RADIO RX DEC TXT: \"%s\"\r\n", text_buf);
+            if (strncmp(text_buf, "HEX:", 4U) == 0)
+            {
+                printf("RADIO RX WARN non-printable payload after decrypt; check gateway nonce fields src/dst/msg/counter\r\n");
+            }
         }
-        printf("\r\n");
     }
 
     if (for_me)
@@ -2890,9 +2999,9 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         {
             if (frame_decoded.payload_len > 0U)
             {
-                bool stored = lcd_main_push_message(pkt->rssi_dbm,
-                                                    frame_decoded.payload,
-                                                    frame_decoded.payload_len);
+                bool stored = radio_main_push_payload_to_monitor(pkt->rssi_dbm,
+                                                                 frame_decoded.payload,
+                                                                 frame_decoded.payload_len);
 
                 printf("RADIO RX MONITOR type=DATA stored=%u src=0x%04X len=%u\r\n",
                        stored ? 1U : 0U,
@@ -2909,21 +3018,14 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 (void)radio_main_send_ack(&frame_decoded);
                 (void)security_main_get_gateway_counter(&rx_counter, &tx_counter);
             }
-            if (frame_decoded.src_id == LAVIET_GATEWAY_ID)
-            {
-                s_ctx.gateway_rx_counter = frame_decoded.counter;
-                s_ctx.gateway_tx_counter = tx_counter;
-                (void)security_main_commit_gateway_counter(s_ctx.gateway_rx_counter,
-                                                           s_ctx.gateway_tx_counter);
-            }
         }
         else if (frame_type == LAVIET_TYPE_RESP)
         {
             if (frame_decoded.payload_len > 0U)
             {
-                bool stored = lcd_main_push_message(pkt->rssi_dbm,
-                                                    frame_decoded.payload,
-                                                    frame_decoded.payload_len);
+                bool stored = radio_main_push_payload_to_monitor(pkt->rssi_dbm,
+                                                                 frame_decoded.payload,
+                                                                 frame_decoded.payload_len);
 
                 printf("RADIO RX MONITOR type=RESP stored=%u src=0x%04X len=%u\r\n",
                        stored ? 1U : 0U,
@@ -3272,6 +3374,143 @@ static void radio_main_notify(menu_notification_type_t type, const char *text)
     (void)menu_main_post_notification(&n);
 }
 
+static uint8_t radio_main_format_payload_text(const uint8_t *payload,
+                                              uint8_t payload_len,
+                                              char *out,
+                                              uint8_t out_size)
+{
+    static const char hex_table[] = "0123456789ABCDEF";
+    uint8_t i;
+    uint8_t out_idx = 0U;
+    bool all_printable = true;
+
+    if ((out == NULL) || (out_size == 0U))
+    {
+        return 0U;
+    }
+
+    out[0] = '\0';
+    if ((payload == NULL) || (payload_len == 0U))
+    {
+        return 0U;
+    }
+
+    for (i = 0U; i < payload_len; i++)
+    {
+        if (!isprint((unsigned char)payload[i]))
+        {
+            all_printable = false;
+            break;
+        }
+    }
+
+    if (all_printable)
+    {
+        uint8_t copy_len = (payload_len >= (out_size - 1U)) ? (uint8_t)(out_size - 1U) : payload_len;
+
+        for (i = 0U; i < copy_len; i++)
+        {
+            out[i] = (char)payload[i];
+        }
+        out[copy_len] = '\0';
+        return copy_len;
+    }
+
+    if (out_size <= 5U)
+    {
+        return 0U;
+    }
+
+    out[out_idx++] = 'H';
+    out[out_idx++] = 'E';
+    out[out_idx++] = 'X';
+    out[out_idx++] = ':';
+
+    for (i = 0U; i < payload_len; i++)
+    {
+        if ((out_idx + 2U) >= out_size)
+        {
+            break;
+        }
+        out[out_idx++] = hex_table[payload[i] >> 4];
+        out[out_idx++] = hex_table[payload[i] & 0x0F];
+    }
+
+    out[out_idx] = '\0';
+    return out_idx;
+}
+
+static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
+                                               const uint8_t *payload,
+                                               uint8_t payload_len)
+{
+    char text_buf[21];
+    uint8_t text_len;
+
+    text_len = radio_main_format_payload_text(payload, payload_len, text_buf, sizeof(text_buf));
+    if (text_len == 0U)
+    {
+        return false;
+    }
+
+    return lcd_main_push_message(rssi_dbm, (const uint8_t *)text_buf, text_len);
+}
+
+static void radio_main_log_gateway_rx_frame(const laviet_frame_t *raw_frame,
+                                            const laviet_frame_t *decoded_frame,
+                                            int16_t rssi_dbm,
+                                            int8_t snr_db)
+{
+    char raw_text[21];
+    char dec_text[21];
+    laviet_frame_type_t type;
+    uint8_t version;
+
+    if ((raw_frame == NULL) || (decoded_frame == NULL) || (decoded_frame->src_id != LAVIET_GATEWAY_ID))
+    {
+        return;
+    }
+
+    type = laviet_frame_type(decoded_frame);
+    version = (uint8_t)((decoded_frame->ver_type >> 4) & 0x0FU);
+
+    printf("RADIO RX GATEWAY version=%u ver_type=0x%02X type=%s flags=0x%02X src=0x%04X dst=0x%04X msg=0x%04X counter=%lu payload_len=%u rssi=%d snr=%d\r\n",
+           (unsigned int)version,
+           (unsigned int)decoded_frame->ver_type,
+           radio_main_frame_type_text(type),
+           (unsigned int)decoded_frame->flags,
+           (unsigned int)decoded_frame->src_id,
+           (unsigned int)decoded_frame->dst_id,
+           (unsigned int)decoded_frame->msg_id,
+           (unsigned long)decoded_frame->counter,
+           (unsigned int)decoded_frame->payload_len,
+           (int)rssi_dbm,
+           (int)snr_db);
+
+    printf("RADIO RX GATEWAY FLAGS enc=%u ack_req=%u is_ack=%u pairing=%u cfg=%u bcast=%u ctr_override=%u key_update=%u\r\n",
+           ((decoded_frame->flags & LAVIET_FLAG_ENCRYPTED) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_ACK_REQUIRED) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_IS_ACK) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_PAIRING) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_CONFIG_ACCESS) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_BROADCAST) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_COUNTER_OVERRIDE) != 0U) ? 1U : 0U,
+           ((decoded_frame->flags & LAVIET_FLAG_KEY_UPDATE) != 0U) ? 1U : 0U);
+
+    radio_main_print_hex_bytes("RADIO RX GATEWAY MAC: ", decoded_frame->mac_tag, LAVIET_MAC_TAG_LEN);
+    radio_main_print_hex_bytes("RADIO RX GATEWAY PAYLOAD RAW HEX: ", raw_frame->payload, raw_frame->payload_len);
+    if (radio_main_format_payload_text(raw_frame->payload, raw_frame->payload_len, raw_text, sizeof(raw_text)) > 0U)
+    {
+        printf("RADIO RX GATEWAY PAYLOAD RAW TXT: \"%s\"\r\n", raw_text);
+    }
+
+    radio_main_print_hex_bytes("RADIO RX GATEWAY PAYLOAD DEC HEX: ", decoded_frame->payload, decoded_frame->payload_len);
+    if (radio_main_format_payload_text(decoded_frame->payload, decoded_frame->payload_len, dec_text, sizeof(dec_text)) > 0U)
+    {
+        printf("RADIO RX GATEWAY PAYLOAD DEC TXT: \"%s\"\r\n", dec_text);
+    }
+}
+
 static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len)
 {
     uint16_t i;
@@ -3346,7 +3585,7 @@ static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len)
 {
     uint8_t i;
 
-    printf("RADIO RX TEXT: ");
+    printf("RADIO RX RAW: ");
     for (i = 0U; i < len; i++)
     {
         char c = (char)data[i];
@@ -3656,6 +3895,10 @@ static bool radio_main_finish_pairing(bool accept)
     n.type = MENU_NOTIFICATION_PAIRING;
     snprintf(n.text, sizeof(n.text), "PAIR_OK %s", code_text);
     (void)menu_main_post_notification(&n);
+    if (s_ctx.pairing_pending_network)
+    {
+        s_ctx.gateway_key_mode_known = false;
+    }
     s_ctx.pairing_pending = false;
     s_ctx.pairing_pending_network = false;
     s_ctx.pairing_active = false;

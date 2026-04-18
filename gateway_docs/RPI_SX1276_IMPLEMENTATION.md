@@ -194,6 +194,8 @@ Rekomendowany flow wdrozeniowy:
 
 Dokladny przyklad surowej ramki `PAIR_REQ / PAIR_RESP` jest opisany w `gateway_docs/README.md`.
 
+Pelna spec ramki, kluczy, HMAC i AES-CTR jest opisana w `gateway_docs/FRAME_CRYPTO_SPEC.md`.
+
 ## 8. Rekomendacja implementacyjna dla pairingu
 
 Najprostsza, zgodna z obecnym firmware:

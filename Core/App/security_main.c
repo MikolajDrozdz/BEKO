@@ -242,6 +242,11 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
                                           const uint8_t *code,
                                           uint8_t code_len,
                                           uint8_t key_out[16]);
+static void security_peer_link_key_derive_v1_16(uint16_t local_node_id,
+                                                uint16_t peer_node_id,
+                                                const uint8_t *code,
+                                                uint8_t code_len,
+                                                uint8_t key_out[16]);
 static bool security_load_runtime_and_seed_from_store(void);
 static bool security_save_runtime_and_seed_to_store(void);
 static bool security_commit_runtime_cfg_soft(void);
@@ -268,6 +273,9 @@ static bool security_rotate_key_internal(void);
 static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len, bool gateway_slot);
 static bool security_delete_device_internal(uint32_t node_id);
 static bool security_get_device_internal(uint8_t idx, trusted_info_t *out);
+static bool security_lookup_peer_code(uint32_t peer_node_id,
+                                      uint8_t code_out[SECURITY_CODE_MAX],
+                                      uint8_t *code_len_out);
 static uint8_t security_trusted_store_capacity(void);
 static uint16_t security_trusted_store_slot(uint8_t idx);
 static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRUSTED_ID_LEN]);
@@ -535,19 +543,19 @@ bool security_main_get_network_key(uint8_t key_out[16])
     return ok;
 }
 
-bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_id, uint8_t key_out[16])
+static bool security_lookup_peer_code(uint32_t peer_node_id,
+                                      uint8_t code_out[SECURITY_CODE_MAX],
+                                      uint8_t *code_len_out)
 {
-    bool ok = false;
-    uint8_t code[SECURITY_CODE_MAX];
-    uint8_t code_len = 0U;
     uint8_t i;
 
-    if ((key_out == NULL) || (peer_node_id == 0U) || (s_security_mutex == NULL))
+    if ((code_out == NULL) || (code_len_out == NULL) || (peer_node_id == 0U) || (s_security_mutex == NULL))
     {
         return false;
     }
 
-    memset(code, 0, sizeof(code));
+    memset(code_out, 0, SECURITY_CODE_MAX);
+    *code_len_out = 0U;
     if (osMutexAcquire(s_security_mutex, 100U) == osOK)
     {
         if (s_security_initialized)
@@ -556,14 +564,14 @@ bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_
             {
                 if (s_trusted[i].in_use && (s_trusted[i].node_id == peer_node_id))
                 {
-                    code_len = s_trusted[i].code_len;
-                    if (code_len > SECURITY_CODE_MAX)
+                    *code_len_out = s_trusted[i].code_len;
+                    if (*code_len_out > SECURITY_CODE_MAX)
                     {
-                        code_len = SECURITY_CODE_MAX;
+                        *code_len_out = SECURITY_CODE_MAX;
                     }
-                    if (code_len > 0U)
+                    if (*code_len_out > 0U)
                     {
-                        memcpy(code, s_trusted[i].code, code_len);
+                        memcpy(code_out, s_trusted[i].code, *code_len_out);
                     }
                     break;
                 }
@@ -572,25 +580,42 @@ bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_
         (void)osMutexRelease(s_security_mutex);
     }
 
-    if (code_len == 0U)
+    return (*code_len_out > 0U);
+}
+
+bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_id, uint8_t key_out[16])
+{
+    bool ok = false;
+    uint8_t code[SECURITY_CODE_MAX];
+    uint8_t code_len = 0U;
+
+    if ((key_out == NULL) || (peer_node_id == 0U))
+    {
+        return false;
+    }
+
+    if (!security_lookup_peer_code(peer_node_id, code, &code_len))
     {
         return false;
     }
 
     security_peer_link_key_derive(local_node_id, peer_node_id, code, code_len, key_out);
+    laviet_secure_zero(code, sizeof(code));
     ok = true;
     return ok;
 }
 
-bool security_main_get_frame_keys(uint16_t local_id,
-                                  uint16_t peer_id,
-                                  bool use_pair_link,
-                                  uint8_t enc_key_out[16],
-                                  uint8_t hmac_key_out[32])
+bool security_main_get_frame_keys_mode(uint16_t local_id,
+                                       uint16_t peer_id,
+                                       security_frame_key_mode_t mode,
+                                       uint8_t enc_key_out[16],
+                                       uint8_t hmac_key_out[32])
 {
     uint8_t base_key[16];
     uint8_t digest[32];
     uint8_t info[8];
+    uint8_t code[SECURITY_CODE_MAX];
+    uint8_t code_len = 0U;
     uint16_t domain_id;
     bool ok = false;
 
@@ -600,15 +625,38 @@ bool security_main_get_frame_keys(uint16_t local_id,
     }
 
     memset(base_key, 0, sizeof(base_key));
-    if (use_pair_link && (peer_id != LAVIET_BROADCAST_ID))
+    memset(code, 0, sizeof(code));
+    switch (mode)
     {
-        ok = security_main_get_peer_link_key(local_id, peer_id, base_key);
+        case SECURITY_FRAME_KEY_MODE_PAIR_V1_32:
+            if (!security_lookup_peer_code(peer_id, code, &code_len))
+            {
+                return false;
+            }
+            security_peer_link_key_derive(local_id, peer_id, code, code_len, base_key);
+            ok = true;
+            break;
+
+        case SECURITY_FRAME_KEY_MODE_PAIR_V1_16:
+            if (!security_lookup_peer_code(peer_id, code, &code_len))
+            {
+                return false;
+            }
+            security_peer_link_key_derive_v1_16(local_id, peer_id, code, code_len, base_key);
+            ok = true;
+            break;
+
+        case SECURITY_FRAME_KEY_MODE_SHARED:
+        default:
+            memcpy(base_key, s_shared_frame_root_key, sizeof(base_key));
+            ok = true;
+            break;
     }
 
     if (!ok)
     {
-        memcpy(base_key, s_shared_frame_root_key, sizeof(base_key));
-        ok = true;
+        laviet_secure_zero(code, sizeof(code));
+        return false;
     }
 
     domain_id = (peer_id == LAVIET_BROADCAST_ID) ?
@@ -633,7 +681,24 @@ bool security_main_get_frame_keys(uint16_t local_id,
     laviet_secure_zero(base_key, sizeof(base_key));
     laviet_secure_zero(digest, sizeof(digest));
     laviet_secure_zero(info, sizeof(info));
+    laviet_secure_zero(code, sizeof(code));
     return ok;
+}
+
+bool security_main_get_frame_keys(uint16_t local_id,
+                                  uint16_t peer_id,
+                                  bool use_pair_link,
+                                  uint8_t enc_key_out[16],
+                                  uint8_t hmac_key_out[32])
+{
+    security_frame_key_mode_t mode = SECURITY_FRAME_KEY_MODE_SHARED;
+
+    if (use_pair_link && (peer_id != LAVIET_BROADCAST_ID))
+    {
+        mode = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
+    }
+
+    return security_main_get_frame_keys_mode(local_id, peer_id, mode, enc_key_out, hmac_key_out);
 }
 
 bool security_main_get_gateway_counter(uint32_t *rx_counter_out, uint32_t *tx_counter_out)
@@ -1126,6 +1191,46 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
     memcpy(info, label, sizeof(label) - 1U);
     security_be32_write(&info[sizeof(label) - 1U], lo);
     security_be32_write(&info[sizeof(label) - 1U + 4U], hi);
+
+    if (laviet_hmac_sha256(code, code_len, info, (uint16_t)sizeof(info), digest))
+    {
+        memcpy(key_out, digest, 16U);
+    }
+    else
+    {
+        memset(key_out, 0, 16U);
+    }
+
+    laviet_secure_zero(info, sizeof(info));
+    laviet_secure_zero(digest, sizeof(digest));
+}
+
+static void security_peer_link_key_derive_v1_16(uint16_t local_node_id,
+                                                uint16_t peer_node_id,
+                                                const uint8_t *code,
+                                                uint8_t code_len,
+                                                uint8_t key_out[16])
+{
+    static const uint8_t label[] = "SEC:PAIR:V1";
+    uint8_t info[sizeof(label) - 1U + 4U];
+    uint8_t digest[LAVIET_SHA256_LEN];
+    uint16_t lo;
+    uint16_t hi;
+
+    if ((key_out == NULL) || (code == NULL) || (code_len == 0U))
+    {
+        return;
+    }
+
+    lo = (local_node_id < peer_node_id) ? local_node_id : peer_node_id;
+    hi = (local_node_id < peer_node_id) ? peer_node_id : local_node_id;
+    memset(info, 0, sizeof(info));
+    memset(digest, 0, sizeof(digest));
+    memcpy(info, label, sizeof(label) - 1U);
+    info[sizeof(label) - 1U] = (uint8_t)(lo >> 8);
+    info[sizeof(label) - 1U + 1U] = (uint8_t)lo;
+    info[sizeof(label) - 1U + 2U] = (uint8_t)(hi >> 8);
+    info[sizeof(label) - 1U + 3U] = (uint8_t)hi;
 
     if (laviet_hmac_sha256(code, code_len, info, (uint16_t)sizeof(info), digest))
     {

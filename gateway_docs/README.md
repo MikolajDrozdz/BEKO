@@ -2,6 +2,10 @@
 
 Ten folder opisuje kontrakt komunikacyjny miedzy gatewayem Raspberry Pi a firmware STM32 w tym repo.
 
+Najbardziej techniczny opis ramki, HMAC, AES-CTR i kolejnosci liczenia jest w:
+
+- `gateway_docs/FRAME_CRYPTO_SPEC.md`
+
 ## 1. Rola gatewaya
 
 Gateway:
