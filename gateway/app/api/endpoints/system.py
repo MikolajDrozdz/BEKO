@@ -21,6 +21,7 @@ def get_system_status():
         "protocol_version": LAVIET_FRAME_VERSION,
         "status": "online" if lora_device.is_ready() else "radio_not_ready",
         "radio_ready": lora_device.is_ready(),
+        "radio_driver": lora_device.get_driver_name(),
         "radio_error": lora_device.get_last_error(),
     }
 
