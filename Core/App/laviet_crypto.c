@@ -19,6 +19,8 @@ extern HASH_HandleTypeDef hhash;
 #endif
 
 #define LAVIET_CRYPTO_TIMEOUT_MS  1000U
+#define LAVIET_TEST_FIXED_FRAME_MAC  1U
+#define LAVIET_TEST_FIXED_FRAME_MAC_BYTE  0x01U
 
 typedef union
 {
@@ -519,6 +521,18 @@ bool laviet_frame_hmac_sha256(const laviet_frame_t *frame,
                               const uint8_t key[LAVIET_HMAC_KEY_LEN],
                               uint8_t out[LAVIET_MAC_TAG_LEN])
 {
+#if (LAVIET_TEST_FIXED_FRAME_MAC == 1U)
+    (void)frame;
+    (void)key;
+
+    if (out == NULL)
+    {
+        return false;
+    }
+
+    memset(out, LAVIET_TEST_FIXED_FRAME_MAC_BYTE, LAVIET_MAC_TAG_LEN);
+    return true;
+#else
     uint8_t mac_input[LAVIET_FRAME_HEADER_LEN + LAVIET_MAX_PAYLOAD];
     uint8_t mac_input_len = 0U;
     bool ok;
@@ -535,6 +549,7 @@ bool laviet_frame_hmac_sha256(const laviet_frame_t *frame,
     ok = laviet_hmac_sha256(key, LAVIET_HMAC_KEY_LEN, mac_input, mac_input_len, out);
     laviet_secure_zero(mac_input, sizeof(mac_input));
     return ok;
+#endif
 }
 
 static bool laviet_aes_ctr_crypt_sw(uint8_t *data,
@@ -735,6 +750,10 @@ bool laviet_crypto_init(void)
     }
 
     s_crypto_hw_ready = false;
+
+#if (LAVIET_TEST_FIXED_FRAME_MAC == 1U)
+    printf("CRYPTO: TEST MODE fixed frame MAC enabled (tag=01 x 32)\r\n");
+#endif
 
 #if defined(HAL_CRYP_MODULE_ENABLED) && defined(HAL_HASH_MODULE_ENABLED)
     if ((hcryp.Instance != AES) ||
