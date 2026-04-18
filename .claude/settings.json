@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Read(//d/STUDIA/BEKO//**)",
+      "Read(//d/STUDIA/BEKO/**)"
+    ]
+  }
+}

@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  * {
+    @apply border-teal-200 dark:border-teal-800;
+  }
+
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-teal-50 text-teal-900 dark:bg-teal-950 dark:text-teal-50;
+    min-height: 100vh;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-teal-300 dark:bg-teal-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-teal-400 dark:bg-teal-600;
+  }
+}
+
+@layer components {
+  .surface {
+    @apply bg-white dark:bg-teal-900 border border-teal-200 dark:border-teal-800;
+  }
+
+  .surface-elevated {
+    @apply bg-white dark:bg-teal-900 border border-teal-200 dark:border-teal-800 shadow-sm;
+  }
+
+  .text-muted {
+    @apply text-teal-600 dark:text-teal-400;
+  }
+
+  .text-accent {
+    @apply text-ivory-700 dark:text-ivory-500;
+  }
+
+  .accent-bg {
+    @apply bg-ivory-700 dark:bg-ivory-500;
+  }
+
+  .accent-bg-subtle {
+    @apply bg-ivory-100 dark:bg-ivory-900;
+  }
+
+  .font-mono-feature {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.8125rem;
+    font-feature-settings: 'liga' 0;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.2s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
