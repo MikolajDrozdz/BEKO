@@ -15,6 +15,11 @@ except ImportError as e:
     RadioMode = None
 
 try:
+    import radio_defines as legacy_radio_defines
+except ImportError:
+    legacy_radio_defines = None
+
+try:
     import spidev
 except ImportError as e:
     print(f"[WARNING] Failed to import spidev: {e}")
@@ -39,6 +44,24 @@ def _env_int(name: str, default: int) -> int:
         return int(raw, 0)
     except ValueError:
         return default
+
+
+def _legacy_freq_hz(default_hz: int) -> int:
+    if legacy_radio_defines is None:
+        return default_hz
+
+    legacy_freq = getattr(legacy_radio_defines, "LORA_FREQ", None)
+    if legacy_freq is None:
+        return default_hz
+
+    try:
+        legacy_float = float(legacy_freq)
+    except (TypeError, ValueError):
+        return default_hz
+
+    if legacy_float > 1000000:
+        return int(legacy_float)
+    return int(legacy_float * 1000000)
 
 
 class _GpioHelper:
@@ -120,13 +143,21 @@ class _SX1276LoRaRadio:
         if spidev is None:
             raise RuntimeError("spidev is unavailable")
 
-        self.spi_bus = _env_int("LAVIET_SPI_BUS", 0)
-        self.spi_cs = _env_int("LAVIET_SPI_CS", 0)
+        default_spi_bus = getattr(legacy_radio_defines, "SPI_PORT", 0) if legacy_radio_defines else 0
+        default_spi_cs = getattr(legacy_radio_defines, "SPI_CHANNEL", 1) if legacy_radio_defines else 1
+        default_reset_pin = getattr(legacy_radio_defines, "RESET_PIN", 25) if legacy_radio_defines else 25
+        default_dio0_pin = getattr(legacy_radio_defines, "INTERRUPT_PIN", 22) if legacy_radio_defines else 22
+        default_tx_power = getattr(legacy_radio_defines, "LORA_POWER", 17) if legacy_radio_defines else 17
+        default_sync_word = getattr(legacy_radio_defines, "LORA_SYNC_WORD", 0x34) if legacy_radio_defines else 0x34
+
+        self.spi_bus = _env_int("LAVIET_SPI_BUS", int(default_spi_bus))
+        self.spi_cs = _env_int("LAVIET_SPI_CS", int(default_spi_cs))
         self.spi_hz = _env_int("LAVIET_SPI_HZ", 5000000)
-        self.reset_pin = _env_int("LAVIET_GPIO_RESET", 22)
-        self.dio0_pin = _env_int("LAVIET_GPIO_DIO0", 25)
-        self.freq_hz = _env_int("LAVIET_LORA_FREQ_HZ", 868500000)
-        self.tx_power = _env_int("LAVIET_LORA_TX_POWER", 17)
+        self.reset_pin = _env_int("LAVIET_GPIO_RESET", int(default_reset_pin))
+        self.dio0_pin = _env_int("LAVIET_GPIO_DIO0", int(default_dio0_pin))
+        self.freq_hz = _env_int("LAVIET_LORA_FREQ_HZ", _legacy_freq_hz(868500000))
+        self.tx_power = _env_int("LAVIET_LORA_TX_POWER", int(default_tx_power))
+        self.sync_word = _env_int("LAVIET_LORA_SYNC_WORD", int(default_sync_word))
         self.poll_interval = max(5, _env_int("LAVIET_RX_POLL_MS", 20)) / 1000.0
         self.spi: Any = None
         self.gpio = _GpioHelper(self.reset_pin)
@@ -181,12 +212,12 @@ class _SX1276LoRaRadio:
             self._set_frequency(self.freq_hz)
             self._set_tx_power(self.tx_power)
             self._write_reg(self.REG_LNA, self._read_reg(self.REG_LNA) | 0x03)
-            self._write_reg(self.REG_MODEM_CONFIG1, 0x72)  # BW125k, CR4/5, explicit header
+            self._write_reg(self.REG_MODEM_CONFIG1, 0x92)  # BW500k, CR4/5, explicit header
             self._write_reg(self.REG_MODEM_CONFIG2, 0x74)  # SF7, CRC on
             self._write_reg(self.REG_MODEM_CONFIG3, 0x04)  # AGC on
             self._write_reg(self.REG_PREAMBLE_MSB, 0x00)
             self._write_reg(self.REG_PREAMBLE_LSB, 0x08)
-            self._write_reg(self.REG_SYNC_WORD, 0x34)
+            self._write_reg(self.REG_SYNC_WORD, self.sync_word)
             self._write_reg(self.REG_IRQ_FLAGS, 0xFF)
             self._write_reg(self.REG_FIFO_ADDR_PTR, 0x00)
             self._write_reg(self.REG_DIO_MAPPING1, 0x00)  # DIO0=RxDone
@@ -336,7 +367,8 @@ class LoRaHardware:
             print(
                 f"[HARDWARE LoRa] Builtin SX1276 driver ready "
                 f"(spi={self.radio.spi_bus}.{self.radio.spi_cs}, reset_gpio={self.radio.reset_pin}, "
-                f"dio0_gpio={self.radio.dio0_pin}, freq={self.radio.freq_hz})"
+                f"dio0_gpio={self.radio.dio0_pin}, freq={self.radio.freq_hz}, "
+                f"sync=0x{self.radio.sync_word:02X})"
             )
             return True
         except Exception as e:
