@@ -243,6 +243,7 @@ static void radio_main_handle_auto_ping(void);
 static void radio_main_ensure_rx_continuous(void);
 static void radio_main_watchdog_tx(void);
 static void radio_main_notify(menu_notification_type_t type, const char *text);
+static const char *radio_main_frame_type_text(laviet_frame_type_t type);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
 static void radio_main_print_tx_ascii(const uint8_t *data, uint8_t len);
 static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len);
@@ -851,18 +852,31 @@ static void radio_main_task_fn(void *argument)
                 case RADIO_MAIN_CMD_START_PAIRING:
                 case RADIO_MAIN_CMD_START_NETWORK_PAIRING:
                     cmd_result = s_ctx.initialized || radio_main_force_recover_radio("start pairing");
-                    s_ctx.pairing_active = true;
-                    s_ctx.pairing_network_mode = cmd.u.pairing.network_mode;
-                    s_ctx.pairing_pending = false;
-                    s_ctx.pairing_pending_network = false;
-                    s_ctx.pairing_outgoing_pending = false;
-                    s_ctx.pairing_outgoing_network = false;
-                    s_ctx.pairing_until_ms = radio_main_now_ms() + cmd.u.pairing.timeout_ms;
-                    if (cmd_result &&
-                        s_ctx.initialized &&
-                        (radio_get_state() != RADIO_STATE_TX))
+                    if (cmd_result && cmd.u.pairing.network_mode)
                     {
-                        (void)radio_start_rx_continuous();
+                        trusted_info_t gateway_info;
+
+                        memset(&gateway_info, 0, sizeof(gateway_info));
+                        if (security_main_cmd_get_device(0U, &gateway_info) && gateway_info.in_use)
+                        {
+                            printf("RADIO: network pairing blocked, gateway slot already in use\r\n");
+                            cmd_result = false;
+                        }
+                    }
+                    if (cmd_result)
+                    {
+                        s_ctx.pairing_active = true;
+                        s_ctx.pairing_network_mode = cmd.u.pairing.network_mode;
+                        s_ctx.pairing_pending = false;
+                        s_ctx.pairing_pending_network = false;
+                        s_ctx.pairing_outgoing_pending = false;
+                        s_ctx.pairing_outgoing_network = false;
+                        s_ctx.pairing_until_ms = radio_main_now_ms() + cmd.u.pairing.timeout_ms;
+                        if (s_ctx.initialized &&
+                            (radio_get_state() != RADIO_STATE_TX))
+                        {
+                            (void)radio_start_rx_continuous();
+                        }
                     }
                     break;
 
@@ -2647,7 +2661,39 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
         (void)snprintf(n.text, sizeof(n.text), "TYPE:%u", (unsigned int)frame_type);
     }
 
+    printf("RADIO RX NOTIFY type=%s src=0x%04X rssi=%d text=\"%s\"\r\n",
+           radio_main_frame_type_text(frame_type),
+           (unsigned int)src_id,
+           (int)rssi_dbm,
+           n.text);
     (void)menu_main_post_notification(&n);
+}
+
+static const char *radio_main_frame_type_text(laviet_frame_type_t type)
+{
+    switch (type)
+    {
+        case LAVIET_TYPE_DATA:
+            return "DATA";
+        case LAVIET_TYPE_ACK:
+            return "ACK";
+        case LAVIET_TYPE_RESP:
+            return "RESP";
+        case LAVIET_TYPE_PAIR_REQ:
+            return "PAIR_REQ";
+        case LAVIET_TYPE_PAIR_RESP:
+            return "PAIR_RESP";
+        case LAVIET_TYPE_CFG:
+            return "CFG";
+        case LAVIET_TYPE_COUNTER_SYNC:
+            return "COUNTER_SYNC";
+        case LAVIET_TYPE_KEY_ROTATE:
+            return "KEY_ROTATE";
+        case LAVIET_TYPE_ERROR:
+            return "ERROR";
+        default:
+            return "UNKNOWN";
+    }
 }
 
 static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
@@ -2771,15 +2817,22 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
     frame_type = laviet_frame_type(&frame);
     if ((frame.src_id == LAVIET_GATEWAY_ID) &&
-        (frame_type != LAVIET_TYPE_COUNTER_SYNC) &&
-        (frame.counter <= rx_counter))
+        (frame_type != LAVIET_TYPE_COUNTER_SYNC))
     {
-        printf("RADIO RX REPLAY drop src=0x%04X counter=%lu last=%lu\r\n",
-               (unsigned int)frame.src_id,
-               (unsigned long)frame.counter,
-               (unsigned long)rx_counter);
-        laviet_secure_zero(enc_key, 16U);
-        return;
+        if ((frame.counter == 0UL) && (rx_counter == 0UL))
+        {
+            printf("RADIO RX compat allow src=0x%04X counter=0 while last=0\r\n",
+                   (unsigned int)frame.src_id);
+        }
+        else if (frame.counter <= rx_counter)
+        {
+            printf("RADIO RX REPLAY drop src=0x%04X counter=%lu last=%lu\r\n",
+                   (unsigned int)frame.src_id,
+                   (unsigned long)frame.counter,
+                   (unsigned long)rx_counter);
+            laviet_secure_zero(enc_key, 16U);
+            return;
+        }
     }
 
     frame_decoded = frame;
@@ -2807,6 +2860,17 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         return;
     }
 
+    printf("RADIO RX OK type=%s src=0x%04X dst=0x%04X msg=0x%04X counter=%lu flags=0x%02X len=%u rssi=%d snr=%d\r\n",
+           radio_main_frame_type_text(frame_type),
+           (unsigned int)frame_decoded.src_id,
+           (unsigned int)frame_decoded.dst_id,
+           (unsigned int)frame_decoded.msg_id,
+           (unsigned long)frame_decoded.counter,
+           (unsigned int)frame_decoded.flags,
+           (unsigned int)frame_decoded.payload_len,
+           (int)pkt->rssi_dbm,
+           (int)pkt->snr_db);
+
     if (frame_decoded.payload_len > 0U)
     {
         uint16_t i;
@@ -2826,9 +2890,14 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         {
             if (frame_decoded.payload_len > 0U)
             {
-                (void)lcd_main_push_message(pkt->rssi_dbm,
-                                            frame_decoded.payload,
-                                            frame_decoded.payload_len);
+                bool stored = lcd_main_push_message(pkt->rssi_dbm,
+                                                    frame_decoded.payload,
+                                                    frame_decoded.payload_len);
+
+                printf("RADIO RX MONITOR type=DATA stored=%u src=0x%04X len=%u\r\n",
+                       stored ? 1U : 0U,
+                       (unsigned int)frame_decoded.src_id,
+                       (unsigned int)frame_decoded.payload_len);
             }
             radio_main_post_rx_notification(pkt->rssi_dbm,
                                             frame_decoded.src_id,
@@ -2846,6 +2915,30 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 s_ctx.gateway_tx_counter = tx_counter;
                 (void)security_main_commit_gateway_counter(s_ctx.gateway_rx_counter,
                                                            s_ctx.gateway_tx_counter);
+            }
+        }
+        else if (frame_type == LAVIET_TYPE_RESP)
+        {
+            if (frame_decoded.payload_len > 0U)
+            {
+                bool stored = lcd_main_push_message(pkt->rssi_dbm,
+                                                    frame_decoded.payload,
+                                                    frame_decoded.payload_len);
+
+                printf("RADIO RX MONITOR type=RESP stored=%u src=0x%04X len=%u\r\n",
+                       stored ? 1U : 0U,
+                       (unsigned int)frame_decoded.src_id,
+                       (unsigned int)frame_decoded.payload_len);
+            }
+            radio_main_post_rx_notification(pkt->rssi_dbm,
+                                            frame_decoded.src_id,
+                                            frame_decoded.payload,
+                                            frame_decoded.payload_len,
+                                            frame_type);
+            if ((frame_decoded.dst_id == s_ctx.node_id) &&
+                ((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U))
+            {
+                (void)radio_main_send_ack(&frame_decoded);
             }
         }
         else if (frame_type == LAVIET_TYPE_COUNTER_SYNC)
@@ -2877,6 +2970,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 char code_text[12];
                 const uint8_t *pair_code = NULL;
                 uint8_t pair_code_len = 0U;
+                trusted_info_t gateway_info;
 
                 if (!radio_main_pair_payload_parse(frame_decoded.payload,
                                                    (uint8_t)frame_decoded.payload_len,
@@ -2890,6 +2984,15 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 {
                     printf("RADIO RX non-gateway PAIR_REQ drop src=0x%04X\r\n",
                            (unsigned int)frame_decoded.src_id);
+                    return;
+                }
+
+                memset(&gateway_info, 0, sizeof(gateway_info));
+                if (s_ctx.pairing_network_mode &&
+                    security_main_cmd_get_device(0U, &gateway_info) &&
+                    gateway_info.in_use)
+                {
+                    printf("RADIO RX network PAIR_REQ drop, gateway slot already in use\r\n");
                     return;
                 }
 
@@ -2949,9 +3052,15 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                              code_text,
                                              (uint8_t)sizeof(code_text));
 
-                if (code_match && security_main_cmd_add_device(frame_decoded.src_id,
-                                                                s_ctx.pairing_outgoing_code,
-                                                                s_ctx.pairing_outgoing_code_len))
+                if (code_match &&
+                    ((s_ctx.pairing_outgoing_network &&
+                      security_main_cmd_add_gateway(frame_decoded.src_id,
+                                                    s_ctx.pairing_outgoing_code,
+                                                    s_ctx.pairing_outgoing_code_len)) ||
+                     (!s_ctx.pairing_outgoing_network &&
+                      security_main_cmd_add_device(frame_decoded.src_id,
+                                                   s_ctx.pairing_outgoing_code,
+                                                   s_ctx.pairing_outgoing_code_len))))
                 {
                     char pair_note[21];
                     snprintf(pair_note, sizeof(pair_note), "PAIR_OK %s", code_text);
@@ -3511,7 +3620,14 @@ static bool radio_main_finish_pairing(bool accept)
         return true;
     }
 
-    ok = security_main_cmd_add_device(node_id, code, code_len);
+    if (s_ctx.pairing_pending_network)
+    {
+        ok = security_main_cmd_add_gateway(node_id, code, code_len);
+    }
+    else
+    {
+        ok = security_main_cmd_add_device(node_id, code, code_len);
+    }
     if (!ok)
     {
         radio_main_notify(MENU_NOTIFICATION_ERROR, "Pairing save failed");

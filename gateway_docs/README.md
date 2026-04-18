@@ -62,7 +62,7 @@ Wszystkie pola wielobajtowe sa kodowane big-endian.
 
 Po wybraniu `Pair with network` node:
 
-1. przechodzi na 60 s w tryb nasluchu,
+1. przechodzi na 5 min w tryb nasluchu,
 2. nie wysyla zadnego `PAIR_REQ`,
 3. czeka na `PAIR_REQ` od gatewaya,
 4. po odebraniu pokazuje prosbe o lokalne potwierdzenie,
@@ -86,6 +86,125 @@ Sa dwa poprawne tryby:
 - `unicast`, gdy `node_id` jest juz znane z produkcji, etykiety lub innego kanalu.
 
 Dla nieznanego noda rekomendowany jest `broadcast`.
+
+### 5.4. Przykadowe ramki pairingu
+
+Najczestsze bledy po stronie gatewaya:
+
+- zly `flags`,
+- zly `domain_id` przy wyprowadzaniu klucza HMAC,
+- ustawienie `ACK_REQUIRED` dla `PAIR_REQ`,
+- ustawienie `ENCRYPTED` dla `PAIR_REQ / PAIR_RESP`,
+- payload inny niz dokladnie `8 B`,
+- `src_id != 0x0001` przy network pairingu.
+
+#### Przyklad A: `PAIR_REQ` broadcast od gatewaya
+
+To jest najprostszy i rekomendowany bootstrap, gdy gateway nie zna jeszcze `node_id`.
+
+Pola:
+
+- `ver_type = 0x14` -> wersja `1`, typ `PAIR_REQ=4`
+- `flags = 0x28` -> `PAIRING | BROADCAST`
+- `src_id = 0x0001`
+- `dst_id = 0xFFFF`
+- `msg_id = 0x1001`
+- `counter = 0x00000001`
+- `payload_len = 0x08`
+- `payload = "12345678"` -> `31 32 33 34 35 36 37 38`
+- `mac_tag = HMAC-SHA256(...)`
+
+W pairingu firmware nie ustawia `ENCRYPTED`, wiec payload idzie jawnie.
+
+Klucz HMAC dla tego przykladu:
+
+- `base_key = "LAVIET_SHARED_V1"` jako 16 B ASCII
+- `domain_id = 0xFFFF` dla broadcastu
+- `info = 4C 56 31 4B FF FF 00 02`
+- `hmac_key = HMAC_SHA256(base_key, info)`
+
+Wynik dla tego konkretnego przykladu:
+
+```text
+hmac_key =
+3D 4D BF F2 87 A7 37 A7 BE 99 F1 D3 D9 01 EF F2
+A8 F7 95 08 46 03 C4 54 9B D2 20 C6 09 F1 33 D6
+
+mac_input =
+14 28 00 01 FF FF 10 01 00 00 00 01 08 31 32 33 34 35 36 37 38
+
+mac_tag =
+27 E0 22 94 07 53 56 60 F6 F0 24 9E B9 B3 56 0C
+15 68 A2 75 20 26 6A A0 6F 15 C1 66 79 59 DD F9
+
+full_frame =
+14 28 00 01 FF FF 10 01 00 00 00 01 08 31 32 33
+34 35 36 37 38 27 E0 22 94 07 53 56 60 F6 F0 24
+9E B9 B3 56 0C 15 68 A2 75 20 26 6A A0 6F 15 C1
+66 79 59 DD F9
+```
+
+#### Przyklad B: `PAIR_RESP` unicast od node'a do gatewaya
+
+Po lokalnej akceptacji node odsyla `PAIR_RESP` do gatewaya.
+Payload to nadal ten sam 8-bajtowy kod parowania.
+
+Pola:
+
+- `ver_type = 0x15` -> wersja `1`, typ `PAIR_RESP=5`
+- `flags = 0x08` -> tylko `PAIRING`
+- `src_id = 0x1234`
+- `dst_id = 0x0001`
+- `msg_id = 0x0001`
+- `counter = 0x00000001`
+- `payload_len = 0x08`
+- `payload = "12345678"` -> `31 32 33 34 35 36 37 38`
+
+Tu bardzo latwo o blad:
+
+- to nie jest broadcast,
+- `domain_id` dla HMAC nie wynosi `0xFFFF`,
+- dla unicastu jest `min(local_id, peer_id)`.
+
+Dla `src_id=0x1234` i `dst_id=0x0001`:
+
+- `domain_id = 0x0001`
+- `info = 4C 56 31 4B 00 01 00 02`
+
+Wynik dla tego konkretnego przykladu:
+
+```text
+hmac_key =
+6F 05 6F B1 12 85 84 24 40 20 B4 19 59 51 09 A2
+E5 A7 70 19 C6 54 DF 31 C8 AA 38 63 8E C4 85 A1
+
+mac_input =
+15 08 12 34 00 01 00 01 00 00 00 01 08 31 32 33 34 35 36 37 38
+
+mac_tag =
+4B E3 1E FB 7F 06 5F 82 35 B3 42 45 0E EE A8 D5
+81 7F 84 8D 76 0C C9 95 A7 BF A3 B5 5C 69 54 1A
+
+full_frame =
+15 08 12 34 00 01 00 01 00 00 00 01 08 31 32 33
+34 35 36 37 38 4B E3 1E FB 7F 06 5F 82 35 B3 42
+45 0E EE A8 D5 81 7F 84 8D 76 0C C9 95 A7 BF A3
+B5 5C 69 54 1A
+```
+
+#### Przyklad C: `PAIR_REQ` unicast od gatewaya do znanego `node_id`
+
+Jesli gateway zna juz `node_id`, moze wyslac `PAIR_REQ` jako unicast.
+
+Wtedy:
+
+- `dst_id = node_id`, nie `0xFFFF`,
+- `flags = 0x08`, bez `BROADCAST`,
+- `domain_id = min(0x0001, node_id)`, zwykle `0x0001`,
+- nadal bez `ACK_REQUIRED`,
+- nadal bez `ENCRYPTED`.
+
+To jest najczestszy powod odrzucenia ramek: gateway wysyla unicast, ale dalej liczy HMAC jak dla broadcastu.
 
 ## 6. Minimalne flow radiowe
 

@@ -185,12 +185,14 @@ Dla kazdej wyslanej ramki unicast z `ACK_REQUIRED`:
 Rekomendowany flow wdrozeniowy:
 
 1. Uzytkownik na nodzie wybiera `Pair with network`.
-2. Node tylko nasluchuje przez 60 s.
+2. Node tylko nasluchuje przez 5 min.
 3. Operator na panelu gatewaya wybiera `Start network pairing`.
 4. Gateway wysyla `PAIR_REQ`.
 5. Node pokazuje lokalna prosbe o akceptacje.
 6. Node po akceptacji wysyla `PAIR_RESP`.
 7. Gateway zapisuje trusted relation i aktywuje node.
+
+Dokladny przyklad surowej ramki `PAIR_REQ / PAIR_RESP` jest opisany w `gateway_docs/README.md`.
 
 ## 8. Rekomendacja implementacyjna dla pairingu
 

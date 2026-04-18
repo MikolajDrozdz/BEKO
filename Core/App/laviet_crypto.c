@@ -8,6 +8,7 @@
 #include "cmsis_os2.h"
 #include "stm32u5xx_hal.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #if defined(HAL_CRYP_MODULE_ENABLED)
@@ -722,36 +723,50 @@ static bool laviet_crypto_self_test_locked(void)
 
 bool laviet_crypto_init(void)
 {
-#if defined(HAL_CRYP_MODULE_ENABLED) && defined(HAL_HASH_MODULE_ENABLED)
-    if ((hcryp.Instance != AES) ||
-        (HAL_CRYP_GetState(&hcryp) != HAL_CRYP_STATE_READY) ||
-        (HAL_HASH_GetState(&hhash) != HAL_HASH_STATE_READY))
-    {
-        s_crypto_hw_ready = false;
-        return false;
-    }
-
     if (s_crypto_mutex == NULL)
     {
         s_crypto_mutex = osMutexNew(NULL);
         if (s_crypto_mutex == NULL)
         {
+            printf("CRYPTO: mutex create failed, using software backend\r\n");
             s_crypto_hw_ready = false;
-            return false;
+            return true;
         }
+    }
+
+    s_crypto_hw_ready = false;
+
+#if defined(HAL_CRYP_MODULE_ENABLED) && defined(HAL_HASH_MODULE_ENABLED)
+    if ((hcryp.Instance != AES) ||
+        (HAL_CRYP_GetState(&hcryp) != HAL_CRYP_STATE_READY) ||
+        (HAL_HASH_GetState(&hhash) != HAL_HASH_STATE_READY))
+    {
+        printf("CRYPTO: hardware backend not ready, using software fallback\r\n");
+        return true;
     }
 
     if (!laviet_crypto_lock())
     {
-        s_crypto_hw_ready = false;
-        return false;
+        printf("CRYPTO: hardware lock unavailable, using software fallback\r\n");
+        return true;
     }
 
     s_crypto_hw_ready = laviet_crypto_self_test_locked();
     laviet_crypto_unlock();
-    return s_crypto_hw_ready;
+
+    if (s_crypto_hw_ready)
+    {
+        printf("CRYPTO: hardware backend ready\r\n");
+    }
+    else
+    {
+        printf("CRYPTO: hardware self-test failed, using software fallback\r\n");
+    }
+
+    return true;
 #else
-    return false;
+    printf("CRYPTO: hardware backend disabled, using software backend\r\n");
+    return true;
 #endif
 }
 

@@ -72,6 +72,7 @@ typedef struct
             uint32_t node_id;
             uint8_t code_len;
             uint8_t code[SECURITY_CODE_MAX];
+            bool gateway_slot;
         } add_device;
         struct
         {
@@ -264,7 +265,7 @@ static void security_migrate_trusted_slot_v1_to_v2(void);
 static bool security_load_settings_legacy_from_store(void);
 static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static bool security_rotate_key_internal(void);
-static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len);
+static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len, bool gateway_slot);
 static bool security_delete_device_internal(uint32_t node_id);
 static bool security_get_device_internal(uint8_t idx, trusted_info_t *out);
 static uint8_t security_trusted_store_capacity(void);
@@ -335,6 +336,25 @@ bool security_main_cmd_add_device(uint32_t node_id, const uint8_t *code, uint8_t
     cmd.id = SECURITY_CMD_ADD_DEVICE;
     cmd.u.add_device.node_id = node_id;
     cmd.u.add_device.code_len = (len > SECURITY_CODE_MAX) ? SECURITY_CODE_MAX : len;
+    cmd.u.add_device.gateway_slot = false;
+    if ((cmd.u.add_device.code_len > 0U) && (code != NULL))
+    {
+        memcpy(cmd.u.add_device.code, code, cmd.u.add_device.code_len);
+    }
+
+    return security_main_enqueue_sync(&cmd, &sync);
+}
+
+bool security_main_cmd_add_gateway(uint32_t node_id, const uint8_t *code, uint8_t len)
+{
+    security_cmd_t cmd;
+    security_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = SECURITY_CMD_ADD_DEVICE;
+    cmd.u.add_device.node_id = node_id;
+    cmd.u.add_device.code_len = (len > SECURITY_CODE_MAX) ? SECURITY_CODE_MAX : len;
+    cmd.u.add_device.gateway_slot = true;
     if ((cmd.u.add_device.code_len > 0U) && (code != NULL))
     {
         memcpy(cmd.u.add_device.code, code, cmd.u.add_device.code_len);
@@ -764,7 +784,8 @@ static void security_main_task_fn(void *argument)
                     {
                         cmd.sync->result = security_add_device_internal(cmd.u.add_device.node_id,
                                                                         cmd.u.add_device.code,
-                                                                        cmd.u.add_device.code_len);
+                                                                        cmd.u.add_device.code_len,
+                                                                        cmd.u.add_device.gateway_slot);
                     }
                     break;
 
@@ -1834,7 +1855,7 @@ static void security_load_trusted_from_store(void)
     printf("SEC: trusted slots persisted=%u\r\n", capacity);
 }
 
-static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len)
+static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len, bool gateway_slot)
 {
     uint8_t i;
     uint8_t free_idx = 0xFFU;
@@ -1875,9 +1896,21 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
         }
     }
 
-    if ((max_slots > 0U) && !s_trusted[0].in_use)
+    if (gateway_slot)
     {
-        free_idx = 0U;
+        if (max_slots == 0U)
+        {
+            return false;
+        }
+
+        if (!s_trusted[0].in_use)
+        {
+            free_idx = 0U;
+        }
+        else
+        {
+            return false;
+        }
     }
     else
     {
@@ -1897,7 +1930,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     }
 
     s_trusted[free_idx].in_use = true;
-    s_trusted[free_idx].is_master = (free_idx == 0U);
+    s_trusted[free_idx].is_master = gateway_slot;
     s_trusted[free_idx].node_id = node_id;
     s_trusted[free_idx].code_len = len;
     memset(s_trusted[free_idx].code, 0, sizeof(s_trusted[free_idx].code));

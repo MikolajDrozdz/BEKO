@@ -45,6 +45,7 @@ typedef struct
 void security_main_create_task(void);
 
 bool security_main_cmd_add_device(uint32_t node_id, const uint8_t *code, uint8_t len);
+bool security_main_cmd_add_gateway(uint32_t node_id, const uint8_t *code, uint8_t len);
 bool security_main_cmd_delete_device(uint32_t node_id);
 bool security_main_cmd_get_device(uint8_t idx, trusted_info_t *out);
 bool security_main_cmd_set_coding(bool enabled);

@@ -25,6 +25,7 @@
 #define MENU_LINE_BUF_SIZE                  (MENU_LINE_CHARS + 1U)
 #define MENU_SETTINGS_PIN_LEN               4U
 #define MENU_SETTINGS_PIN_UNLOCK_MS         60000UL
+#define MENU_PAIRING_WINDOW_MS              300000UL
 #define MENU_TRUSTED_DEVICE_SLOTS           16U
 #define MENU_DEVICE_SLOT_INVALID            0xFFU
 
@@ -428,6 +429,11 @@ static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const 
 static void menu_open_send_target_page(menu_state_t *st, menu_action_t action);
 static bool menu_start_pairing_session(menu_state_t *st, bool send_pair_req, bool network_mode);
 static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot);
+static bool menu_get_trusted_slot(uint8_t slot, trusted_info_t *info_out);
+static bool menu_gateway_slot_in_use(void);
+static uint8_t menu_line_append_device_slot_name(char *dst, uint8_t offset, uint8_t slot);
+static void menu_build_trusted_slot_label(uint8_t slot, const trusted_info_t *info, char *dst);
+static void menu_build_empty_trusted_slot_label(uint8_t slot, char *dst);
 static bool menu_should_open_quick_reply(const char *text);
 static bool menu_modal_is_preemptible(menu_modal_t modal);
 static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id);
@@ -1803,6 +1809,71 @@ static const char *menu_pair_code_text(const char *text, uint8_t prefix_len)
     return "----";
 }
 
+static bool menu_get_trusted_slot(uint8_t slot, trusted_info_t *info_out)
+{
+    if (info_out == NULL)
+    {
+        return false;
+    }
+
+    memset(info_out, 0, sizeof(*info_out));
+    return (slot < MENU_TRUSTED_DEVICE_SLOTS) &&
+           security_main_cmd_get_device(slot, info_out) &&
+           info_out->in_use;
+}
+
+static bool menu_gateway_slot_in_use(void)
+{
+    trusted_info_t info;
+
+    return menu_get_trusted_slot(0U, &info);
+}
+
+static uint8_t menu_line_append_device_slot_name(char *dst, uint8_t offset, uint8_t slot)
+{
+    if ((dst == NULL) || (offset >= MENU_LINE_CHARS))
+    {
+        return offset;
+    }
+
+    if (slot == 0U)
+    {
+        return menu_line_copy(dst, offset, "G", 1U);
+    }
+
+    offset = menu_line_copy(dst, offset, "D", 1U);
+    return menu_line_append_u32(dst, offset, slot);
+}
+
+static void menu_build_trusted_slot_label(uint8_t slot, const trusted_info_t *info, char *dst)
+{
+    uint8_t offset = 0U;
+
+    if ((info == NULL) || (dst == NULL))
+    {
+        return;
+    }
+
+    menu_line_clear(dst);
+    offset = menu_line_append_device_slot_name(dst, offset, slot);
+    offset = menu_line_copy(dst, offset, " 0x", 3U);
+    (void)menu_line_append_hex32(dst, offset, info->node_id);
+}
+
+static void menu_build_empty_trusted_slot_label(uint8_t slot, char *dst)
+{
+    uint8_t offset = 0U;
+
+    if (dst == NULL)
+    {
+        return;
+    }
+
+    menu_line_clear(dst);
+    offset = menu_line_append_device_slot_name(dst, offset, slot);
+    (void)menu_line_copy(dst, offset, " (empty)", 8U);
+}
+
 static const char *menu_lora_bw_text(radio_lora_bw_t bw)
 {
     if (bw == RADIO_LORA_BW_7_8_KHZ)
@@ -2198,19 +2269,13 @@ static void menu_build_item_label(const menu_state_t *st,
         (item_idx < MENU_TRUSTED_DEVICE_SLOTS))
     {
         memset(&info, 0, sizeof(info));
-        if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
+        if (menu_get_trusted_slot(item_idx, &info))
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "M " : "D ", 2U);
-            offset = menu_line_append_u32(dst, offset, item_idx);
-            offset = menu_line_copy(dst, offset, " 0x", 3U);
-            (void)menu_line_append_hex32(dst, offset, info.node_id);
+            menu_build_trusted_slot_label(item_idx, &info, dst);
         }
         else
         {
-            offset = menu_line_copy(dst, offset, "Slot ", 5U);
-            offset = menu_line_append_u32(dst, offset, item_idx);
-            offset = menu_line_copy(dst, offset, " ", 1U);
-            (void)menu_line_copy(dst, offset, "(empty)", 7U);
+            menu_build_empty_trusted_slot_label(item_idx, dst);
         }
         return;
     }
@@ -2219,18 +2284,13 @@ static void menu_build_item_label(const menu_state_t *st,
         (item_idx < MENU_TRUSTED_DEVICE_SLOTS))
     {
         memset(&info, 0, sizeof(info));
-        if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
+        if (menu_get_trusted_slot(item_idx, &info))
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
-            offset = menu_line_copy(dst, offset, "0x", 2U);
-            (void)menu_line_append_hex32(dst, offset, info.node_id);
+            menu_build_trusted_slot_label(item_idx, &info, dst);
         }
         else
         {
-            offset = menu_line_copy(dst, offset, "Slot ", 5U);
-            offset = menu_line_append_u32(dst, offset, item_idx);
-            offset = menu_line_copy(dst, offset, " ", 1U);
-            (void)menu_line_copy(dst, offset, "(empty)", 7U);
+            menu_build_empty_trusted_slot_label(item_idx, dst);
         }
         return;
     }
@@ -2239,18 +2299,13 @@ static void menu_build_item_label(const menu_state_t *st,
         (item_idx < MENU_TRUSTED_DEVICE_SLOTS))
     {
         memset(&info, 0, sizeof(info));
-        if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
+        if (menu_get_trusted_slot(item_idx, &info))
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
-            offset = menu_line_copy(dst, offset, "0x", 2U);
-            (void)menu_line_append_hex32(dst, offset, info.node_id);
+            menu_build_trusted_slot_label(item_idx, &info, dst);
         }
         else
         {
-            offset = menu_line_copy(dst, offset, "Slot ", 5U);
-            offset = menu_line_append_u32(dst, offset, item_idx);
-            offset = menu_line_copy(dst, offset, " ", 1U);
-            (void)menu_line_copy(dst, offset, "(empty)", 7U);
+            menu_build_empty_trusted_slot_label(item_idx, dst);
         }
         return;
     }
@@ -2279,13 +2334,9 @@ static void menu_build_item_label(const menu_state_t *st,
     {
         memset(&info, 0, sizeof(info));
         if ((st->selected_device_slot != MENU_DEVICE_SLOT_INVALID) &&
-            security_main_cmd_get_device(st->selected_device_slot, &info) &&
-            info.in_use)
+            menu_get_trusted_slot(st->selected_device_slot, &info))
         {
-            offset = menu_line_copy(dst, offset, info.is_master ? "M" : "S", 1U);
-            offset = menu_line_append_u32(dst, offset, st->selected_device_slot);
-            offset = menu_line_copy(dst, offset, " 0x", 3U);
-            offset = menu_line_append_hex32(dst, offset, info.node_id);
+            menu_build_trusted_slot_label(st->selected_device_slot, &info, dst);
         }
         else
         {
@@ -3086,7 +3137,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                     trusted_info_t info;
 
                     memset(&info, 0, sizeof(info));
-                    if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
+                    if (menu_get_trusted_slot(st->selected_idx, &info))
                     {
                         menu_open_device_delete_action(st, st->selected_idx);
                     }
@@ -3103,20 +3154,10 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                         char label[MENU_LINE_BUF_SIZE];
 
                         memset(&info, 0, sizeof(info));
-                        if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
+                        if (menu_get_trusted_slot(st->selected_idx, &info))
                         {
                             st->pending_target_node_id = info.node_id;
-                            menu_line_clear(label);
-                            if (info.is_master)
-                            {
-                                (void)menu_line_copy(label, 0U, "Master ", 7U);
-                                (void)menu_line_append_hex32(label, 7U, info.node_id);
-                            }
-                            else
-                            {
-                                (void)menu_line_copy(label, 0U, "Node ", 5U);
-                                (void)menu_line_append_hex32(label, 5U, info.node_id);
-                            }
+                            menu_build_trusted_slot_label(st->selected_idx, &info, label);
                             menu_open_send_prompt(st, st->send_target_action, label);
                         }
                         else
@@ -3136,20 +3177,10 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                     char label[MENU_LINE_BUF_SIZE];
 
                     memset(&info, 0, sizeof(info));
-                    if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
+                    if (menu_get_trusted_slot(st->selected_idx, &info))
                     {
                         st->pending_target_node_id = info.node_id;
-                        menu_line_clear(label);
-                        if (info.is_master)
-                        {
-                            (void)menu_line_copy(label, 0U, "Master ", 7U);
-                            (void)menu_line_append_hex32(label, 7U, info.node_id);
-                        }
-                        else
-                        {
-                            (void)menu_line_copy(label, 0U, "Node ", 5U);
-                            (void)menu_line_append_hex32(label, 5U, info.node_id);
-                        }
+                        menu_build_trusted_slot_label(st->selected_idx, &info, label);
                         menu_open_send_prompt(st, MENU_ACTION_SEND_DIRECT_DEFAULT, label);
                     }
                     else
@@ -3393,14 +3424,19 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             st->pairing_network_mode = false;
             st->modal = MENU_MODAL_PAIR_SETUP;
             st->pending_action = MENU_ACTION_NONE;
-            menu_render_popup("PAIR MODE 60s", "OK=listen", "Hold OK=PAIR_REQ", "Any key=cancel");
+            menu_render_popup("PAIR MODE 5 min", "OK=listen", "Hold OK=PAIR_REQ", "Any key=cancel");
             break;
 
         case MENU_ACTION_DEVICE_ADD_NETWORK:
+            if (menu_gateway_slot_in_use())
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "Remove G first");
+                break;
+            }
             st->pairing_network_mode = true;
             st->modal = MENU_MODAL_PAIR_SETUP;
             st->pending_action = MENU_ACTION_NONE;
-            menu_render_popup("NET PAIR 60s", "OK=listen", "GW sends PAIR_REQ", "Any key=cancel");
+            menu_render_popup("NET PAIR 5 min", "OK=listen", "GW sends PAIR_REQ", "Any key=cancel");
             break;
 
         case MENU_ACTION_DEVICE_DELETE:
@@ -3986,15 +4022,19 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_pair_req, boo
     {
         return false;
     }
+    if (network_mode && menu_gateway_slot_in_use())
+    {
+        return false;
+    }
     if (network_mode)
     {
-        if (!radio_main_cmd_start_network_pairing(60000U))
+        if (!radio_main_cmd_start_network_pairing(MENU_PAIRING_WINDOW_MS))
         {
             return false;
         }
         send_pair_req = false;
     }
-    else if (!radio_main_cmd_start_pairing(60000U))
+    else if (!radio_main_cmd_start_pairing(MENU_PAIRING_WINDOW_MS))
     {
         return false;
     }
@@ -4022,7 +4062,7 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_pair_req, boo
 
         menu_open_info_modal(st,
                              network_mode ? "NET PAIR" : "PAIR MODE",
-                             "60s active",
+                             "5 min active",
                              status_line,
                              "Any key=close");
     }
@@ -4030,7 +4070,7 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_pair_req, boo
     {
         menu_open_info_modal(st,
                              network_mode ? "NET PAIR" : "PAIR MODE",
-                             "60s active",
+                             "5 min active",
                              network_mode ? "Wait PAIR_REQ GW" : "Listening...",
                              "Any key=close");
     }
