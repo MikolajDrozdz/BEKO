@@ -5,6 +5,7 @@
 
 #include "laviet_crypto.h"
 
+#include "cmsis_os2.h"
 #include "stm32u5xx_hal.h"
 
 #include <string.h>
@@ -15,6 +16,17 @@ extern CRYP_HandleTypeDef hcryp;
 #if defined(HAL_HASH_MODULE_ENABLED)
 extern HASH_HandleTypeDef hhash;
 #endif
+
+#define LAVIET_CRYPTO_TIMEOUT_MS  1000U
+
+typedef union
+{
+    uint32_t words[4];
+    uint8_t bytes[16];
+} laviet_crypto_block_t;
+
+static osMutexId_t s_crypto_mutex = NULL;
+static bool s_crypto_hw_ready = false;
 
 typedef struct
 {
@@ -391,22 +403,29 @@ static void laviet_make_counter_block(const laviet_frame_t *frame,
     out[15] = (uint8_t)block_index;
 }
 
-bool laviet_crypto_init(void)
+static bool laviet_crypto_lock(void)
 {
-#if defined(HAL_CRYP_MODULE_ENABLED) && defined(HAL_HASH_MODULE_ENABLED)
-    return (hcryp.Instance == AES) &&
-           (HAL_CRYP_GetState(&hcryp) == HAL_CRYP_STATE_READY) &&
-           (HAL_HASH_GetState(&hhash) == HAL_HASH_STATE_READY);
-#else
-    return false;
-#endif
+    if (s_crypto_mutex == NULL)
+    {
+        return false;
+    }
+
+    return (osMutexAcquire(s_crypto_mutex, LAVIET_CRYPTO_TIMEOUT_MS) == osOK);
 }
 
-bool laviet_hmac_sha256(const uint8_t *key,
-                        uint16_t key_len,
-                        const uint8_t *data,
-                        uint16_t data_len,
-                        uint8_t out[LAVIET_SHA256_LEN])
+static void laviet_crypto_unlock(void)
+{
+    if (s_crypto_mutex != NULL)
+    {
+        (void)osMutexRelease(s_crypto_mutex);
+    }
+}
+
+static bool laviet_hmac_sha256_sw(const uint8_t *key,
+                                  uint16_t key_len,
+                                  const uint8_t *data,
+                                  uint16_t data_len,
+                                  uint8_t out[LAVIET_SHA256_LEN])
 {
     uint8_t key_block[64];
     uint8_t inner_hash[LAVIET_SHA256_LEN];
@@ -454,6 +473,47 @@ bool laviet_hmac_sha256(const uint8_t *key,
     return true;
 }
 
+static bool laviet_hmac_sha256_hw_locked(const uint8_t *key,
+                                         uint16_t key_len,
+                                         const uint8_t *data,
+                                         uint16_t data_len,
+                                         uint8_t out[LAVIET_SHA256_LEN])
+{
+#if defined(HAL_HASH_MODULE_ENABLED)
+    bool ok = false;
+
+    if ((key == NULL) ||
+        (out == NULL) ||
+        ((data == NULL) && (data_len > 0U)))
+    {
+        return false;
+    }
+
+    (void)HAL_HASH_DeInit(&hhash);
+    hhash.Init.DataType = HASH_DATATYPE_8B;
+    hhash.Init.KeySize = key_len;
+    hhash.Init.pKey = (uint8_t *)key;
+    if ((HAL_HASH_Init(&hhash) == HAL_OK) &&
+        (HAL_HMACEx_SHA256_Start(&hhash,
+                                 data,
+                                 data_len,
+                                 out,
+                                 LAVIET_CRYPTO_TIMEOUT_MS) == HAL_OK))
+    {
+        ok = true;
+    }
+
+    return ok;
+#else
+    (void)key;
+    (void)key_len;
+    (void)data;
+    (void)data_len;
+    (void)out;
+    return false;
+#endif
+}
+
 bool laviet_frame_hmac_sha256(const laviet_frame_t *frame,
                               const uint8_t key[LAVIET_HMAC_KEY_LEN],
                               uint8_t out[LAVIET_MAC_TAG_LEN])
@@ -476,10 +536,10 @@ bool laviet_frame_hmac_sha256(const laviet_frame_t *frame,
     return ok;
 }
 
-bool laviet_aes_ctr_crypt(uint8_t *data,
-                          uint8_t len,
-                          const uint8_t key[LAVIET_AES_KEY_LEN],
-                          const laviet_frame_t *frame)
+static bool laviet_aes_ctr_crypt_sw(uint8_t *data,
+                                    uint8_t len,
+                                    const uint8_t key[LAVIET_AES_KEY_LEN],
+                                    const laviet_frame_t *frame)
 {
     uint8_t round_key[176];
     uint8_t counter_block[16];
@@ -511,6 +571,251 @@ bool laviet_aes_ctr_crypt(uint8_t *data,
     laviet_secure_zero(counter_block, sizeof(counter_block));
     laviet_secure_zero(stream, sizeof(stream));
     return true;
+}
+
+static bool laviet_aes_ctr_crypt_hw_locked(uint8_t *data,
+                                           uint8_t len,
+                                           const uint8_t key[LAVIET_AES_KEY_LEN],
+                                           const laviet_frame_t *frame)
+{
+#if defined(HAL_CRYP_MODULE_ENABLED)
+    laviet_crypto_block_t key_block;
+    laviet_crypto_block_t iv_block;
+    laviet_crypto_block_t input_block;
+    laviet_crypto_block_t output_block;
+    bool ok = false;
+
+    if (((data == NULL) && (len > 0U)) ||
+        (key == NULL) ||
+        (frame == NULL) ||
+        (hcryp.Instance != AES))
+    {
+        return false;
+    }
+    if (len == 0U)
+    {
+        return true;
+    }
+    if (len > sizeof(input_block.bytes))
+    {
+        return false;
+    }
+
+    memset(&key_block, 0, sizeof(key_block));
+    memset(&iv_block, 0, sizeof(iv_block));
+    memset(&input_block, 0, sizeof(input_block));
+    memset(&output_block, 0, sizeof(output_block));
+    memcpy(key_block.bytes, key, LAVIET_AES_KEY_LEN);
+    laviet_make_counter_block(frame, 0U, iv_block.bytes);
+    memcpy(input_block.bytes, data, len);
+
+    (void)HAL_CRYP_DeInit(&hcryp);
+    hcryp.Instance = AES;
+    hcryp.Init.DataType = CRYP_NO_SWAP;
+    hcryp.Init.KeySize = CRYP_KEYSIZE_128B;
+    hcryp.Init.pKey = key_block.words;
+    hcryp.Init.pInitVect = iv_block.words;
+    hcryp.Init.Algorithm = CRYP_AES_CTR;
+    hcryp.Init.DataWidthUnit = CRYP_DATAWIDTHUNIT_BYTE;
+    hcryp.Init.HeaderWidthUnit = CRYP_HEADERWIDTHUNIT_BYTE;
+    hcryp.Init.KeyIVConfigSkip = CRYP_KEYIVCONFIG_ALWAYS;
+    hcryp.Init.KeyMode = CRYP_KEYMODE_NORMAL;
+
+    if ((HAL_CRYP_Init(&hcryp) == HAL_OK) &&
+        (HAL_CRYP_Encrypt(&hcryp,
+                          input_block.words,
+                          len,
+                          output_block.words,
+                          LAVIET_CRYPTO_TIMEOUT_MS) == HAL_OK))
+    {
+        memcpy(data, output_block.bytes, len);
+        ok = true;
+    }
+
+    laviet_secure_zero(&key_block, sizeof(key_block));
+    laviet_secure_zero(&iv_block, sizeof(iv_block));
+    laviet_secure_zero(&input_block, sizeof(input_block));
+    laviet_secure_zero(&output_block, sizeof(output_block));
+    return ok;
+#else
+    (void)data;
+    (void)len;
+    (void)key;
+    (void)frame;
+    return false;
+#endif
+}
+
+static bool laviet_crypto_self_test_locked(void)
+{
+    static const uint8_t s_test_key[32] =
+    {
+        0x00U, 0x11U, 0x22U, 0x33U, 0x44U, 0x55U, 0x66U, 0x77U,
+        0x88U, 0x99U, 0xAAU, 0xBBU, 0xCCU, 0xDDU, 0xEEU, 0xFFU,
+        0x10U, 0x21U, 0x32U, 0x43U, 0x54U, 0x65U, 0x76U, 0x87U,
+        0x98U, 0xA9U, 0xBAU, 0xCBU, 0xDCU, 0xEDU, 0xFEU, 0x0FU
+    };
+    static const uint8_t s_test_data[19] =
+    {
+        (uint8_t)'L', (uint8_t)'A', (uint8_t)'V', (uint8_t)'I', (uint8_t)'E',
+        (uint8_t)'T', (uint8_t)'_', (uint8_t)'H', (uint8_t)'W', (uint8_t)'_',
+        (uint8_t)'T', (uint8_t)'E', (uint8_t)'S', (uint8_t)'T', 0x01U, 0x02U,
+        0x03U, 0x04U, 0x05U
+    };
+    static const laviet_frame_t s_test_frame =
+    {
+        .ver_type = 0x11U,
+        .flags = LAVIET_FLAG_ENCRYPTED,
+        .src_id = 0x1234U,
+        .dst_id = 0x0001U,
+        .msg_id = 0x4567U,
+        .counter = 0x89ABCDEFUL
+    };
+    uint8_t hmac_sw[LAVIET_SHA256_LEN];
+    uint8_t hmac_hw[LAVIET_SHA256_LEN];
+    uint8_t aes_sw_1[1] = { 0xA5U };
+    uint8_t aes_hw_1[1] = { 0xA5U };
+    uint8_t aes_sw_16[16];
+    uint8_t aes_hw_16[16];
+    uint8_t i;
+
+    memset(hmac_sw, 0, sizeof(hmac_sw));
+    memset(hmac_hw, 0, sizeof(hmac_hw));
+    for (i = 0U; i < sizeof(aes_sw_16); i++)
+    {
+        aes_sw_16[i] = (uint8_t)(i * 7U);
+        aes_hw_16[i] = aes_sw_16[i];
+    }
+
+    if (!laviet_hmac_sha256_sw(s_test_key, sizeof(s_test_key), s_test_data, sizeof(s_test_data), hmac_sw) ||
+        !laviet_hmac_sha256_hw_locked(s_test_key, sizeof(s_test_key), s_test_data, sizeof(s_test_data), hmac_hw) ||
+        (memcmp(hmac_sw, hmac_hw, sizeof(hmac_sw)) != 0))
+    {
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_sw(NULL, 0U, s_test_key, &s_test_frame) ||
+        !laviet_aes_ctr_crypt_hw_locked(NULL, 0U, s_test_key, &s_test_frame))
+    {
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_sw(aes_sw_1, sizeof(aes_sw_1), s_test_key, &s_test_frame) ||
+        !laviet_aes_ctr_crypt_hw_locked(aes_hw_1, sizeof(aes_hw_1), s_test_key, &s_test_frame) ||
+        (memcmp(aes_sw_1, aes_hw_1, sizeof(aes_sw_1)) != 0))
+    {
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_sw(aes_sw_16, sizeof(aes_sw_16), s_test_key, &s_test_frame) ||
+        !laviet_aes_ctr_crypt_hw_locked(aes_hw_16, sizeof(aes_hw_16), s_test_key, &s_test_frame) ||
+        (memcmp(aes_sw_16, aes_hw_16, sizeof(aes_sw_16)) != 0))
+    {
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_hw_locked(aes_hw_16, sizeof(aes_hw_16), s_test_key, &s_test_frame) ||
+        !laviet_aes_ctr_crypt_sw(aes_sw_16, sizeof(aes_sw_16), s_test_key, &s_test_frame) ||
+        (memcmp(aes_sw_16, aes_hw_16, sizeof(aes_sw_16)) != 0))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool laviet_crypto_init(void)
+{
+#if defined(HAL_CRYP_MODULE_ENABLED) && defined(HAL_HASH_MODULE_ENABLED)
+    if ((hcryp.Instance != AES) ||
+        (HAL_CRYP_GetState(&hcryp) != HAL_CRYP_STATE_READY) ||
+        (HAL_HASH_GetState(&hhash) != HAL_HASH_STATE_READY))
+    {
+        s_crypto_hw_ready = false;
+        return false;
+    }
+
+    if (s_crypto_mutex == NULL)
+    {
+        s_crypto_mutex = osMutexNew(NULL);
+        if (s_crypto_mutex == NULL)
+        {
+            s_crypto_hw_ready = false;
+            return false;
+        }
+    }
+
+    if (!laviet_crypto_lock())
+    {
+        s_crypto_hw_ready = false;
+        return false;
+    }
+
+    s_crypto_hw_ready = laviet_crypto_self_test_locked();
+    laviet_crypto_unlock();
+    return s_crypto_hw_ready;
+#else
+    return false;
+#endif
+}
+
+bool laviet_hmac_sha256(const uint8_t *key,
+                        uint16_t key_len,
+                        const uint8_t *data,
+                        uint16_t data_len,
+                        uint8_t out[LAVIET_SHA256_LEN])
+{
+    if ((key == NULL) || (out == NULL) || ((data == NULL) && (data_len > 0U)))
+    {
+        return false;
+    }
+
+    if (s_crypto_hw_ready && laviet_crypto_lock())
+    {
+        bool ok = laviet_hmac_sha256_hw_locked(key, key_len, data, data_len, out);
+
+        laviet_crypto_unlock();
+        if (ok)
+        {
+            return true;
+        }
+    }
+
+    return laviet_hmac_sha256_sw(key, key_len, data, data_len, out);
+}
+
+bool laviet_aes_ctr_crypt(uint8_t *data,
+                          uint8_t len,
+                          const uint8_t key[LAVIET_AES_KEY_LEN],
+                          const laviet_frame_t *frame)
+{
+    uint8_t temp[16];
+
+    if (((data == NULL) && (len > 0U)) || (key == NULL) || (frame == NULL))
+    {
+        return false;
+    }
+
+    if (s_crypto_hw_ready && (len <= sizeof(temp)) && laviet_crypto_lock())
+    {
+        bool ok;
+
+        memset(temp, 0, sizeof(temp));
+        if (len > 0U)
+        {
+            memcpy(temp, data, len);
+        }
+        ok = laviet_aes_ctr_crypt_hw_locked(temp, len, key, frame);
+        laviet_crypto_unlock();
+        if (ok)
+        {
+            if (len > 0U)
+            {
+                memcpy(data, temp, len);
+            }
+            laviet_secure_zero(temp, sizeof(temp));
+            return true;
+        }
+        laviet_secure_zero(temp, sizeof(temp));
+    }
+
+    return laviet_aes_ctr_crypt_sw(data, len, key, frame);
 }
 
 bool laviet_mac_equal(const uint8_t a[LAVIET_MAC_TAG_LEN],

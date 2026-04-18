@@ -33,6 +33,7 @@
 #define SECURITY_KEY_SEED_BYTES             8U
 #define SECURITY_CODE_MAX                   I2C_MEM_STORE_TRUSTED_CODE_MAX
 #define SECURITY_TRUSTED_ID_LEN             4U
+#define SECURITY_TPM_ROOT_NV_INDEX          0x01C10100UL
 
 typedef enum
 {
@@ -181,13 +182,7 @@ static security_runtime_cfg_t s_runtime_cfg =
     .active_modulation = RADIO_MAIN_MODULATION_LORA,
     .radio_profiles_persisted = false
 };
-static uint8_t s_network_key[16] =
-{
-    0x31U, 0x42U, 0x53U, 0x64U,
-    0x75U, 0x86U, 0x97U, 0xA8U,
-    0x19U, 0x2AU, 0x3BU, 0x4CU,
-    0x5DU, 0x6EU, 0x7FU, 0x80U
-};
+static uint8_t s_network_key[16];
 static const uint8_t s_shared_frame_root_key[16] =
 {
     (uint8_t)'L', (uint8_t)'A', (uint8_t)'V', (uint8_t)'I',
@@ -276,11 +271,16 @@ static uint8_t security_trusted_store_capacity(void);
 static uint16_t security_trusted_store_slot(uint8_t idx);
 static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRUSTED_ID_LEN]);
 static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID_LEN]);
+static void security_be32_write(uint8_t *dst, uint32_t value);
+static uint32_t security_be32_read(const uint8_t *src);
 static bool security_store_trusted_slot(uint8_t idx);
 static bool security_erase_trusted_slot(uint8_t idx);
 static void security_load_trusted_from_store(void);
 static bool security_load_gateway_counter_from_store(void);
 static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_t tx_counter);
+static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
+static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BYTES]);
+static bool security_get_entropy_bytes(uint8_t *out, uint8_t len);
 static void security_bootstrap_tpm(void);
 static void security_bootstrap_store(void);
 
@@ -890,14 +890,28 @@ static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_
 
 static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16])
 {
-    uint8_t i;
+    static const uint8_t label[] = "SEC:NET:ROOT";
+    uint8_t digest[LAVIET_SHA256_LEN];
 
-    for (i = 0U; i < 16U; i++)
+    if ((seed == NULL) || (key_out == NULL))
     {
-        uint8_t a = seed[i % SECURITY_KEY_SEED_BYTES];
-        uint8_t b = (uint8_t)(0x5AU + (17U * i));
-        key_out[i] = (uint8_t)(a ^ b);
+        return;
     }
+
+    memset(digest, 0, sizeof(digest));
+    if (laviet_hmac_sha256(seed,
+                           SECURITY_KEY_SEED_BYTES,
+                           label,
+                           (uint16_t)(sizeof(label) - 1U),
+                           digest))
+    {
+        memcpy(key_out, digest, 16U);
+    }
+    else
+    {
+        memset(key_out, 0, 16U);
+    }
+    laviet_secure_zero(digest, sizeof(digest));
 }
 
 static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
@@ -1073,17 +1087,11 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint8_t code_len,
                                           uint8_t key_out[16])
 {
+    static const uint8_t label[] = "SEC:PAIR:V1";
+    uint8_t info[sizeof(label) - 1U + 8U];
+    uint8_t digest[LAVIET_SHA256_LEN];
     uint32_t lo;
     uint32_t hi;
-    /**
-     * @brief FNV-1a hash algorithm initial offset basis constant
-     * @details This is the standard 32-bit FNV offset basis value used as the
-     *          starting hash value in the FNV-1a (Fowler-Noll-Vo) hash function.
-     *          The value 2166136261 (0x811c9dc5) is the recommended prime for
-     *          32-bit FNV hashing.
-     */
-    uint32_t h = 2166136261UL;
-    uint8_t i;
 
     if ((key_out == NULL) || (code == NULL) || (code_len == 0U))
     {
@@ -1092,43 +1100,23 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
 
     lo = (local_node_id < peer_node_id) ? local_node_id : peer_node_id;
     hi = (local_node_id < peer_node_id) ? peer_node_id : local_node_id;
+    memset(info, 0, sizeof(info));
+    memset(digest, 0, sizeof(digest));
+    memcpy(info, label, sizeof(label) - 1U);
+    security_be32_write(&info[sizeof(label) - 1U], lo);
+    security_be32_write(&info[sizeof(label) - 1U + 4U], hi);
 
-#define SECURITY_FNV_MIX(_v)             \
-    do                                   \
-    {                                    \
-        h ^= (uint8_t)(_v);              \
-        h *= 16777619UL;                 \
-    } while (0)
-
-    SECURITY_FNV_MIX('B');
-    SECURITY_FNV_MIX('K');
-    SECURITY_FNV_MIX('L');
-    SECURITY_FNV_MIX('1');
-
-    for (i = 0U; i < 4U; i++)
+    if (laviet_hmac_sha256(code, code_len, info, (uint16_t)sizeof(info), digest))
     {
-        SECURITY_FNV_MIX((lo >> (24U - (8U * i))) & 0xFFU);
+        memcpy(key_out, digest, 16U);
     }
-    for (i = 0U; i < 4U; i++)
+    else
     {
-        SECURITY_FNV_MIX((hi >> (24U - (8U * i))) & 0xFFU);
-    }
-    SECURITY_FNV_MIX(code_len);
-    for (i = 0U; i < code_len; i++)
-    {
-        SECURITY_FNV_MIX(code[i]);
+        memset(key_out, 0, 16U);
     }
 
-    for (i = 0U; i < 16U; i++)
-    {
-        h ^= (h << 13);
-        h ^= (h >> 17);
-        h ^= (h << 5);
-        h += (uint32_t)code[i % code_len] + ((uint32_t)i * 41UL);
-        key_out[i] = (uint8_t)((h >> ((i % 3U) * 8U)) & 0xFFU);
-    }
-
-#undef SECURITY_FNV_MIX
+    laviet_secure_zero(info, sizeof(info));
+    laviet_secure_zero(digest, sizeof(digest));
 }
 
 static bool security_load_runtime_and_seed_from_store(void)
@@ -1453,68 +1441,143 @@ static void security_migrate_trusted_slot_v1_to_v2(void)
     }
 }
 
-static bool security_rotate_key_internal(void)
+static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
-    uint8_t seed[SECURITY_KEY_SEED_BYTES];
+    uint16_t out_len = 0U;
+    uint32_t tpm_rc = 0UL;
+    st33ktpm2x_status_t rc;
+
+    if ((seed == NULL) || !s_tpm_ready)
+    {
+        return false;
+    }
+
+    rc = st33ktpm2x_tpm2_nv_read(&s_tpm,
+                                 SECURITY_TPM_ROOT_NV_INDEX,
+                                 0U,
+                                 seed,
+                                 SECURITY_KEY_SEED_BYTES,
+                                 &out_len,
+                                 &tpm_rc);
+    if ((rc == ST33KTPM2X_OK) && (out_len == SECURITY_KEY_SEED_BYTES))
+    {
+        return true;
+    }
+
+    if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
+    {
+        printf("SEC: TPM root seed read failed rc=%d tpm_rc=0x%08lX\r\n",
+               (int)rc,
+               (unsigned long)tpm_rc);
+    }
+
+    return false;
+}
+
+static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
+{
+    uint32_t tpm_rc = 0UL;
+    st33ktpm2x_status_t rc;
+
+    if ((seed == NULL) || !s_tpm_ready)
+    {
+        return false;
+    }
+
+    rc = st33ktpm2x_tpm2_nv_write(&s_tpm,
+                                  SECURITY_TPM_ROOT_NV_INDEX,
+                                  0U,
+                                  seed,
+                                  SECURITY_KEY_SEED_BYTES,
+                                  &tpm_rc);
+    if (rc == ST33KTPM2X_OK)
+    {
+        return true;
+    }
+
+    if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
+    {
+        printf("SEC: TPM root seed write failed rc=%d tpm_rc=0x%08lX\r\n",
+               (int)rc,
+               (unsigned long)tpm_rc);
+    }
+
+    return false;
+}
+
+static bool security_get_entropy_bytes(uint8_t *out, uint8_t len)
+{
     uint16_t out_len = 0U;
     uint32_t tpm_rc = 0UL;
     st33ktpm2x_status_t tpm_st;
     uint8_t i;
 
-    memset(seed, 0, sizeof(seed));
+    if ((out == NULL) || (len == 0U))
+    {
+        return false;
+    }
 
     if (s_tpm_ready)
     {
         tpm_st = st33ktpm2x_tpm2_get_random(&s_tpm,
-                                            SECURITY_KEY_SEED_BYTES,
-                                            seed,
-                                            sizeof(seed),
+                                            len,
+                                            out,
+                                            len,
                                             &out_len,
                                             &tpm_rc);
-        if ((tpm_st != ST33KTPM2X_OK) || (out_len < SECURITY_KEY_SEED_BYTES))
+        if ((tpm_st == ST33KTPM2X_OK) && (out_len >= len))
         {
-            s_tpm_ready = false;
+            return true;
+        }
+
+        printf("SEC: TPM random unavailable rc=%d tpm_rc=0x%08lX\r\n",
+               (int)tpm_st,
+               (unsigned long)tpm_rc);
+        s_tpm_ready = false;
+    }
+
+    for (i = 0U; i < len; i += 4U)
+    {
+        uint32_t random_word = 0UL;
+        uint8_t chunk = ((uint8_t)(len - i) >= 4U) ? 4U : (uint8_t)(len - i);
+        uint8_t j;
+
+        if ((HAL_RNG_GetState(&hrng) != HAL_RNG_STATE_READY) ||
+            (HAL_RNG_GenerateRandomNumber(&hrng, &random_word) != HAL_OK))
+        {
+            printf("SEC: HAL RNG unavailable\r\n");
+            return false;
+        }
+
+        for (j = 0U; j < chunk; j++)
+        {
+            out[i + j] = (uint8_t)(random_word >> (24U - (j * 8U)));
         }
     }
 
-    if (!s_tpm_ready)
+    return true;
+}
+
+static bool security_rotate_key_internal(void)
+{
+    uint8_t seed[SECURITY_KEY_SEED_BYTES];
+
+    memset(seed, 0, sizeof(seed));
+    if (!security_get_entropy_bytes(seed, sizeof(seed)))
     {
-        bool rng_ok = true;
-
-        for (i = 0U; i < SECURITY_KEY_SEED_BYTES; i += 4U)
-        {
-            uint32_t random_word = 0UL;
-
-            if ((HAL_RNG_GetState(&hrng) != HAL_RNG_STATE_READY) ||
-                (HAL_RNG_GenerateRandomNumber(&hrng, &random_word) != HAL_OK))
-            {
-                rng_ok = false;
-                break;
-            }
-
-            seed[i] = (uint8_t)(random_word >> 24);
-            seed[i + 1U] = (uint8_t)(random_word >> 16);
-            seed[i + 2U] = (uint8_t)(random_word >> 8);
-            seed[i + 3U] = (uint8_t)random_word;
-        }
-
-        if (!rng_ok)
-        {
-            uint32_t tick = HAL_GetTick();
-            for (i = 0U; i < SECURITY_KEY_SEED_BYTES; i++)
-            {
-                seed[i] = (uint8_t)((tick >> ((i % 4U) * 8U)) ^ (uint32_t)(0x37U + (i * 13U)));
-            }
-        }
+        laviet_secure_zero(seed, sizeof(seed));
+        return false;
     }
 
     memcpy(s_key_seed_cached, seed, SECURITY_KEY_SEED_BYTES);
     security_key_seed_to_key(seed, s_network_key);
+    (void)security_tpm_store_root_seed(seed);
     if (s_mem_ready)
     {
         (void)security_save_runtime_and_seed_to_store();
     }
 
+    laviet_secure_zero(seed, sizeof(seed));
     return true;
 }
 
@@ -1931,6 +1994,8 @@ static void security_bootstrap_store(void)
     i2c_mem_store_cfg_t mem_cfg;
     bool loaded = false;
     bool loaded_v1 = false;
+    bool runtime_loaded = false;
+    bool seed_loaded_from_tpm = false;
 
     i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
     /* M24C01-R has only 128 B, so keep EEPROM only for trusted devices. */
@@ -1955,17 +2020,28 @@ static void security_bootstrap_store(void)
         printf("SEC: MEM store unavailable\r\n");
     }
 
+    if (security_tpm_load_root_seed(s_key_seed_cached))
+    {
+        seed_loaded_from_tpm = true;
+        loaded = true;
+        printf("SEC: root seed loaded from TPM\r\n");
+    }
+
     if (s_mem_ready)
     {
-        loaded = security_load_runtime_and_seed_from_store();
-        loaded_v1 = loaded && !s_runtime_cfg.radio_profiles_persisted;
-        if (!loaded)
+        runtime_loaded = security_load_runtime_and_seed_from_store();
+        loaded_v1 = runtime_loaded && !s_runtime_cfg.radio_profiles_persisted;
+        if (!runtime_loaded)
         {
             if (security_load_settings_legacy_from_store() &&
                 security_load_key_seed_legacy_from_store(s_key_seed_cached))
             {
-                loaded = true;
+                runtime_loaded = true;
             }
+        }
+        if (runtime_loaded && !seed_loaded_from_tpm)
+        {
+            loaded = true;
         }
     }
 
@@ -1975,7 +2051,11 @@ static void security_bootstrap_store(void)
     }
     else
     {
-        (void)security_rotate_key_internal();
+        if (!security_rotate_key_internal())
+        {
+            printf("SEC: root key init failed\r\n");
+            memset(s_network_key, 0, sizeof(s_network_key));
+        }
     }
 
     if (s_mem_ready)

@@ -29,6 +29,10 @@
 #define RADIO_TX_GUARD_MIN_MS                200UL
 #define RADIO_TX_GUARD_LORA_MS               20000UL
 #define RADIO_TX_GUARD_MARGIN_MS             64UL
+#define RADIO_ACK_TIMEOUT_MIN_MS             750UL
+#define RADIO_ACK_TIMEOUT_MARGIN_MS          250UL
+#define RADIO_ACK_CLOSED_TTL_MS              10000UL
+#define RADIO_ACK_RETRY_LIMIT                2U
 #define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
 #define RADIO_NETWORK_PAIR_RSSI_MIN_DBM      (-20)
 #define RADIO_LORA_BW_HZ_7_8                 7800UL
@@ -157,6 +161,27 @@ typedef struct
     bool tx_in_progress;
     uint32_t tx_deadline_ms;
     char last_error_text[21];
+    struct
+    {
+        bool active;
+        uint16_t peer_id;
+        uint16_t msg_id;
+        uint32_t counter;
+        uint8_t raw_len;
+        uint8_t raw[LAVIET_FRAME_MAX_LEN];
+        uint8_t retries_done;
+        uint32_t deadline_ms;
+        uint32_t wait_ms;
+    } ack_pending;
+    struct
+    {
+        bool valid;
+        bool timed_out;
+        uint16_t peer_id;
+        uint16_t msg_id;
+        uint32_t counter;
+        uint32_t expires_ms;
+    } ack_recent;
 } radio_main_ctx_t;
 
 static osThreadId_t s_radio_task = NULL;
@@ -205,6 +230,12 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
                                             const uint8_t *payload,
                                             uint8_t payload_len,
                                             laviet_frame_type_t frame_type);
+static uint32_t radio_main_ack_timeout_ms(uint8_t raw_len);
+static bool radio_main_ack_track_start(const laviet_frame_t *frame, const uint8_t *raw, uint8_t raw_len);
+static void radio_main_ack_track_close(bool timed_out);
+static void radio_main_ack_recent_expire(void);
+static void radio_main_handle_ack_frame(uint16_t src_id, uint16_t acked_msg_id, uint32_t acked_counter);
+static void radio_main_handle_ack_timeout(void);
 static void radio_main_handle_events(void);
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt);
 static void radio_main_handle_hopping(void);
@@ -875,6 +906,8 @@ static void radio_main_task_fn(void *argument)
             radio_process();
             radio_main_handle_events();
             radio_main_watchdog_tx();
+            radio_main_handle_ack_timeout();
+            radio_main_ack_recent_expire();
             radio_main_handle_hopping();
             radio_main_handle_auto_ping();
             radio_main_ensure_rx_continuous();
@@ -1002,6 +1035,184 @@ static bool radio_main_tx_timed_out(void)
 {
     return (s_ctx.tx_in_progress &&
             ((int32_t)(radio_main_now_ms() - s_ctx.tx_deadline_ms) >= 0));
+}
+
+static uint32_t radio_main_ack_timeout_ms(uint8_t raw_len)
+{
+    uint32_t tx_airtime_ms;
+    uint32_t ack_airtime_ms;
+    uint32_t wait_ms;
+    uint8_t ack_raw_len = (uint8_t)(LAVIET_FRAME_MIN_LEN + LAVIET_ACK_PAYLOAD_LEN);
+
+    if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_FSK)
+    {
+        tx_airtime_ms = radio_main_estimate_fsk_ook_airtime_ms(raw_len, false);
+        ack_airtime_ms = radio_main_estimate_fsk_ook_airtime_ms(ack_raw_len, false);
+    }
+    else if (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_OOK)
+    {
+        tx_airtime_ms = radio_main_estimate_fsk_ook_airtime_ms(raw_len, true);
+        ack_airtime_ms = radio_main_estimate_fsk_ook_airtime_ms(ack_raw_len, true);
+    }
+    else
+    {
+        tx_airtime_ms = radio_main_estimate_lora_airtime_ms(raw_len);
+        ack_airtime_ms = radio_main_estimate_lora_airtime_ms(ack_raw_len);
+    }
+
+    wait_ms = tx_airtime_ms + ack_airtime_ms + RADIO_ACK_TIMEOUT_MARGIN_MS;
+    if (wait_ms < RADIO_ACK_TIMEOUT_MIN_MS)
+    {
+        wait_ms = RADIO_ACK_TIMEOUT_MIN_MS;
+    }
+
+    return wait_ms;
+}
+
+static bool radio_main_ack_track_start(const laviet_frame_t *frame, const uint8_t *raw, uint8_t raw_len)
+{
+    if ((frame == NULL) || (raw == NULL) || (raw_len == 0U))
+    {
+        return false;
+    }
+    if ((frame->dst_id == LAVIET_BROADCAST_ID) ||
+        ((frame->flags & LAVIET_FLAG_ACK_REQUIRED) == 0U) ||
+        (laviet_frame_type(frame) == LAVIET_TYPE_ACK))
+    {
+        return true;
+    }
+    if (s_ctx.ack_pending.active)
+    {
+        radio_main_set_last_error("ACK pending");
+        return false;
+    }
+
+    memset(&s_ctx.ack_pending, 0, sizeof(s_ctx.ack_pending));
+    s_ctx.ack_pending.active = true;
+    s_ctx.ack_pending.peer_id = frame->dst_id;
+    s_ctx.ack_pending.msg_id = frame->msg_id;
+    s_ctx.ack_pending.counter = frame->counter;
+    s_ctx.ack_pending.raw_len = raw_len;
+    memcpy(s_ctx.ack_pending.raw, raw, raw_len);
+    s_ctx.ack_pending.wait_ms = radio_main_ack_timeout_ms(raw_len);
+    s_ctx.ack_pending.deadline_ms = radio_main_now_ms() + s_ctx.ack_pending.wait_ms;
+    s_ctx.ack_pending.retries_done = 0U;
+    return true;
+}
+
+static void radio_main_ack_track_close(bool timed_out)
+{
+    if (!s_ctx.ack_pending.active)
+    {
+        return;
+    }
+
+    s_ctx.ack_recent.valid = true;
+    s_ctx.ack_recent.timed_out = timed_out;
+    s_ctx.ack_recent.peer_id = s_ctx.ack_pending.peer_id;
+    s_ctx.ack_recent.msg_id = s_ctx.ack_pending.msg_id;
+    s_ctx.ack_recent.counter = s_ctx.ack_pending.counter;
+    s_ctx.ack_recent.expires_ms = radio_main_now_ms() + RADIO_ACK_CLOSED_TTL_MS;
+    memset(&s_ctx.ack_pending, 0, sizeof(s_ctx.ack_pending));
+}
+
+static void radio_main_ack_recent_expire(void)
+{
+    if (s_ctx.ack_recent.valid &&
+        ((int32_t)(radio_main_now_ms() - s_ctx.ack_recent.expires_ms) >= 0))
+    {
+        memset(&s_ctx.ack_recent, 0, sizeof(s_ctx.ack_recent));
+    }
+}
+
+static void radio_main_handle_ack_frame(uint16_t src_id, uint16_t acked_msg_id, uint32_t acked_counter)
+{
+    if (s_ctx.ack_pending.active &&
+        (src_id == s_ctx.ack_pending.peer_id) &&
+        (acked_msg_id == s_ctx.ack_pending.msg_id) &&
+        (acked_counter == s_ctx.ack_pending.counter))
+    {
+        printf("RADIO ACK delivered src=0x%04X msg=0x%04X counter=%lu retries=%u\r\n",
+               (unsigned int)src_id,
+               (unsigned int)acked_msg_id,
+               (unsigned long)acked_counter,
+               (unsigned int)s_ctx.ack_pending.retries_done);
+        radio_main_ack_track_close(false);
+        return;
+    }
+
+    if (s_ctx.ack_pending.active && (src_id == s_ctx.ack_pending.peer_id))
+    {
+        printf("RADIO ACK bad src=0x%04X ack_msg=0x%04X ack_counter=%lu expected_msg=0x%04X expected_counter=%lu\r\n",
+               (unsigned int)src_id,
+               (unsigned int)acked_msg_id,
+               (unsigned long)acked_counter,
+               (unsigned int)s_ctx.ack_pending.msg_id,
+               (unsigned long)s_ctx.ack_pending.counter);
+        return;
+    }
+
+    if (s_ctx.ack_recent.valid &&
+        (src_id == s_ctx.ack_recent.peer_id) &&
+        (acked_msg_id == s_ctx.ack_recent.msg_id) &&
+        (acked_counter == s_ctx.ack_recent.counter))
+    {
+        printf("RADIO ACK %s src=0x%04X ack_msg=0x%04X ack_counter=%lu\r\n",
+               s_ctx.ack_recent.timed_out ? "late" : "duplicate",
+               (unsigned int)src_id,
+               (unsigned int)acked_msg_id,
+               (unsigned long)acked_counter);
+        return;
+    }
+
+    printf("RADIO ACK unexpected src=0x%04X ack_msg=0x%04X ack_counter=%lu\r\n",
+           (unsigned int)src_id,
+           (unsigned int)acked_msg_id,
+           (unsigned long)acked_counter);
+}
+
+static void radio_main_handle_ack_timeout(void)
+{
+    if (!s_ctx.ack_pending.active || s_ctx.tx_in_progress)
+    {
+        return;
+    }
+    if ((int32_t)(radio_main_now_ms() - s_ctx.ack_pending.deadline_ms) < 0)
+    {
+        return;
+    }
+
+    if (s_ctx.ack_pending.retries_done < RADIO_ACK_RETRY_LIMIT)
+    {
+        printf("RADIO ACK retry %u/%u dst=0x%04X msg=0x%04X counter=%lu\r\n",
+               (unsigned int)(s_ctx.ack_pending.retries_done + 1U),
+               (unsigned int)RADIO_ACK_RETRY_LIMIT,
+               (unsigned int)s_ctx.ack_pending.peer_id,
+               (unsigned int)s_ctx.ack_pending.msg_id,
+               (unsigned long)s_ctx.ack_pending.counter);
+
+        if (radio_main_send_raw_with_retry(s_ctx.ack_pending.raw, s_ctx.ack_pending.raw_len))
+        {
+            s_ctx.ack_pending.retries_done++;
+            s_ctx.ack_pending.deadline_ms = radio_main_now_ms() + s_ctx.ack_pending.wait_ms;
+            return;
+        }
+
+        printf("RADIO ACK retry send failed dst=0x%04X msg=0x%04X\r\n",
+               (unsigned int)s_ctx.ack_pending.peer_id,
+               (unsigned int)s_ctx.ack_pending.msg_id);
+        s_ctx.ack_pending.deadline_ms = radio_main_now_ms() + 50UL;
+        return;
+    }
+
+    printf("RADIO ACK timeout dst=0x%04X msg=0x%04X counter=%lu retries=%u\r\n",
+           (unsigned int)s_ctx.ack_pending.peer_id,
+           (unsigned int)s_ctx.ack_pending.msg_id,
+           (unsigned long)s_ctx.ack_pending.counter,
+           (unsigned int)s_ctx.ack_pending.retries_done);
+    radio_main_set_last_error("ACK timeout");
+    radio_main_notify(MENU_NOTIFICATION_WARNING, "ACK timeout");
+    radio_main_ack_track_close(true);
 }
 
 static void radio_main_set_last_error(const char *text)
@@ -2137,6 +2348,14 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
         dst16 = (uint16_t)dst_id;
     }
 
+    if (s_ctx.ack_pending.active &&
+        (dst_id != 0xFFFFFFFFUL) &&
+        ((type == LAVIET_TYPE_DATA) || (type == LAVIET_TYPE_RESP)))
+    {
+        radio_main_set_last_error("ACK pending");
+        return false;
+    }
+
     memset(&frame, 0, sizeof(frame));
     frame.ver_type = laviet_frame_ver_type(type);
     frame.flags = 0U;
@@ -2244,6 +2463,12 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
     }
 
     if (!radio_main_send_raw_with_retry(raw, raw_len))
+    {
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        return false;
+    }
+    if (!radio_main_ack_track_start(&frame, raw, raw_len))
     {
         laviet_secure_zero(enc_key, sizeof(enc_key));
         laviet_secure_zero(hmac_key, sizeof(hmac_key));
@@ -2771,6 +2996,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                        (unsigned int)frame_decoded.src_id,
                        (unsigned int)acked_msg_id,
                        (unsigned long)acked_counter);
+                radio_main_handle_ack_frame(frame_decoded.src_id, acked_msg_id, acked_counter);
             }
             else
             {

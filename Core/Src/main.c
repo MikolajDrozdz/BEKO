@@ -299,8 +299,8 @@ static void MX_AES_Init(void)
   hcryp.Init.pKey = (uint32_t *)pKeyAES;
   hcryp.Init.pInitVect = (uint32_t *)pInitVectAES;
   hcryp.Init.Algorithm = CRYP_AES_CTR;
-  hcryp.Init.DataWidthUnit = CRYP_DATAWIDTHUNIT_WORD;
-  hcryp.Init.HeaderWidthUnit = CRYP_HEADERWIDTHUNIT_WORD;
+  hcryp.Init.DataWidthUnit = CRYP_DATAWIDTHUNIT_BYTE;
+  hcryp.Init.HeaderWidthUnit = CRYP_HEADERWIDTHUNIT_BYTE;
   hcryp.Init.KeyIVConfigSkip = CRYP_KEYIVCONFIG_ALWAYS;
   hcryp.Init.KeyMode = CRYP_KEYMODE_NORMAL;
   if (HAL_CRYP_Init(&hcryp) != HAL_OK)
@@ -349,7 +349,7 @@ static void MX_HASH_Init(void)
   /* USER CODE BEGIN HASH_Init 1 */
 
   /* USER CODE END HASH_Init 1 */
-  hhash.Init.DataType = HASH_DATATYPE_32B;
+  hhash.Init.DataType = HASH_DATATYPE_8B;
   hhash.Init.KeySize = 1;
   hhash.Init.pKey = (uint8_t *)pKeyHASH;
   if (HAL_HASH_Init(&hhash) != HAL_OK)
