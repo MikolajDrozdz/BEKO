@@ -1,0 +1,8 @@
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.6.0
+sqlalchemy>=2.0.27
+pycryptodome>=3.20.0
+spidev>=3.6
+RPi.GPIO>=0.7.1
+lgpio>=0.2.2.0
