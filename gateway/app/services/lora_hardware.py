@@ -17,9 +17,17 @@ class LoRaHardware:
     def __init__(self):
         self.on_receive_callback = None
         self.radio: Optional[RadioHandler] = None
+        self.last_error: Optional[str] = None
+
+    def is_ready(self) -> bool:
+        return self.radio is not None
+
+    def get_last_error(self) -> Optional[str]:
+        return self.last_error
 
     def initialize(self):
         print("[HARDWARE LoRa] Initializing hardware via radio_handle.py...")
+        self.last_error = None
 
         def internal_callback(data, rssi=None, index=None):
             if self.on_receive_callback and data:
@@ -59,32 +67,39 @@ class LoRaHardware:
             )
 
             print("[HARDWARE LoRa] Radio initialized")
+            return True
         except Exception as e:
             self.radio = None
+            self.last_error = str(e)
             print(f"[HARDWARE LoRa ERROR] Failed to initialize radio: {e}")
+            return False
 
     def send_frame(self, frame: bytes) -> bool:
-        if self.radio:
-            print(f"[HARDWARE LoRa TX] len={len(frame)} hex={frame.hex()}")
-            payload_ints = list(frame)
-            try:
-                tx_ok = self.radio.send(payload_ints)
-                if tx_ok is False:
-                    print("[HARDWARE LoRa TX] TX_DONE missing or CAD blocked")
-                    try:
-                        self.radio.set_mode_rx()
-                    except Exception:
-                        pass
-                    return False
+        if not self.radio:
+            self.last_error = "radio is not initialized"
+            print("[HARDWARE LoRa TX] ERROR: refusing TX because radio is not initialized")
+            return False
 
-                print(f"[HARDWARE LoRa TX] OK ({len(frame)} B)")
-                return True
-            except Exception as e:
-                print(f"[HARDWARE LoRa TX] ERROR: {e}")
+        print(f"[HARDWARE LoRa TX] len={len(frame)} hex={frame.hex()}")
+        payload_ints = list(frame)
+        try:
+            tx_ok = self.radio.send(payload_ints)
+            if tx_ok is False:
+                self.last_error = "TX_DONE missing or CAD blocked"
+                print("[HARDWARE LoRa TX] TX_DONE missing or CAD blocked")
+                try:
+                    self.radio.set_mode_rx()
+                except Exception:
+                    pass
                 return False
 
-        print("[HARDWARE LoRa TX] Simulated send (no hardware) =>", frame.hex())
-        return True
+            self.last_error = None
+            print(f"[HARDWARE LoRa TX] OK ({len(frame)} B)")
+            return True
+        except Exception as e:
+            self.last_error = str(e)
+            print(f"[HARDWARE LoRa TX] ERROR: {e}")
+            return False
 
     def attach_receive_interrupt(self, callback: Callable[[bytes, int], None]):
         self.on_receive_callback = callback

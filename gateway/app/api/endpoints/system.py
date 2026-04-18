@@ -19,7 +19,9 @@ def get_system_status():
         "gateway_id": LAVIET_GATEWAY_ID,
         "gateway_id_hex": hex(LAVIET_GATEWAY_ID),
         "protocol_version": LAVIET_FRAME_VERSION,
-        "status": "online"
+        "status": "online" if lora_device.is_ready() else "radio_not_ready",
+        "radio_ready": lora_device.is_ready(),
+        "radio_error": lora_device.get_last_error(),
     }
 
 
@@ -63,7 +65,8 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
     node.counter += 1
     db.commit()
 
-    lora_device.send_frame(final_frame)
+    if not lora_device.send_frame(final_frame):
+        raise HTTPException(status_code=503, detail=f"Radio TX failed: {lora_device.get_last_error()}")
 
 @router.post("/nodes/{node_id}/sync_counter", summary="Synchronizacja licznika węzła (ADMIN)")
 def sync_counter(node_id: int, db: Session = Depends(get_db)):
