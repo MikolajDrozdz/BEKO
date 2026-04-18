@@ -75,6 +75,13 @@ app.include_router(pairing.router, prefix="/api/pairing", tags=["pairing"])
 pairing_manager.set_send_callback(lora_device.send_frame)
 
 
+def _debug_hex(label: str, data: bytes | None) -> None:
+    if data is None:
+        print(f"{label}<none>")
+        return
+    print(f"{label}{data.hex()}")
+
+
 def _derive_node_keys(node_id: int, paired_code: bytes):
     if not isinstance(paired_code, bytes):
         paired_code = bytes(paired_code)
@@ -149,7 +156,20 @@ def _verify_inbound_mac(frame: LavietFrame, paired_code: bytes | None, raw_heade
         )
         return False
 
+    if paired_code:
+        base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, frame.src_id, paired_code)
+        domain_id = min(LAVIET_GATEWAY_ID, frame.src_id)
+        _debug_hex("[LoRa HMAC DBG] paired_code=", paired_code)
+        _debug_hex("[LoRa HMAC DBG] pair_base_key=", base_key)
+        print(f"[LoRa HMAC DBG] domain_id=0x{domain_id:04X}")
+        _debug_hex("[LoRa HMAC DBG] hmac_key=", hmac_key)
+    else:
+        print("[LoRa HMAC DBG] using shared key path")
+
+    _debug_hex("[LoRa HMAC DBG] mac_input=", raw_header_payload)
     expected_mac = laviet_generate_mac(hmac_key, raw_header_payload, b"")
+    _debug_hex("[LoRa HMAC DBG] expected_mac=", expected_mac)
+    _debug_hex("[LoRa HMAC DBG] received_mac=", frame.mac_tag or b"")
     if not laviet_mac_equal(expected_mac, frame.mac_tag or b""):
         print(
             f"[LoRa HMAC] Drop src={hex(frame.src_id)} dst={hex(frame.dst_id)} "

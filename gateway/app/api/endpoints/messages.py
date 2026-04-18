@@ -31,6 +31,13 @@ from ...services.pairing import pairing_manager
 router = APIRouter()
 
 
+def _debug_hex(label: str, data: bytes | None) -> None:
+    if data is None:
+        print(f"{label}<none>")
+        return
+    print(f"{label}{data.hex()}")
+
+
 @router.post("/send", response_model=schemas.MessageResponse)
 def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     try:
@@ -51,12 +58,19 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
 
     node = None
     paired_code = None
+    paired_code_source = "none"
     if dst_id_16 != LAVIET_BROADCAST_ID:
         node = db.query(models.Node).filter(models.Node.node_id == dst_id_16).first()
         if node is None:
             raise HTTPException(status_code=404, detail="Node not found or not paired")
 
-        paired_code = pairing_manager.get_paired_code(dst_id_16) or node.paired_code
+        runtime_code = pairing_manager.get_paired_code(dst_id_16)
+        if runtime_code:
+            paired_code = runtime_code
+            paired_code_source = "runtime"
+        else:
+            paired_code = node.paired_code
+            paired_code_source = "db"
         if not paired_code:
             raise HTTPException(status_code=409, detail="Node is not paired yet")
         if node.paired_code != paired_code:
@@ -87,6 +101,11 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         domain_id = min(LAVIET_GATEWAY_ID, dst_id_16)
         aes_key = get_aes_key(base_key, domain_id)
         hmac_key = get_hmac_key(base_key, domain_id)
+        _debug_hex(f"[TX HMAC DBG] paired_code[{paired_code_source}]=", paired_code)
+        _debug_hex("[TX HMAC DBG] pair_base_key=", base_key)
+        print(f"[TX HMAC DBG] domain_id=0x{domain_id:04X}")
+        _debug_hex("[TX HMAC DBG] aes_key=", aes_key)
+        _debug_hex("[TX HMAC DBG] hmac_key=", hmac_key)
         node.counter += 1
         db.commit()
         db.refresh(node)
@@ -125,6 +144,8 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
 
     raw_frame_no_mac = LavietFrameBuilder.build_frame(net_frame)
     net_frame.mac_tag = laviet_generate_mac(hmac_key, raw_frame_no_mac, b"")
+    _debug_hex("[TX HMAC DBG] mac_input=", raw_frame_no_mac)
+    _debug_hex("[TX HMAC DBG] mac_tag=", net_frame.mac_tag)
     final_frame = LavietFrameBuilder.build_frame(net_frame)
 
     print(
