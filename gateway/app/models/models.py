@@ -10,7 +10,7 @@ class Node(Base):
     is_paired = Column(Boolean, default=False)
     counter = Column(Integer, default=0)
     shared_key = Column(LargeBinary, nullable=True)
-    paired_code = Column(LargeBinary, nullable=True)  # 6-bajtowy kod parowania
+    paired_code = Column(LargeBinary, nullable=True)  # 8-bajtowy kod parowania
     network_mode = Column(Boolean, default=False)      # Czy węzeł sieciowy (relay)
     network_ttl = Column(Integer, default=3)           # TTL propagacji w mesh
     last_seen = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

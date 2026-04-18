@@ -1,13 +1,36 @@
 import asyncio
+import struct
+import time
+from datetime import datetime
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from .models.database import engine, Base
-from .api.endpoints import messages, nodes, system, logs, pairing
+
+from .api.endpoints import logs, messages, nodes, pairing, system
+from .core.laviet_crypto import (
+    LAVIET_SHARED_V1,
+    get_aes_key,
+    get_hmac_key,
+    laviet_aes_ctr_crypt,
+    laviet_generate_mac,
+    security_peer_link_key_derive,
+)
+from .models import models
+from .models.database import Base, SessionLocal, engine
+from .services import message_tracker
+from .services.laviet_frame import (
+    LAVIET_BROADCAST_ID,
+    LAVIET_FLAG_ACK_REQUIRED,
+    LAVIET_FLAG_ENCRYPTED,
+    LAVIET_FLAG_IS_ACK,
+    LAVIET_GATEWAY_ID,
+    LavietFrame,
+    LavietFrameBuilder,
+    LavietType,
+)
 from .services.lora_hardware import lora_device
-from .services.laviet_frame import LavietFrameBuilder, LavietType
 from .services.pairing import pairing_manager
 
-# Start database models
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="LAVIET Gateway API", version="1.0.0")
@@ -20,22 +43,26 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.middleware("http")
 async def log_request_body(request: Request, call_next):
     body_bytes = await request.body()
     try:
-        body_str = body_bytes.decode('utf-8')
+        body_str = body_bytes.decode("utf-8")
         if body_str:
             print(f"[API REQUEST] {request.method} {request.url.path} - Body: {body_str}")
     except Exception:
-        print(f"[API REQUEST] {request.method} {request.url.path} - Body: <binary data, len={len(body_bytes)}>")
+        print(
+            f"[API REQUEST] {request.method} {request.url.path} - Body: <binary data, len={len(body_bytes)}>"
+        )
 
     async def receive():
         return {"type": "http.request", "body": body_bytes}
-    request._receive = receive
 
+    request._receive = receive
     response = await call_next(request)
     return response
+
 
 app.include_router(messages.router, prefix="/api/messages", tags=["messages"])
 app.include_router(nodes.router, prefix="/api/nodes", tags=["nodes"])
@@ -43,45 +70,198 @@ app.include_router(system.router, prefix="/api/system", tags=["system"])
 app.include_router(logs.router, prefix="/api/logs", tags=["logs"])
 app.include_router(pairing.router, prefix="/api/pairing", tags=["pairing"])
 
-# Konfiguracja callbacka wysyłającego dla pairing managera
 pairing_manager.set_send_callback(lora_device.send_frame)
 
-# Tło odbierania wiadomości radiowych (nasłuch LoRa)
+
+def _derive_node_keys(node_id: int, paired_code: bytes):
+    if not isinstance(paired_code, bytes):
+        paired_code = bytes(paired_code)
+    base_key = security_peer_link_key_derive(LAVIET_GATEWAY_ID, node_id, paired_code)
+    domain_id = min(LAVIET_GATEWAY_ID, node_id)
+    aes_key = get_aes_key(base_key, domain_id)
+    hmac_key = get_hmac_key(base_key, domain_id)
+    return aes_key, hmac_key
+
+
+def _decode_inbound_payload(frame: LavietFrame, node: models.Node) -> bytes:
+    payload = frame.payload
+    if (frame.flags & LAVIET_FLAG_ENCRYPTED) == 0:
+        return payload
+
+    if node and node.paired_code:
+        aes_key, _ = _derive_node_keys(frame.src_id, node.paired_code)
+    else:
+        domain_id = (
+            LAVIET_BROADCAST_ID
+            if frame.dst_id == LAVIET_BROADCAST_ID
+            else min(LAVIET_GATEWAY_ID, frame.src_id)
+        )
+        aes_key = get_aes_key(LAVIET_SHARED_V1, domain_id)
+
+    return laviet_aes_ctr_crypt(
+        payload,
+        aes_key,
+        frame.src_id,
+        frame.dst_id,
+        frame.msg_id,
+        frame.counter,
+    )
+
+
+def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node) -> None:
+    if frame.dst_id == LAVIET_BROADCAST_ID:
+        return
+    if (frame.flags & LAVIET_FLAG_ACK_REQUIRED) == 0:
+        return
+    if frame.type == LavietType.ACK:
+        return
+    if node is None or not node.paired_code:
+        print(f"[LoRa ACK] Skip ACK for {hex(frame.src_id)}: node is not paired")
+        return
+
+    node.counter += 1
+    db.commit()
+    db.refresh(node)
+
+    ack_payload = struct.pack(">HI", frame.msg_id & 0xFFFF, frame.counter & 0xFFFFFFFF)
+    _, hmac_key = _derive_node_keys(frame.src_id, node.paired_code)
+    ack_frame = LavietFrame(
+        type=LavietType.ACK,
+        flags=LAVIET_FLAG_IS_ACK,
+        src_id=LAVIET_GATEWAY_ID,
+        dst_id=frame.src_id,
+        msg_id=int(time.time() * 1000) & 0xFFFF,
+        counter=node.counter,
+        payload_len=len(ack_payload),
+        payload=ack_payload,
+    )
+
+    raw_frame = LavietFrameBuilder.build_frame(ack_frame)
+    ack_frame.mac_tag = laviet_generate_mac(hmac_key, raw_frame, b"")
+    final_frame = LavietFrameBuilder.build_frame(ack_frame)
+
+    if lora_device.send_frame(final_frame):
+        print(
+            f"[LoRa ACK] Sent ACK to {hex(frame.src_id)} for msg=0x{frame.msg_id:04X} counter={frame.counter}"
+        )
+    else:
+        print(
+            f"[LoRa ACK] Failed to send ACK to {hex(frame.src_id)} for msg=0x{frame.msg_id:04X}"
+        )
+
+
+def _store_inbound_data(db, frame: LavietFrame, plain_payload: bytes) -> None:
+    node = db.query(models.Node).filter(models.Node.node_id == frame.src_id).first()
+    if node:
+        node.last_seen = datetime.utcnow()
+
+    db_msg = models.Message(
+        dst_id=frame.dst_id,
+        src_id=frame.src_id,
+        payload_hex=plain_payload.hex(),
+        status="received",
+    )
+    db.add(db_msg)
+    db.commit()
+
+    try:
+        text = plain_payload.decode("utf-8")
+    except UnicodeDecodeError:
+        text = None
+
+    if text is not None:
+        print(
+            f"[LoRa DATA] src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
+            f"msg=0x{frame.msg_id:04X} counter={frame.counter} text={text!r}"
+        )
+    else:
+        print(
+            f"[LoRa DATA] src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
+            f"msg=0x{frame.msg_id:04X} counter={frame.counter} payload_hex={plain_payload.hex()}"
+        )
+
+
+def _handle_ack_frame(db, frame: LavietFrame) -> None:
+    if len(frame.payload) != 6:
+        print(
+            f"[LoRa ACK] Ignoring malformed ACK from {hex(frame.src_id)}: payload_len={len(frame.payload)}"
+        )
+        return
+
+    acked_msg_id, acked_counter = struct.unpack(">HI", frame.payload)
+    message_id = message_tracker.pop_pending_ack(frame.src_id, acked_msg_id, acked_counter)
+    if message_id is None:
+        print(
+            f"[LoRa ACK] Unexpected ACK from {hex(frame.src_id)} for "
+            f"msg=0x{acked_msg_id:04X} counter={acked_counter}"
+        )
+        return
+
+    db_msg = db.query(models.Message).filter(models.Message.id == message_id).first()
+    if db_msg is None:
+        print(
+            f"[LoRa ACK] ACK matched runtime tracker but message {message_id} is missing from DB"
+        )
+        return
+
+    db_msg.status = "delivered"
+    db.commit()
+    print(
+        f"[LoRa ACK] Delivered message_id={message_id} from node={hex(frame.src_id)} "
+        f"acked_msg=0x{acked_msg_id:04X} acked_counter={acked_counter}"
+    )
+
+
 async def lora_listener_task():
-    print("[BACKGROUND TASK] Rozpoczęto asynchroniczny nasłuch LoRa (LAVIET)")
+    print("[BACKGROUND TASK] Started async LoRa listener")
 
     def on_receive(frame_bytes: bytes, rssi_dbm: int = 0):
-        print(f"[LoRa DEBUG] Rozmiar otrzymanej ramki: {len(frame_bytes)} B, RSSI: {rssi_dbm}")
+        print(f"[LoRa DEBUG] RX len={len(frame_bytes)} RSSI={rssi_dbm}")
+        db = SessionLocal()
         try:
-            # Weryfikujemy wstepnie format
             parsed = LavietFrameBuilder.parse_frame(frame_bytes)
-            print(f"[LoRa] Zdekodowano nową ramkę: typ={parsed.type}, src={hex(parsed.src_id)}")
+            print(
+                f"[LoRa] Parsed frame type={parsed.type} src={hex(parsed.src_id)} "
+                f"dst={hex(parsed.dst_id)} msg=0x{parsed.msg_id:04X} counter={parsed.counter}"
+            )
 
             if parsed.type == LavietType.PAIR_RESP:
-                # Odcięcie paddingu narzucanego przez hardware (korzystamy z wyliczonej długości)
-                raw_header_payload = frame_bytes[:13 + parsed.payload_len]
+                raw_header_payload = frame_bytes[: 13 + parsed.payload_len]
                 pairing_manager.on_pair_resp(parsed, raw_header_payload)
+                return
 
-            elif parsed.type == LavietType.DATA:
-                print(f"[LoRa] Otrzymano DATA od {hex(parsed.src_id)} - TODO: Deszyfracja i propagacja")
-            
+            node = db.query(models.Node).filter(models.Node.node_id == parsed.src_id).first()
+            if node:
+                node.last_seen = datetime.utcnow()
+
+            if parsed.type == LavietType.DATA:
+                plain_payload = _decode_inbound_payload(parsed, node)
+                _store_inbound_data(db, parsed, plain_payload)
+                _send_ack_for_frame(db, parsed, node)
             elif parsed.type == LavietType.ACK:
-                print(f"[LoRa] Oczekiwano ACK od {hex(parsed.src_id)} - Otrzymano poprawnie!")
-                
+                _handle_ack_frame(db, parsed)
+            else:
+                print(f"[LoRa] Ignoring unsupported frame type={parsed.type}")
+                db.commit()
         except Exception as e:
-            print(f"[LoRa] Błąd dekodowania przypchodzącej ramki: {e}")
+            print(f"[LoRa] RX decode error: {e}")
+            db.rollback()
+        finally:
+            db.close()
 
     lora_device.attach_receive_interrupt(on_receive)
 
     while True:
         await asyncio.sleep(1)
 
+
 @app.on_event("startup")
 async def on_startup():
-    print("Inicjalizacja modułu LoRa (SPI)")
+    print("Initializing LoRa module (SPI)")
     lora_device.initialize()
     asyncio.create_task(lora_listener_task())
 
+
 @app.get("/")
 def read_root():
-    return {"message": "LAVIET Gateway działa!"}
+    return {"message": "LAVIET Gateway dziala!"}
