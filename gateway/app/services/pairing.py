@@ -2,6 +2,7 @@
 Pairing flow for the LAVIET gateway.
 """
 
+import hmac
 import os
 import threading
 import time
@@ -119,8 +120,12 @@ class PairingManager:
                 "opened_at": time.monotonic(),
                 "msg_id": msg_id,
                 "counter": counter,
+                "code": bytes(raw_payload),
             }
-            print(f"[PAIRING] Sent PAIR_REQ to {hex(target_node_id)}")
+            print(
+                f"[PAIRING] Sent PAIR_REQ to {hex(target_node_id)} "
+                f"code={raw_payload.hex()}"
+            )
 
         return True
 
@@ -160,9 +165,26 @@ class PairingManager:
                 )
                 return False
 
+            request = self._pending_reqs.get(pending_key)
+            expected_code = None if request is None else request.get("code")
+            if expected_code is None:
+                print(
+                    f"[PAIRING] Rejected PAIR_RESP from {hex(frame.src_id)}: "
+                    "missing expected pairing code in pending request"
+                )
+                return False
+            if not hmac.compare_digest(code, expected_code):
+                print(
+                    f"[PAIRING] Rejected PAIR_RESP from {hex(frame.src_id)}: "
+                    f"code mismatch expected={expected_code.hex()} got={code.hex()}"
+                )
+                return False
+
             self._paired_nodes[frame.src_id] = code
             if pending_key != LAVIET_BROADCAST_ID:
                 self._pending_reqs.pop(pending_key, None)
+            else:
+                self._pending_reqs.pop(LAVIET_BROADCAST_ID, None)
 
         self._persist_paired_node(frame.src_id, code)
         print(f"[PAIRING] Accepted PAIR_RESP from {hex(frame.src_id)}. Code={code.hex()}")

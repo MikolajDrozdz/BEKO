@@ -85,7 +85,43 @@ def _derive_node_keys(node_id: int, paired_code: bytes):
     return aes_key, hmac_key
 
 
-def _derive_inbound_hmac_key(frame: LavietFrame, node: models.Node | None):
+def _resolve_paired_code(node_id: int, node: models.Node | None) -> bytes | None:
+    runtime_code = pairing_manager.get_paired_code(node_id)
+    if runtime_code:
+        return bytes(runtime_code)
+    if node is not None and node.paired_code:
+        return bytes(node.paired_code)
+    return None
+
+
+def _sync_node_paired_code(db, node_id: int, node: models.Node | None, paired_code: bytes | None):
+    if not paired_code:
+        return node
+
+    if node is None:
+        node = models.Node(
+            node_id=node_id,
+            is_paired=True,
+            counter=0,
+            paired_code=bytes(paired_code),
+            network_mode=False,
+            network_ttl=3,
+        )
+        db.add(node)
+        db.commit()
+        db.refresh(node)
+        return node
+
+    if node.paired_code != paired_code or not node.is_paired:
+        node.paired_code = bytes(paired_code)
+        node.is_paired = True
+        db.commit()
+        db.refresh(node)
+
+    return node
+
+
+def _derive_inbound_hmac_key(frame: LavietFrame, paired_code: bytes | None):
     if frame.type in (LavietType.PAIR_REQ, LavietType.PAIR_RESP, LavietType.ERROR):
         domain_id = (
             LAVIET_BROADCAST_ID
@@ -97,15 +133,15 @@ def _derive_inbound_hmac_key(frame: LavietFrame, node: models.Node | None):
     if (frame.flags & LAVIET_FLAG_BROADCAST) or frame.dst_id == LAVIET_BROADCAST_ID:
         return get_hmac_key(LAVIET_SHARED_V1, LAVIET_BROADCAST_ID)
 
-    if node is None or not node.paired_code:
+    if not paired_code:
         return None
 
-    _, hmac_key = _derive_node_keys(frame.src_id, node.paired_code)
+    _, hmac_key = _derive_node_keys(frame.src_id, paired_code)
     return hmac_key
 
 
-def _verify_inbound_mac(frame: LavietFrame, node: models.Node | None, raw_header_payload: bytes) -> bool:
-    hmac_key = _derive_inbound_hmac_key(frame, node)
+def _verify_inbound_mac(frame: LavietFrame, paired_code: bytes | None, raw_header_payload: bytes) -> bool:
+    hmac_key = _derive_inbound_hmac_key(frame, paired_code)
     if hmac_key is None:
         print(
             f"[LoRa HMAC] Missing key for src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
@@ -124,13 +160,13 @@ def _verify_inbound_mac(frame: LavietFrame, node: models.Node | None, raw_header
     return True
 
 
-def _decode_inbound_payload(frame: LavietFrame, node: models.Node) -> bytes:
+def _decode_inbound_payload(frame: LavietFrame, paired_code: bytes | None) -> bytes:
     payload = frame.payload
     if (frame.flags & LAVIET_FLAG_ENCRYPTED) == 0:
         return payload
 
-    if node and node.paired_code:
-        aes_key, _ = _derive_node_keys(frame.src_id, node.paired_code)
+    if paired_code:
+        aes_key, _ = _derive_node_keys(frame.src_id, paired_code)
     else:
         domain_id = (
             LAVIET_BROADCAST_ID
@@ -149,14 +185,14 @@ def _decode_inbound_payload(frame: LavietFrame, node: models.Node) -> bytes:
     )
 
 
-def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node) -> None:
+def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired_code: bytes | None) -> None:
     if frame.dst_id == LAVIET_BROADCAST_ID:
         return
     if (frame.flags & LAVIET_FLAG_ACK_REQUIRED) == 0:
         return
     if frame.type == LavietType.ACK:
         return
-    if node is None or not node.paired_code:
+    if node is None or not paired_code:
         print(f"[LoRa ACK] Skip ACK for {hex(frame.src_id)}: node is not paired")
         return
 
@@ -165,7 +201,7 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node) -> None:
     db.refresh(node)
 
     ack_payload = struct.pack(">HI", frame.msg_id & 0xFFFF, frame.counter & 0xFFFFFFFF)
-    _, hmac_key = _derive_node_keys(frame.src_id, node.paired_code)
+    _, hmac_key = _derive_node_keys(frame.src_id, paired_code)
     ack_frame = LavietFrame(
         type=LavietType.ACK,
         flags=LAVIET_FLAG_IS_ACK,
@@ -272,17 +308,19 @@ async def lora_listener_task():
                 return
 
             node = db.query(models.Node).filter(models.Node.node_id == parsed.src_id).first()
+            paired_code = _resolve_paired_code(parsed.src_id, node)
+            node = _sync_node_paired_code(db, parsed.src_id, node, paired_code)
             if node:
                 node.last_seen = datetime.utcnow()
 
-            if not _verify_inbound_mac(parsed, node, raw_header_payload):
+            if not _verify_inbound_mac(parsed, paired_code, raw_header_payload):
                 db.rollback()
                 return
 
             if parsed.type == LavietType.DATA:
-                plain_payload = _decode_inbound_payload(parsed, node)
+                plain_payload = _decode_inbound_payload(parsed, paired_code)
                 _store_inbound_data(db, parsed, plain_payload)
-                _send_ack_for_frame(db, parsed, node)
+                _send_ack_for_frame(db, parsed, node, paired_code)
             elif parsed.type == LavietType.ACK:
                 _handle_ack_frame(db, parsed)
             else:

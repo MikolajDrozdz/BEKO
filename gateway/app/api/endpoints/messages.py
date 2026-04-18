@@ -56,10 +56,10 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         if node is None:
             raise HTTPException(status_code=404, detail="Node not found or not paired")
 
-        paired_code = node.paired_code or pairing_manager.get_paired_code(dst_id_16)
+        paired_code = pairing_manager.get_paired_code(dst_id_16) or node.paired_code
         if not paired_code:
             raise HTTPException(status_code=409, detail="Node is not paired yet")
-        if node.paired_code is None:
+        if node.paired_code != paired_code:
             node.paired_code = bytes(paired_code)
             node.is_paired = True
             db.commit()
