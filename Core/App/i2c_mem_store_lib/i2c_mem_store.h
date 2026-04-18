@@ -36,7 +36,7 @@ extern "C" {
 #define I2C_MEM_STORE_SECRET_SLOT_SIZE            24U
 #define I2C_MEM_STORE_SECRET_PAYLOAD_MAX          14U
 #define I2C_MEM_STORE_TRUSTED_ID_MAX              6U
-#define I2C_MEM_STORE_TRUSTED_CODE_MAX            6U
+#define I2C_MEM_STORE_TRUSTED_CODE_MAX            8U
 /** @} */
 
 /**
