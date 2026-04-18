@@ -2,17 +2,11 @@ import os
 import sys
 import threading
 import time
+import importlib
 from typing import Any, Callable, Optional, Tuple
 
 # Add project root to path so radio_handle.py can be imported when present.
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
-
-try:
-    from radio_handle import RadioHandler, RadioMode
-except ImportError as e:
-    print(f"[WARNING] Failed to load external radio module: {e}")
-    RadioHandler = None
-    RadioMode = None
 
 try:
     import radio_defines as legacy_radio_defines
@@ -44,6 +38,30 @@ def _env_int(name: str, default: int) -> int:
         return int(raw, 0)
     except ValueError:
         return default
+
+
+def _env_str(name: str, default: str) -> str:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    raw = raw.strip()
+    return raw if raw else default
+
+
+def _load_external_radio_driver() -> Tuple[Optional[type], Optional[Any], Optional[str]]:
+    try:
+        module = importlib.import_module("radio_handle")
+    except ModuleNotFoundError:
+        return None, None, None
+    except Exception as exc:
+        return None, None, str(exc)
+
+    radio_handler = getattr(module, "RadioHandler", None)
+    radio_mode = getattr(module, "RadioMode", None)
+    if radio_handler is None or radio_mode is None:
+        return None, None, "radio_handle is missing RadioHandler or RadioMode"
+
+    return radio_handler, radio_mode, None
 
 
 def _legacy_freq_hz(default_hz: int) -> int:
@@ -293,6 +311,7 @@ class LoRaHardware:
         self.driver_name = "none"
         self._rx_thread: Optional[threading.Thread] = None
         self._rx_stop = threading.Event()
+        self.requested_driver = _env_str("LAVIET_RADIO_DRIVER", "auto").lower()
 
     def is_ready(self) -> bool:
         return self.radio is not None
@@ -343,22 +362,54 @@ class LoRaHardware:
                 )
                 self.on_receive_callback(raw_bytes, rssi_val)
 
-        if RadioHandler is not None and RadioMode is not None:
-            try:
-                self.radio = RadioHandler(RadioMode.LORA, internal_callback)
-                self.radio.lora_handler._spi_write(0x39, 0x34)
-                op_mode = self.radio.lora_handler._spi_read(0x01)
-                sync_word = self.radio.lora_handler._spi_read(0x39)
-                print(
-                    f"[HARDWARE LoRa] Using external radio_handle.py OP_MODE=0x{op_mode:02X} "
-                    f"SYNC_WORD=0x{sync_word:02X}"
-                )
-                self.driver_name = "radio_handle"
-                return True
-            except Exception as e:
-                self.radio = None
-                self.last_error = str(e)
-                print(f"[HARDWARE LoRa] External driver init failed: {e}")
+        requested = self.requested_driver
+        if requested not in {"auto", "builtin", "external"}:
+            print(f"[HARDWARE LoRa] Unknown LAVIET_RADIO_DRIVER={requested!r}; using auto")
+            requested = "auto"
+
+        try_external = requested in {"auto", "external"}
+        try_builtin = requested in {"auto", "builtin"}
+
+        if try_external:
+            radio_handler, radio_mode, import_error = _load_external_radio_driver()
+            if import_error is not None:
+                if requested == "external":
+                    self.last_error = f"external radio_handle import failed: {import_error}"
+                    print(f"[HARDWARE LoRa ERROR] {self.last_error}")
+                    return False
+                print(f"[HARDWARE LoRa] External driver unavailable: {import_error}; trying builtin SX1276")
+            elif radio_handler is None or radio_mode is None:
+                if requested == "external":
+                    self.last_error = "external radio_handle.py not found"
+                    print(f"[HARDWARE LoRa ERROR] {self.last_error}")
+                    return False
+                print("[HARDWARE LoRa] External driver not found; using builtin SX1276")
+            else:
+                try:
+                    self.radio = radio_handler(radio_mode.LORA, internal_callback)
+                    self.radio.lora_handler._spi_write(0x39, 0x34)
+                    op_mode = self.radio.lora_handler._spi_read(0x01)
+                    sync_word = self.radio.lora_handler._spi_read(0x39)
+                    print(
+                        f"[HARDWARE LoRa] Using external radio_handle.py OP_MODE=0x{op_mode:02X} "
+                        f"SYNC_WORD=0x{sync_word:02X}"
+                    )
+                    self.driver_name = "radio_handle"
+                    return True
+                except Exception as e:
+                    self.radio = None
+                    self.last_error = str(e)
+                    if requested == "external":
+                        print(f"[HARDWARE LoRa ERROR] External driver init failed: {e}")
+                        return False
+                    print(f"[HARDWARE LoRa] External driver init failed: {e}; trying builtin SX1276")
+
+        if not try_builtin:
+            self.driver_name = "none"
+            if self.last_error is None:
+                self.last_error = "builtin SX1276 driver disabled by LAVIET_RADIO_DRIVER"
+            print(f"[HARDWARE LoRa ERROR] Failed to initialize radio: {self.last_error}")
+            return False
 
         try:
             self.radio = _SX1276LoRaRadio()
