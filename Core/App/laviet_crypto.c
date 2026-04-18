@@ -19,7 +19,7 @@ extern HASH_HandleTypeDef hhash;
 #endif
 
 #define LAVIET_CRYPTO_TIMEOUT_MS  1000U
-#define LAVIET_TEST_FIXED_FRAME_MAC  1U
+#define LAVIET_TEST_FIXED_FRAME_MAC  0U
 #define LAVIET_TEST_FIXED_FRAME_MAC_BYTE  0x01U
 
 typedef union

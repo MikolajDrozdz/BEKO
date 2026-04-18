@@ -270,6 +270,13 @@ static const char *radio_main_key_mode_text(security_frame_key_mode_t mode);
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len);
 static void radio_main_print_tx_ascii(const uint8_t *data, uint8_t len);
 static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len);
+static void radio_main_log_hmac_debug(const char *prefix,
+                                      const laviet_frame_t *frame,
+                                      security_frame_key_mode_t mode,
+                                      const uint8_t *pair_code,
+                                      uint8_t pair_code_len,
+                                      const uint8_t hmac_key[32],
+                                      const uint8_t expected_mac[LAVIET_MAC_TAG_LEN]);
 static void radio_main_print_generated_pattern(const char *label, uint8_t value, uint16_t len);
 static void radio_main_print_fsk_sync_word(uint64_t sync_word, uint8_t sync_len, const char *label);
 static void radio_main_print_ook_sync_word(uint32_t sync_word, uint8_t sync_len, const char *label);
@@ -2481,14 +2488,7 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
                      (dst16 != LAVIET_BROADCAST_ID));
     if (use_pair_link)
     {
-        if ((dst16 == LAVIET_GATEWAY_ID) && s_ctx.gateway_key_mode_known)
-        {
-            key_mode = s_ctx.gateway_key_mode;
-        }
-        else
-        {
-            key_mode = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
-        }
+        key_mode = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
     }
     if ((dst16 == LAVIET_GATEWAY_ID) &&
         use_pair_link &&
@@ -2520,6 +2520,16 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
         laviet_secure_zero(hmac_key, sizeof(hmac_key));
         radio_main_set_last_error("HMAC failed");
         return false;
+    }
+    if ((dst16 == LAVIET_GATEWAY_ID) && use_pair_link)
+    {
+        radio_main_log_hmac_debug("RADIO TX HMAC DBG",
+                                  &frame,
+                                  key_mode,
+                                  s_ctx.gateway_pair_code_valid ? s_ctx.gateway_pair_code : NULL,
+                                  s_ctx.gateway_pair_code_valid ? s_ctx.gateway_pair_code_len : 0U,
+                                  hmac_key,
+                                  frame.mac_tag);
     }
     if (laviet_frame_encode(&frame, raw, sizeof(raw), &raw_len) != LAVIET_STATUS_OK)
     {
@@ -2751,8 +2761,6 @@ static const char *radio_main_key_mode_text(security_frame_key_mode_t mode)
     {
         case SECURITY_FRAME_KEY_MODE_PAIR_V1_32:
             return "PAIR32";
-        case SECURITY_FRAME_KEY_MODE_PAIR_V1_16:
-            return "PAIR16";
         case SECURITY_FRAME_KEY_MODE_SHARED:
         default:
             return "SHARED";
@@ -2761,7 +2769,7 @@ static const char *radio_main_key_mode_text(security_frame_key_mode_t mode)
 
 static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
 {
-    security_frame_key_mode_t candidates[3];
+    security_frame_key_mode_t candidates[2];
     security_frame_key_mode_t matched_mode = SECURITY_FRAME_KEY_MODE_SHARED;
     uint8_t trial_enc[16];
     uint8_t hmac_key[32];
@@ -2793,25 +2801,6 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
     {
         candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_SHARED;
     }
-    else if (peer_id == LAVIET_GATEWAY_ID)
-    {
-        if (s_ctx.gateway_key_mode_known)
-        {
-            candidates[candidate_count++] = s_ctx.gateway_key_mode;
-        }
-        if ((!s_ctx.gateway_key_mode_known) || (s_ctx.gateway_key_mode != SECURITY_FRAME_KEY_MODE_PAIR_V1_32))
-        {
-            candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
-        }
-        if ((!s_ctx.gateway_key_mode_known) || (s_ctx.gateway_key_mode != SECURITY_FRAME_KEY_MODE_PAIR_V1_16))
-        {
-            candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_PAIR_V1_16;
-        }
-        if ((!s_ctx.gateway_key_mode_known) || (s_ctx.gateway_key_mode != SECURITY_FRAME_KEY_MODE_SHARED))
-        {
-            candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_SHARED;
-        }
-    }
     else
     {
         candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_PAIR_V1_32;
@@ -2820,6 +2809,7 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
     for (idx = 0U; idx < candidate_count; idx++)
     {
         bool candidate_ok = false;
+        bool mac_match = false;
 
         memset(trial_enc, 0, sizeof(trial_enc));
         memset(hmac_key, 0, sizeof(hmac_key));
@@ -2837,8 +2827,22 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
         }
 
         if (candidate_ok &&
-            laviet_frame_hmac_sha256(frame, hmac_key, expected) &&
-            laviet_mac_equal(expected, frame->mac_tag))
+            laviet_frame_hmac_sha256(frame, hmac_key, expected))
+        {
+            if (peer_id == LAVIET_GATEWAY_ID)
+            {
+                radio_main_log_hmac_debug("RADIO RX HMAC DBG",
+                                          frame,
+                                          candidates[idx],
+                                          s_ctx.gateway_pair_code_valid ? s_ctx.gateway_pair_code : NULL,
+                                          s_ctx.gateway_pair_code_valid ? s_ctx.gateway_pair_code_len : 0U,
+                                          hmac_key,
+                                          expected);
+            }
+            mac_match = laviet_mac_equal(expected, frame->mac_tag);
+        }
+
+        if (candidate_ok && mac_match)
         {
             memcpy(enc_key, trial_enc, sizeof(trial_enc));
             matched_mode = candidates[idx];
@@ -2910,7 +2914,6 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     laviet_frame_t frame_decoded;
     laviet_frame_status_t frame_status;
     bool for_me;
-    bool compat_missing_encrypted = false;
     uint8_t enc_key[16];
     uint32_t rx_counter;
     uint32_t tx_counter;
@@ -2984,37 +2987,6 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             return;
         }
     }
-    else if ((frame_decoded.src_id == LAVIET_GATEWAY_ID) &&
-             (frame_decoded.dst_id == s_ctx.node_id) &&
-             (frame_decoded.payload_len > 0U) &&
-             ((frame_type == LAVIET_TYPE_DATA) || (frame_type == LAVIET_TYPE_RESP)))
-    {
-        char raw_text[21];
-        char dec_text[21];
-        laviet_frame_t compat_frame = frame_decoded;
-
-        if ((radio_main_format_payload_text(frame_decoded.payload,
-                                            frame_decoded.payload_len,
-                                            raw_text,
-                                            sizeof(raw_text)) > 0U) &&
-            (strncmp(raw_text, "HEX:", 4U) == 0) &&
-            laviet_aes_ctr_crypt(compat_frame.payload,
-                                 compat_frame.payload_len,
-                                 enc_key,
-                                 &compat_frame) &&
-            (radio_main_format_payload_text(compat_frame.payload,
-                                            compat_frame.payload_len,
-                                            dec_text,
-                                            sizeof(dec_text)) > 0U) &&
-            (strncmp(dec_text, "HEX:", 4U) != 0))
-        {
-            frame_decoded = compat_frame;
-            compat_missing_encrypted = true;
-            printf("RADIO RX compat decrypt src=0x%04X msg=0x%04X missing ENCRYPTED flag\r\n",
-                   (unsigned int)frame_decoded.src_id,
-                   (unsigned int)frame_decoded.msg_id);
-        }
-    }
     laviet_secure_zero(enc_key, 16U);
 
     for_me = (frame_decoded.dst_id == s_ctx.node_id) ||
@@ -3041,10 +3013,6 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     if (frame_decoded.src_id == LAVIET_GATEWAY_ID)
     {
         radio_main_log_gateway_rx_frame(&frame, &frame_decoded, pkt->rssi_dbm, pkt->snr_db);
-        if (compat_missing_encrypted)
-        {
-            printf("RADIO RX GATEWAY NOTE payload decrypted with compatibility path because ENCRYPTED flag was missing\r\n");
-        }
     }
 
     if (frame_decoded.payload_len > 0U)
@@ -3473,6 +3441,7 @@ static void radio_main_set_gateway_pair_code(const uint8_t *code, uint8_t len)
     s_ctx.gateway_pair_code_valid = true;
     printf("RADIO: gateway pair code cache updated len=%u\r\n",
            (unsigned int)s_ctx.gateway_pair_code_len);
+    radio_main_print_hex_bytes("RADIO: gateway pair code cache=", s_ctx.gateway_pair_code, s_ctx.gateway_pair_code_len);
 }
 
 static void radio_main_load_gateway_pair_code_from_security(void)
@@ -3493,6 +3462,11 @@ static bool radio_main_get_gateway_cached_frame_keys(security_frame_key_mode_t m
                                                      uint8_t enc_key_out[16],
                                                      uint8_t hmac_key_out[32])
 {
+    if (!s_ctx.gateway_pair_code_valid)
+    {
+        radio_main_load_gateway_pair_code_from_security();
+    }
+
     if (!s_ctx.gateway_pair_code_valid)
     {
         return false;
@@ -3658,6 +3632,52 @@ static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, u
         }
     }
     printf("\r\n");
+}
+
+static void radio_main_log_hmac_debug(const char *prefix,
+                                      const laviet_frame_t *frame,
+                                      security_frame_key_mode_t mode,
+                                      const uint8_t *pair_code,
+                                      uint8_t pair_code_len,
+                                      const uint8_t hmac_key[32],
+                                      const uint8_t expected_mac[LAVIET_MAC_TAG_LEN])
+{
+    uint8_t mac_input[LAVIET_FRAME_HEADER_LEN + LAVIET_MAX_PAYLOAD];
+    uint8_t mac_input_len = 0U;
+
+    if ((prefix == NULL) || (frame == NULL) || (hmac_key == NULL) || (expected_mac == NULL))
+    {
+        return;
+    }
+
+    printf("%s mode=%s src=0x%04X dst=0x%04X msg=0x%04X counter=%lu flags=0x%02X payload_len=%u\r\n",
+           prefix,
+           radio_main_key_mode_text(mode),
+           (unsigned int)frame->src_id,
+           (unsigned int)frame->dst_id,
+           (unsigned int)frame->msg_id,
+           (unsigned long)frame->counter,
+           (unsigned int)frame->flags,
+           (unsigned int)frame->payload_len);
+    if ((pair_code != NULL) && (pair_code_len > 0U))
+    {
+        radio_main_print_hex_bytes("  pair_code=", pair_code, pair_code_len);
+    }
+    else
+    {
+        printf("  pair_code=<none>\r\n");
+    }
+    radio_main_print_hex_bytes("  hmac_key=", hmac_key, LAVIET_HMAC_KEY_LEN);
+    if (laviet_frame_build_mac_input(frame, mac_input, sizeof(mac_input), &mac_input_len))
+    {
+        radio_main_print_hex_bytes("  mac_input=", mac_input, mac_input_len);
+    }
+    else
+    {
+        printf("  mac_input=<build_failed>\r\n");
+    }
+    radio_main_print_hex_bytes("  expected_mac=", expected_mac, LAVIET_MAC_TAG_LEN);
+    radio_main_print_hex_bytes("  frame_mac=", frame->mac_tag, LAVIET_MAC_TAG_LEN);
 }
 
 static void radio_main_print_generated_pattern(const char *label, uint8_t value, uint16_t len)

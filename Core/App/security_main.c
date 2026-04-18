@@ -242,11 +242,6 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
                                           const uint8_t *code,
                                           uint8_t code_len,
                                           uint8_t key_out[16]);
-static void security_peer_link_key_derive_v1_16(uint16_t local_node_id,
-                                                uint16_t peer_node_id,
-                                                const uint8_t *code,
-                                                uint8_t code_len,
-                                                uint8_t key_out[16]);
 static bool security_load_runtime_and_seed_from_store(void);
 static bool security_save_runtime_and_seed_to_store(void);
 static bool security_commit_runtime_cfg_soft(void);
@@ -646,24 +641,6 @@ static bool security_get_frame_keys_mode_internal(uint16_t local_id,
                 return false;
             }
             security_peer_link_key_derive(local_id, peer_id, code, code_len, base_key);
-            ok = true;
-            break;
-
-        case SECURITY_FRAME_KEY_MODE_PAIR_V1_16:
-            if (use_explicit_code)
-            {
-                if ((code_in == NULL) || (code_in_len == 0U))
-                {
-                    return false;
-                }
-                code_len = (code_in_len > SECURITY_CODE_MAX) ? SECURITY_CODE_MAX : code_in_len;
-                memcpy(code, code_in, code_len);
-            }
-            else if (!security_lookup_peer_code(peer_id, code, &code_len))
-            {
-                return false;
-            }
-            security_peer_link_key_derive_v1_16(local_id, peer_id, code, code_len, base_key);
             ok = true;
             break;
 
@@ -1246,46 +1223,6 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
     memcpy(info, label, sizeof(label) - 1U);
     security_be32_write(&info[sizeof(label) - 1U], lo);
     security_be32_write(&info[sizeof(label) - 1U + 4U], hi);
-
-    if (laviet_hmac_sha256(code, code_len, info, (uint16_t)sizeof(info), digest))
-    {
-        memcpy(key_out, digest, 16U);
-    }
-    else
-    {
-        memset(key_out, 0, 16U);
-    }
-
-    laviet_secure_zero(info, sizeof(info));
-    laviet_secure_zero(digest, sizeof(digest));
-}
-
-static void security_peer_link_key_derive_v1_16(uint16_t local_node_id,
-                                                uint16_t peer_node_id,
-                                                const uint8_t *code,
-                                                uint8_t code_len,
-                                                uint8_t key_out[16])
-{
-    static const uint8_t label[] = "SEC:PAIR:V1";
-    uint8_t info[sizeof(label) - 1U + 4U];
-    uint8_t digest[LAVIET_SHA256_LEN];
-    uint16_t lo;
-    uint16_t hi;
-
-    if ((key_out == NULL) || (code == NULL) || (code_len == 0U))
-    {
-        return;
-    }
-
-    lo = (local_node_id < peer_node_id) ? local_node_id : peer_node_id;
-    hi = (local_node_id < peer_node_id) ? peer_node_id : local_node_id;
-    memset(info, 0, sizeof(info));
-    memset(digest, 0, sizeof(digest));
-    memcpy(info, label, sizeof(label) - 1U);
-    info[sizeof(label) - 1U] = (uint8_t)(lo >> 8);
-    info[sizeof(label) - 1U + 1U] = (uint8_t)lo;
-    info[sizeof(label) - 1U + 2U] = (uint8_t)(hi >> 8);
-    info[sizeof(label) - 1U + 3U] = (uint8_t)hi;
 
     if (laviet_hmac_sha256(code, code_len, info, (uint16_t)sizeof(info), digest))
     {
@@ -2038,6 +1975,55 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
         }
     }
 
+    if (gateway_slot)
+    {
+        bool persist_ok;
+
+        if (max_slots == 0U)
+        {
+            return false;
+        }
+
+        if (s_trusted[0].in_use &&
+            (s_trusted[0].node_id != 0U) &&
+            (s_trusted[0].node_id != node_id))
+        {
+            printf("SEC: replacing slot0 0x%08lX with gateway 0x%08lX\r\n",
+                   (unsigned long)s_trusted[0].node_id,
+                   (unsigned long)node_id);
+        }
+
+        memset(&s_trusted[0], 0, sizeof(s_trusted[0]));
+        s_trusted[0].in_use = true;
+        s_trusted[0].is_master = true;
+        s_trusted[0].node_id = node_id;
+        s_trusted[0].code_len = len;
+        if ((len > 0U) && (code != NULL))
+        {
+            memcpy(s_trusted[0].code, code, len);
+        }
+
+        persist_ok = security_store_trusted_slot(0U);
+        if (!persist_ok)
+        {
+            printf("SEC: trusted gateway persist failed idx=0\r\n");
+        }
+
+        for (i = 1U; i < max_slots; i++)
+        {
+            if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
+            {
+                memset(&s_trusted[i], 0, sizeof(s_trusted[i]));
+                if (!security_erase_trusted_slot(i))
+                {
+                    printf("SEC: trusted duplicate erase failed idx=%u\r\n", i);
+                }
+            }
+        }
+
+        return persist_ok;
+    }
+
     for (i = 0U; i < max_slots; i++)
     {
         if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
@@ -2056,31 +2042,12 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
         }
     }
 
-    if (gateway_slot)
+    for (i = 1U; i < max_slots; i++)
     {
-        if (max_slots == 0U)
+        if (!s_trusted[i].in_use)
         {
-            return false;
-        }
-
-        if (!s_trusted[0].in_use)
-        {
-            free_idx = 0U;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    else
-    {
-        for (i = 1U; i < max_slots; i++)
-        {
-            if (!s_trusted[i].in_use)
-            {
-                free_idx = i;
-                break;
-            }
+            free_idx = i;
+            break;
         }
     }
 

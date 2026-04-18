@@ -30,8 +30,7 @@ typedef enum
 typedef enum
 {
     SECURITY_FRAME_KEY_MODE_SHARED = 0,
-    SECURITY_FRAME_KEY_MODE_PAIR_V1_32 = 1,
-    SECURITY_FRAME_KEY_MODE_PAIR_V1_16 = 2
+    SECURITY_FRAME_KEY_MODE_PAIR_V1_32 = 1
 } security_frame_key_mode_t;
 
 typedef struct
