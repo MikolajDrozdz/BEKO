@@ -9,11 +9,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from .api.endpoints import logs, messages, nodes, pairing, system
 from .core.laviet_crypto import (
     LAVIET_SHARED_V1,
+    derive_unicast_base_key,
     get_aes_key,
     get_hmac_key,
     laviet_aes_ctr_crypt,
     laviet_generate_mac,
-    security_peer_link_key_derive,
 )
 from .models import models
 from .models.database import Base, SessionLocal, engine
@@ -76,7 +76,7 @@ pairing_manager.set_send_callback(lora_device.send_frame)
 def _derive_node_keys(node_id: int, paired_code: bytes):
     if not isinstance(paired_code, bytes):
         paired_code = bytes(paired_code)
-    base_key = security_peer_link_key_derive(LAVIET_GATEWAY_ID, node_id, paired_code)
+    base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, node_id, paired_code)
     domain_id = min(LAVIET_GATEWAY_ID, node_id)
     aes_key = get_aes_key(base_key, domain_id)
     hmac_key = get_hmac_key(base_key, domain_id)

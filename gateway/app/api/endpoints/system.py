@@ -7,7 +7,7 @@ from ...services.laviet_frame import (
     LavietFrameBuilder, LavietFrame, LavietType, LAVIET_FRAME_VERSION,
     LAVIET_GATEWAY_ID, LAVIET_FLAG_COUNTER_OVERRIDE
 )
-from ...core.laviet_crypto import security_peer_link_key_derive, get_aes_key, get_hmac_key, laviet_aes_ctr_crypt, laviet_generate_mac
+from ...core.laviet_crypto import derive_unicast_base_key, get_aes_key, get_hmac_key, get_unicast_key_mode, laviet_aes_ctr_crypt, laviet_generate_mac
 from ...models import models
 
 router = APIRouter()
@@ -23,6 +23,7 @@ def get_system_status():
         "radio_ready": lora_device.is_ready(),
         "radio_driver": lora_device.get_driver_name(),
         "radio_error": lora_device.get_last_error(),
+        "unicast_key_mode": get_unicast_key_mode(),
     }
 
 
@@ -36,7 +37,7 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
     if isinstance(code, str):
         code = code.encode('ascii')
 
-    base_key = security_peer_link_key_derive(LAVIET_GATEWAY_ID, node_id, code)
+    base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, node_id, code)
     domain_id = min(LAVIET_GATEWAY_ID, node_id)
     aes_key = get_aes_key(base_key, domain_id)
     hmac_key = get_hmac_key(base_key, domain_id)

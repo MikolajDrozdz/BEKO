@@ -1,6 +1,7 @@
 import struct
 import hmac
 import hashlib
+import os
 from Crypto.Cipher import AES
 from Crypto.Util import Counter
 
@@ -24,6 +25,31 @@ def security_peer_link_key_derive(local_node_id: int, peer_node_id: int, code: b
     
     # Bierzemy pierwsze 16 bajtów wygenerowanego rekordu jako AES Peer Link Key!
     return digest[:16]
+
+def security_peer_link_key_derive_v1_16(local_node_id: int, peer_node_id: int, code: bytes) -> bytes:
+    """Kompatybilny wariant z be16(min_id) || be16(max_id)."""
+    lo = min(local_node_id, peer_node_id) & 0xFFFF
+    hi = max(local_node_id, peer_node_id) & 0xFFFF
+
+    label = b"SEC:PAIR:V1"
+    info = bytearray(label)
+    info.extend(struct.pack(">HH", lo, hi))
+    digest = hmac.new(code, bytes(info), hashlib.sha256).digest()
+    return digest[:16]
+
+def get_unicast_key_mode() -> str:
+    mode = os.getenv("LAVIET_UNICAST_KEY_MODE", "pair32").strip().lower()
+    if mode not in {"pair32", "pair16", "shared"}:
+        return "pair32"
+    return mode
+
+def derive_unicast_base_key(local_node_id: int, peer_node_id: int, code: bytes, mode: str | None = None) -> bytes:
+    effective_mode = get_unicast_key_mode() if mode is None else mode.strip().lower()
+    if effective_mode == "shared":
+        return LAVIET_SHARED_V1
+    if effective_mode == "pair16":
+        return security_peer_link_key_derive_v1_16(local_node_id, peer_node_id, code)
+    return security_peer_link_key_derive(local_node_id, peer_node_id, code)
 
 def _derive_subkey(base_key: bytes, domain_id: int, selector: int) -> bytes:
     """HMAC-SHA256 nad LV1K || domain_id || 0x00 || selector"""

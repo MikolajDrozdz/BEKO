@@ -5,11 +5,12 @@ from sqlalchemy.orm import Session
 
 from ...core.laviet_crypto import (
     LAVIET_SHARED_V1,
+    derive_unicast_base_key,
     get_aes_key,
     get_hmac_key,
+    get_unicast_key_mode,
     laviet_aes_ctr_crypt,
     laviet_generate_mac,
-    security_peer_link_key_derive,
 )
 from ...models import models
 from ...models.database import get_db
@@ -83,7 +84,8 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     else:
         if not isinstance(paired_code, bytes):
             paired_code = bytes(paired_code)
-        base_key = security_peer_link_key_derive(LAVIET_GATEWAY_ID, dst_id_16, paired_code)
+        key_mode = get_unicast_key_mode()
+        base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, dst_id_16, paired_code, key_mode)
         domain_id = min(LAVIET_GATEWAY_ID, dst_id_16)
         aes_key = get_aes_key(base_key, domain_id)
         hmac_key = get_hmac_key(base_key, domain_id)
@@ -98,15 +100,19 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         flags |= LAVIET_FLAG_BROADCAST
         cipher_payload = payload_bytes
     else:
-        flags |= (LAVIET_FLAG_ACK_REQUIRED | LAVIET_FLAG_ENCRYPTED)
-        cipher_payload = laviet_aes_ctr_crypt(
-            payload_bytes,
-            aes_key,
-            LAVIET_GATEWAY_ID,
-            dst_id_16,
-            msg_id,
-            counter,
-        )
+        flags |= LAVIET_FLAG_ACK_REQUIRED
+        if msg.coded:
+            flags |= LAVIET_FLAG_ENCRYPTED
+            cipher_payload = laviet_aes_ctr_crypt(
+                payload_bytes,
+                aes_key,
+                LAVIET_GATEWAY_ID,
+                dst_id_16,
+                msg_id,
+                counter,
+            )
+        else:
+            cipher_payload = payload_bytes
 
     net_frame = LavietFrame(
         type=LavietType.DATA,
@@ -125,7 +131,9 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
 
     print(
         f"[TX] LAVIET src={hex(LAVIET_GATEWAY_ID)} dst={hex(dst_id_16)} "
-        f"msg_id=0x{msg_id:04X} counter={counter} payload={payload_bytes.hex()}"
+        f"msg_id=0x{msg_id:04X} counter={counter} coded={msg.coded} "
+        f"key_mode={get_unicast_key_mode() if dst_id_16 != LAVIET_BROADCAST_ID else 'shared-broadcast'} "
+        f"payload={payload_bytes.hex()}"
     )
     tx_ok = bool(lora_device.send_frame(final_frame))
     if not tx_ok:
