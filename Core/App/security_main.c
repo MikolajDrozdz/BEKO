@@ -1,9 +1,10 @@
 #include "security_main.h"
 
-#include "beko_net_proto.h"
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
 #include "i2c_mem_store_lib/i2c_mem_store.h"
+#include "laviet_crypto.h"
+#include "laviet_frame.h"
 #include "main.h"
 #include "st33ktpm2x_lib/st33ktpm2x.h"
 #include "task.h"
@@ -18,6 +19,10 @@
 #define SECURITY_CMD_POLL_MS                5U
 #define SECURITY_TRUSTED_MAX                16U
 #define SECURITY_TRUSTED_SLOT_BASE          0U
+#define SECURITY_GATEWAY_COUNTER_SLOT       2U
+#define SECURITY_GATEWAY_COUNTER_MAGIC      0xC7U
+#define SECURITY_GATEWAY_COUNTER_VERSION    1U
+#define SECURITY_GATEWAY_COUNTER_STORE_LEN  10U
 #define SECURITY_STORE_MAGIC                0xA5U
 #define SECURITY_STORE_VERSION              3U
 #define SECURITY_LEGACY_SETTINGS_SLOT       0U
@@ -183,10 +188,20 @@ static uint8_t s_network_key[16] =
     0x19U, 0x2AU, 0x3BU, 0x4CU,
     0x5DU, 0x6EU, 0x7FU, 0x80U
 };
+static const uint8_t s_shared_frame_root_key[16] =
+{
+    (uint8_t)'L', (uint8_t)'A', (uint8_t)'V', (uint8_t)'I',
+    (uint8_t)'E', (uint8_t)'T', (uint8_t)'_', (uint8_t)'S',
+    (uint8_t)'H', (uint8_t)'A', (uint8_t)'R', (uint8_t)'E',
+    (uint8_t)'D', (uint8_t)'_', (uint8_t)'V', (uint8_t)'1'
+};
 static uint8_t s_key_seed_cached[SECURITY_KEY_SEED_BYTES];
+static uint32_t s_gateway_rx_counter = 0UL;
+static uint32_t s_gateway_tx_counter = 0UL;
 
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c3;
+extern RNG_HandleTypeDef hrng;
 
 static const uint32_t s_freq_options_hz[] =
 {
@@ -264,6 +279,8 @@ static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID
 static bool security_store_trusted_slot(uint8_t idx);
 static bool security_erase_trusted_slot(uint8_t idx);
 static void security_load_trusted_from_store(void);
+static bool security_load_gateway_counter_from_store(void);
+static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_t tx_counter);
 static void security_bootstrap_tpm(void);
 static void security_bootstrap_store(void);
 
@@ -542,6 +559,107 @@ bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_
 
     security_peer_link_key_derive(local_node_id, peer_node_id, code, code_len, key_out);
     ok = true;
+    return ok;
+}
+
+bool security_main_get_frame_keys(uint16_t local_id,
+                                  uint16_t peer_id,
+                                  bool use_pair_link,
+                                  uint8_t enc_key_out[16],
+                                  uint8_t hmac_key_out[32])
+{
+    uint8_t base_key[16];
+    uint8_t digest[32];
+    uint8_t info[8];
+    uint16_t domain_id;
+    bool ok = false;
+
+    if ((local_id == 0U) || (peer_id == 0U) || (enc_key_out == NULL) || (hmac_key_out == NULL))
+    {
+        return false;
+    }
+
+    memset(base_key, 0, sizeof(base_key));
+    if (use_pair_link && (peer_id != LAVIET_BROADCAST_ID))
+    {
+        ok = security_main_get_peer_link_key(local_id, peer_id, base_key);
+    }
+
+    if (!ok)
+    {
+        memcpy(base_key, s_shared_frame_root_key, sizeof(base_key));
+        ok = true;
+    }
+
+    domain_id = (peer_id == LAVIET_BROADCAST_ID) ?
+                LAVIET_BROADCAST_ID :
+                ((local_id < peer_id) ? local_id : peer_id);
+    info[0] = (uint8_t)'L';
+    info[1] = (uint8_t)'V';
+    info[2] = (uint8_t)'1';
+    info[3] = (uint8_t)'K';
+    info[4] = (uint8_t)(domain_id >> 8);
+    info[5] = (uint8_t)domain_id;
+    info[6] = 0U;
+    info[7] = 1U;
+    ok = laviet_hmac_sha256(base_key, sizeof(base_key), info, sizeof(info), digest);
+    if (ok)
+    {
+        memcpy(enc_key_out, digest, 16U);
+        info[7] = 2U;
+        ok = laviet_hmac_sha256(base_key, sizeof(base_key), info, sizeof(info), hmac_key_out);
+    }
+
+    laviet_secure_zero(base_key, sizeof(base_key));
+    laviet_secure_zero(digest, sizeof(digest));
+    laviet_secure_zero(info, sizeof(info));
+    return ok;
+}
+
+bool security_main_get_gateway_counter(uint32_t *rx_counter_out, uint32_t *tx_counter_out)
+{
+    bool ok = false;
+
+    if ((rx_counter_out == NULL) || (tx_counter_out == NULL) || (s_security_mutex == NULL))
+    {
+        return false;
+    }
+
+    if (osMutexAcquire(s_security_mutex, 100U) == osOK)
+    {
+        *rx_counter_out = s_gateway_rx_counter;
+        *tx_counter_out = s_gateway_tx_counter;
+        ok = s_security_initialized;
+        (void)osMutexRelease(s_security_mutex);
+    }
+
+    return ok;
+}
+
+bool security_main_commit_gateway_counter(uint32_t rx_counter, uint32_t tx_counter)
+{
+    bool ok = false;
+
+    if (s_security_mutex == NULL)
+    {
+        return false;
+    }
+
+    if (osMutexAcquire(s_security_mutex, 100U) == osOK)
+    {
+        if (s_security_initialized)
+        {
+            s_gateway_rx_counter = rx_counter;
+            s_gateway_tx_counter = tx_counter;
+            if (!security_store_gateway_counter_to_store(rx_counter, tx_counter))
+            {
+                printf("SEC: gateway counter persist failed\r\n");
+            }
+            ok = true;
+        }
+        (void)osMutexRelease(s_security_mutex);
+    }
+
     return ok;
 }
 
@@ -1250,7 +1368,7 @@ static bool security_load_radio_profiles_from_store(void)
     s_runtime_cfg.lora.preamble_len = security_u16_from_index((uint8_t)value, &s_preamble_options[1], 6U, 8U);
     bit_pos = security_unpack_bits(w.packed, bit_pos, 1U, &value);
     s_runtime_cfg.lora.implicit_header = (value != 0UL);
-    s_runtime_cfg.lora.payload_len = s_runtime_cfg.lora.implicit_header ? BEKO_NET_MAX_PAYLOAD : 0U;
+    s_runtime_cfg.lora.payload_len = s_runtime_cfg.lora.implicit_header ? LAVIET_FRAME_MAX_LEN : 0U;
     bit_pos = security_unpack_bits(w.packed, bit_pos, 1U, &value);
     s_runtime_cfg.lora.invert_iq = (value != 0UL);
     bit_pos = security_unpack_bits(w.packed, bit_pos, 2U, &value);
@@ -1361,10 +1479,32 @@ static bool security_rotate_key_internal(void)
 
     if (!s_tpm_ready)
     {
-        uint32_t tick = HAL_GetTick();
-        for (i = 0U; i < SECURITY_KEY_SEED_BYTES; i++)
+        bool rng_ok = true;
+
+        for (i = 0U; i < SECURITY_KEY_SEED_BYTES; i += 4U)
         {
-            seed[i] = (uint8_t)((tick >> ((i % 4U) * 8U)) ^ (uint32_t)(0x37U + (i * 13U)));
+            uint32_t random_word = 0UL;
+
+            if ((HAL_RNG_GetState(&hrng) != HAL_RNG_STATE_READY) ||
+                (HAL_RNG_GenerateRandomNumber(&hrng, &random_word) != HAL_OK))
+            {
+                rng_ok = false;
+                break;
+            }
+
+            seed[i] = (uint8_t)(random_word >> 24);
+            seed[i + 1U] = (uint8_t)(random_word >> 16);
+            seed[i + 2U] = (uint8_t)(random_word >> 8);
+            seed[i + 3U] = (uint8_t)random_word;
+        }
+
+        if (!rng_ok)
+        {
+            uint32_t tick = HAL_GetTick();
+            for (i = 0U; i < SECURITY_KEY_SEED_BYTES; i++)
+            {
+                seed[i] = (uint8_t)((tick >> ((i % 4U) * 8U)) ^ (uint32_t)(0x37U + (i * 13U)));
+            }
         }
     }
 
@@ -1381,6 +1521,7 @@ static bool security_rotate_key_internal(void)
 static uint8_t security_trusted_store_capacity(void)
 {
     uint16_t available;
+    uint16_t reserved_offset;
 
     if (!s_mem_ready)
     {
@@ -1392,6 +1533,14 @@ static uint8_t security_trusted_store_capacity(void)
     }
 
     available = (uint16_t)(s_mem_store.secret_slot_count - SECURITY_TRUSTED_SLOT_BASE);
+    if (SECURITY_GATEWAY_COUNTER_SLOT >= SECURITY_TRUSTED_SLOT_BASE)
+    {
+        reserved_offset = (uint16_t)(SECURITY_GATEWAY_COUNTER_SLOT - SECURITY_TRUSTED_SLOT_BASE);
+        if (available > reserved_offset)
+        {
+            available = reserved_offset;
+        }
+    }
     if (available > SECURITY_TRUSTED_MAX)
     {
         available = SECURITY_TRUSTED_MAX;
@@ -1429,6 +1578,92 @@ static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID
            ((uint32_t)in[1] << 16) |
            ((uint32_t)in[2] << 8) |
            (uint32_t)in[3];
+}
+
+static void security_be32_write(uint8_t *dst, uint32_t value)
+{
+    if (dst == NULL)
+    {
+        return;
+    }
+
+    dst[0] = (uint8_t)(value >> 24);
+    dst[1] = (uint8_t)(value >> 16);
+    dst[2] = (uint8_t)(value >> 8);
+    dst[3] = (uint8_t)value;
+}
+
+static uint32_t security_be32_read(const uint8_t *src)
+{
+    if (src == NULL)
+    {
+        return 0UL;
+    }
+
+    return ((uint32_t)src[0] << 24) |
+           ((uint32_t)src[1] << 16) |
+           ((uint32_t)src[2] << 8) |
+           (uint32_t)src[3];
+}
+
+static bool security_load_gateway_counter_from_store(void)
+{
+    uint8_t data[I2C_MEM_STORE_SECRET_PAYLOAD_MAX];
+    uint8_t len = 0U;
+    i2c_mem_store_status_t rc;
+
+    if (!s_mem_ready || (s_mem_store.secret_slot_count <= SECURITY_GATEWAY_COUNTER_SLOT))
+    {
+        return false;
+    }
+
+    memset(data, 0, sizeof(data));
+    rc = i2c_mem_store_secret_read(&s_mem_store,
+                                   SECURITY_GATEWAY_COUNTER_SLOT,
+                                   data,
+                                   sizeof(data),
+                                   &len);
+    if ((rc != I2C_MEM_STORE_OK) ||
+        (len != SECURITY_GATEWAY_COUNTER_STORE_LEN) ||
+        (data[0] != SECURITY_GATEWAY_COUNTER_MAGIC) ||
+        (data[1] != SECURITY_GATEWAY_COUNTER_VERSION))
+    {
+        laviet_secure_zero(data, sizeof(data));
+        return false;
+    }
+
+    s_gateway_rx_counter = security_be32_read(&data[2]);
+    s_gateway_tx_counter = security_be32_read(&data[6]);
+    laviet_secure_zero(data, sizeof(data));
+    return true;
+}
+
+static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_t tx_counter)
+{
+    uint8_t data[SECURITY_GATEWAY_COUNTER_STORE_LEN];
+    i2c_mem_store_status_t rc;
+
+    if (!s_mem_ready)
+    {
+        return true;
+    }
+    if (s_mem_store.secret_slot_count <= SECURITY_GATEWAY_COUNTER_SLOT)
+    {
+        return false;
+    }
+
+    memset(data, 0, sizeof(data));
+    data[0] = SECURITY_GATEWAY_COUNTER_MAGIC;
+    data[1] = SECURITY_GATEWAY_COUNTER_VERSION;
+    security_be32_write(&data[2], rx_counter);
+    security_be32_write(&data[6], tx_counter);
+
+    rc = i2c_mem_store_secret_write(&s_mem_store,
+                                    SECURITY_GATEWAY_COUNTER_SLOT,
+                                    data,
+                                    sizeof(data));
+    laviet_secure_zero(data, sizeof(data));
+    return (rc == I2C_MEM_STORE_OK);
 }
 
 static bool security_store_trusted_slot(uint8_t idx)
@@ -1750,6 +1985,12 @@ static void security_bootstrap_store(void)
             security_migrate_trusted_slot_v1_to_v2();
         }
         (void)security_save_runtime_and_seed_to_store();
+        if (security_load_gateway_counter_from_store())
+        {
+            printf("SEC: gateway counters rx=%lu tx=%lu\r\n",
+                   (unsigned long)s_gateway_rx_counter,
+                   (unsigned long)s_gateway_tx_counter);
+        }
         security_load_trusted_from_store();
     }
 }

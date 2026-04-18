@@ -1,8 +1,9 @@
 #include "radio_main.h"
 
-#include "beko_net_proto.h"
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
+#include "laviet_crypto.h"
+#include "laviet_frame.h"
 #include "lcd_main.h"
 #include "menu_main.h"
 #include "radio_lib/radio_lib.h"
@@ -21,9 +22,7 @@
 #define RADIO_CMD_POLL_MS                    5U
 #define RADIO_MSG_BUF_MAX                    255U
 #define RADIO_HOP_PERIOD_DEFAULT_MS          10000UL
-#define RADIO_DEDUP_WINDOW_MS                60000UL
-#define RADIO_PAIR_CODE_LEN                  6U
-#define RADIO_AUTH_TAG_LEN                   4U
+#define RADIO_PAIR_CODE_LEN                  LAVIET_PAIR_PAYLOAD_LEN
 #define RADIO_RECOVERY_RESET_PULSE_MS        2U
 #define RADIO_RECOVERY_RESET_BOOT_MS         10U
 #define RADIO_RECOVERY_RETRY_COUNT           2U
@@ -31,9 +30,7 @@
 #define RADIO_TX_GUARD_LORA_MS               20000UL
 #define RADIO_TX_GUARD_MARGIN_MS             64UL
 #define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
-#define RADIO_NETWORK_PAIR_MARKER            0xA1U
 #define RADIO_NETWORK_PAIR_RSSI_MIN_DBM      (-20)
-#define RADIO_NETWORK_PAIR_PAYLOAD_LEN       (2U + RADIO_PAIR_CODE_LEN)
 #define RADIO_LORA_BW_HZ_7_8                 7800UL
 #define RADIO_LORA_BW_HZ_10_4                10400UL
 #define RADIO_LORA_BW_HZ_15_6                15600UL
@@ -63,9 +60,9 @@ typedef enum
     RADIO_MAIN_CMD_START_PAIRING,
     RADIO_MAIN_CMD_START_NETWORK_PAIRING,
     RADIO_MAIN_CMD_PAIRING_ACCEPT,
-    RADIO_MAIN_CMD_SEND_JOIN_REQ,
-    RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ,
-    RADIO_MAIN_CMD_SEND_TRUST_REMOVED
+    RADIO_MAIN_CMD_SEND_PAIR_REQ,
+    RADIO_MAIN_CMD_SEND_NETWORK_PAIR_REQ,
+    RADIO_MAIN_CMD_SEND_PAIR_ERROR
 } radio_main_cmd_id_t;
 
 typedef struct
@@ -134,15 +131,17 @@ typedef struct
     uint32_t fh_period_ms;
     bool coding_enabled;
     bool auto_ping_enabled;
+    bool crypto_ready;
     uint8_t lora_preset;
     radio_main_fsk_cfg_t fsk_cfg;
     radio_main_ook_cfg_t ook_cfg;
     uint8_t hop_idx;
     uint32_t last_hop_ms;
     uint32_t last_ping_ms;
-    uint32_t node_id;
-    uint32_t next_msg_id;
-    uint8_t network_default_ttl;
+    uint16_t node_id;
+    uint16_t next_msg_id;
+    uint32_t gateway_rx_counter;
+    uint32_t gateway_tx_counter;
     bool pairing_active;
     bool pairing_network_mode;
     uint32_t pairing_until_ms;
@@ -151,7 +150,6 @@ typedef struct
     uint8_t pairing_pending_code[8];
     uint8_t pairing_pending_code_len;
     bool pairing_pending_network;
-    uint8_t pairing_pending_ttl;
     bool pairing_outgoing_pending;
     uint8_t pairing_outgoing_code[8];
     uint8_t pairing_outgoing_code_len;
@@ -159,7 +157,6 @@ typedef struct
     bool tx_in_progress;
     uint32_t tx_deadline_ms;
     char last_error_text[21];
-    beko_net_dedup_cache_t dedup;
 } radio_main_ctx_t;
 
 static osThreadId_t s_radio_task = NULL;
@@ -195,13 +192,19 @@ static bool radio_main_validate_hop_period(uint32_t period_ms);
 static bool radio_main_reconfigure_radio(void);
 static bool radio_main_reset_module_internal(void);
 static bool radio_main_force_recover_radio(const char *reason);
-static bool radio_main_send_system_frame(uint8_t type,
+static bool radio_main_send_system_frame(laviet_frame_type_t type,
                                          uint32_t dst_id,
                                          const uint8_t *payload,
                                          uint16_t payload_len);
+static bool radio_main_send_ack(const laviet_frame_t *frame);
 static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint8_t len);
 static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len);
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
+static void radio_main_post_rx_notification(int16_t rssi_dbm,
+                                            uint16_t src_id,
+                                            const uint8_t *payload,
+                                            uint8_t payload_len,
+                                            laviet_frame_type_t frame_type);
 static void radio_main_handle_events(void);
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt);
 static void radio_main_handle_hopping(void);
@@ -220,25 +223,17 @@ static uint32_t radio_main_frf_to_hz(uint8_t msb, uint8_t mid, uint8_t lsb);
 static void radio_main_log_runtime_profile(const char *reason);
 static void radio_main_log_hw_registers(const char *reason);
 static bool radio_main_finish_pairing(bool accept);
-static bool radio_main_send_join_request_internal(void);
+static bool radio_main_send_pair_request_internal(void);
 static bool radio_main_pair_payload_parse(const uint8_t *payload,
                                           uint8_t payload_len,
-                                          bool *network_mode_out,
                                           const uint8_t **code_out,
-                                          uint8_t *code_len_out,
-                                          uint8_t *ttl_out);
+                                          uint8_t *code_len_out);
 static uint8_t radio_main_pair_payload_build(bool network_mode,
                                              const uint8_t *code,
                                              uint8_t code_len,
-                                             uint8_t ttl,
                                              uint8_t *payload_out,
                                              uint8_t payload_capacity);
-static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
-                                            const beko_net_frame_t *frame,
-                                            const uint8_t *cipher_payload,
-                                            uint16_t cipher_len);
-static void radio_main_auth_tag_write_be(uint32_t tag, uint8_t out[RADIO_AUTH_TAG_LEN]);
-static uint32_t radio_main_auth_tag_read_be(const uint8_t in[RADIO_AUTH_TAG_LEN]);
+static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc_key[16]);
 static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len);
 static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char *out, uint8_t out_size);
 static uint32_t radio_main_now_ms(void);
@@ -341,9 +336,9 @@ bool radio_main_cmd_send_user_text(const char *text, uint32_t dst_id)
     cmd.id = RADIO_MAIN_CMD_SEND_USER_TEXT;
     cmd.u.send_text.dst_id = dst_id;
     len = strlen(text);
-    if (len > 20U)
+    if ((len == 0U) || (len > LAVIET_MAX_PAYLOAD))
     {
-        len = 20U;
+        return false;
     }
     cmd.u.send_text.len = (uint8_t)len;
     memcpy(cmd.u.send_text.text, text, len);
@@ -502,33 +497,29 @@ bool radio_main_cmd_pairing_accept(bool accept)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
-bool radio_main_cmd_send_join_req(void)
+bool radio_main_cmd_send_pair_req(void)
 {
     radio_main_cmd_t cmd;
     radio_main_cmd_sync_t sync;
 
     memset(&cmd, 0, sizeof(cmd));
-    cmd.id = RADIO_MAIN_CMD_SEND_JOIN_REQ;
+    cmd.id = RADIO_MAIN_CMD_SEND_PAIR_REQ;
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
-bool radio_main_cmd_send_network_join_req(void)
+bool radio_main_cmd_send_network_pair_req(void)
 {
-    radio_main_cmd_t cmd;
-    radio_main_cmd_sync_t sync;
-
-    memset(&cmd, 0, sizeof(cmd));
-    cmd.id = RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ;
-    return radio_main_enqueue_sync(&cmd, &sync);
+    printf("RADIO: node-originated network PAIR_REQ disabled\r\n");
+    return false;
 }
 
-bool radio_main_cmd_send_trust_removed(uint32_t dst_id)
+bool radio_main_cmd_send_pair_error(uint32_t dst_id)
 {
     radio_main_cmd_t cmd;
     radio_main_cmd_sync_t sync;
 
     memset(&cmd, 0, sizeof(cmd));
-    cmd.id = RADIO_MAIN_CMD_SEND_TRUST_REMOVED;
+    cmd.id = RADIO_MAIN_CMD_SEND_PAIR_ERROR;
     cmd.u.to_node.dst_id = dst_id;
     return radio_main_enqueue_sync(&cmd, &sync);
 }
@@ -618,14 +609,14 @@ static void radio_main_task_fn(void *argument)
     (void)argument;
     memset(&s_ctx, 0, sizeof(s_ctx));
     memset(&sec_cfg, 0, sizeof(sec_cfg));
-    s_ctx.node_id = beko_net_local_node_id();
+    s_ctx.node_id = laviet_local_node_id();
     s_ctx.next_msg_id = 1U;
-    s_ctx.network_default_ttl = BEKO_NET_DEFAULT_TTL;
+    s_ctx.crypto_ready = laviet_crypto_init();
+    (void)security_main_get_gateway_counter(&s_ctx.gateway_rx_counter, &s_ctx.gateway_tx_counter);
     s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
     s_ctx.backend_modulation_id = s_ctx.modulation_id;
     s_ctx.lora_preset = 2U;
     radio_main_clear_last_error();
-    beko_net_dedup_init(&s_ctx.dedup, RADIO_DEDUP_WINDOW_MS);
 
     radio_default_hw_cfg(&s_ctx.hw, &hspi1);
     radio_default_lora_cfg(&s_ctx.lora_cfg);
@@ -672,7 +663,7 @@ static void radio_main_task_fn(void *argument)
 
     if (radio_main_radio_init_and_start())
     {
-        printf("RADIO: init OK node=0x%08lX\r\n", (unsigned long)s_ctx.node_id);
+        printf("RADIO: init OK laviet_node=0x%04X\r\n", (unsigned int)s_ctx.node_id);
     }
     else
     {
@@ -687,7 +678,7 @@ static void radio_main_task_fn(void *argument)
 
         if (radio_main_radio_init_and_start())
         {
-            printf("RADIO: fallback init OK node=0x%08lX\r\n", (unsigned long)s_ctx.node_id);
+            printf("RADIO: fallback init OK laviet_node=0x%04X\r\n", (unsigned int)s_ctx.node_id);
         }
         else
         {
@@ -712,7 +703,7 @@ static void radio_main_task_fn(void *argument)
 
                 case RADIO_MAIN_CMD_SEND_USER_TEXT:
                     radio_main_clear_last_error();
-                    cmd_result = radio_main_send_system_frame(BEKO_NET_TYPE_USER,
+                    cmd_result = radio_main_send_system_frame(LAVIET_TYPE_DATA,
                                                               cmd.u.send_text.dst_id,
                                                               (const uint8_t *)cmd.u.send_text.text,
                                                               cmd.u.send_text.len);
@@ -851,17 +842,21 @@ static void radio_main_task_fn(void *argument)
                     }
                     break;
 
-                case RADIO_MAIN_CMD_SEND_JOIN_REQ:
-                case RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ:
-                    s_ctx.pairing_network_mode = (cmd.id == RADIO_MAIN_CMD_SEND_NETWORK_JOIN_REQ);
-                    cmd_result = radio_main_send_join_request_internal();
+                case RADIO_MAIN_CMD_SEND_PAIR_REQ:
+                    s_ctx.pairing_network_mode = false;
+                    cmd_result = radio_main_send_pair_request_internal();
                     break;
 
-                case RADIO_MAIN_CMD_SEND_TRUST_REMOVED:
-                    cmd_result = radio_main_send_system_frame(BEKO_NET_TYPE_TRUST_REMOVED,
+                case RADIO_MAIN_CMD_SEND_NETWORK_PAIR_REQ:
+                    printf("RADIO: network PAIR_REQ command rejected on node\r\n");
+                    cmd_result = false;
+                    break;
+
+                case RADIO_MAIN_CMD_SEND_PAIR_ERROR:
+                    cmd_result = radio_main_send_system_frame(LAVIET_TYPE_ERROR,
                                                               cmd.u.to_node.dst_id,
-                                                              (const uint8_t *)"REMOVED",
-                                                              7U);
+                                                              (const uint8_t *)"\x04\x00\x00\x00\x00\x00\x00\x00",
+                                                              LAVIET_ERROR_PAYLOAD_LEN);
                     break;
 
                 default:
@@ -1219,39 +1214,17 @@ static uint32_t radio_main_estimate_fsk_ook_airtime_ms(uint16_t payload_len, boo
     return (uint32_t)total_ms;
 }
 
-/*
- * Builds the same BEKO_NET frame shape as the periodic service ping and uses
- * that exact encoded size to derive airtime for the current modulation.
- */
 static uint32_t radio_main_auto_ping_airtime_ms(void)
 {
-    beko_net_frame_t frame;
-    uint8_t raw[RADIO_MSG_BUF_MAX];
-    uint16_t raw_len = 0U;
     const char *msg = s_template_groups[2][0];
     uint16_t payload_len = (uint16_t)strlen(msg);
+    uint16_t raw_len;
 
-    memset(&frame, 0, sizeof(frame));
-    frame.type = BEKO_NET_TYPE_USER;
-    frame.flags = 0U;
-    frame.ttl = (s_ctx.network_default_ttl != 0U) ? s_ctx.network_default_ttl : BEKO_NET_DEFAULT_TTL;
-    frame.src_id = s_ctx.node_id;
-    frame.dst_id = BEKO_NET_BROADCAST_ID;
-    frame.msg_id = s_ctx.next_msg_id;
-    frame.payload_len = payload_len;
-    memcpy(frame.payload, msg, payload_len);
-
-    if (s_ctx.coding_enabled)
+    if (payload_len > LAVIET_MAX_PAYLOAD)
     {
-        frame.flags |= BEKO_NET_FLAG_CODED;
-        frame.flags |= BEKO_NET_FLAG_AUTH;
-        frame.payload_len = (uint16_t)(frame.payload_len + RADIO_AUTH_TAG_LEN);
+        payload_len = LAVIET_MAX_PAYLOAD;
     }
-
-    if (!beko_net_encode(&frame, raw, sizeof(raw), &raw_len))
-    {
-        raw_len = (uint16_t)(20U + frame.payload_len + 2U);
-    }
+    raw_len = (uint16_t)(LAVIET_FRAME_HEADER_LEN + payload_len + LAVIET_MAC_TAG_LEN);
 
     if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
     {
@@ -1482,7 +1455,7 @@ static void radio_main_apply_modulation_cfg(void)
              * jako tryb eksperymentalny. Wypełniamy `payload_len`, aby backend LoRa
              * zaakceptował konfigurację przy starcie.
              */
-            s_ctx.backend_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
+            s_ctx.backend_cfg.payload_len = LAVIET_FRAME_MAX_LEN;
         }
         return;
     }
@@ -1728,7 +1701,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
             if (value == 6UL)
             {
                 s_ctx.lora_cfg.implicit_header = true;
-                s_ctx.lora_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
+                s_ctx.lora_cfg.payload_len = LAVIET_FRAME_MAX_LEN;
             }
             reconfigure_now = (s_ctx.backend_modulation_id == RADIO_MAIN_MODULATION_LORA);
             break;
@@ -1783,7 +1756,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
             s_ctx.lora_cfg.implicit_header = (value == (uint32_t)RADIO_MAIN_HEADER_IMPLICIT);
             if (s_ctx.lora_cfg.implicit_header)
             {
-                s_ctx.lora_cfg.payload_len = BEKO_NET_MAX_PAYLOAD;
+                s_ctx.lora_cfg.payload_len = LAVIET_FRAME_MAX_LEN;
             }
             else
             {
@@ -2119,77 +2092,191 @@ static bool radio_main_reset_module_internal(void)
     return radio_main_force_recover_radio("manual reset");
 }
 
-static bool radio_main_send_system_frame(uint8_t type,
+static bool radio_main_send_system_frame(laviet_frame_type_t type,
                                          uint32_t dst_id,
                                          const uint8_t *payload,
                                          uint16_t payload_len)
 {
-    beko_net_frame_t frame;
-    uint8_t raw[RADIO_MSG_BUF_MAX];
-    uint16_t raw_len = 0U;
-    uint8_t key[16];
+    laviet_frame_t frame;
+    uint8_t raw[LAVIET_FRAME_MAX_LEN];
+    uint8_t raw_len = 0U;
+    uint8_t enc_key[16];
+    uint8_t hmac_key[32];
+    uint16_t dst16;
+    uint16_t peer_id;
+    uint32_t rx_counter;
+    uint32_t tx_counter;
+    bool encrypted = false;
+    bool use_pair_link;
 
     if (!s_ctx.initialized)
     {
         return false;
     }
-    if (payload_len > BEKO_NET_MAX_PAYLOAD)
+    if (!s_ctx.crypto_ready)
     {
+        radio_main_set_last_error("Crypto not ready");
         return false;
+    }
+    if (((payload == NULL) && (payload_len > 0U)) || (payload_len > LAVIET_MAX_PAYLOAD))
+    {
+        radio_main_set_last_error("Payload >16B");
+        return false;
+    }
+    if (dst_id == 0xFFFFFFFFUL)
+    {
+        dst16 = LAVIET_BROADCAST_ID;
+    }
+    else if (dst_id > 0xFFFFUL)
+    {
+        radio_main_set_last_error("Bad dst_id");
+        return false;
+    }
+    else
+    {
+        dst16 = (uint16_t)dst_id;
     }
 
     memset(&frame, 0, sizeof(frame));
-    frame.type = type;
+    frame.ver_type = laviet_frame_ver_type(type);
     frame.flags = 0U;
-    frame.ttl = (s_ctx.network_default_ttl != 0U) ? s_ctx.network_default_ttl : BEKO_NET_DEFAULT_TTL;
     frame.src_id = s_ctx.node_id;
-    frame.dst_id = dst_id;
-    frame.msg_id = s_ctx.next_msg_id++;
-    frame.payload_len = payload_len;
+    frame.dst_id = dst16;
+    frame.msg_id = s_ctx.next_msg_id;
+    s_ctx.next_msg_id++;
+    if (s_ctx.next_msg_id == 0U)
+    {
+        s_ctx.next_msg_id = 1U;
+    }
+
+    if (!security_main_get_gateway_counter(&rx_counter, &tx_counter))
+    {
+        rx_counter = s_ctx.gateway_rx_counter;
+        tx_counter = s_ctx.gateway_tx_counter;
+    }
+    tx_counter++;
+    if (tx_counter == 0UL)
+    {
+        tx_counter = 1UL;
+    }
+    frame.counter = tx_counter;
+    frame.payload_len = (uint8_t)payload_len;
     if ((payload_len > 0U) && (payload != NULL))
     {
         memcpy(frame.payload, payload, payload_len);
     }
 
-    if ((type == BEKO_NET_TYPE_USER) &&
-        s_ctx.coding_enabled)
+    if (dst16 == LAVIET_BROADCAST_ID)
     {
-        bool have_key = false;
-        uint32_t tag;
-
-        if ((uint16_t)(payload_len + RADIO_AUTH_TAG_LEN) > BEKO_NET_MAX_PAYLOAD)
-        {
-            return false;
-        }
-
-        if ((dst_id != BEKO_NET_BROADCAST_ID) &&
-            security_main_get_peer_link_key(s_ctx.node_id, dst_id, key))
-        {
-            have_key = true;
-        }
-        if (!have_key && security_main_get_network_key(key))
-        {
-            have_key = true;
-        }
-        if (!have_key)
-        {
-            return false;
-        }
-        beko_net_xtea_ctr_crypt(frame.payload, frame.payload_len, key, frame.msg_id);
-        tag = radio_main_auth_tag_compute(key, &frame, frame.payload, frame.payload_len);
-        memmove(&frame.payload[RADIO_AUTH_TAG_LEN], frame.payload, frame.payload_len);
-        radio_main_auth_tag_write_be(tag, frame.payload);
-        frame.payload_len = (uint16_t)(frame.payload_len + RADIO_AUTH_TAG_LEN);
-        frame.flags |= BEKO_NET_FLAG_CODED;
-        frame.flags |= BEKO_NET_FLAG_AUTH;
+        frame.flags |= LAVIET_FLAG_BROADCAST;
+    }
+    else if ((type == LAVIET_TYPE_DATA) || (type == LAVIET_TYPE_RESP))
+    {
+        frame.flags |= LAVIET_FLAG_ACK_REQUIRED;
     }
 
-    if (!beko_net_encode(&frame, raw, sizeof(raw), &raw_len))
+    switch (type)
+    {
+        case LAVIET_TYPE_DATA:
+        case LAVIET_TYPE_RESP:
+            encrypted = s_ctx.coding_enabled && (dst16 != LAVIET_BROADCAST_ID);
+            break;
+        case LAVIET_TYPE_CFG:
+            frame.flags |= LAVIET_FLAG_CONFIG_ACCESS;
+            encrypted = true;
+            break;
+        case LAVIET_TYPE_COUNTER_SYNC:
+            frame.flags |= LAVIET_FLAG_COUNTER_OVERRIDE;
+            encrypted = true;
+            break;
+        case LAVIET_TYPE_KEY_ROTATE:
+            frame.flags |= LAVIET_FLAG_KEY_UPDATE;
+            encrypted = true;
+            break;
+        case LAVIET_TYPE_ACK:
+            frame.flags |= LAVIET_FLAG_IS_ACK;
+            break;
+        case LAVIET_TYPE_PAIR_REQ:
+        case LAVIET_TYPE_PAIR_RESP:
+            frame.flags |= LAVIET_FLAG_PAIRING;
+            break;
+        case LAVIET_TYPE_ERROR:
+        default:
+            break;
+    }
+    if (encrypted)
+    {
+        frame.flags |= LAVIET_FLAG_ENCRYPTED;
+    }
+
+    peer_id = (dst16 == LAVIET_BROADCAST_ID) ? LAVIET_BROADCAST_ID : dst16;
+    use_pair_link = ((type != LAVIET_TYPE_PAIR_REQ) &&
+                     (type != LAVIET_TYPE_PAIR_RESP) &&
+                     (type != LAVIET_TYPE_ERROR) &&
+                     (dst16 != LAVIET_BROADCAST_ID));
+    if (!security_main_get_frame_keys(s_ctx.node_id, peer_id, use_pair_link, enc_key, hmac_key))
+    {
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        radio_main_set_last_error("No frame key");
+        return false;
+    }
+    if (encrypted && !laviet_aes_ctr_crypt(frame.payload, frame.payload_len, enc_key, &frame))
+    {
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        radio_main_set_last_error("AES failed");
+        return false;
+    }
+    if (!laviet_frame_hmac_sha256(&frame, hmac_key, frame.mac_tag))
+    {
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        radio_main_set_last_error("HMAC failed");
+        return false;
+    }
+    if (laviet_frame_encode(&frame, raw, sizeof(raw), &raw_len) != LAVIET_STATUS_OK)
+    {
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        radio_main_set_last_error("Frame encode failed");
+        return false;
+    }
+
+    if (!radio_main_send_raw_with_retry(raw, raw_len))
+    {
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        return false;
+    }
+
+    s_ctx.gateway_rx_counter = rx_counter;
+    s_ctx.gateway_tx_counter = tx_counter;
+    (void)security_main_commit_gateway_counter(rx_counter, tx_counter);
+    laviet_secure_zero(enc_key, sizeof(enc_key));
+    laviet_secure_zero(hmac_key, sizeof(hmac_key));
+    return true;
+}
+
+static bool radio_main_send_ack(const laviet_frame_t *frame)
+{
+    uint8_t payload[LAVIET_ACK_PAYLOAD_LEN];
+
+    if ((frame == NULL) ||
+        (frame->dst_id != s_ctx.node_id) ||
+        (frame->dst_id == LAVIET_BROADCAST_ID) ||
+        ((frame->flags & LAVIET_FLAG_ACK_REQUIRED) == 0U) ||
+        (laviet_frame_type(frame) == LAVIET_TYPE_ACK))
     {
         return false;
     }
 
-    return radio_main_send_raw_with_retry(raw, (uint8_t)raw_len);
+    if (!laviet_frame_write_ack_payload(frame->msg_id, frame->counter, payload))
+    {
+        return false;
+    }
+
+    return radio_main_send_system_frame(LAVIET_TYPE_ACK, frame->src_id, payload, sizeof(payload));
 }
 
 /*
@@ -2296,8 +2383,85 @@ static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, 
 
     msg = s_template_groups[group_id][msg_id];
     len = (uint16_t)strlen(msg);
+    if ((len == 0U) || (len > LAVIET_MAX_PAYLOAD))
+    {
+        radio_main_set_last_error("Payload >16B");
+        return false;
+    }
 
-    return radio_main_send_system_frame(BEKO_NET_TYPE_USER, dst_id, (const uint8_t *)msg, len);
+    return radio_main_send_system_frame(LAVIET_TYPE_DATA, dst_id, (const uint8_t *)msg, len);
+}
+
+static void radio_main_post_rx_notification(int16_t rssi_dbm,
+                                            uint16_t src_id,
+                                            const uint8_t *payload,
+                                            uint8_t payload_len,
+                                            laviet_frame_type_t frame_type)
+{
+    menu_notification_t n;
+
+    memset(&n, 0, sizeof(n));
+    n.type = MENU_NOTIFICATION_RX;
+    n.rssi_dbm = rssi_dbm;
+    n.device_code = src_id;
+
+    if ((payload != NULL) && (payload_len > 0U))
+    {
+        uint8_t i;
+        uint8_t copy_len = (payload_len > 20U) ? 20U : payload_len;
+
+        for (i = 0U; i < copy_len; i++)
+        {
+            char c = (char)payload[i];
+            n.text[i] = isprint((unsigned char)c) ? c : '.';
+        }
+        n.text[copy_len] = '\0';
+    }
+    else
+    {
+        (void)snprintf(n.text, sizeof(n.text), "TYPE:%u", (unsigned int)frame_type);
+    }
+
+    (void)menu_main_post_notification(&n);
+}
+
+static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
+{
+    uint8_t hmac_key[32];
+    uint8_t expected[LAVIET_MAC_TAG_LEN];
+    laviet_frame_type_t frame_type;
+    uint16_t peer_id;
+    bool use_pair_link;
+    bool ok = false;
+
+    if ((frame == NULL) || (enc_key == NULL) || !s_ctx.crypto_ready)
+    {
+        return false;
+    }
+
+    memset(enc_key, 0, 16U);
+    memset(hmac_key, 0, sizeof(hmac_key));
+    memset(expected, 0, sizeof(expected));
+    frame_type = laviet_frame_type(frame);
+    peer_id = laviet_frame_is_broadcast(frame) ? LAVIET_BROADCAST_ID : frame->src_id;
+    use_pair_link = ((frame_type != LAVIET_TYPE_PAIR_REQ) &&
+                     (frame_type != LAVIET_TYPE_PAIR_RESP) &&
+                     (frame_type != LAVIET_TYPE_ERROR) &&
+                     (peer_id != LAVIET_BROADCAST_ID));
+    if (security_main_get_frame_keys(s_ctx.node_id, peer_id, use_pair_link, enc_key, hmac_key) &&
+        laviet_frame_hmac_sha256(frame, hmac_key, expected) &&
+        laviet_mac_equal(expected, frame->mac_tag))
+    {
+        ok = true;
+    }
+
+    laviet_secure_zero(hmac_key, sizeof(hmac_key));
+    laviet_secure_zero(expected, sizeof(expected));
+    if (!ok)
+    {
+        laviet_secure_zero(enc_key, 16U);
+    }
+    return ok;
 }
 
 static void radio_main_handle_events(void)
@@ -2339,16 +2503,14 @@ static void radio_main_handle_events(void)
 
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 {
-    beko_net_frame_t frame;
-    beko_net_frame_t frame_decoded;
-    char type_text[16];
-    bool is_beko;
-    bool duplicate;
+    laviet_frame_t frame;
+    laviet_frame_t frame_decoded;
+    laviet_frame_status_t frame_status;
     bool for_me;
-    uint8_t key[16];
-    uint8_t tx_buf[RADIO_MSG_BUF_MAX];
-    uint16_t tx_len = 0U;
-    menu_notification_t n;
+    uint8_t enc_key[16];
+    uint32_t rx_counter;
+    uint32_t tx_counter;
+    laviet_frame_type_t frame_type;
 
     if ((pkt == NULL) || (pkt->length == 0U))
     {
@@ -2359,132 +2521,130 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     radio_main_print_rx_ascii(pkt->data, pkt->length);
     (void)security_main_log_message(pkt->rssi_dbm, pkt->data, pkt->length);
 
-    is_beko = beko_net_decode(pkt->data, pkt->length, &frame);
-    if (is_beko)
-    {
-        frame_decoded = frame;
-        if ((frame.flags & BEKO_NET_FLAG_CODED) != 0U)
-        {
-            if (frame_decoded.type == BEKO_NET_TYPE_USER)
-            {
-                bool auth_ok = false;
-                uint16_t cipher_len;
-                uint32_t rx_tag;
-                uint32_t expected_tag;
-
-                if (((frame.flags & BEKO_NET_FLAG_AUTH) == 0U) ||
-                    (frame_decoded.payload_len < RADIO_AUTH_TAG_LEN))
-                {
-                    printf("RADIO RX coded without auth src=0x%08lX\r\n",
-                           (unsigned long)frame_decoded.src_id);
-                    return;
-                }
-
-                cipher_len = (uint16_t)(frame_decoded.payload_len - RADIO_AUTH_TAG_LEN);
-                rx_tag = radio_main_auth_tag_read_be(frame_decoded.payload);
-
-                if (security_main_get_network_key(key))
-                {
-                    expected_tag = radio_main_auth_tag_compute(key,
-                                                               &frame_decoded,
-                                                               &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
-                                                               cipher_len);
-                    if ((rx_tag ^ expected_tag) == 0UL)
-                    {
-                        auth_ok = true;
-                    }
-                }
-
-                if (!auth_ok &&
-                    (frame_decoded.dst_id != BEKO_NET_BROADCAST_ID) &&
-                    (frame_decoded.dst_id == s_ctx.node_id) &&
-                    security_main_get_peer_link_key(s_ctx.node_id, frame_decoded.src_id, key))
-                {
-                    expected_tag = radio_main_auth_tag_compute(key,
-                                                               &frame_decoded,
-                                                               &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
-                                                               cipher_len);
-                    if ((rx_tag ^ expected_tag) == 0UL)
-                    {
-                        auth_ok = true;
-                    }
-                }
-
-                if (!auth_ok)
-                {
-                    printf("RADIO RX auth mismatch src=0x%08lX dst=0x%08lX\r\n",
-                           (unsigned long)frame_decoded.src_id,
-                           (unsigned long)frame_decoded.dst_id);
-                    return;
-                }
-
-                if (cipher_len > 0U)
-                {
-                    memmove(frame_decoded.payload,
-                            &frame_decoded.payload[RADIO_AUTH_TAG_LEN],
-                            cipher_len);
-                }
-                frame_decoded.payload_len = cipher_len;
-            }
-            else if (!security_main_get_network_key(key))
-            {
-                return;
-            }
-
-            beko_net_xtea_ctr_crypt(frame_decoded.payload,
-                                    frame_decoded.payload_len,
-                                    key,
-                                    frame_decoded.msg_id);
-        }
-        else if (s_ctx.coding_enabled && (frame_decoded.type == BEKO_NET_TYPE_USER))
-        {
-            /* In secure mode ignore uncoded user payloads. */
-            return;
-        }
-
-        if (frame_decoded.payload_len > 0U)
-        {
-            uint16_t i;
-
-            printf("RADIO RX DEC: ");
-            for (i = 0U; i < frame_decoded.payload_len; i++)
-            {
-                char c = (char)frame_decoded.payload[i];
-                printf("%c", isprint((unsigned char)c) ? c : '.');
-            }
-            printf("\r\n");
-
-            (void)lcd_main_push_message(pkt->rssi_dbm, frame_decoded.payload, frame_decoded.payload_len);
-        }
-        else
-        {
-            snprintf(type_text, sizeof(type_text), "TYPE:%u", frame_decoded.type);
-            (void)lcd_main_push_message(pkt->rssi_dbm, (const uint8_t *)type_text, strlen(type_text));
-        }
-    }
-    else
+    frame_status = laviet_frame_decode(pkt->data, pkt->length, &frame);
+    if (frame_status != LAVIET_STATUS_OK)
     {
         (void)lcd_main_push_message(pkt->rssi_dbm, pkt->data, pkt->length);
+        printf("RADIO RX non-LAVIET drop status=%d\r\n", (int)frame_status);
         return;
     }
 
-    duplicate = beko_net_dedup_seen_or_add(&s_ctx.dedup,
-                                           frame.src_id,
-                                           frame.msg_id,
-                                           radio_main_now_ms());
-    if (duplicate)
+    if (!radio_main_laviet_verify_rx(&frame, enc_key))
     {
-        printf("RADIO REPLAY DROP src=0x%08lX msg=0x%08lX type=%u\r\n",
-               (unsigned long)frame.src_id,
-               (unsigned long)frame.msg_id,
-               (unsigned int)frame.type);
+        printf("RADIO RX HMAC drop src=0x%04X dst=0x%04X msg=0x%04X\r\n",
+               (unsigned int)frame.src_id,
+               (unsigned int)frame.dst_id,
+               (unsigned int)frame.msg_id);
         return;
     }
-    for_me = beko_net_is_for_node(&frame_decoded, s_ctx.node_id);
+
+    if (!security_main_get_gateway_counter(&rx_counter, &tx_counter))
+    {
+        rx_counter = s_ctx.gateway_rx_counter;
+        tx_counter = s_ctx.gateway_tx_counter;
+    }
+
+    frame_type = laviet_frame_type(&frame);
+    if ((frame.src_id == LAVIET_GATEWAY_ID) &&
+        (frame_type != LAVIET_TYPE_COUNTER_SYNC) &&
+        (frame.counter <= rx_counter))
+    {
+        printf("RADIO RX REPLAY drop src=0x%04X counter=%lu last=%lu\r\n",
+               (unsigned int)frame.src_id,
+               (unsigned long)frame.counter,
+               (unsigned long)rx_counter);
+        laviet_secure_zero(enc_key, 16U);
+        return;
+    }
+
+    frame_decoded = frame;
+    if ((frame_decoded.flags & LAVIET_FLAG_ENCRYPTED) != 0U)
+    {
+        if (!laviet_aes_ctr_crypt(frame_decoded.payload,
+                                  frame_decoded.payload_len,
+                                  enc_key,
+                                  &frame_decoded))
+        {
+            printf("RADIO RX AES drop src=0x%04X\r\n", (unsigned int)frame_decoded.src_id);
+            laviet_secure_zero(enc_key, 16U);
+            return;
+        }
+    }
+    laviet_secure_zero(enc_key, 16U);
+
+    for_me = (frame_decoded.dst_id == s_ctx.node_id) ||
+             (frame_decoded.dst_id == LAVIET_BROADCAST_ID);
+    if (!for_me)
+    {
+        printf("RADIO RX not-for-me src=0x%04X dst=0x%04X\r\n",
+               (unsigned int)frame_decoded.src_id,
+               (unsigned int)frame_decoded.dst_id);
+        return;
+    }
+
+    if (frame_decoded.payload_len > 0U)
+    {
+        uint16_t i;
+
+        printf("RADIO RX DEC: ");
+        for (i = 0U; i < frame_decoded.payload_len; i++)
+        {
+            char c = (char)frame_decoded.payload[i];
+            printf("%c", isprint((unsigned char)c) ? c : '.');
+        }
+        printf("\r\n");
+    }
 
     if (for_me)
     {
-        if (frame_decoded.type == BEKO_NET_TYPE_JOIN_REQ)
+        if (frame_type == LAVIET_TYPE_DATA)
+        {
+            if (frame_decoded.payload_len > 0U)
+            {
+                (void)lcd_main_push_message(pkt->rssi_dbm,
+                                            frame_decoded.payload,
+                                            frame_decoded.payload_len);
+            }
+            radio_main_post_rx_notification(pkt->rssi_dbm,
+                                            frame_decoded.src_id,
+                                            frame_decoded.payload,
+                                            frame_decoded.payload_len,
+                                            frame_type);
+            if (frame_decoded.dst_id == s_ctx.node_id)
+            {
+                (void)radio_main_send_ack(&frame_decoded);
+                (void)security_main_get_gateway_counter(&rx_counter, &tx_counter);
+            }
+            if (frame_decoded.src_id == LAVIET_GATEWAY_ID)
+            {
+                s_ctx.gateway_rx_counter = frame_decoded.counter;
+                s_ctx.gateway_tx_counter = tx_counter;
+                (void)security_main_commit_gateway_counter(s_ctx.gateway_rx_counter,
+                                                           s_ctx.gateway_tx_counter);
+            }
+        }
+        else if (frame_type == LAVIET_TYPE_COUNTER_SYNC)
+        {
+            uint32_t new_counter;
+
+            if ((frame_decoded.src_id != LAVIET_GATEWAY_ID) ||
+                (frame_decoded.payload_len != LAVIET_COUNTER_SYNC_PAYLOAD_LEN))
+            {
+                printf("RADIO RX bad COUNTER_SYNC\r\n");
+                return;
+            }
+            new_counter = ((uint32_t)frame_decoded.payload[0] << 24) |
+                          ((uint32_t)frame_decoded.payload[1] << 16) |
+                          ((uint32_t)frame_decoded.payload[2] << 8) |
+                          (uint32_t)frame_decoded.payload[3];
+            s_ctx.gateway_rx_counter = new_counter;
+            s_ctx.gateway_tx_counter = tx_counter;
+            (void)security_main_commit_gateway_counter(s_ctx.gateway_rx_counter,
+                                                       s_ctx.gateway_tx_counter);
+            (void)radio_main_send_ack(&frame_decoded);
+            radio_main_notify(MENU_NOTIFICATION_WARNING, "Counter sync");
+        }
+        else if (frame_type == LAVIET_TYPE_PAIR_REQ)
         {
             if (s_ctx.pairing_active && !s_ctx.pairing_pending)
             {
@@ -2492,55 +2652,44 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 char code_text[12];
                 const uint8_t *pair_code = NULL;
                 uint8_t pair_code_len = 0U;
-                uint8_t pair_ttl = BEKO_NET_DEFAULT_TTL;
-                bool pair_network = false;
 
                 if (!radio_main_pair_payload_parse(frame_decoded.payload,
                                                    (uint8_t)frame_decoded.payload_len,
-                                                   &pair_network,
                                                    &pair_code,
-                                                   &pair_code_len,
-                                                   &pair_ttl))
+                                                   &pair_code_len))
                 {
                     return;
                 }
 
-                if (pair_network)
+                if (s_ctx.pairing_network_mode && (frame_decoded.src_id != LAVIET_GATEWAY_ID))
                 {
-                    if (!s_ctx.pairing_network_mode)
-                    {
-                        radio_main_notify(MENU_NOTIFICATION_WARNING, "Net pair only");
-                        return;
-                    }
-                    if (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM)
-                    {
-                        radio_main_notify(MENU_NOTIFICATION_WARNING, "Net pair RSSI low");
-                        return;
-                    }
-                }
-                else if (s_ctx.pairing_network_mode)
-                {
-                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Use network pair");
+                    printf("RADIO RX non-gateway PAIR_REQ drop src=0x%04X\r\n",
+                           (unsigned int)frame_decoded.src_id);
                     return;
+                }
+
+                if (s_ctx.pairing_network_mode &&
+                    (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM))
+                {
+                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Pair RSSI low");
                 }
 
                 s_ctx.pairing_pending = true;
-                s_ctx.pairing_pending_network = pair_network;
-                s_ctx.pairing_pending_ttl = pair_ttl;
+                s_ctx.pairing_pending_network = s_ctx.pairing_network_mode;
                 s_ctx.pairing_pending_node = frame_decoded.src_id;
                 s_ctx.pairing_pending_code_len = (pair_code_len > sizeof(s_ctx.pairing_pending_code)) ?
                                                  sizeof(s_ctx.pairing_pending_code) : pair_code_len;
                 memcpy(s_ctx.pairing_pending_code, pair_code, s_ctx.pairing_pending_code_len);
 
                 radio_main_pair_code_to_text(s_ctx.pairing_pending_code,
-                                             s_ctx.pairing_pending_code_len,
-                                             code_text,
-                                             (uint8_t)sizeof(code_text));
-                snprintf(pair_note, sizeof(pair_note), "JOIN_REQ %s", code_text);
+                                              s_ctx.pairing_pending_code_len,
+                                              code_text,
+                                              (uint8_t)sizeof(code_text));
+                snprintf(pair_note, sizeof(pair_note), "PAIR_REQ %s", code_text);
                 radio_main_notify(MENU_NOTIFICATION_PAIRING, pair_note);
             }
         }
-        else if (frame_decoded.type == BEKO_NET_TYPE_JOIN_ACCEPT)
+        else if (frame_type == LAVIET_TYPE_PAIR_RESP)
         {
             if (s_ctx.pairing_active && s_ctx.pairing_outgoing_pending)
             {
@@ -2548,35 +2697,19 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 char code_text[12];
                 const uint8_t *pair_code = NULL;
                 uint8_t pair_code_len = 0U;
-                uint8_t pair_ttl = BEKO_NET_DEFAULT_TTL;
-                bool pair_network = false;
 
                 if (!radio_main_pair_payload_parse(frame_decoded.payload,
                                                    (uint8_t)frame_decoded.payload_len,
-                                                   &pair_network,
                                                    &pair_code,
-                                                   &pair_code_len,
-                                                   &pair_ttl))
+                                                   &pair_code_len))
                 {
                     return;
                 }
 
-                if (s_ctx.pairing_outgoing_network)
+                if (s_ctx.pairing_outgoing_network &&
+                    (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM))
                 {
-                    if (!pair_network)
-                    {
-                        radio_main_notify(MENU_NOTIFICATION_ERROR, "Join mode mismatch");
-                        s_ctx.pairing_outgoing_pending = false;
-                        s_ctx.pairing_outgoing_network = false;
-                        return;
-                    }
-                    if (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM)
-                    {
-                        radio_main_notify(MENU_NOTIFICATION_WARNING, "Net pair RSSI low");
-                        s_ctx.pairing_outgoing_pending = false;
-                        s_ctx.pairing_outgoing_network = false;
-                        return;
-                    }
+                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Pair RSSI low");
                 }
 
                 if ((pair_code_len == s_ctx.pairing_outgoing_code_len) &&
@@ -2592,84 +2725,91 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                              (uint8_t)sizeof(code_text));
 
                 if (code_match && security_main_cmd_add_device(frame_decoded.src_id,
-                                                               s_ctx.pairing_outgoing_code,
-                                                               s_ctx.pairing_outgoing_code_len))
+                                                                s_ctx.pairing_outgoing_code,
+                                                                s_ctx.pairing_outgoing_code_len))
                 {
                     char pair_note[21];
-                    if (pair_network)
-                    {
-                        s_ctx.network_default_ttl = pair_ttl;
-                    }
-                    snprintf(pair_note, sizeof(pair_note), "JOIN_OK %s", code_text);
+                    snprintf(pair_note, sizeof(pair_note), "PAIR_OK %s", code_text);
                     radio_main_notify(MENU_NOTIFICATION_PAIRING, pair_note);
                     s_ctx.pairing_active = false;
                 }
                 else
                 {
-                    radio_main_notify(MENU_NOTIFICATION_ERROR, "JOIN code mismatch");
+                    radio_main_notify(MENU_NOTIFICATION_ERROR, "PAIR code mismatch");
                 }
 
                 s_ctx.pairing_outgoing_pending = false;
                 s_ctx.pairing_outgoing_network = false;
             }
         }
-        else if (frame_decoded.type == BEKO_NET_TYPE_JOIN_REJECT)
+        else if (frame_type == LAVIET_TYPE_ERROR)
         {
             if (s_ctx.pairing_active && s_ctx.pairing_outgoing_pending)
             {
-                radio_main_notify(MENU_NOTIFICATION_PAIRING, "JOIN_REJECT");
+                radio_main_notify(MENU_NOTIFICATION_PAIRING, "PAIR_ERROR");
                 s_ctx.pairing_outgoing_pending = false;
-            }
-        }
-        else if (frame_decoded.type == BEKO_NET_TYPE_TRUST_REMOVED)
-        {
-            if (security_main_cmd_delete_device(frame_decoded.src_id))
-            {
-                radio_main_notify(MENU_NOTIFICATION_WARNING, "Removed by peer");
             }
             else
             {
-                radio_main_notify(MENU_NOTIFICATION_WARNING, "Peer removed trust");
+                radio_main_notify(MENU_NOTIFICATION_WARNING, "LAVIET error");
+            }
+            if (frame_decoded.dst_id == s_ctx.node_id)
+            {
+                (void)radio_main_send_ack(&frame_decoded);
+            }
+        }
+        else if (frame_type == LAVIET_TYPE_ACK)
+        {
+            uint16_t acked_msg_id = 0U;
+            uint32_t acked_counter = 0UL;
+
+            if (laviet_frame_read_ack_payload(frame_decoded.payload,
+                                              &acked_msg_id,
+                                              &acked_counter))
+            {
+                printf("RADIO RX ACK src=0x%04X ack_msg=0x%04X ack_counter=%lu\r\n",
+                       (unsigned int)frame_decoded.src_id,
+                       (unsigned int)acked_msg_id,
+                       (unsigned long)acked_counter);
+            }
+            else
+            {
+                printf("RADIO RX ACK bad payload src=0x%04X\r\n",
+                       (unsigned int)frame_decoded.src_id);
             }
         }
         else
         {
-            memset(&n, 0, sizeof(n));
-            n.type = MENU_NOTIFICATION_RX;
-            n.rssi_dbm = pkt->rssi_dbm;
-            n.device_code = frame_decoded.src_id;
-            if (frame_decoded.payload_len > 0U)
+            radio_main_post_rx_notification(pkt->rssi_dbm,
+                                            frame_decoded.src_id,
+                                            frame_decoded.payload,
+                                            frame_decoded.payload_len,
+                                            frame_type);
+            if ((frame_decoded.dst_id == s_ctx.node_id) &&
+                ((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U) &&
+                (frame_type != LAVIET_TYPE_ACK))
             {
-                uint8_t i;
-                uint8_t copy_len = (frame_decoded.payload_len > 20U) ? 20U : (uint8_t)frame_decoded.payload_len;
-                for (i = 0U; i < copy_len; i++)
-                {
-                    char c = (char)frame_decoded.payload[i];
-                    n.text[i] = isprint((unsigned char)c) ? c : '.';
-                }
-                n.text[copy_len] = '\0';
+                (void)radio_main_send_ack(&frame_decoded);
             }
-            else
-            {
-                snprintf(n.text, sizeof(n.text), "Type %u", frame_decoded.type);
-            }
-            (void)menu_main_post_notification(&n);
         }
     }
 
-    if (!for_me && beko_net_should_forward(&frame, s_ctx.node_id))
+    if ((frame_decoded.src_id == LAVIET_GATEWAY_ID) &&
+        (frame_type != LAVIET_TYPE_COUNTER_SYNC) &&
+        (frame_decoded.counter > s_ctx.gateway_rx_counter))
     {
-        frame.ttl--;
-        if (beko_net_encode(&frame, tx_buf, sizeof(tx_buf), &tx_len))
+        uint32_t latest_rx;
+        uint32_t latest_tx;
+
+        latest_rx = s_ctx.gateway_rx_counter;
+        latest_tx = s_ctx.gateway_tx_counter;
+        if (security_main_get_gateway_counter(&latest_rx, &latest_tx))
         {
-            if (radio_main_send_raw_with_retry(tx_buf, (uint8_t)tx_len))
-            {
-                printf("RADIO relay src=0x%08lX msg=0x%08lX ttl=%u\r\n",
-                       (unsigned long)frame.src_id,
-                       (unsigned long)frame.msg_id,
-                       frame.ttl);
-            }
+            s_ctx.gateway_tx_counter = latest_tx;
         }
+        s_ctx.gateway_rx_counter = frame_decoded.counter;
+        (void)security_main_commit_gateway_counter(s_ctx.gateway_rx_counter,
+                                                   s_ctx.gateway_tx_counter);
     }
 }
 
@@ -2729,7 +2869,7 @@ static void radio_main_handle_auto_ping(void)
 
     if (radio_get_state() != RADIO_STATE_TX)
     {
-        (void)radio_main_send_template_internal(2U, 0U, BEKO_NET_BROADCAST_ID);
+        (void)radio_main_send_template_internal(2U, 0U, LAVIET_GATEWAY_ID);
     }
 }
 
@@ -3130,10 +3270,12 @@ static bool radio_main_finish_pairing(bool accept)
 
     if (!accept)
     {
-        (void)radio_main_send_system_frame(BEKO_NET_TYPE_JOIN_REJECT,
+        uint8_t err_payload[LAVIET_ERROR_PAYLOAD_LEN] = { 1U, LAVIET_TYPE_PAIR_REQ, 0U, 0U, 0U, 0U, 0U, 0U };
+
+        (void)radio_main_send_system_frame(LAVIET_TYPE_ERROR,
                                            node_id,
-                                           (const uint8_t *)"REJECT",
-                                           6U);
+                                           err_payload,
+                                           sizeof(err_payload));
         memset(&n, 0, sizeof(n));
         n.type = MENU_NOTIFICATION_PAIRING;
         snprintf(n.text, sizeof(n.text), "Device rejected");
@@ -3155,7 +3297,6 @@ static bool radio_main_finish_pairing(bool accept)
     payload_len = radio_main_pair_payload_build(s_ctx.pairing_pending_network,
                                                 code,
                                                 code_len,
-                                                s_ctx.pairing_pending_ttl,
                                                 payload,
                                                 (uint8_t)sizeof(payload));
     if (payload_len == 0U)
@@ -3164,18 +3305,14 @@ static bool radio_main_finish_pairing(bool accept)
         s_ctx.pairing_pending_network = false;
         return false;
     }
-    if (s_ctx.pairing_pending_network)
-    {
-        s_ctx.network_default_ttl = s_ctx.pairing_pending_ttl;
-    }
 
-    (void)radio_main_send_system_frame(BEKO_NET_TYPE_JOIN_ACCEPT, node_id, payload, payload_len);
+    (void)radio_main_send_system_frame(LAVIET_TYPE_PAIR_RESP, node_id, payload, payload_len);
 
     radio_main_pair_code_to_text(code, code_len, code_text, (uint8_t)sizeof(code_text));
 
     memset(&n, 0, sizeof(n));
     n.type = MENU_NOTIFICATION_PAIRING;
-    snprintf(n.text, sizeof(n.text), "JOIN_OK %s", code_text);
+    snprintf(n.text, sizeof(n.text), "PAIR_OK %s", code_text);
     (void)menu_main_post_notification(&n);
     s_ctx.pairing_pending = false;
     s_ctx.pairing_pending_network = false;
@@ -3184,12 +3321,13 @@ static bool radio_main_finish_pairing(bool accept)
     return true;
 }
 
-static bool radio_main_send_join_request_internal(void)
+static bool radio_main_send_pair_request_internal(void)
 {
     char note[21];
     char code_text[12];
     uint8_t payload[16];
     uint8_t payload_len;
+    uint32_t dst_id;
 
     if (!s_ctx.pairing_active)
     {
@@ -3200,7 +3338,6 @@ static bool radio_main_send_join_request_internal(void)
     payload_len = radio_main_pair_payload_build(s_ctx.pairing_network_mode,
                                                 s_ctx.pairing_outgoing_code,
                                                 s_ctx.pairing_outgoing_code_len,
-                                                s_ctx.network_default_ttl,
                                                 payload,
                                                 (uint8_t)sizeof(payload));
     if (payload_len == 0U)
@@ -3208,8 +3345,9 @@ static bool radio_main_send_join_request_internal(void)
         return false;
     }
 
-    if (!radio_main_send_system_frame(BEKO_NET_TYPE_JOIN_REQ,
-                                      BEKO_NET_BROADCAST_ID,
+    dst_id = s_ctx.pairing_network_mode ? LAVIET_GATEWAY_ID : LAVIET_BROADCAST_ID;
+    if (!radio_main_send_system_frame(LAVIET_TYPE_PAIR_REQ,
+                                      dst_id,
                                       payload,
                                       payload_len))
     {
@@ -3222,92 +3360,9 @@ static bool radio_main_send_join_request_internal(void)
                                  s_ctx.pairing_outgoing_code_len,
                                  code_text,
                                  (uint8_t)sizeof(code_text));
-    snprintf(note, sizeof(note), "JOIN_SENT %.10s", code_text);
+    snprintf(note, sizeof(note), "PAIR_SENT %.10s", code_text);
     radio_main_notify(MENU_NOTIFICATION_PAIRING, note);
     return true;
-}
-
-static uint32_t radio_main_auth_tag_compute(const uint8_t key[16],
-                                            const beko_net_frame_t *frame,
-                                            const uint8_t *cipher_payload,
-                                            uint16_t cipher_len)
-{
-    uint32_t h = 2166136261UL;
-    uint8_t i;
-
-    if ((key == NULL) || (frame == NULL))
-    {
-        return 0UL;
-    }
-
-#define RADIO_AUTH_FNV_MIX(x) \
-    do                        \
-    {                         \
-        h ^= (uint8_t)(x);    \
-        h *= 16777619UL;      \
-    } while (0)
-
-    for (i = 0U; i < 16U; i++)
-    {
-        RADIO_AUTH_FNV_MIX(key[i]);
-    }
-
-    RADIO_AUTH_FNV_MIX(frame->type);
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->src_id >> 24));
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->src_id >> 16));
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->src_id >> 8));
-    RADIO_AUTH_FNV_MIX((uint8_t)frame->src_id);
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->dst_id >> 24));
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->dst_id >> 16));
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->dst_id >> 8));
-    RADIO_AUTH_FNV_MIX((uint8_t)frame->dst_id);
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->msg_id >> 24));
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->msg_id >> 16));
-    RADIO_AUTH_FNV_MIX((uint8_t)(frame->msg_id >> 8));
-    RADIO_AUTH_FNV_MIX((uint8_t)frame->msg_id);
-    RADIO_AUTH_FNV_MIX((uint8_t)(cipher_len >> 8));
-    RADIO_AUTH_FNV_MIX((uint8_t)cipher_len);
-
-    if ((cipher_payload != NULL) && (cipher_len > 0U))
-    {
-        for (i = 0U; i < cipher_len; i++)
-        {
-            RADIO_AUTH_FNV_MIX(cipher_payload[i]);
-        }
-    }
-
-#undef RADIO_AUTH_FNV_MIX
-
-    h ^= (h >> 13);
-    h *= 0x9E3779B1UL;
-    h ^= (h >> 16);
-    return h;
-}
-
-static void radio_main_auth_tag_write_be(uint32_t tag, uint8_t out[RADIO_AUTH_TAG_LEN])
-{
-    if (out == NULL)
-    {
-        return;
-    }
-
-    out[0] = (uint8_t)(tag >> 24);
-    out[1] = (uint8_t)(tag >> 16);
-    out[2] = (uint8_t)(tag >> 8);
-    out[3] = (uint8_t)tag;
-}
-
-static uint32_t radio_main_auth_tag_read_be(const uint8_t in[RADIO_AUTH_TAG_LEN])
-{
-    if (in == NULL)
-    {
-        return 0UL;
-    }
-
-    return ((uint32_t)in[0] << 24) |
-           ((uint32_t)in[1] << 16) |
-           ((uint32_t)in[2] << 8) |
-           (uint32_t)in[3];
 }
 
 static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len)
@@ -3355,35 +3410,20 @@ static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char 
 
 static bool radio_main_pair_payload_parse(const uint8_t *payload,
                                           uint8_t payload_len,
-                                          bool *network_mode_out,
                                           const uint8_t **code_out,
-                                          uint8_t *code_len_out,
-                                          uint8_t *ttl_out)
+                                          uint8_t *code_len_out)
 {
-    if ((network_mode_out == NULL) || (code_out == NULL) || (code_len_out == NULL) || (ttl_out == NULL))
+    if ((code_out == NULL) || (code_len_out == NULL))
     {
         return false;
     }
 
-    *network_mode_out = false;
     *code_out = NULL;
     *code_len_out = 0U;
-    *ttl_out = BEKO_NET_DEFAULT_TTL;
 
-    if ((payload == NULL) || (payload_len == 0U))
+    if ((payload == NULL) || (payload_len != RADIO_PAIR_CODE_LEN))
     {
         return false;
-    }
-
-    if ((payload_len == RADIO_NETWORK_PAIR_PAYLOAD_LEN) &&
-        (payload[0] == RADIO_NETWORK_PAIR_MARKER) &&
-        (payload[1] != 0U))
-    {
-        *network_mode_out = true;
-        *ttl_out = payload[1];
-        *code_out = &payload[2];
-        *code_len_out = RADIO_PAIR_CODE_LEN;
-        return true;
     }
 
     *code_out = payload;
@@ -3394,29 +3434,17 @@ static bool radio_main_pair_payload_parse(const uint8_t *payload,
 static uint8_t radio_main_pair_payload_build(bool network_mode,
                                              const uint8_t *code,
                                              uint8_t code_len,
-                                             uint8_t ttl,
                                              uint8_t *payload_out,
                                              uint8_t payload_capacity)
 {
+    (void)network_mode;
+
     if ((payload_out == NULL) || (code == NULL) || (code_len == 0U))
     {
         return 0U;
     }
 
-    if (network_mode)
-    {
-        if ((code_len != RADIO_PAIR_CODE_LEN) || (payload_capacity < RADIO_NETWORK_PAIR_PAYLOAD_LEN))
-        {
-            return 0U;
-        }
-
-        payload_out[0] = RADIO_NETWORK_PAIR_MARKER;
-        payload_out[1] = (ttl != 0U) ? ttl : BEKO_NET_DEFAULT_TTL;
-        memcpy(&payload_out[2], code, RADIO_PAIR_CODE_LEN);
-        return RADIO_NETWORK_PAIR_PAYLOAD_LEN;
-    }
-
-    if (payload_capacity < code_len)
+    if ((code_len != RADIO_PAIR_CODE_LEN) || (payload_capacity < RADIO_PAIR_CODE_LEN))
     {
         return 0U;
     }

@@ -7,7 +7,7 @@ W systemie występuje:
 
 - jeden węzeł centralny: **Raspberry Pi Gateway**,
 - do **254 node’ów STM32**,
-- komunikacja radiowa przez **SX1262**.
+- komunikacja radiowa przez obecny backend **SX1276/RFM95**.
 
 Gateway wysyła wiadomości do wybranego node’a albo do całej sieci.  
 Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez node ramką `ACK`.
@@ -16,11 +16,12 @@ Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez
 
 ## 2. Adresacja
 
-Adresacja w systemie jest 8-bitowa:
+Adresacja w ramce `LAVIET_FRAME_V1` jest 16-bitowa:
 
-- `0` – broadcast,
-- `1..254` – adresy node’ów,
-- `255` – adres zarezerwowany, na możliwy dalszy rozwój.
+- `0x0000` – wartość nieważna,
+- `0x0001` – Raspberry Pi Gateway,
+- `0x0002..0xFFFE` – adresy node’ów,
+- `0xFFFF` – broadcast.
 
 W systemie może działać:
 
@@ -70,9 +71,9 @@ PIN służy do kontroli dostępu, a nie jako główny sekret kryptograficzny sys
 
 ---
 
-## 5. Ramka `BEKO_FRAME_V1`
+## 5. Ramka `LAVIET_FRAME_V1`
 
-System wykorzystuje zwartą ramkę aplikacyjną `BEKO_FRAME_V1`.
+System wykorzystuje zwartą ramkę aplikacyjną `LAVIET_FRAME_V1`.
 
 ### Struktura ramki
 
@@ -119,6 +120,7 @@ Przykładowe typy:
 - `0x6` – `CFG`
 - `0x7` – `COUNTER_SYNC`
 - `0x8` – `KEY_ROTATE`
+- `0x9` – `ERROR`
 
 ### `flags`
 Pole 1-bajtowe:
@@ -154,11 +156,11 @@ HMAC liczony jest po:
 
 `ver_type || flags || src_id || dst_id || msg_id || counter || payload_len || payload`
 
-Obliczenia HMAC powinny wykorzystywać **sprzętowy blok HASH** mikrokontrolera STM32U545.
+Firmware inicjalizuje bloki **CRYP/HASH/RNG** STM32U545 i nie uruchamia ruchu secure, jeśli CRYP/HASH nie zgłoszą gotowości. `laviet_crypto` zachowuje portable ścieżkę obliczeń jako referencję zgodności formatu ramki; backend można dalej przepiąć na pełne wywołania HAL bez zmiany kontraktu `LAVIET_FRAME_V1`.
 
 ### Szyfrowanie wiadomości
 
-Payload wiadomości szyfrowany z użyciem **sprzętowego AES** korzystający z dostępnego w STM32U545 bloku sprzętowego.
+Payload wiadomości szyfrowany jest w trybie:
 - **AES-CTR**
 
 Zalety:
@@ -220,7 +222,7 @@ Taka operacja:
 
 ### Parowanie
 
-Parowanie odbywa się wyłącznie z gatewayem. Warunkiem koniecznym podłączenia nowego urządzenia jest minimalna moc sygnału nie mniejsza niż -20 dBm mocy odbieranej przez węzeł centralny jak i parowany węzeł.
+Parowanie odbywa się wyłącznie z gatewayem. Próg RSSI `-20 dBm` jest traktowany jako ostrzeżenie diagnostyczne do walidacji praktycznej, a nie jako twarda blokada w pierwszym wdrożeniu.
 
 Przebieg:
 
@@ -250,7 +252,7 @@ Podczas uruchamiania urządzenia przez UART powinny być wypisywane informacje o
 
 - MCU,
 - TPM,
-- SX1262,
+- SX1276/RFM95,
 - wyświetlacza,
 - przycisków,
 - LED,

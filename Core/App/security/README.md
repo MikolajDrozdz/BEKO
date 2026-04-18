@@ -8,10 +8,10 @@ Dokumenty pomocnicze:
 
 ## Aktualny model
 
-- `BEKO_NET_V1` używa `src_id`, `dst_id`, `msg_id` i `ttl`.
-- Ramki `USER` mogą być szyfrowane i uwierzytelniane przez `coding + auth tag`.
-- Relay działa tylko dla ramek `USER`, które nie są do mnie i mają jeszcze `ttl > 1`.
-- Ochrona przed replay jest realizowana per `src_id` przez przesuwne okno `msg_id`.
+- `LAVIET_FRAME_V1` używa `src_id`, `dst_id`, `msg_id`, `counter`, `payload_len` i `mac_tag`.
+- Ramki są uwierzytelniane HMAC-SHA256, a payload może być szyfrowany AES-CTR.
+- Relay mesh/TTL został usunięty z bieżącej architektury; node działa w topologii gwiazdy z gatewayem.
+- Ochrona przed replay w pierwszym wdrożeniu używa monotonicznego `counter` dla relacji gateway-node i zapisuje go w małym slocie `secret` NVM.
 - `TPM PP` w obecnym hardware jest podłączony do samego modułu TPM, nie do GPIO MCU.
   To znaczy, że nie wolno traktować go jak zwykłego przycisku aplikacji. Jeśli ma
   sterować pairingiem albo operacjami administracyjnymi, trzeba użyć polityk TPM
@@ -25,38 +25,38 @@ Poniżej są mechanizmy, które można wdrażać warstwowo. Nie trzeba robić ws
 ### 1. Rate limiting per source
 
 - Trzymać licznik ramek na `src_id` w krótkim oknie czasu, np. `N / 10 s`.
-- Po przekroczeniu limitu przestać relayować ruch z tego źródła.
+- Po przekroczeniu limitu przestać obsługiwać ruch z tego źródła.
 - Dla bardzo agresywnych źródeł wejść w czasowe `cooldown`.
 
-### 2. Global relay budget
+### 2. Global TX budget
 
-- Osobno limitować ruch lokalny i ruch relayowany.
-- Węzeł nie powinien poświęcić całego duty-cycle tylko na cudze pakiety.
-- Praktycznie: token bucket dla `forward`, np. osobny budżet na minutę.
+- Osobno limitować ruch użytkownika i ruch administracyjny.
+- Węzeł nie powinien poświęcić całego duty-cycle na flood control traffic.
+- Praktycznie: token bucket dla TX, np. osobny budżet na minutę.
 
 ### 3. Separate limits for control traffic
 
-- `JOIN_REQ`, `JOIN_ACCEPT`, `JOIN_REJECT`, `TRUST_REMOVED`, `ACK` powinny mieć niższe limity niż zwykłe `USER`.
+- `PAIR_REQ`, `PAIR_RESP`, `ERROR`, `CFG`, `COUNTER_SYNC`, `KEY_ROTATE` i `ACK` powinny mieć niższe limity niż zwykłe `DATA`.
 - Pairing powinien działać tylko w krótkim oknie serwisowym.
-- Powtarzane `JOIN_REQ` od jednego źródła powinny być szybko wyciszane.
+- Powtarzane `PAIR_REQ` od jednego źródła powinny być szybko wyciszane.
 
 ### 4. Replay-aware abuse scoring
 
 - Każde wykrycie replay zwiększa licznik nadużyć dla `src_id`.
 - Po kilku replayach z rzędu można:
-  - zablokować relay,
+  - zablokować obsługę źródła,
   - obniżyć priorytet,
   - logować zdarzenie security.
 
-### 5. Strict forwarding policy
+### 5. Strict frame policy
 
-- Forwardować tylko ramki, które naprawdę mają sens sieciowo.
-- Nie relayować ramek sterujących i lokalnych komunikatów administracyjnych.
-- Ograniczyć maksymalny `ttl` już przy dekodowaniu.
+- Przyjmować tylko ramki, które pasują do topologii gateway-node.
+- Nie generować `ACK` dla broadcastu ani dla błędnego HMAC/replay.
+- Walidować typ, flagi, `payload_len`, `src_id` i `dst_id` przed kryptografią.
 
 ### 6. Bounded parsing cost
 
-- Odrzucać ramki z nieprawidłowym `src_id`, `msg_id`, `ttl` lub długością przed cięższą logiką.
+- Odrzucać ramki z nieprawidłowym `src_id`, `dst_id`, `msg_id`, `counter` lub długością przed cięższą logiką.
 - Nie robić drogich operacji kryptograficznych dla ruchu, który już wygląda na śmieciowy.
 - Przy floodzie najtańsze filtry powinny działać jako pierwsze.
 
@@ -68,14 +68,14 @@ Poniżej są mechanizmy, które można wdrażać warstwowo. Nie trzeba robić ws
 
 ### 8. Channel occupancy protection
 
-- Relay i auto-ping powinny respektować duty-cycle i własny budżet TX.
-- W stanie przeciążenia najpierw wyłączać relay, dopiero potem mniej ważny ruch lokalny.
+- Auto-ping i control traffic powinny respektować duty-cycle i własny budżet TX.
+- W stanie przeciążenia najpierw ograniczać ruch administracyjny/testowy, dopiero potem ruch użytkownika.
 - Dobrze działa też adaptacyjne wydłużanie odstępów TX po wykryciu floodu.
 
 ## Najbardziej opłacalna kolejność wdrożenia
 
 1. Per-source rate limiting.
-2. Global relay budget.
+2. Global TX budget.
 3. Abuse scoring dla replay/flood.
 4. Ograniczenia pairing/control traffic.
 5. Agregowane logowanie security zamiast popup spam.

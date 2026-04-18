@@ -7,11 +7,11 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ## 2. Finalizacja formatu ramki `LAVIET_FRAME_V1`
 
-- [ ] Zaimplementować finalny parser i serializer ramki zgodny z dokumentacją.
-- [ ] Rozdzielić logikę dla ramek `DATA`, `ACK`, `RESP`, `PAIR_REQ`, `PAIR_RESP`, `CFG`, `COUNTER_SYNC`, `KEY_ROTATE`, `ERROR`.
-- [ ] Zaimplementować walidację `payload_len` względem typu wiadomości.
-- [ ] Dodać sprawdzenie zgodności `flags` z typem wiadomości.
-- [ ] Dodać sprawdzanie dopuszczalnego `src_id`, `dst_id` i warunków broadcast.
+- [x] Zaimplementować finalny parser i serializer ramki zgodny z dokumentacją.
+- [x] Rozdzielić logikę dla ramek `DATA`, `ACK`, `RESP`, `PAIR_REQ`, `PAIR_RESP`, `CFG`, `COUNTER_SYNC`, `KEY_ROTATE`, `ERROR`.
+- [x] Zaimplementować walidację `payload_len` względem typu wiadomości.
+- [x] Dodać sprawdzenie zgodności `flags` z typem wiadomości.
+- [x] Dodać sprawdzanie dopuszczalnego `src_id`, `dst_id` i warunków broadcast.
 
 ### Rekomendacje
 - Dla `CFG`, `COUNTER_SYNC` i `KEY_ROTATE` warto zdefiniować osobne mini-formaty payloadu, żeby uniknąć niejednoznacznej interpretacji danych.
@@ -21,11 +21,11 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ## 3. ACK i niezawodność dostarczenia
 
-- [ ] Wymusić `ACK` dla każdej poprawnie odebranej wiadomości z gatewaya.
+- [x] Wymusić `ACK` dla każdej poprawnie odebranej wiadomości z gatewaya.
 - [ ] Dodać timeout oczekiwania na `ACK` po stronie gatewaya.
 - [ ] Dodać retransmisję z limitem prób.
 - [ ] Dodać rozróżnienie: brak `ACK`, błędny `ACK`, spóźniony `ACK`, zduplikowany `ACK`.
-- [ ] Dodać logikę mapowania `ACK` do `msg_id` i `counter`.
+- [x] Dodać logikę mapowania `ACK` do `msg_id` i `counter`.
 
 ### Rekomendacje
 - `ACK` powinien być uwierzytelniany HMAC-em tak samo jak zwykła wiadomość.
@@ -37,10 +37,10 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 ## 4. Szyfrowanie wiadomości – AES-CTR sprzętowo
 
 - [ ] Zastąpić wcześniejsze szyfrowanie rozwiązaniem opartym o sprzętowy blok AES w STM32U545.
-- [ ] Zaimplementować `AES-CTR` dla pola `payload`.
-- [ ] Zdefiniować jednoznaczny format nonce / counter block dla AES-CTR.
-- [ ] Zapewnić niepowtarzalność pary: klucz + nonce.
-- [ ] Dodać zerowanie buforów z plaintextem i kluczami po użyciu.
+- [x] Zaimplementować `AES-CTR` dla pola `payload`.
+- [x] Zdefiniować jednoznaczny format nonce / counter block dla AES-CTR.
+- [x] Zapewnić niepowtarzalność pary: klucz + nonce.
+- [x] Dodać zerowanie buforów z plaintextem i kluczami po użyciu.
 
 ### Rekomendacje
 - Najlepiej zbudować blok startowy AES-CTR z elementów takich jak `src_id`, `dst_id`, `msg_id`, `counter` oraz stała domenowa protokołu.
@@ -52,8 +52,8 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 ## 5. HMAC-SHA256 – blok HASH sprzętowo
 
 - [ ] Zaimplementować HMAC-SHA256 z użyciem sprzętowego bloku HASH w STM32U545.
-- [ ] Ujednolicić listę pól wchodzących do HMAC.
-- [ ] Dodać bezpieczne porównanie `mac_tag` po stronie odbiornika.
+- [x] Ujednolicić listę pól wchodzących do HMAC.
+- [x] Dodać bezpieczne porównanie `mac_tag` po stronie odbiornika.
 - [ ] Dodać testy zgodności HMAC z wersją referencyjną programową.
 
 ### Rekomendacje
@@ -80,9 +80,9 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ## 7. Anti-replay i licznik bezpieczeństwa
 
-- [ ] Zaimplementować monotoniczny `counter` per relacja komunikacyjna.
-- [ ] Zapisywać stan licznika w pamięci nieulotnej.
-- [ ] Zaimplementować bezpieczny mechanizm `COUNTER_SYNC` tylko dla gatewaya.
+- [x] Zaimplementować monotoniczny `counter` per relacja komunikacyjna.
+- [x] Zapisywać stan licznika w pamięci nieulotnej.
+- [x] Zaimplementować bezpieczny mechanizm `COUNTER_SYNC` tylko dla gatewaya.
 - [ ] Dodać ochronę przed rollbackiem licznika po restarcie i zaniku zasilania.
 - [ ] Dodać testy replay attack.
 
@@ -95,11 +95,11 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ## 8. Parowanie i relacja zaufania
 
-- [ ] Zaimplementować finalny przebieg `PAIR_REQ` / `PAIR_RESP`.
-- [ ] Usunąć pozostałości po starym modelu mesh / peer-to-peer, jeśli nie są już potrzebne.
-- [ ] Zdecydować, czy warunek RSSI dla parowania rzeczywiście ma być częścią polityki bezpieczeństwa.
-- [ ] Zaimplementować zapis relacji trusted w pamięci nieulotnej.
-- [ ] Dodać procedurę usuwania zaufania i unieważnienia kluczy.
+- [x] Zaimplementować finalny przebieg `PAIR_REQ` / `PAIR_RESP`.
+- [x] Usunąć pozostałości po starym modelu mesh / peer-to-peer, jeśli nie są już potrzebne.
+- [x] Zdecydować, czy warunek RSSI dla parowania rzeczywiście ma być częścią polityki bezpieczeństwa.
+- [x] Zaimplementować zapis relacji trusted w pamięci nieulotnej.
+- [x] Dodać procedurę usuwania zaufania i unieważnienia kluczy.
 
 ### Rekomendacje
 - Wymóg `-20 dBm` dla parowania wygląda bardzo restrykcyjnie i może być trudny do spełnienia w praktyce; warto go zweryfikować eksperymentalnie albo zastąpić bardziej realistycznym warunkiem bliskości fizycznej lub trybem serwisowym.
@@ -123,9 +123,9 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ---
 
-## 10. Warstwa radiowa SX1262 i niezawodność transmisji
+## 10. Warstwa radiowa SX1276/RFM95 i niezawodność transmisji
 
-- [ ] Uporządkować dokumentację i kod konfiguracji SX1262.
+- [x] Uporządkować dokumentację i kod konfiguracji SX1276/RFM95.
 - [ ] Zweryfikować, czy włączone jest CRC warstwy radiowej.
 - [ ] Opisać i udokumentować parametry modulacji: SF, BW, CR, preambuła, sync word, moc nadawania, timeout RX/TX.
 - [ ] Dodać testy w warunkach zakłóceń i słabego sygnału.
@@ -167,20 +167,6 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 
 ---
 
-## 13. Panel webowy i warstwa gatewaya
-
-- [ ] Zaimplementować prosty panel webowy na Raspberry Pi.
-- [ ] Dodać listę node’ów, ich statusów i adresów.
-- [ ] Dodać wysyłanie wiadomości do pojedynczego node’a i broadcast.
-- [ ] Dodać prezentację wyniku operacji: `ACK`, timeout, błąd, brak odpowiedzi.
-- [ ] Dodać historię wiadomości i odpowiedzi.
-
-### Rekomendacje
-- Panel powinien rozróżniać role administratora i operatora.
-- Dobrze dodać czytelną prezentację ostatniego RSSI, czasu ostatniego ACK i stanu sparowania node’a.
-- Operacje krytyczne, takie jak `PAIR_REQ`, `COUNTER_SYNC`, `KEY_ROTATE`, powinny być oddzielone od zwykłego wysyłania wiadomości.
-
----
 
 ## 14. Testy i walidacja
 
@@ -209,14 +195,14 @@ Nowy plan dotyczy aktualnej architektury: **1 Raspberry Pi Gateway + node’y ST
 5. Dopięć model `TPM-first` i bezpieczne ładowanie kluczy.
 6. Wdrożyć trwały `counter` anti-replay i `COUNTER_SYNC`.
 7. Dopięć pairing tylko z gatewayem.
-8. Udokumentować i zweryfikować konfigurację SX1262.
+8. Udokumentować i zweryfikować konfigurację SX1276/RFM95.
 9. Dodać testy bezpieczeństwa i niezawodności.
 
 ---
 
 ## 16. Elementy, które należy zarchiwizować
 
-- [ ] Stare założenia mesh / multi-hop / TTL.
-- [ ] Dokumentację opartą o `BEKO_NET_V1`, `AuthTag 4B`, `XTEA-CTR` i routing wieloskokowy.
-- [ ] Stare TODO związane z forwardingiem i flood relay.
-- [ ] Niespójne typy wiadomości i flagi wykraczające poza rozmiar pól.
+- [x] Stare założenia mesh / multi-hop / TTL.
+- [x] Dokumentację opartą o `BEKO_NET_V1`, `AuthTag 4B`, `XTEA-CTR` i routing wieloskokowy.
+- [x] Stare TODO związane z forwardingiem i flood relay.
+- [x] Niespójne typy wiadomości i flagi wykraczające poza rozmiar pól.

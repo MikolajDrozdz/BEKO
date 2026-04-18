@@ -43,6 +43,18 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+CRYP_HandleTypeDef hcryp;
+__ALIGN_BEGIN static const uint32_t pKeyAES[4] __ALIGN_END = {
+                            0x00000000,0x00000000,0x00000000,0x00000000};
+__ALIGN_BEGIN static const uint32_t pInitVectAES[4] __ALIGN_END = {
+                            0x00000000,0x00000000,0x00000000,0x00000000};
+
+HASH_HandleTypeDef hhash;
+__ALIGN_BEGIN static const uint8_t pKeyHASH[1] __ALIGN_END = {
+                            0x00};
+
+RNG_HandleTypeDef hrng;
+
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c3;
 
@@ -67,6 +79,10 @@ static void MX_I2C1_Init(void);
 static void MX_RTC_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_I2C3_Init(void);
+static void MX_AES_Init(void);
+static void MX_GTZC_Init(void);
+static void MX_HASH_Init(void);
+static void MX_RNG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -112,6 +128,8 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+  /* GTZC initialisation */
+  MX_GTZC_Init();
 
   /* USER CODE BEGIN SysInit */
 
@@ -125,6 +143,9 @@ int main(void)
   MX_RTC_Init();
   MX_SPI1_Init();
   MX_I2C3_Init();
+  MX_AES_Init();
+  MX_HASH_Init();
+  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
   app_init();
@@ -255,6 +276,117 @@ static void SystemPower_Config(void)
   }
 /* USER CODE BEGIN PWR */
 /* USER CODE END PWR */
+}
+
+/**
+  * @brief AES Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_AES_Init(void)
+{
+
+  /* USER CODE BEGIN AES_Init 0 */
+
+  /* USER CODE END AES_Init 0 */
+
+  /* USER CODE BEGIN AES_Init 1 */
+
+  /* USER CODE END AES_Init 1 */
+  hcryp.Instance = AES;
+  hcryp.Init.DataType = CRYP_NO_SWAP;
+  hcryp.Init.KeySize = CRYP_KEYSIZE_128B;
+  hcryp.Init.pKey = (uint32_t *)pKeyAES;
+  hcryp.Init.pInitVect = (uint32_t *)pInitVectAES;
+  hcryp.Init.Algorithm = CRYP_AES_CTR;
+  hcryp.Init.DataWidthUnit = CRYP_DATAWIDTHUNIT_WORD;
+  hcryp.Init.HeaderWidthUnit = CRYP_HEADERWIDTHUNIT_WORD;
+  hcryp.Init.KeyIVConfigSkip = CRYP_KEYIVCONFIG_ALWAYS;
+  hcryp.Init.KeyMode = CRYP_KEYMODE_NORMAL;
+  if (HAL_CRYP_Init(&hcryp) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN AES_Init 2 */
+
+  /* USER CODE END AES_Init 2 */
+
+}
+
+/**
+  * @brief GTZC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GTZC_Init(void)
+{
+
+  /* USER CODE BEGIN GTZC_Init 0 */
+
+  /* USER CODE END GTZC_Init 0 */
+
+  /* USER CODE BEGIN GTZC_Init 1 */
+
+  /* USER CODE END GTZC_Init 1 */
+  /* USER CODE BEGIN GTZC_Init 2 */
+
+  /* USER CODE END GTZC_Init 2 */
+
+}
+
+/**
+  * @brief HASH Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_HASH_Init(void)
+{
+
+  /* USER CODE BEGIN HASH_Init 0 */
+
+  /* USER CODE END HASH_Init 0 */
+
+  /* USER CODE BEGIN HASH_Init 1 */
+
+  /* USER CODE END HASH_Init 1 */
+  hhash.Init.DataType = HASH_DATATYPE_32B;
+  hhash.Init.KeySize = 1;
+  hhash.Init.pKey = (uint8_t *)pKeyHASH;
+  if (HAL_HASH_Init(&hhash) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN HASH_Init 2 */
+
+  /* USER CODE END HASH_Init 2 */
+
+}
+
+/**
+  * @brief RNG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
+
 }
 
 /**

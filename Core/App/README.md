@@ -5,7 +5,7 @@ Aktualna architektura jest oparta o zadania RTOS i Active Object (kolejki komend
 - `button_main` - polling 3 przycisków co 25 ms (`DIG_B1/B2/B3`), debounce, short/long press.
 - `menu_main` - kontroler UI na LCD 20x4 (pager/menu/popup), auto-exit 60 s.
 - `lcd_main` - dedykowany task LCD z trybami `MONITOR/MENU/POPUP`, scroll wiadomości RX.
-- `radio_main` - task radiowy z protokołem `BEKO_NET_V1`, TTL+dedup forwarding, pairing, presety LoRa.
+- `radio_main` - task radiowy z protokołem `LAVIET_FRAME_V1`, ACK, HMAC/AES-CTR, counter anti-replay i presetami LoRa.
 - `security_main` - task domeny security: runtime config, rotacja klucza, TPM bootstrap, log RX do EEPROM.
 - `bmp280_main`, `tof_main`, `led_array_main` - zadania sprzętowe jak wcześniej.
 
@@ -21,11 +21,12 @@ Aktualna architektura jest oparta o zadania RTOS i Active Object (kolejki komend
 
 LCD pokazuje animację `HELLO BEKO`, następnie przechodzi do monitora RX.
 
-## Routing i UI
+## Radio i UI
 
-- Ramki systemowe: `BEKO_NET_V1` (`BK`, ver=1, ttl, src/dst, msg_id, payload, crc16).
-- `node_id` wyliczane z UID MCU.
-- Forwarding: tylko ramki systemowe nie-do-mnie, `ttl > 1`, bez duplikatów (cache 32/60 s).
+- Ramki systemowe: `LAVIET_FRAME_V1`, 45-61 B, `payload` 0-16 B, `mac_tag` 32 B.
+- `node_id` jest 16-bitowe i wyliczane z UID MCU z pominięciem wartości zarezerwowanych.
+- Topologia jest gwiazdą: node nie wykonuje mesh relay ani TTL forwarding.
+- Każda poprawna unicastowa ramka gateway->node dostaje `ACK` z `msg_id` i `counter`.
 - Każda wiadomość RX:
   - print na UART,
   - jedna linia LCD (`RSSI:payload`, 20 znaków),

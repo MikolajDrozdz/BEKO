@@ -1,6 +1,6 @@
 #include "menu_main.h"
 
-#include "beko_net_proto.h"
+#include "laviet_frame.h"
 #include "bmp280_main.h"
 #include "button_main.h"
 #include "cmsis_os2.h"
@@ -23,6 +23,8 @@
 #define MENU_ITEMS_VISIBLE                  3U
 #define MENU_LINE_CHARS                     20U
 #define MENU_LINE_BUF_SIZE                  (MENU_LINE_CHARS + 1U)
+#define MENU_SETTINGS_PIN_LEN               4U
+#define MENU_SETTINGS_PIN_UNLOCK_MS         60000UL
 #define MENU_TRUSTED_DEVICE_SLOTS           16U
 #define MENU_DEVICE_SLOT_INVALID            0xFFU
 
@@ -340,8 +342,16 @@ typedef enum
     MENU_MODAL_PAIR_REQUEST,
     MENU_MODAL_PAIR_SETUP,
     MENU_MODAL_SEND_CONFIRM,
-    MENU_MODAL_QUICK_REPLY
+    MENU_MODAL_QUICK_REPLY,
+    MENU_MODAL_PIN
 } menu_modal_t;
+
+typedef enum
+{
+    MENU_AUTH_NONE = 0,
+    MENU_AUTH_USER,
+    MENU_AUTH_ADMIN
+} menu_auth_level_t;
 
 typedef struct
 {
@@ -357,6 +367,12 @@ typedef struct
     uint32_t quick_reply_deadline_ms;
     uint32_t quick_reply_last_seconds;
     char quick_reply_text[MENU_LINE_BUF_SIZE];
+    menu_page_id_t pending_auth_page;
+    menu_auth_level_t pending_auth_level;
+    uint8_t pin_digits[MENU_SETTINGS_PIN_LEN];
+    uint8_t pin_index;
+    uint32_t user_unlock_until_ms;
+    uint32_t admin_unlock_until_ms;
     bool popup_enabled;
     uint32_t last_input_ms;
     menu_modal_t modal;
@@ -380,12 +396,15 @@ static osThreadId_t s_menu_task = NULL;
 static osMessageQueueId_t s_menu_notify_queue = NULL;
 static StaticTask_t s_menu_task_cb;
 static StackType_t s_menu_task_stack[MENU_TASK_STACK_WORDS];
+static const uint8_t s_user_pin[MENU_SETTINGS_PIN_LEN] = { 0U, 0U, 0U, 0U };
+static const uint8_t s_admin_pin[MENU_SETTINGS_PIN_LEN] = { 9U, 9U, 9U, 9U };
 
 static void menu_main_task_fn(void *argument);
 static const menu_page_t *menu_get_page(menu_page_id_t page_id);
 static void menu_render(menu_state_t *st);
 static void menu_render_popup(const char *l0, const char *l1, const char *l2, const char *l3);
 static void menu_render_quick_reply(menu_state_t *st);
+static void menu_render_pin(menu_state_t *st);
 static void menu_enter_monitor(menu_state_t *st);
 static void menu_open_page(menu_state_t *st, menu_page_id_t page_id);
 static void menu_open_info_modal(menu_state_t *st,
@@ -396,6 +415,7 @@ static void menu_open_info_modal(menu_state_t *st,
 static void menu_close_modal(menu_state_t *st);
 static void menu_handle_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_modal_button(menu_state_t *st, button_event_t evt);
+static void menu_handle_pin_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n);
 static void menu_execute_action(menu_state_t *st, menu_action_t action);
 static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text);
@@ -406,10 +426,15 @@ static bool menu_is_send_action(menu_action_t action);
 static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx);
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label);
 static void menu_open_send_target_page(menu_state_t *st, menu_action_t action);
-static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, bool network_mode);
+static bool menu_start_pairing_session(menu_state_t *st, bool send_pair_req, bool network_mode);
 static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot);
 static bool menu_should_open_quick_reply(const char *text);
 static bool menu_modal_is_preemptible(menu_modal_t modal);
+static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id);
+static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_level);
+static bool menu_pin_matches(const menu_state_t *st);
+static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_auth_level_t auth_level);
+static void menu_clear_pin_state(menu_state_t *st);
 static void menu_line_clear(char *dst);
 static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars);
 static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value);
@@ -497,8 +522,6 @@ static const menu_item_t s_page_send_direct_list_items[] =
 
 static const menu_item_t s_page_send_target_list_items[] =
 {
-    { "Broadcast", MENU_PAGE_NONE, MENU_ACTION_NONE },
-    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
@@ -1435,6 +1458,9 @@ static void menu_enter_monitor(menu_state_t *st)
     st->quick_reply_src_id = 0U;
     st->quick_reply_deadline_ms = 0U;
     st->quick_reply_last_seconds = 0U;
+    st->user_unlock_until_ms = 0UL;
+    st->admin_unlock_until_ms = 0UL;
+    menu_clear_pin_state(st);
     menu_line_clear(st->quick_reply_text);
     (void)lcd_main_set_mode(LCD_MODE_MONITOR);
 }
@@ -1502,6 +1528,10 @@ static void menu_close_modal(menu_state_t *st)
         return;
     }
 
+    if (st->modal == MENU_MODAL_PIN)
+    {
+        menu_clear_pin_state(st);
+    }
     st->modal = MENU_MODAL_NONE;
     st->pending_action = MENU_ACTION_NONE;
 
@@ -2206,11 +2236,10 @@ static void menu_build_item_label(const menu_state_t *st,
     }
 
     if ((st->current_page == MENU_PAGE_SEND_TARGET_LIST) &&
-        (item_idx > 0U) &&
-        (item_idx <= MENU_TRUSTED_DEVICE_SLOTS))
+        (item_idx < MENU_TRUSTED_DEVICE_SLOTS))
     {
         memset(&info, 0, sizeof(info));
-        if (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) && info.in_use)
+        if (security_main_cmd_get_device(item_idx, &info) && info.in_use)
         {
             offset = menu_line_copy(dst, offset, info.is_master ? "Master " : "Node ", 7U);
             offset = menu_line_copy(dst, offset, "0x", 2U);
@@ -2219,7 +2248,7 @@ static void menu_build_item_label(const menu_state_t *st,
         else
         {
             offset = menu_line_copy(dst, offset, "Slot ", 5U);
-            offset = menu_line_append_u32(dst, offset, (uint32_t)(item_idx - 1U));
+            offset = menu_line_append_u32(dst, offset, item_idx);
             offset = menu_line_copy(dst, offset, " ", 1U);
             (void)menu_line_copy(dst, offset, "(empty)", 7U);
         }
@@ -2369,6 +2398,199 @@ static void menu_render_quick_reply(menu_state_t *st)
     menu_line_copy_or_default(line2, "UP=no OK=ok DN=yes", "");
     menu_line_format_u32(line3, "Reply in ", st->quick_reply_last_seconds, " s");
     menu_render_popup(st->quick_reply_text, line1, line2, line3);
+}
+
+static void menu_render_pin(menu_state_t *st)
+{
+    char line1[MENU_LINE_BUF_SIZE];
+    const char *title = "USER PIN";
+    uint8_t offset;
+    uint8_t i;
+
+    if (st == NULL)
+    {
+        return;
+    }
+
+    if (st->pending_auth_level == MENU_AUTH_ADMIN)
+    {
+        title = "ADMIN PIN";
+    }
+
+    menu_line_clear(line1);
+    offset = menu_line_copy(line1, 0U, "PIN: ", 5U);
+    for (i = 0U; i < MENU_SETTINGS_PIN_LEN; i++)
+    {
+        char digit = '_';
+
+        if (i < st->pin_index)
+        {
+            digit = '*';
+        }
+        else if (i == st->pin_index)
+        {
+            digit = (char)('0' + st->pin_digits[i]);
+        }
+
+        if (offset < MENU_LINE_CHARS)
+        {
+            line1[offset++] = digit;
+        }
+        if (offset < MENU_LINE_CHARS)
+        {
+            line1[offset++] = ' ';
+        }
+    }
+
+    menu_render_popup(title, line1, "UP/DN digit", "OK=next HOLD=cancel");
+}
+
+static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id)
+{
+    switch (page_id)
+    {
+        case MENU_PAGE_PAGER:
+        case MENU_PAGE_RADIO_SETTINGS:
+        case MENU_PAGE_SEND_OPTIONS:
+        case MENU_PAGE_SEND_DIRECT_LIST:
+        case MENU_PAGE_SEND_TARGET_LIST:
+        case MENU_PAGE_MSG_GROUPS:
+        case MENU_PAGE_GROUP_ALERT:
+        case MENU_PAGE_GROUP_STATUS:
+        case MENU_PAGE_GROUP_SERVICE:
+        case MENU_PAGE_GROUP_QUICK:
+            return MENU_AUTH_USER;
+
+        case MENU_PAGE_MAIN:
+        case MENU_PAGE_DEVICES:
+        case MENU_PAGE_DEVICE_DELETE_LIST:
+        case MENU_PAGE_DEVICE_DELETE_ACTION:
+        case MENU_PAGE_SECURITY:
+        case MENU_PAGE_SECURITY_FH:
+        case MENU_PAGE_SECURITY_CODING:
+        case MENU_PAGE_SECURITY_NOTIFY:
+        case MENU_PAGE_SECURITY_AUTOPING:
+        case MENU_PAGE_HARDWARE:
+        case MENU_PAGE_HARDWARE_LED:
+        case MENU_PAGE_MODULATION:
+        case MENU_PAGE_MOD_LORA:
+        case MENU_PAGE_MOD_LORA_FREQ:
+        case MENU_PAGE_MOD_LORA_BW:
+        case MENU_PAGE_MOD_LORA_SF:
+        case MENU_PAGE_MOD_LORA_CR:
+        case MENU_PAGE_MOD_LORA_POWER:
+        case MENU_PAGE_MOD_LORA_CRC:
+        case MENU_PAGE_MOD_LORA_PREAMBLE:
+        case MENU_PAGE_MOD_LORA_HEADER:
+        case MENU_PAGE_MOD_LORA_IQ:
+        case MENU_PAGE_MOD_LORA_SYNC:
+        case MENU_PAGE_MOD_FSK:
+        case MENU_PAGE_MOD_FSK_SHAPING:
+        case MENU_PAGE_MOD_FSK_FREQ:
+        case MENU_PAGE_MOD_FSK_BITRATE:
+        case MENU_PAGE_MOD_FSK_BW:
+        case MENU_PAGE_MOD_FSK_FILTER:
+        case MENU_PAGE_MOD_FSK_POWER:
+        case MENU_PAGE_MOD_FSK_PREAMBLE:
+        case MENU_PAGE_MOD_FSK_SYNC_LEN:
+        case MENU_PAGE_MOD_FSK_SYNC_WORD:
+        case MENU_PAGE_MOD_FSK_ADDR:
+        case MENU_PAGE_MOD_FSK_CRC:
+        case MENU_PAGE_MOD_FSK_WHITEN:
+        case MENU_PAGE_MOD_OOK:
+        case MENU_PAGE_MOD_OOK_FREQ:
+        case MENU_PAGE_MOD_OOK_BITRATE:
+        case MENU_PAGE_MOD_OOK_POWER:
+        case MENU_PAGE_MOD_OOK_BW:
+        case MENU_PAGE_MOD_OOK_PREAMBLE:
+        case MENU_PAGE_MOD_OOK_SYNC_LEN:
+        case MENU_PAGE_MOD_OOK_SYNC_WORD:
+        case MENU_PAGE_MOD_OOK_THRESH_TYPE:
+        case MENU_PAGE_MOD_OOK_THRESH_VALUE:
+        case MENU_PAGE_INFO:
+            return MENU_AUTH_ADMIN;
+
+        default:
+            return MENU_AUTH_NONE;
+    }
+}
+
+static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_level)
+{
+    uint32_t until_ms = 0UL;
+
+    if ((st == NULL) || (auth_level == MENU_AUTH_NONE))
+    {
+        return (auth_level == MENU_AUTH_NONE);
+    }
+
+    if (auth_level == MENU_AUTH_ADMIN)
+    {
+        until_ms = st->admin_unlock_until_ms;
+    }
+    else
+    {
+        until_ms = st->user_unlock_until_ms;
+    }
+
+    if (until_ms == 0UL)
+    {
+        return false;
+    }
+
+    return ((int32_t)(until_ms - HAL_GetTick()) > 0);
+}
+
+static bool menu_pin_matches(const menu_state_t *st)
+{
+    const uint8_t *pin_ref = s_user_pin;
+    uint8_t diff = 0U;
+    uint8_t i;
+
+    if (st == NULL)
+    {
+        return false;
+    }
+
+    if (st->pending_auth_level == MENU_AUTH_ADMIN)
+    {
+        pin_ref = s_admin_pin;
+    }
+
+    for (i = 0U; i < MENU_SETTINGS_PIN_LEN; i++)
+    {
+        diff |= (uint8_t)(st->pin_digits[i] ^ pin_ref[i]);
+    }
+
+    return (diff == 0U);
+}
+
+static void menu_clear_pin_state(menu_state_t *st)
+{
+    if (st == NULL)
+    {
+        return;
+    }
+
+    memset(st->pin_digits, 0, sizeof(st->pin_digits));
+    st->pin_index = 0U;
+    st->pending_auth_page = MENU_PAGE_NONE;
+    st->pending_auth_level = MENU_AUTH_NONE;
+}
+
+static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_auth_level_t auth_level)
+{
+    if (st == NULL)
+    {
+        return;
+    }
+
+    st->modal = MENU_MODAL_PIN;
+    st->pending_auth_page = target_page;
+    st->pending_auth_level = auth_level;
+    memset(st->pin_digits, 0, sizeof(st->pin_digits));
+    st->pin_index = 0U;
+    menu_render_pin(st);
 }
 
 static bool menu_should_open_quick_reply(const char *text)
@@ -2525,11 +2747,6 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
             return;
         }
 
-        if (!st->popup_enabled && (st->current_page == MENU_PAGE_NONE))
-        {
-            return;
-        }
-
         menu_line_format_hex32(source_line, "From ", n->device_code);
         menu_line_format_i32(rssi_line, "RSSI ", n->rssi_dbm, " dBm");
         menu_open_info_modal(st, "RX MESSAGE", has_text ? text_safe : "(empty)", source_line, rssi_line);
@@ -2542,7 +2759,7 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     }
 
     if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-        (strncmp(text_safe, "JOIN_REQ", 8U) == 0))
+        (strncmp(text_safe, "PAIR_REQ", 8U) == 0))
     {
         st->modal = MENU_MODAL_PAIR_REQUEST;
         menu_line_clear(code_line);
@@ -2553,17 +2770,17 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     }
 
     if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-        (strncmp(text_safe, "JOIN_SENT", 9U) == 0))
+        (strncmp(text_safe, "PAIR_SENT", 9U) == 0))
     {
         menu_line_clear(code_line);
         (void)menu_line_copy(code_line, 0U, "Code: ", 6U);
         (void)menu_line_copy(code_line, 6U, menu_pair_code_text(text_safe, 9U), 11U);
-        menu_open_info_modal(st, "JOIN REQ SENT", code_line, "Wait for JOIN_OK", "");
+        menu_open_info_modal(st, "PAIR REQ SENT", code_line, "Wait for PAIR_OK", "");
         return;
     }
 
     if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-        (strncmp(text_safe, "JOIN_OK", 7U) == 0))
+        (strncmp(text_safe, "PAIR_OK", 7U) == 0))
     {
         menu_line_clear(code_line);
         (void)menu_line_copy(code_line, 0U, "Code: ", 6U);
@@ -2573,9 +2790,9 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     }
 
     if ((n->type == MENU_NOTIFICATION_PAIRING) &&
-        (strncmp(text_safe, "JOIN_REJECT", 11U) == 0))
+        (strncmp(text_safe, "PAIR_ERROR", 10U) == 0))
     {
-        menu_open_info_modal(st, "PAIRING", "JOIN rejected", "Any key=back", "");
+        menu_open_info_modal(st, "PAIRING", "PAIR rejected", "Any key=back", "");
         return;
     }
 
@@ -2589,11 +2806,91 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     }
 }
 
+static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
+{
+    menu_page_id_t target_page;
+
+    if ((st == NULL) || (evt == BUTTON_EVENT_NONE))
+    {
+        return;
+    }
+
+    if (evt == BUTTON_EVENT_UP_SHORT)
+    {
+        st->pin_digits[st->pin_index] = (uint8_t)((st->pin_digits[st->pin_index] + 1U) % 10U);
+        menu_render_pin(st);
+        return;
+    }
+
+    if (evt == BUTTON_EVENT_DOWN_SHORT)
+    {
+        st->pin_digits[st->pin_index] = (st->pin_digits[st->pin_index] == 0U) ?
+                                        9U :
+                                        (uint8_t)(st->pin_digits[st->pin_index] - 1U);
+        menu_render_pin(st);
+        return;
+    }
+
+    if (evt == BUTTON_EVENT_OK_LONG)
+    {
+        menu_close_modal(st);
+        return;
+    }
+
+    if (evt != BUTTON_EVENT_OK_SHORT)
+    {
+        return;
+    }
+
+    if ((uint8_t)(st->pin_index + 1U) < MENU_SETTINGS_PIN_LEN)
+    {
+        st->pin_index++;
+        menu_render_pin(st);
+        return;
+    }
+
+    if (!menu_pin_matches(st))
+    {
+        memset(st->pin_digits, 0, sizeof(st->pin_digits));
+        st->pin_index = 0U;
+        menu_render_popup("BAD PIN", "Try again", "UP/DN digit", "OK=next HOLD=cancel");
+        return;
+    }
+
+    target_page = st->pending_auth_page;
+    if (st->pending_auth_level == MENU_AUTH_ADMIN)
+    {
+        st->admin_unlock_until_ms = HAL_GetTick() + MENU_SETTINGS_PIN_UNLOCK_MS;
+        st->user_unlock_until_ms = st->admin_unlock_until_ms;
+    }
+    else if (st->pending_auth_level == MENU_AUTH_USER)
+    {
+        st->user_unlock_until_ms = HAL_GetTick() + MENU_SETTINGS_PIN_UNLOCK_MS;
+    }
+    st->modal = MENU_MODAL_NONE;
+    menu_clear_pin_state(st);
+
+    if (target_page == MENU_PAGE_NONE)
+    {
+        if (st->current_page == MENU_PAGE_NONE)
+        {
+            (void)lcd_main_set_mode(LCD_MODE_MONITOR);
+        }
+        else
+        {
+            menu_render(st);
+        }
+        return;
+    }
+
+    menu_open_page(st, target_page);
+}
+
 static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
 {
     menu_action_t action;
     bool ok;
-    bool send_join_req;
+    bool send_pair_req;
 
     if ((st == NULL) || (evt == BUTTON_EVENT_NONE))
     {
@@ -2602,6 +2899,10 @@ static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
 
     switch (st->modal)
     {
+        case MENU_MODAL_PIN:
+            menu_handle_pin_button(st, evt);
+            break;
+
         case MENU_MODAL_PAIR_REQUEST:
             if (evt == BUTTON_EVENT_OK_SHORT)
             {
@@ -2616,14 +2917,22 @@ static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
             break;
 
         case MENU_MODAL_PAIR_SETUP:
-            send_join_req = (evt == BUTTON_EVENT_OK_LONG);
-            if ((evt != BUTTON_EVENT_OK_SHORT) && (evt != BUTTON_EVENT_OK_LONG))
+            send_pair_req = (!st->pairing_network_mode && (evt == BUTTON_EVENT_OK_LONG));
+            if (st->pairing_network_mode)
+            {
+                if (evt != BUTTON_EVENT_OK_SHORT)
+                {
+                    menu_close_modal(st);
+                    return;
+                }
+            }
+            else if ((evt != BUTTON_EVENT_OK_SHORT) && (evt != BUTTON_EVENT_OK_LONG))
             {
                 menu_close_modal(st);
                 return;
             }
 
-            ok = menu_start_pairing_session(st, send_join_req, st->pairing_network_mode);
+            ok = menu_start_pairing_session(st, send_pair_req, st->pairing_network_mode);
             if (!ok)
             {
                 menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Pairing start failed");
@@ -2696,7 +3005,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
         }
         else if ((evt == BUTTON_EVENT_OK_SHORT) || (evt == BUTTON_EVENT_OK_LONG))
         {
-            menu_open_page(st, MENU_PAGE_PAGER);
+            menu_request_pin(st, MENU_PAGE_PAGER, MENU_AUTH_USER);
         }
         return;
     }
@@ -2705,6 +3014,14 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
     if (page == NULL)
     {
         menu_enter_monitor(st);
+        return;
+    }
+
+    if ((menu_page_auth_level(st->current_page) != MENU_AUTH_NONE) &&
+        !menu_auth_unlocked(st, menu_page_auth_level(st->current_page)) &&
+        (evt != BUTTON_EVENT_OK_LONG))
+    {
+        menu_request_pin(st, st->current_page, menu_page_auth_level(st->current_page));
         return;
     }
 
@@ -2780,19 +3097,13 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                 }
                 else if (st->current_page == MENU_PAGE_SEND_TARGET_LIST)
                 {
-                    if (st->selected_idx == 0U)
-                    {
-                        st->pending_target_node_id = BEKO_NET_BROADCAST_ID;
-                        menu_open_send_prompt(st, st->send_target_action, "Broadcast");
-                    }
-                    else if ((st->selected_idx > 0U) &&
-                             (st->selected_idx <= MENU_TRUSTED_DEVICE_SLOTS))
+                    if (st->selected_idx < MENU_TRUSTED_DEVICE_SLOTS)
                     {
                         trusted_info_t info;
                         char label[MENU_LINE_BUF_SIZE];
 
                         memset(&info, 0, sizeof(info));
-                        if (security_main_cmd_get_device((uint8_t)(st->selected_idx - 1U), &info) && info.in_use)
+                        if (security_main_cmd_get_device(st->selected_idx, &info) && info.in_use)
                         {
                             st->pending_target_node_id = info.node_id;
                             menu_line_clear(label);
@@ -2848,6 +3159,12 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                 }
                 else if (item->child_page != MENU_PAGE_NONE)
                 {
+                    if ((menu_page_auth_level(item->child_page) != MENU_AUTH_NONE) &&
+                        !menu_auth_unlocked(st, menu_page_auth_level(item->child_page)))
+                    {
+                        menu_request_pin(st, item->child_page, menu_page_auth_level(item->child_page));
+                        break;
+                    }
                     menu_open_page(st, item->child_page);
                 }
                 else if (menu_is_send_action(item->action))
@@ -2913,6 +3230,13 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
         return;
     }
 
+    if (menu_is_send_action(action) && (st->pending_target_node_id == 0U))
+    {
+        st->send_target_action = MENU_ACTION_NONE;
+        menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "No target");
+        return;
+    }
+
     switch (action)
     {
         case MENU_ACTION_BACK:
@@ -2941,7 +3265,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_DEFAULT:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(1U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:OK");
             st->pending_target_node_id = 0U;
@@ -2962,7 +3286,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ALERT_FIRE:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(0U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent ALR:FIRE");
             st->pending_target_node_id = 0U;
@@ -2970,7 +3294,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ALERT_INTR:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(0U, 1U, dst_id);
             menu_show_send_result(st, send_ok, "Sent ALR:INTR");
             st->pending_target_node_id = 0U;
@@ -2978,7 +3302,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ALERT_LOWBATT:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(0U, 2U, dst_id);
             menu_show_send_result(st, send_ok, "Sent ALR:LOW");
             st->pending_target_node_id = 0U;
@@ -2986,7 +3310,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_STATUS_OK:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(1U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:OK");
             st->pending_target_node_id = 0U;
@@ -2994,7 +3318,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_STATUS_BUSY:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(1U, 1U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:BUSY");
             st->pending_target_node_id = 0U;
@@ -3002,7 +3326,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_STATUS_IDLE:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(1U, 2U, dst_id);
             menu_show_send_result(st, send_ok, "Sent STS:IDLE");
             st->pending_target_node_id = 0U;
@@ -3010,7 +3334,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_SERVICE_PING:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(2U, 0U, dst_id);
             menu_show_send_result(st, send_ok, "Sent SRV:PING");
             st->pending_target_node_id = 0U;
@@ -3018,7 +3342,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_SERVICE_RESET:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(2U, 1U, dst_id);
             menu_show_send_result(st, send_ok, "Sent SRV:RESET");
             st->pending_target_node_id = 0U;
@@ -3026,7 +3350,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_SERVICE_SYNC:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_template(2U, 2U, dst_id);
             menu_show_send_result(st, send_ok, "Sent SRV:SYNC");
             st->pending_target_node_id = 0U;
@@ -3034,7 +3358,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ASK_DONE:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_user_text("ASK: Is done?", dst_id);
             menu_show_send_result(st, send_ok, "Sent ASK:DONE");
             st->pending_target_node_id = 0U;
@@ -3042,7 +3366,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ACT_COME_OVER:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_user_text("ACT Come over.", dst_id);
             menu_show_send_result(st, send_ok, "Sent ACT:COME");
             st->pending_target_node_id = 0U;
@@ -3050,7 +3374,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ACT_STOP:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_user_text("ACT: Stop!", dst_id);
             menu_show_send_result(st, send_ok, "Sent ACT:STOP");
             st->pending_target_node_id = 0U;
@@ -3058,7 +3382,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             break;
 
         case MENU_ACTION_SEND_ASK_READY:
-            dst_id = (st->pending_target_node_id != 0U) ? st->pending_target_node_id : BEKO_NET_BROADCAST_ID;
+            dst_id = st->pending_target_node_id;
             send_ok = radio_main_cmd_send_user_text("ASK: Is ready?", dst_id);
             menu_show_send_result(st, send_ok, "Sent ASK:READY");
             st->pending_target_node_id = 0U;
@@ -3069,14 +3393,14 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             st->pairing_network_mode = false;
             st->modal = MENU_MODAL_PAIR_SETUP;
             st->pending_action = MENU_ACTION_NONE;
-            menu_render_popup("PAIR MODE 60s", "OK=listen", "Hold OK=JOIN_REQ", "Any key=cancel");
+            menu_render_popup("PAIR MODE 60s", "OK=listen", "Hold OK=PAIR_REQ", "Any key=cancel");
             break;
 
         case MENU_ACTION_DEVICE_ADD_NETWORK:
             st->pairing_network_mode = true;
             st->modal = MENU_MODAL_PAIR_SETUP;
             st->pending_action = MENU_ACTION_NONE;
-            menu_render_popup("NET PAIR >-20dBm", "OK=listen", "Hold OK=JOIN_REQ", "Any key=cancel");
+            menu_render_popup("NET PAIR 60s", "OK=listen", "GW sends PAIR_REQ", "Any key=cancel");
             break;
 
         case MENU_ACTION_DEVICE_DELETE:
@@ -3100,7 +3424,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             ok = security_main_cmd_delete_device(info.node_id);
             if (ok)
             {
-                send_ok = radio_main_cmd_send_trust_removed(info.node_id);
+                send_ok = radio_main_cmd_send_pair_error(info.node_id);
             }
             else
             {
@@ -3549,17 +3873,17 @@ static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *p
 
     if (st->current_page == MENU_PAGE_SEND_TARGET_LIST)
     {
-        if ((item_idx == 0U) || (item_idx == (uint8_t)(page->item_count - 1U)))
+        if (item_idx == (uint8_t)(page->item_count - 1U))
         {
             return true;
         }
 
-        if ((item_idx > 0U) && (item_idx <= MENU_TRUSTED_DEVICE_SLOTS))
+        if (item_idx < MENU_TRUSTED_DEVICE_SLOTS)
         {
             trusted_info_t info;
 
             memset(&info, 0, sizeof(info));
-            return (security_main_cmd_get_device((uint8_t)(item_idx - 1U), &info) && info.in_use);
+            return (security_main_cmd_get_device(item_idx, &info) && info.in_use);
         }
 
         return false;
@@ -3607,6 +3931,7 @@ static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const 
 static void menu_open_send_target_page(menu_state_t *st, menu_action_t action)
 {
     menu_page_id_t previous_page;
+    const menu_page_t *page;
 
     if (st == NULL)
     {
@@ -3621,6 +3946,19 @@ static void menu_open_send_target_page(menu_state_t *st, menu_action_t action)
     st->pending_target_node_id = 0U;
     st->send_target_action = action;
     st->transient_parent_page = previous_page;
+    page = menu_get_page(MENU_PAGE_SEND_TARGET_LIST);
+    if (page != NULL)
+    {
+        while ((st->selected_idx < page->item_count) &&
+               !menu_item_is_selectable(st, page, st->selected_idx))
+        {
+            st->selected_idx++;
+        }
+        if ((page->item_count > 0U) && (st->selected_idx >= page->item_count))
+        {
+            st->selected_idx = (uint8_t)(page->item_count - 1U);
+        }
+    }
     menu_render(st);
 }
 
@@ -3640,7 +3978,7 @@ static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot)
 }
 
 /* Starts pairing and reports the mode/result through a modal message. */
-static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, bool network_mode)
+static bool menu_start_pairing_session(menu_state_t *st, bool send_pair_req, bool network_mode)
 {
     bool send_ok = true;
 
@@ -3654,31 +3992,32 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, boo
         {
             return false;
         }
+        send_pair_req = false;
     }
     else if (!radio_main_cmd_start_pairing(60000U))
     {
         return false;
     }
 
-    if (send_join_req)
+    if (send_pair_req)
     {
         if (network_mode)
         {
-            send_ok = radio_main_cmd_send_network_join_req();
+            send_ok = radio_main_cmd_send_network_pair_req();
         }
         else
         {
-            send_ok = radio_main_cmd_send_join_req();
+            send_ok = radio_main_cmd_send_pair_req();
         }
     }
 
-    if (send_join_req)
+    if (send_pair_req)
     {
-        const char *status_line = "JOIN_REQ failed";
+        const char *status_line = "PAIR_REQ failed";
 
         if (send_ok)
         {
-            status_line = "JOIN_REQ sent";
+            status_line = "PAIR_REQ sent";
         }
 
         menu_open_info_modal(st,
@@ -3692,7 +4031,7 @@ static bool menu_start_pairing_session(menu_state_t *st, bool send_join_req, boo
         menu_open_info_modal(st,
                              network_mode ? "NET PAIR" : "PAIR MODE",
                              "60s active",
-                             network_mode ? "Need >-20 dBm" : "Listening...",
+                             network_mode ? "Wait PAIR_REQ GW" : "Listening...",
                              "Any key=close");
     }
 
