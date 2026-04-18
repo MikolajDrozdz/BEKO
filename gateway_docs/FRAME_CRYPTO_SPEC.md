@@ -18,7 +18,14 @@ Spec obejmuje:
 - liczenie HMAC-SHA256,
 - kolejnosc operacji TX i RX,
 - zachowanie pairingu,
+- aktualne sciezki kompatybilnosci po stronie nodu,
 - najczestsze bledy zgodnosci.
+
+Dokument rozroznia dwie rzeczy:
+
+- kontrakt docelowy, ktorego nowy gateway powinien przestrzegac,
+- aktualne zachowanie kompatybilnosci w firmware STM32, ktore istnieje po to,
+  zeby zdiagnozowac lub przezyc starsze gatewaye.
 
 ## 2. Stale protokolu
 
@@ -118,6 +125,13 @@ Mapa bitowa `flags`:
 - szyfrowanie:
   - unicast po sparowaniu: tak
   - broadcast: nie
+- docelowo, jezeli payload jest szyfrowany, `ENCRYPTED` musi byc ustawione
+- aktualny node ma dodatkowa sciezke kompatybilnosci:
+  - dla gateway->node `DATA` i `RESP`
+  - jezeli HMAC przejdzie, a `ENCRYPTED=0`
+  - node moze sprobowac decrypt jako diagnostyczny fallback
+  - to nie jest kontrakt dla nowego gatewaya; nowy gateway ma ustawic
+    `ENCRYPTED=1`
 
 ### 7.2. `ACK`
 
@@ -245,6 +259,20 @@ Aktualny node probuje przy odbiorze od gatewaya kolejno:
 To jest tylko mechanizm zgodnosci ze starszymi gatewayami.
 Nie nalezy go traktowac jako docelowego projektu nowego gatewaya.
 
+### 10.4. Zrodlo `code[8]` po sparowaniu
+
+Aktualny node po udanym pairingu gatewayowym:
+
+- zapisuje `code[8]` w storage slotu gatewaya,
+- trzyma tez kopie tego `code[8]` w runtime cache,
+- przy starcie probuje odtworzyc cache ze storage.
+
+To jest istotne, bo dalszy unicast po pairingu musi byc liczony z dokladnie tym
+samym `code[8]`, ktory przeszedl w `PAIR_REQ/PAIR_RESP`.
+
+Jesli gateway po pairingu zacznie liczyc `DATA/RESP/ACK` z innym `code[8]`,
+node odrzuci ramke na `HMAC drop`, nawet gdy reszta formatu jest poprawna.
+
 ## 11. Wyprowadzanie `aes_key` i `hmac_key`
 
 Z `base_key` wyprowadzane sa dwa subklucze przez HMAC-SHA256.
@@ -355,6 +383,15 @@ Czyli kolejnosc jest taka:
 3. policz HMAC po `header + encrypted_payload`,
 4. dopiero wtedy dolacz `mac_tag`.
 
+Jezeli gateway wysyla ciphertext, ale zostawia `ENCRYPTED=0`, to sa dwa skutki:
+
+1. To jest niezgodne z kontraktem i nowy gateway nie powinien tak robic.
+2. Samo to nie tlumaczy `HMAC drop`.
+
+`HMAC drop` oznacza, ze po stronie nodu nie zgadzaja sie bajty `header+payload`
+albo klucz HMAC. Brak flagi `ENCRYPTED` psuje interpretacje payloadu, ale nie
+jest pierwsza przyczyna bledu, jezeli HMAC odpada juz na wejsciu.
+
 ### 13.3. Wzor
 
 ```text
@@ -399,6 +436,25 @@ Czyli:
 - zly HMAC = brak decrypt
 - brak zgodnego klucza = brak decrypt
 
+### 15.1. Aktualna kompatybilnosc RX dla gateway->node
+
+W aktualnym firmware node ma dodatkowe zachowanie diagnostyczne:
+
+- dla ramek od gatewaya typow `DATA` i `RESP`
+- jezeli `HMAC` przejdzie
+- a flaga `ENCRYPTED` nie jest ustawiona
+- node moze sprobowac decrypt payloadu tym samym `aes_key`
+- jezeli wynik wyglada jak sensowny tekst, node przyjmie ten plaintext
+  i zaloguje sciezke kompatybilnosci
+
+To istnieje po to, zeby pomoc przy diagnozowaniu gatewaya, ktory szyfruje
+payload, ale nie ustawia flagi `ENCRYPTED`.
+
+To nie zmienia kontraktu docelowego:
+
+- nowy gateway ma szyfrowac tylko wtedy, gdy ustawia `ENCRYPTED=1`
+- nowy gateway nie powinien polegac na tej sciezce kompatybilnosci
+
 ## 16. Jak gateway ma liczyc klucze dla poszczegolnych klas ruchu
 
 ### 16.1. `PAIR_REQ` broadcast
@@ -429,6 +485,7 @@ Czyli:
 - `base_key = pair_base_key` z kodu pairingowego
 - `domain_id = min(0x0001, node_id)` zwykle `0x0001`
 - `DATA` i `RESP` unicast zwykle z `ACK_REQUIRED`
+- jezeli payload jest szyfrowany, `ENCRYPTED` musi byc ustawione
 - broadcast `DATA` nie jest rekomendowany jako nowa implementacja gatewaya
 
 ### 16.5. `ACK`
@@ -463,6 +520,13 @@ Aktualny node nie blokuje juz twardo ramek z gatewaya tylko dlatego, ze
 
 To jest mechanizm zgodnosci i diagnostyki, a nie docelowy model bezpieczenstwa.
 Gateway nadal powinien prowadzic monotoniczny `counter`.
+
+To jest tylko bypass walidacji anti-replay na RX od gatewaya.
+`counter` nadal musi byc spojny z:
+
+- naglowkiem,
+- AES-CTR nonce,
+- wejsciem do HMAC.
 
 ## 18. Pairing - co idzie po eterze
 
@@ -506,6 +570,9 @@ Dla unicastu z `ACK_REQUIRED` gateway powinien:
 10. payload > `16 B`
 11. brak `PAIRING` przy `PAIR_REQ / PAIR_RESP`
 12. uzycie `PAIR_V1_16` jako glowny tryb nowego gatewaya
+13. wysylanie ciphertextu przy `ENCRYPTED=0`
+14. liczenie poprawnego HMAC dla pairingu, ale przejscie na inny `code[8]`
+    dla pierwszego `DATA` po sparowaniu
 
 ## 21. Minimalny algorytm wysylki `DATA` po sparowaniu
 
@@ -553,6 +620,7 @@ Nowy gateway, ktory ma byc zgodny z aktualnym node STM32, powinien:
 - dla zwyklego unicastu po sparowaniu uzywac `PAIR_V1_32`
 - liczyc HMAC po ciphertext
 - szyfrowac tylko payload
+- ustawic `ENCRYPTED=1`, jezeli payload jest szyfrowany
 - utrzymywac monotoniczny `counter`
 - mapowac `ACK` po `acked_msg_id + acked_counter`
 
@@ -563,6 +631,8 @@ Aktualny node na RX od gatewaya akceptuje:
 - `PAIR_V1_32`
 - `PAIR_V1_16`
 - `SHARED`
+- opcjonalny diagnostyczny decrypt dla `DATA/RESP`, gdy gateway wyslal
+  ciphertext z `ENCRYPTED=0`, ale HMAC i klucz sa poprawne
 
 ale tylko jako kompatybilnosc.
 

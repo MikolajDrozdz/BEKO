@@ -73,6 +73,13 @@ bool security_main_get_frame_keys_mode(uint16_t local_id,
                                        security_frame_key_mode_t mode,
                                        uint8_t enc_key_out[16],
                                        uint8_t hmac_key_out[32]);
+bool security_main_get_frame_keys_for_code(uint16_t local_id,
+                                           uint16_t peer_id,
+                                           security_frame_key_mode_t mode,
+                                           const uint8_t *code,
+                                           uint8_t code_len,
+                                           uint8_t enc_key_out[16],
+                                           uint8_t hmac_key_out[32]);
 bool security_main_get_frame_keys(uint16_t local_id,
                                   uint16_t peer_id,
                                   bool use_pair_link,

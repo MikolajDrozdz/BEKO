@@ -605,11 +605,14 @@ bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_
     return ok;
 }
 
-bool security_main_get_frame_keys_mode(uint16_t local_id,
-                                       uint16_t peer_id,
-                                       security_frame_key_mode_t mode,
-                                       uint8_t enc_key_out[16],
-                                       uint8_t hmac_key_out[32])
+static bool security_get_frame_keys_mode_internal(uint16_t local_id,
+                                                  uint16_t peer_id,
+                                                  security_frame_key_mode_t mode,
+                                                  const uint8_t *code_in,
+                                                  uint8_t code_in_len,
+                                                  bool use_explicit_code,
+                                                  uint8_t enc_key_out[16],
+                                                  uint8_t hmac_key_out[32])
 {
     uint8_t base_key[16];
     uint8_t digest[32];
@@ -629,7 +632,16 @@ bool security_main_get_frame_keys_mode(uint16_t local_id,
     switch (mode)
     {
         case SECURITY_FRAME_KEY_MODE_PAIR_V1_32:
-            if (!security_lookup_peer_code(peer_id, code, &code_len))
+            if (use_explicit_code)
+            {
+                if ((code_in == NULL) || (code_in_len == 0U))
+                {
+                    return false;
+                }
+                code_len = (code_in_len > SECURITY_CODE_MAX) ? SECURITY_CODE_MAX : code_in_len;
+                memcpy(code, code_in, code_len);
+            }
+            else if (!security_lookup_peer_code(peer_id, code, &code_len))
             {
                 return false;
             }
@@ -638,7 +650,16 @@ bool security_main_get_frame_keys_mode(uint16_t local_id,
             break;
 
         case SECURITY_FRAME_KEY_MODE_PAIR_V1_16:
-            if (!security_lookup_peer_code(peer_id, code, &code_len))
+            if (use_explicit_code)
+            {
+                if ((code_in == NULL) || (code_in_len == 0U))
+                {
+                    return false;
+                }
+                code_len = (code_in_len > SECURITY_CODE_MAX) ? SECURITY_CODE_MAX : code_in_len;
+                memcpy(code, code_in, code_len);
+            }
+            else if (!security_lookup_peer_code(peer_id, code, &code_len))
             {
                 return false;
             }
@@ -683,6 +704,40 @@ bool security_main_get_frame_keys_mode(uint16_t local_id,
     laviet_secure_zero(info, sizeof(info));
     laviet_secure_zero(code, sizeof(code));
     return ok;
+}
+
+bool security_main_get_frame_keys_mode(uint16_t local_id,
+                                       uint16_t peer_id,
+                                       security_frame_key_mode_t mode,
+                                       uint8_t enc_key_out[16],
+                                       uint8_t hmac_key_out[32])
+{
+    return security_get_frame_keys_mode_internal(local_id,
+                                                 peer_id,
+                                                 mode,
+                                                 NULL,
+                                                 0U,
+                                                 false,
+                                                 enc_key_out,
+                                                 hmac_key_out);
+}
+
+bool security_main_get_frame_keys_for_code(uint16_t local_id,
+                                           uint16_t peer_id,
+                                           security_frame_key_mode_t mode,
+                                           const uint8_t *code,
+                                           uint8_t code_len,
+                                           uint8_t enc_key_out[16],
+                                           uint8_t hmac_key_out[32])
+{
+    return security_get_frame_keys_mode_internal(local_id,
+                                                 peer_id,
+                                                 mode,
+                                                 code,
+                                                 code_len,
+                                                 true,
+                                                 enc_key_out,
+                                                 hmac_key_out);
 }
 
 bool security_main_get_frame_keys(uint16_t local_id,
