@@ -7,7 +7,7 @@ from ...services.laviet_frame import (
     LavietFrameBuilder, LavietFrame, LavietType, LAVIET_FRAME_VERSION,
     LAVIET_GATEWAY_ID, LAVIET_FLAG_COUNTER_OVERRIDE
 )
-from ...core.laviet_crypto import derive_unicast_base_key, get_aes_key, get_hmac_key, get_unicast_key_mode, laviet_aes_ctr_crypt, laviet_generate_mac
+from ...core.laviet_crypto import derive_unicast_base_key, get_aes_key, get_hmac_key, laviet_aes_ctr_crypt, laviet_generate_mac
 from ...models import models
 
 router = APIRouter()
@@ -23,7 +23,7 @@ def get_system_status():
         "radio_ready": lora_device.is_ready(),
         "radio_driver": lora_device.get_driver_name(),
         "radio_error": lora_device.get_last_error(),
-        "unicast_key_mode": get_unicast_key_mode(),
+        "unicast_key_mode": "pair32",
     }
 
 

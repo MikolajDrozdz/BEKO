@@ -8,7 +8,6 @@ from ...core.laviet_crypto import (
     derive_unicast_base_key,
     get_aes_key,
     get_hmac_key,
-    get_unicast_key_mode,
     laviet_aes_ctr_crypt,
     laviet_generate_mac,
 )
@@ -50,12 +49,6 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     if msg.dst_id in (0xFFFFFFFF, 4294967295):
         dst_id_16 = LAVIET_BROADCAST_ID
 
-    requested_key_mode = None
-    if msg.key_mode is not None:
-        requested_key_mode = msg.key_mode.strip().lower()
-        if requested_key_mode not in {"pair32", "pair16", "shared"}:
-            raise HTTPException(status_code=400, detail="Nieprawidlowy key_mode")
-
     node = None
     paired_code = None
     if dst_id_16 != LAVIET_BROADCAST_ID:
@@ -90,8 +83,7 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     else:
         if not isinstance(paired_code, bytes):
             paired_code = bytes(paired_code)
-        key_mode = requested_key_mode or get_unicast_key_mode()
-        base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, dst_id_16, paired_code, key_mode)
+        base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, dst_id_16, paired_code)
         domain_id = min(LAVIET_GATEWAY_ID, dst_id_16)
         aes_key = get_aes_key(base_key, domain_id)
         hmac_key = get_hmac_key(base_key, domain_id)
@@ -138,7 +130,7 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     print(
         f"[TX] LAVIET src={hex(LAVIET_GATEWAY_ID)} dst={hex(dst_id_16)} "
         f"msg_id=0x{msg_id:04X} counter={counter} coded={msg.coded} "
-        f"key_mode={(requested_key_mode or get_unicast_key_mode()) if dst_id_16 != LAVIET_BROADCAST_ID else 'shared-broadcast'} "
+        f"key_mode={'pair32' if dst_id_16 != LAVIET_BROADCAST_ID else 'shared-broadcast'} "
         f"payload={payload_bytes.hex()}"
     )
     tx_ok = bool(lora_device.send_frame(final_frame))

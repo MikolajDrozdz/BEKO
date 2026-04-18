@@ -13,6 +13,7 @@ from .core.laviet_crypto import (
     get_aes_key,
     get_hmac_key,
     laviet_aes_ctr_crypt,
+    laviet_mac_equal,
     laviet_generate_mac,
 )
 from .models import models
@@ -21,6 +22,7 @@ from .services import message_tracker
 from .services.laviet_frame import (
     LAVIET_BROADCAST_ID,
     LAVIET_FLAG_ACK_REQUIRED,
+    LAVIET_FLAG_BROADCAST,
     LAVIET_FLAG_ENCRYPTED,
     LAVIET_FLAG_IS_ACK,
     LAVIET_GATEWAY_ID,
@@ -81,6 +83,45 @@ def _derive_node_keys(node_id: int, paired_code: bytes):
     aes_key = get_aes_key(base_key, domain_id)
     hmac_key = get_hmac_key(base_key, domain_id)
     return aes_key, hmac_key
+
+
+def _derive_inbound_hmac_key(frame: LavietFrame, node: models.Node | None):
+    if frame.type in (LavietType.PAIR_REQ, LavietType.PAIR_RESP, LavietType.ERROR):
+        domain_id = (
+            LAVIET_BROADCAST_ID
+            if (frame.flags & LAVIET_FLAG_BROADCAST) or frame.dst_id == LAVIET_BROADCAST_ID
+            else min(LAVIET_GATEWAY_ID, frame.src_id)
+        )
+        return get_hmac_key(LAVIET_SHARED_V1, domain_id)
+
+    if (frame.flags & LAVIET_FLAG_BROADCAST) or frame.dst_id == LAVIET_BROADCAST_ID:
+        return get_hmac_key(LAVIET_SHARED_V1, LAVIET_BROADCAST_ID)
+
+    if node is None or not node.paired_code:
+        return None
+
+    _, hmac_key = _derive_node_keys(frame.src_id, node.paired_code)
+    return hmac_key
+
+
+def _verify_inbound_mac(frame: LavietFrame, node: models.Node | None, raw_header_payload: bytes) -> bool:
+    hmac_key = _derive_inbound_hmac_key(frame, node)
+    if hmac_key is None:
+        print(
+            f"[LoRa HMAC] Missing key for src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
+            f"type={frame.type}"
+        )
+        return False
+
+    expected_mac = laviet_generate_mac(hmac_key, raw_header_payload, b"")
+    if not laviet_mac_equal(expected_mac, frame.mac_tag or b""):
+        print(
+            f"[LoRa HMAC] Drop src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
+            f"msg=0x{frame.msg_id:04X}: invalid MAC"
+        )
+        return False
+
+    return True
 
 
 def _decode_inbound_payload(frame: LavietFrame, node: models.Node) -> bytes:
@@ -220,19 +261,23 @@ async def lora_listener_task():
         db = SessionLocal()
         try:
             parsed = LavietFrameBuilder.parse_frame(frame_bytes)
+            raw_header_payload = frame_bytes[: 13 + parsed.payload_len]
             print(
                 f"[LoRa] Parsed frame type={parsed.type} src={hex(parsed.src_id)} "
                 f"dst={hex(parsed.dst_id)} msg=0x{parsed.msg_id:04X} counter={parsed.counter}"
             )
 
             if parsed.type == LavietType.PAIR_RESP:
-                raw_header_payload = frame_bytes[: 13 + parsed.payload_len]
                 pairing_manager.on_pair_resp(parsed, raw_header_payload)
                 return
 
             node = db.query(models.Node).filter(models.Node.node_id == parsed.src_id).first()
             if node:
                 node.last_seen = datetime.utcnow()
+
+            if not _verify_inbound_mac(parsed, node, raw_header_payload):
+                db.rollback()
+                return
 
             if parsed.type == LavietType.DATA:
                 plain_payload = _decode_inbound_payload(parsed, node)

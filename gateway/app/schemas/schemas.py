@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -40,10 +40,6 @@ class MessageCreate(MessageBase):
         default=False,
         description="False = plaintext unicast/broadcast, True = AES-CTR dla unicastu.",
     )
-    key_mode: Optional[str] = Field(
-        default=None,
-        description="Opcjonalny tryb klucza dla szyfrowanego unicastu: pair32, pair16, shared.",
-    )
 
     model_config = {
         "json_schema_extra": {
@@ -52,7 +48,6 @@ class MessageCreate(MessageBase):
                     "dst_id": 65535,
                     "payload_hex": "48656c6c6f",
                     "coded": False,
-                    "key_mode": None,
                 }
             ]
         }

@@ -7,7 +7,7 @@ import threading
 import time
 from typing import Callable, Dict, Optional
 
-from ..core.laviet_crypto import LAVIET_SHARED_V1, get_hmac_key, laviet_generate_mac
+from ..core.laviet_crypto import LAVIET_SHARED_V1, get_hmac_key, laviet_generate_mac, laviet_mac_equal
 from ..models import models
 from ..models.database import SessionLocal
 from .laviet_frame import (
@@ -142,10 +142,9 @@ class PairingManager:
         domain_id = min(LAVIET_GATEWAY_ID, frame.src_id)
         hmac_key = get_hmac_key(LAVIET_SHARED_V1, domain_id)
         calc_mac = laviet_generate_mac(hmac_key, raw_bytes_no_mac, b"")
-        if calc_mac != frame.mac_tag:
-            print(
-                f"[PAIRING] [DEBUG BYPASS] PAIR_RESP MAC mismatch from {hex(frame.src_id)}, accepting in debug mode"
-            )
+        if not laviet_mac_equal(calc_mac, frame.mac_tag or b""):
+            print(f"[PAIRING] Rejected PAIR_RESP from {hex(frame.src_id)}: invalid MAC")
+            return False
 
         plain_payload = frame.payload
         if len(plain_payload) != 8:
