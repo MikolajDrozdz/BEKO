@@ -16,9 +16,6 @@ export const nodesApi = {
   delete: (nodeId: number, signal?: AbortSignal) =>
     apiDelete<NodeActionResponse>(`/api/nodes/${nodeId}`, signal),
 
-  syncCounter: (nodeId: number, signal?: AbortSignal) =>
-    apiPost<NodeActionResponse>(`/api/system/nodes/${nodeId}/sync_counter`, undefined, signal),
-
   rotateKeys: (nodeId: number, signal?: AbortSignal) =>
     apiPost<NodeActionResponse>(`/api/system/nodes/${nodeId}/rotate_keys`, undefined, signal),
 }

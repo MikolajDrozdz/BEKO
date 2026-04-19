@@ -27,20 +27,6 @@ export function useDeleteNode() {
   })
 }
 
-export function useSyncCounter() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (nodeId: number) => nodesApi.syncCounter(nodeId),
-    onSuccess: (_, nodeId) => {
-      toast.success(`Counter synced for node ${nodeId}`)
-      queryClient.invalidateQueries({ queryKey: NODES_KEY })
-    },
-    onError: (err: Error) => {
-      toast.error(`Sync failed: ${err.message}`)
-    },
-  })
-}
-
 export function useRotateKeys() {
   const queryClient = useQueryClient()
   return useMutation({

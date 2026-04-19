@@ -56,6 +56,7 @@ export interface Node {
   last_seen?: string;
   counter?: number;
   rssi?: number;
+  coding_enabled?: boolean;
 }
 
 export type NodesResponse = Node[] | { nodes: Node[] };

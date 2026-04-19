@@ -8,10 +8,16 @@ import type {
 
 function normalizeRecord(r: Record<string, unknown>): MessageRecord {
   return {
-    ...(r as MessageRecord),
+    dst_id: (r.dst_id ?? r.destination_id ?? 0) as number,
+    payload_hex: (r.payload_hex ?? r.payload ?? '') as string,
+    id: (r.id ?? r.message_id) as string | number | undefined,
+    src_id: r.src_id as number | undefined,
     timestamp: (r.timestamp ?? r.sent_at ?? r.created_at ?? r.time) as string | undefined,
-    coded: (r.coded ?? r.is_coded) as boolean | undefined,
+    sent_at: r.sent_at as string | undefined,
+    direction: r.direction as 'sent' | 'received' | undefined,
+    status: r.status as string | undefined,
     rssi: (r.rssi ?? r.signal_rssi ?? r.rx_rssi) as number | undefined,
+    coded: (r.coded ?? r.is_coded) as boolean | undefined,
   }
 }
 

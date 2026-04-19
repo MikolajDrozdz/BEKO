@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Cpu, Trash2, RefreshCw, Search, RotateCcw, ArrowUpDown } from 'lucide-react'
-import { useNodes, useDeleteNode, useSyncCounter, useRotateKeys } from '@/hooks/useNodes'
+import { Cpu, Trash2, RefreshCw, Search, RotateCcw } from 'lucide-react'
+import { useNodes, useDeleteNode, useRotateKeys } from '@/hooks/useNodes'
 import { SectionHeader } from '@/components/common/SectionHeader'
 import { EmptyState } from '@/components/common/EmptyState'
 import { ErrorDisplay } from '@/components/common/ErrorDisplay'
@@ -24,13 +24,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { formatTimestamp, formatNodeId } from '@/lib/utils/format'
 import type { Node } from '@/types/api'
 
-function NodeRow({ node, onDelete, onSync, onRotate, deleting, syncing, rotating }: {
+function NodeRow({ node, onDelete, onRotate, deleting, rotating }: {
   node: Node
   onDelete: () => void
-  onSync: () => void
   onRotate: () => void
   deleting: boolean
-  syncing: boolean
   rotating: boolean
 }) {
   const id = node.node_id ?? node.id ?? 0
@@ -89,23 +87,6 @@ function NodeRow({ node, onDelete, onSync, onRotate, deleting, syncing, rotating
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  loading={syncing}
-                  onClick={onSync}
-                  title="Sync counter"
-                >
-                  <ArrowUpDown className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Sync counter</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
                   loading={rotating}
                   onClick={onRotate}
                   title="Rotate keys"
@@ -139,7 +120,6 @@ function NodeRow({ node, onDelete, onSync, onRotate, deleting, syncing, rotating
 export function NodesPage() {
   const { data: nodes, isLoading, error, refetch } = useNodes()
   const deleteNode = useDeleteNode()
-  const syncCounter = useSyncCounter()
   const rotateKeys = useRotateKeys()
   const [search, setSearch] = useState('')
 
@@ -224,10 +204,8 @@ export function NodesPage() {
                           key={id}
                           node={node}
                           onDelete={() => deleteNode.mutate(id)}
-                          onSync={() => syncCounter.mutate(id)}
                           onRotate={() => rotateKeys.mutate(id)}
                           deleting={deleteNode.isPending && deleteNode.variables === id}
-                          syncing={syncCounter.isPending && syncCounter.variables === id}
                           rotating={rotateKeys.isPending && rotateKeys.variables === id}
                         />
                       )
