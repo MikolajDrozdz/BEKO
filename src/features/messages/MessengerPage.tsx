@@ -42,10 +42,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-<<<<<<< HEAD
-import { hexToText, textToHex, BROADCAST_ID } from '@/lib/utils/hex'
-import { formatNodeId, formatTime, formatDateLabel, dateDayKey } from '@/lib/utils/format'
-=======
 import { hexToText, textToHex } from '@/lib/utils/hex'
 import {
   BROADCAST_ID,
@@ -61,16 +57,10 @@ import {
   requiresNodeResponse,
 } from '@/lib/utils/protocol'
 import { formatNodeId } from '@/lib/utils/format'
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
 import type { MessageRecord } from '@/types/api'
 
-const MAX_MESSAGE_LENGTH = 16
-
 const schema = z.object({
-  message: z
-    .string()
-    .min(1, 'Message cannot be empty')
-    .max(MAX_MESSAGE_LENGTH, `Maximum ${MAX_MESSAGE_LENGTH} characters`),
+  message: z.string().min(1, 'Type a message'),
 })
 type FormValues = z.infer<typeof schema>
 type AddressBook = Record<string, string>
@@ -90,10 +80,6 @@ const RESPONSE_TIMEOUT_SECONDS = 30
 function isReceived(msg: MessageRecord): boolean {
   if (msg.direction === 'received') return true
   if (msg.direction === 'sent') return false
-<<<<<<< HEAD
-  if (msg.status === 'received') return true
-  if (msg.status === 'sent' || msg.status === 'delivered' || msg.status === 'ok') return false
-=======
   // fallback on status field
   if (msg.status === 'received' || msg.status === 'response') return true
   if (
@@ -107,7 +93,6 @@ function isReceived(msg: MessageRecord): boolean {
     msg.status === 'ok'
   ) return false
   // fallback: received = has source node but no known destination
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
   if (msg.src_id !== undefined && msg.dst_id === undefined) return true
   return false
 }
@@ -116,8 +101,6 @@ function getMsgTimestamp(msg: MessageRecord): string | undefined {
   return msg.timestamp ?? msg.sent_at
 }
 
-<<<<<<< HEAD
-=======
 function formatTime(ts?: string | number): string {
   if (!ts) return ''
   try {
@@ -200,7 +183,6 @@ function isAckConfirmedReceived(msg: MessageRecord): boolean {
   return msg.ack_sent ?? msg.ack_required ?? true
 }
 
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
 // ─── Components ───────────────────────────────────────────────────────────────
 
 function DateDivider({ label }: { label: string }) {
@@ -316,27 +298,6 @@ function MessageBubble({ msg, addressBook }: { msg: MessageRecord; addressBook: 
   )
 }
 
-// ─── Character counter ────────────────────────────────────────────────────────
-
-function CharCounter({ current }: { current: number }) {
-  const remaining = MAX_MESSAGE_LENGTH - current
-  const isOver = remaining < 0
-  const isWarning = remaining <= 4 && !isOver
-  return (
-    <span
-      className={`tabular-nums text-[10px] font-mono-feature shrink-0 ${
-        isOver
-          ? 'text-red-500 dark:text-red-400 font-semibold'
-          : isWarning
-          ? 'text-amber-500 dark:text-amber-400'
-          : 'text-teal-400 dark:text-teal-600'
-      }`}
-    >
-      {current}/{MAX_MESSAGE_LENGTH}
-    </span>
-  )
-}
-
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 type DayGroup = { dateKey: string; label: string; messages: MessageRecord[] }
@@ -345,12 +306,12 @@ function groupByDate(messages: MessageRecord[]): DayGroup[] {
   const groups: DayGroup[] = []
   for (const msg of messages) {
     const ts = getMsgTimestamp(msg)
-    const key = dateDayKey(ts)
+    const key = getDateKey(ts)
     const last = groups[groups.length - 1]
     if (last && last.dateKey === key) {
       last.messages.push(msg)
     } else {
-      groups.push({ dateKey: key, label: formatDateLabel(ts), messages: [msg] })
+      groups.push({ dateKey: key, label: getDateLabel(ts), messages: [msg] })
     }
   }
   return groups
@@ -384,9 +345,6 @@ export function MessengerPage() {
     defaultValues: { message: '' },
   })
 
-<<<<<<< HEAD
-  const messageValue = form.watch('message')
-=======
   const watchMessage = form.watch('message') ?? ''
   const recipientId = Number(recipient)
   const destinationError = getSendTargetError(recipientId)
@@ -401,7 +359,6 @@ export function MessengerPage() {
     : 0
   const isBroadcast = recipient === String(BROADCAST_ID)
   const effectiveAckRequired = !isBroadcast && ackRequired
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -696,13 +653,9 @@ export function MessengerPage() {
                 {sorted.length === 0 ? 'No messages yet' : `No messages for ${activeFilterLabel}`}
               </p>
               <p className="text-xs text-teal-400 dark:text-teal-600 max-w-xs">
-<<<<<<< HEAD
-                Send a message below — received messages from nodes will also appear here.
-=======
                 {sorted.length === 0
                   ? 'Send a message below — received messages from nodes will also appear here'
                   : 'Pick another address filter to see the rest of the conversation'}
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
               </p>
             </div>
           )}
@@ -805,33 +758,15 @@ export function MessengerPage() {
 
           {/* Bottom row: textarea + coded + send */}
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-end gap-2">
-            <div className="flex-1 min-w-0 space-y-1">
+            <div className="flex-1 min-w-0">
               <Textarea
-<<<<<<< HEAD
-                placeholder={`Message to ${isBroadcast ? 'all nodes' : formatNodeId(Number(recipient))}… (Enter to send)`}
-=======
                 placeholder={`Message to ${getAddressLabel(Number(recipient), addressBook)}... (Enter to send, Shift+Enter for newline)`}
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
                 rows={1}
                 className="resize-none text-sm min-h-[40px] max-h-28 overflow-y-auto"
                 onKeyDown={handleKeyDown}
-                maxLength={MAX_MESSAGE_LENGTH}
                 {...form.register('message')}
               />
-              <div className="flex items-center justify-between px-0.5">
-                {form.formState.errors.message ? (
-                  <p className="text-xs text-red-500">{form.formState.errors.message.message}</p>
-                ) : (
-                  <span className="text-[10px] text-teal-400 dark:text-teal-600">
-                    Max {MAX_MESSAGE_LENGTH} characters
-                  </span>
-                )}
-                <CharCounter current={messageValue.length} />
-              </div>
             </div>
-<<<<<<< HEAD
-            <div className="flex flex-col items-center gap-1 shrink-0 pb-5">
-=======
             <div className="flex flex-col items-center gap-1 shrink-0 pb-0.5">
               <Label htmlFor="ack-msg" className="text-[10px] text-teal-500 dark:text-teal-400 cursor-pointer select-none">
                 ACK
@@ -845,7 +780,6 @@ export function MessengerPage() {
               />
             </div>
             <div className="flex flex-col items-center gap-1 shrink-0 pb-0.5">
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
               <Label htmlFor="coded-msg" className="text-[10px] text-teal-500 dark:text-teal-400 cursor-pointer select-none">
                 Coded
               </Label>
@@ -854,20 +788,13 @@ export function MessengerPage() {
             <Button
               type="submit"
               loading={sendMessage.isPending}
-<<<<<<< HEAD
-              disabled={!recipient || messageValue.length === 0 || messageValue.length > MAX_MESSAGE_LENGTH}
-              className="shrink-0 h-10 mb-5"
-=======
               disabled={!recipient || !!destinationError || !!payloadLengthError || !!asciiError}
               className="shrink-0 h-10"
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
             >
               <Send className="h-4 w-4" />
               Send
             </Button>
           </form>
-<<<<<<< HEAD
-=======
           {form.formState.errors.message && (
             <p className="text-xs text-red-500 mt-1">{form.formState.errors.message.message}</p>
           )}
@@ -879,7 +806,6 @@ export function MessengerPage() {
               </AlertDescription>
             </Alert>
           )}
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
         </div>
       </div>
 

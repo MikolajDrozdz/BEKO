@@ -257,7 +257,14 @@ export interface LogEntry {
 
 export type LogsResponse = LogEntry[] | string[] | { logs: LogEntry[] | string[] };
 
-<<<<<<< HEAD
+export interface LogsSummary {
+  by_level?: Record<string, number>;
+  counts?: Record<string, number>;
+  last_timestamp?: string;
+  last_created_at?: string;
+  total?: number;
+}
+
 // ─── Auth & Users ─────────────────────────────────────────────────────────────
 
 export type UserRole = 'admin' | 'user'
@@ -309,14 +316,6 @@ export interface UserUpdate {
   permissions?: Capability[]
   is_active?: boolean
   password?: string
-=======
-export interface LogsSummary {
-  by_level?: Record<string, number>;
-  counts?: Record<string, number>;
-  last_timestamp?: string;
-  last_created_at?: string;
-  total?: number;
->>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
 }
 
 // ─── Generic ─────────────────────────────────────────────────────────────────
