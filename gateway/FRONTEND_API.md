@@ -37,6 +37,14 @@ Potwierdzenie bazy danych z unikalnym `msg_id`.
 `GET /api/messages/history`
 **Opis**: Zwraca całą historię lokalną SQLite wysłanych wiadomości.
 
+### Statystyki Wiadomości
+`GET /api/messages/stats?range=24h`
+**Opis**: Zwraca liczniki statusów, podstawowe bucketowanie czasowe oraz pola `avg_ack_ms` / `avg_response_ms` jako `null`, dopóki backend nie zapisuje timestampów ACK/RESP w bazie.
+
+### Pending ACK / Response
+`GET /api/messages/pending`
+**Opis**: Zwraca runtime'owe listy `pending_ack` i `pending_response`. Dane są trzymane w pamięci procesu gatewaya.
+
 ---
 
 ## 2. Moduł: Zarządzanie Parowaniem (Pairing)
@@ -89,6 +97,18 @@ Odpytania wspierające diagnostykę i stabilizację protokołu radiowego.
 ### Kondycja Bramy
 `GET /api/system/`
 **Opis**: Pobiera wewnętrzny adres bramy (`0x0001` - `LAVIET_GATEWAY_ID`), naświetlając wersję protokołu.
+
+### Aktualne Metryki Systemu
+`GET /api/system/metrics`
+**Opis**: Zwraca aktualną próbkę CPU, temperatury, load average, RAM, dysku i uptime.
+
+### Historia Metryk Systemu
+`GET /api/system/metrics/history?range=1h&step=10s`
+**Opis**: Zwraca próbki metryk z pamięci procesu. Backend zbiera próbkę co 10 sekund od startu aplikacji.
+
+### Status Radia
+`GET /api/radio/status`
+**Opis**: Zwraca gotowość radia, driver, konfigurację LoRa, liczniki RX/TX, błędy CRC/TX oraz ostatnie RSSI/SNR.
 
 ### Forcowanie Synchronizacji Licznika HMAC (Counter Override)
 `POST /api/system/nodes/{node_id}/sync_counter`

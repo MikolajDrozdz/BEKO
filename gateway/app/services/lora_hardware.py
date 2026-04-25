@@ -26,7 +26,7 @@ except ImportError:
 
 try:
     import RPi.GPIO as GPIO
-except ImportError:
+except Exception:
     GPIO = None
 
 
@@ -181,6 +181,7 @@ class _SX1276LoRaRadio:
         self.gpio = _GpioHelper(self.reset_pin)
         self.lock = threading.RLock()
         self.ready = False
+        self.crc_error_count = 0
 
     def _read_reg(self, reg: int) -> int:
         resp = self.spi.xfer2([reg & 0x7F, 0x00])
@@ -289,6 +290,7 @@ class _SX1276LoRaRadio:
                 return None
 
             if (irq_flags & self.IRQ_PAYLOAD_CRC_ERROR) != 0:
+                self.crc_error_count += 1
                 self._write_reg(self.REG_IRQ_FLAGS, 0xFF)
                 return None
 
@@ -296,11 +298,15 @@ class _SX1276LoRaRadio:
             current_addr = self._read_reg(self.REG_FIFO_RX_CURRENT_ADDR)
             self._write_reg(self.REG_FIFO_ADDR_PTR, current_addr)
             payload = self._read_burst(self.REG_FIFO, length)
+            snr_raw = self._read_reg(self.REG_PKT_SNR_VALUE)
+            if snr_raw & 0x80:
+                snr_raw -= 0x100
+            snr_db = round(snr_raw / 4.0, 1)
             rssi_raw = self._read_reg(self.REG_PKT_RSSI_VALUE)
             rssi_dbm = int(rssi_raw) - 157
             self._write_reg(self.REG_IRQ_FLAGS, 0xFF)
             self._write_reg(self.REG_FIFO_ADDR_PTR, self._read_reg(self.REG_FIFO_RX_BASE_ADDR))
-            return payload, rssi_dbm
+            return payload, rssi_dbm, snr_db
 
 
 class LoRaHardware:
@@ -312,6 +318,15 @@ class LoRaHardware:
         self._rx_thread: Optional[threading.Thread] = None
         self._rx_stop = threading.Event()
         self.requested_driver = _env_str("LAVIET_RADIO_DRIVER", "auto").lower()
+        self._stats_lock = threading.RLock()
+        self._rx_count = 0
+        self._tx_count = 0
+        self._tx_fail_count = 0
+        self._crc_error_count = 0
+        self._last_rx_at: Optional[str] = None
+        self._last_tx_at: Optional[str] = None
+        self._last_rssi: Optional[int] = None
+        self._last_snr: Optional[float] = None
 
     def is_ready(self) -> bool:
         return self.radio is not None
@@ -321,6 +336,51 @@ class LoRaHardware:
 
     def get_driver_name(self) -> str:
         return self.driver_name
+
+    def _iso_now(self) -> str:
+        return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+    def _mark_rx(self, rssi: Optional[int] = None, snr: Optional[float] = None) -> None:
+        with self._stats_lock:
+            self._rx_count += 1
+            self._last_rx_at = self._iso_now()
+            self._last_rssi = rssi
+            self._last_snr = snr
+
+    def _mark_tx(self, ok: bool) -> None:
+        with self._stats_lock:
+            if ok:
+                self._tx_count += 1
+                self._last_tx_at = self._iso_now()
+            else:
+                self._tx_fail_count += 1
+
+    def get_status(self) -> dict:
+        radio = self.radio
+        crc_errors = self._crc_error_count
+        if radio is not None and hasattr(radio, "crc_error_count"):
+            crc_errors = getattr(radio, "crc_error_count")
+
+        with self._stats_lock:
+            return {
+                "ready": self.is_ready(),
+                "driver": self.get_driver_name(),
+                "last_error": self.get_last_error(),
+                "frequency_hz": getattr(radio, "freq_hz", _env_int("LAVIET_LORA_FREQ_HZ", _legacy_freq_hz(868500000))),
+                "bandwidth": 500,
+                "spreading_factor": 7,
+                "coding_rate": "4/5",
+                "tx_power": getattr(radio, "tx_power", _env_int("LAVIET_LORA_TX_POWER", 17)),
+                "sync_word": f"0x{getattr(radio, 'sync_word', _env_int('LAVIET_LORA_SYNC_WORD', 0x34)):02X}",
+                "rx_count": self._rx_count,
+                "tx_count": self._tx_count,
+                "tx_fail_count": self._tx_fail_count,
+                "crc_error_count": crc_errors,
+                "last_rx_at": self._last_rx_at,
+                "last_tx_at": self._last_tx_at,
+                "last_rssi": self._last_rssi,
+                "last_snr": self._last_snr,
+            }
 
     def _start_builtin_rx_loop(self) -> None:
         if self.driver_name != "builtin-sx1276":
@@ -336,7 +396,12 @@ class LoRaHardware:
                     if self.on_receive_callback and self.radio is not None:
                         result = self.radio.receive_once()
                         if result is not None:
-                            payload, rssi_dbm = result
+                            if len(result) == 3:
+                                payload, rssi_dbm, snr_db = result
+                            else:
+                                payload, rssi_dbm = result
+                                snr_db = None
+                            self._mark_rx(rssi_dbm, snr_db)
                             print(
                                 f"[HARDWARE LoRa RX] Received raw frame len={len(payload)} RSSI={rssi_dbm} dBm"
                             )
@@ -360,6 +425,7 @@ class LoRaHardware:
                 print(
                     f"[HARDWARE LoRa RX] Received raw frame len={len(raw_bytes)} RSSI={rssi_val} dBm"
                 )
+                self._mark_rx(rssi_val, None)
                 self.on_receive_callback(raw_bytes, rssi_val)
 
         requested = self.requested_driver
@@ -443,6 +509,7 @@ class LoRaHardware:
                 tx_ok = self.radio.send(payload_ints)
                 if tx_ok is False:
                     self.last_error = "TX_DONE missing or CAD blocked"
+                    self._mark_tx(False)
                     print("[HARDWARE LoRa TX] TX_DONE missing or CAD blocked")
                     try:
                         self.radio.set_mode_rx()
@@ -451,10 +518,12 @@ class LoRaHardware:
                     return False
 
                 self.last_error = None
+                self._mark_tx(True)
                 print(f"[HARDWARE LoRa TX] OK ({len(frame)} B)")
                 return True
             except Exception as e:
                 self.last_error = str(e)
+                self._mark_tx(False)
                 print(f"[HARDWARE LoRa TX] ERROR: {e}")
                 return False
 
@@ -462,14 +531,17 @@ class LoRaHardware:
             tx_ok = self.radio.send(frame)
             if not tx_ok:
                 self.last_error = "TX timeout waiting for TxDone"
+                self._mark_tx(False)
                 print("[HARDWARE LoRa TX] ERROR: TX timeout waiting for TxDone")
                 return False
 
             self.last_error = None
+            self._mark_tx(True)
             print(f"[HARDWARE LoRa TX] OK ({len(frame)} B)")
             return True
         except Exception as e:
             self.last_error = str(e)
+            self._mark_tx(False)
             print(f"[HARDWARE LoRa TX] ERROR: {e}")
             try:
                 self.radio.set_mode_rx()

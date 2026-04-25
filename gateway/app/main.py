@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.endpoints import logs, messages, nodes, pairing, system
+from .api.endpoints import logs, messages, nodes, pairing, radio, system
 from .core.laviet_crypto import (
     LAVIET_SHARED_V1,
     derive_unicast_base_key,
@@ -19,6 +19,7 @@ from .core.laviet_crypto import (
 from .models import models
 from .models.database import Base, SessionLocal, engine
 from .services import message_tracker
+from .services import system_metrics
 from .services.laviet_frame import (
     LAVIET_BROADCAST_ID,
     LAVIET_FLAG_ACK_REQUIRED,
@@ -69,10 +70,14 @@ async def log_request_body(request: Request, call_next):
 app.include_router(messages.router, prefix="/api/messages", tags=["messages"])
 app.include_router(nodes.router, prefix="/api/nodes", tags=["nodes"])
 app.include_router(system.router, prefix="/api/system", tags=["system"])
+app.include_router(radio.router, prefix="/api/radio", tags=["radio"])
 app.include_router(logs.router, prefix="/api/logs", tags=["logs"])
 app.include_router(pairing.router, prefix="/api/pairing", tags=["pairing"])
 
 pairing_manager.set_send_callback(lora_device.send_frame)
+
+VALID_USER_RESPONSES = {"YES", "OK", "NO"}
+ACK_TX_DELAY_SECONDS = 0.100
 
 
 def _debug_hex(label: str, data: bytes | None) -> None:
@@ -206,7 +211,9 @@ def _decode_inbound_payload(frame: LavietFrame, paired_code: bytes | None) -> by
 
 
 def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired_code: bytes | None) -> None:
-    if frame.dst_id == LAVIET_BROADCAST_ID:
+    if frame.dst_id != LAVIET_GATEWAY_ID:
+        return
+    if frame.dst_id == LAVIET_BROADCAST_ID or (frame.flags & LAVIET_FLAG_BROADCAST):
         return
     if (frame.flags & LAVIET_FLAG_ACK_REQUIRED) == 0:
         return
@@ -237,6 +244,7 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired
     ack_frame.mac_tag = laviet_generate_mac(hmac_key, raw_frame, b"")
     final_frame = LavietFrameBuilder.build_frame(ack_frame)
 
+    time.sleep(ACK_TX_DELAY_SECONDS)
     if lora_device.send_frame(final_frame):
         print(
             f"[LoRa ACK] Sent ACK to {hex(frame.src_id)} for msg=0x{frame.msg_id:04X} counter={frame.counter}"
@@ -247,7 +255,7 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired
         )
 
 
-def _store_inbound_data(db, frame: LavietFrame, plain_payload: bytes) -> None:
+def _store_inbound_data(db, frame: LavietFrame, plain_payload: bytes, status: str = "received") -> models.Message:
     node = db.query(models.Node).filter(models.Node.node_id == frame.src_id).first()
     if node:
         node.last_seen = datetime.utcnow()
@@ -256,7 +264,7 @@ def _store_inbound_data(db, frame: LavietFrame, plain_payload: bytes) -> None:
         dst_id=frame.dst_id,
         src_id=frame.src_id,
         payload_hex=plain_payload.hex(),
-        status="received",
+        status=status,
     )
     db.add(db_msg)
     db.commit()
@@ -266,16 +274,62 @@ def _store_inbound_data(db, frame: LavietFrame, plain_payload: bytes) -> None:
     except UnicodeDecodeError:
         text = None
 
+    log_label = "RESP" if status == "response" else "DATA"
     if text is not None:
         print(
-            f"[LoRa DATA] src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
+            f"[LoRa {log_label}] src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
             f"msg=0x{frame.msg_id:04X} counter={frame.counter} text={text!r}"
         )
     else:
         print(
-            f"[LoRa DATA] src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
+            f"[LoRa {log_label}] src={hex(frame.src_id)} dst={hex(frame.dst_id)} "
             f"msg=0x{frame.msg_id:04X} counter={frame.counter} payload_hex={plain_payload.hex()}"
         )
+    return db_msg
+
+
+def _decode_user_response(payload: bytes) -> str | None:
+    try:
+        response = payload.decode("utf-8").strip().upper()
+    except UnicodeDecodeError:
+        return None
+
+    if response in VALID_USER_RESPONSES:
+        return response
+    return None
+
+
+def _handle_response_frame(db, frame: LavietFrame, plain_payload: bytes) -> None:
+    db_msg = _store_inbound_data(db, frame, plain_payload, status="response")
+    response = _decode_user_response(plain_payload)
+    if response is None:
+        print(
+            f"[LoRa RESP] Stored unexpected response from {hex(frame.src_id)} "
+            f"as message_id={db_msg.id}: payload_hex={plain_payload.hex()}"
+        )
+        return
+
+    pending_message_id = message_tracker.pop_pending_response(frame.src_id)
+    if pending_message_id is None:
+        print(
+            f"[LoRa RESP] Received {response} from {hex(frame.src_id)} "
+            f"without pending question"
+        )
+        return
+
+    pending_msg = db.query(models.Message).filter(models.Message.id == pending_message_id).first()
+    if pending_msg is None:
+        print(
+            f"[LoRa RESP] Response {response} from {hex(frame.src_id)} matched missing "
+            f"message_id={pending_message_id}"
+        )
+        return
+
+    pending_msg.status = "answered"
+    db.commit()
+    print(
+        f"[LoRa RESP] {response} from {hex(frame.src_id)} answered message_id={pending_message_id}"
+    )
 
 
 def _handle_ack_frame(db, frame: LavietFrame) -> None:
@@ -301,7 +355,12 @@ def _handle_ack_frame(db, frame: LavietFrame) -> None:
         )
         return
 
-    db_msg.status = "delivered"
+    if db_msg.status == "answered":
+        pass
+    elif db_msg.status == "sent_waiting_response":
+        db_msg.status = "delivered_waiting_response"
+    else:
+        db_msg.status = "delivered"
     db.commit()
     print(
         f"[LoRa ACK] Delivered message_id={message_id} from node={hex(frame.src_id)} "
@@ -317,6 +376,12 @@ async def lora_listener_task():
         db = SessionLocal()
         try:
             parsed = LavietFrameBuilder.parse_frame(frame_bytes)
+            radio_status = lora_device.get_status()
+            message_tracker.update_node_radio(
+                parsed.src_id,
+                rssi_dbm,
+                radio_status.get("last_snr"),
+            )
             raw_header_payload = frame_bytes[: 13 + parsed.payload_len]
             print(
                 f"[LoRa] Parsed frame type={parsed.type} src={hex(parsed.src_id)} "
@@ -340,12 +405,17 @@ async def lora_listener_task():
             if parsed.type == LavietType.DATA:
                 plain_payload = _decode_inbound_payload(parsed, paired_code)
                 _store_inbound_data(db, parsed, plain_payload)
-                _send_ack_for_frame(db, parsed, node, paired_code)
+            elif parsed.type == LavietType.RESP:
+                plain_payload = _decode_inbound_payload(parsed, paired_code)
+                _handle_response_frame(db, parsed, plain_payload)
             elif parsed.type == LavietType.ACK:
                 _handle_ack_frame(db, parsed)
             else:
                 print(f"[LoRa] Ignoring unsupported frame type={parsed.type}")
                 db.commit()
+
+            if parsed.type != LavietType.ACK:
+                _send_ack_for_frame(db, parsed, node, paired_code)
         except Exception as e:
             print(f"[LoRa] RX decode error: {e}")
             db.rollback()
@@ -362,7 +432,15 @@ async def lora_listener_task():
 async def on_startup():
     print("Initializing LoRa module (SPI)")
     lora_device.initialize()
+    system_metrics.collect_metrics()
+    asyncio.create_task(system_metrics_sampler())
     asyncio.create_task(lora_listener_task())
+
+
+async def system_metrics_sampler():
+    while True:
+        await asyncio.sleep(10)
+        system_metrics.collect_metrics()
 
 
 @app.get("/")

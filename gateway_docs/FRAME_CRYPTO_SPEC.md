@@ -25,7 +25,8 @@ Spec obejmuje:
 - `LAVIET_FRAME_VERSION = 1`
 - `LAVIET_GATEWAY_ID = 0x0001`
 - `LAVIET_BROADCAST_ID = 0xFFFF`
-- `0x0000` jest niewazne jako `src_id` i `dst_id`
+- `0x0000` jest niewazne jako `src_id` i `dst_id`; sluzy jako sentinel dla braku adresu / blednej inicjalizacji
+- `0x0002..0xFFFE` to zakres node'ow, czyli 65 533 adresy
 - `LAVIET_MAX_PAYLOAD = 16`
 - `LAVIET_MAC_TAG_LEN = 32`
 - `LAVIET_FRAME_HEADER_LEN = 13`
@@ -115,6 +116,7 @@ Mapa bitowa `flags`:
 - payload `1..16 B`
 - unicast zwykle z `ACK_REQUIRED`
 - broadcast bez `ACK_REQUIRED`
+- jezeli plaintext po `strip()` konczy sie na `.`, `?` albo `!`, node pokazuje mozliwosc odpowiedzi `YES` / `OK` / `NO` takze dla broadcastu
 - szyfrowanie:
   - unicast po sparowaniu: tak
   - broadcast: nie
@@ -132,6 +134,8 @@ Mapa bitowa `flags`:
 ### 7.3. `RESP`
 
 - payload `0..16 B`
+- dla odpowiedzi uzytkownika payload to ASCII `YES`, `OK` albo `NO`
+- `RESP` z odpowiedzia na broadcast jest wysylany jako unicast do gatewaya
 - unicast moze miec `ACK_REQUIRED`
 - po sparowaniu zwykle szyfrowany
 

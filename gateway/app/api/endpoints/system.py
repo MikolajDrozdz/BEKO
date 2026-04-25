@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 import time
 from sqlalchemy.orm import Session
 from ...models.database import get_db
+from ...services import system_metrics
 from ...services.lora_hardware import lora_device
 from ...services.laviet_frame import (
     LavietFrameBuilder, LavietFrame, LavietType, LAVIET_FRAME_VERSION,
@@ -15,17 +16,33 @@ router = APIRouter()
 @router.get("/", summary="Informacje o stanie Gatewaya (LAVIET)")
 def get_system_status():
     """Zwraca podstawowe informacje o bramce LoRa."""
+    radio_status = lora_device.get_status()
     return {
         "gateway_id": LAVIET_GATEWAY_ID,
         "gateway_id_hex": hex(LAVIET_GATEWAY_ID),
         "protocol_version": LAVIET_FRAME_VERSION,
         "status": "online" if lora_device.is_ready() else "radio_not_ready",
-        "radio_ready": lora_device.is_ready(),
-        "radio_driver": lora_device.get_driver_name(),
-        "radio_error": lora_device.get_last_error(),
+        "radio_ready": radio_status["ready"],
+        "radio_driver": radio_status["driver"],
+        "radio_error": radio_status["last_error"],
         "unicast_key_mode": "pair32",
+        "radio": radio_status,
     }
 
+
+@router.get("/metrics", summary="Aktualne metryki systemu")
+def get_current_metrics():
+    return system_metrics.collect_metrics()
+
+
+@router.get("/metrics/history", summary="Historia metryk systemu")
+def get_metrics_history(
+    range_: str = Query("1h", alias="range"),
+    step: str = Query("10s"),
+):
+    range_seconds = system_metrics.parse_duration(range_, 3600)
+    step_seconds = system_metrics.parse_duration(step, 10)
+    return system_metrics.get_history(range_seconds, step_seconds)
 
 
 def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):

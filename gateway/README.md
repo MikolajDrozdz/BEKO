@@ -25,8 +25,9 @@ Node STM32:
 
 - `LAVIET_GATEWAY_ID = 0x0001`
 - `LAVIET_BROADCAST_ID = 0xFFFF`
-- `0x0000` jest niewazne
+- `0x0000` jest niewazne i zarezerwowane jako sentinel dla braku adresu / blednej inicjalizacji
 - node ma 16-bit `node_id` wyprowadzony z UID STM32
+- dostepny zakres node'ow to `0x0002..0xFFFE`, czyli 65 533 adresy
 
 ## 3. Format ramki
 
@@ -220,6 +221,17 @@ To jest najczestszy powod odrzucenia ramek: gateway wysyla unicast, ale dalej li
 1. `GW -> NODE : DATA` z `ACK_REQUIRED`
 2. `NODE : walidacja, decrypt, wyswietlenie`
 3. `NODE -> GW : ACK`
+
+Jezeli plaintext wiadomosci po `strip()` konczy sie na `.`, `?` albo `!`, node pokazuje uzytkownikowi opcje odpowiedzi `YES` / `OK` / `NO`.
+
+### 6.2.1. Broadcast wymagajacy odpowiedzi
+
+1. `GW -> BC : DATA` z flaga `BROADCAST`, bez `ACK_REQUIRED`
+2. `NODE : walidacja HMAC, wyswietlenie`
+3. `NODE : jezeli plaintext konczy sie na `.`, `?` albo `!`, pokazuje opcje `YES` / `OK` / `NO`
+4. `NODE -> GW : RESP` jako unicast z payloadem ASCII `YES`, `OK` albo `NO`
+
+Broadcast nie uzywa `ACK_REQUIRED`, bo wiele node'ow mogloby wyslac `ACK` jednoczesnie. Brak `ACK_REQUIRED` nie moze blokowac UI odpowiedzi na nodzie.
 
 ### 6.3. Counter sync
 

@@ -1,6 +1,8 @@
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from ...core.laviet_crypto import (
@@ -15,6 +17,7 @@ from ...models import models
 from ...models.database import get_db
 from ...schemas import schemas
 from ...services import message_tracker
+from ...services import system_metrics
 from ...services.laviet_frame import (
     LAVIET_BROADCAST_ID,
     LAVIET_FLAG_ACK_REQUIRED,
@@ -30,12 +33,30 @@ from ...services.pairing import pairing_manager
 
 router = APIRouter()
 
+RESPONSE_REQUIRED_SUFFIXES = (".", "?", "!")
+
 
 def _debug_hex(label: str, data: bytes | None) -> None:
     if data is None:
         print(f"{label}<none>")
         return
     print(f"{label}{data.hex()}")
+
+
+def _requires_user_response(payload: bytes) -> bool:
+    try:
+        text = payload.decode("utf-8").strip()
+    except UnicodeDecodeError:
+        return False
+
+    return text.endswith(RESPONSE_REQUIRED_SUFFIXES)
+
+
+def _decode_payload_text(payload: bytes) -> str | None:
+    try:
+        return payload.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
 
 
 @router.post("/send", response_model=schemas.MessageResponse)
@@ -51,6 +72,7 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Payload przekracza 16 B")
     if msg.dst_id == 0:
         raise HTTPException(status_code=400, detail="Nieprawidlowy dst_id=0")
+    requires_user_response = _requires_user_response(payload_bytes)
 
     dst_id_16 = msg.dst_id & 0xFFFF
     if msg.dst_id in (0xFFFFFFFF, 4294967295):
@@ -161,14 +183,85 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         db.refresh(db_msg)
         raise HTTPException(status_code=503, detail="Radio TX failed")
 
-    db_msg.status = "sent"
+    db_msg.status = "sent_waiting_response" if requires_user_response else "sent"
     db.commit()
     db.refresh(db_msg)
 
     if dst_id_16 != LAVIET_BROADCAST_ID and (flags & LAVIET_FLAG_ACK_REQUIRED):
         message_tracker.register_pending_ack(db_msg.id, dst_id_16, msg_id, counter)
+    if requires_user_response:
+        message_tracker.register_pending_response(
+            db_msg.id,
+            dst_id_16,
+            question=_decode_payload_text(payload_bytes),
+        )
+        print(
+            f"[TX RESP] Message {db_msg.id} requires YES/OK/NO response "
+            f"from {'broadcast' if dst_id_16 == LAVIET_BROADCAST_ID else hex(dst_id_16)}"
+        )
 
     return db_msg
+
+
+@router.get("/stats")
+def get_message_stats(
+    range_: str = Query("24h", alias="range"),
+    db: Session = Depends(get_db),
+):
+    range_seconds = system_metrics.parse_duration(range_, 86400)
+    since = datetime.utcnow() - timedelta(seconds=range_seconds)
+    rows = db.query(models.Message).filter(models.Message.created_at >= since).all()
+
+    by_status = defaultdict(int)
+    buckets = {}
+    bucket_step = max(60, int(range_seconds / 24))
+
+    for msg in rows:
+        status = msg.status or "unknown"
+        by_status[status] += 1
+        created_at = msg.created_at
+        if created_at is None:
+            continue
+        created_naive = created_at.replace(tzinfo=None) if created_at.tzinfo else created_at
+        bucket_epoch = int(created_naive.timestamp() // bucket_step) * bucket_step
+        bucket = buckets.setdefault(
+            bucket_epoch,
+            {
+                "time": datetime.fromtimestamp(bucket_epoch, timezone.utc)
+                .isoformat()
+                .replace("+00:00", "Z"),
+                "sent": 0,
+                "received": 0,
+                "failed": 0,
+            },
+        )
+        if msg.src_id == LAVIET_GATEWAY_ID:
+            bucket["sent"] += 1
+        if status == "received":
+            bucket["received"] += 1
+        if status == "failed":
+            bucket["failed"] += 1
+
+    return {
+        "total": len(rows),
+        "sent": sum(1 for msg in rows if msg.src_id == LAVIET_GATEWAY_ID),
+        "received": by_status["received"],
+        "response": by_status["response"],
+        "failed": by_status["failed"],
+        "pending": by_status["pending"]
+        + by_status["sent_waiting_response"]
+        + by_status["delivered_waiting_response"],
+        "answered": by_status["answered"],
+        "avg_ack_ms": None,
+        "avg_response_ms": None,
+        "by_status": dict(by_status),
+        "by_bucket": [buckets[key] for key in sorted(buckets)],
+    }
+
+
+@router.get("/pending")
+def get_pending_messages():
+    return message_tracker.snapshot_pending()
 
 
 @router.get("/history", response_model=List[schemas.MessageResponse])

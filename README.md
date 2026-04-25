@@ -6,7 +6,7 @@ BEKO to bezprzewodowy system pagerowy pracujący w topologii **gwiazdy**.
 W systemie występuje:
 
 - jeden węzeł centralny: **Raspberry Pi Gateway**,
-- do **254 node’ów STM32**,
+- do **65 533 node’ów STM32** w przestrzeni adresowej protokołu,
 - komunikacja radiowa przez obecny backend **SX1276/RFM95**.
 
 Gateway wysyła wiadomości do wybranego node’a albo do całej sieci.  
@@ -18,7 +18,7 @@ Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez
 
 Adresacja w ramce `LAVIET_FRAME_V1` jest 16-bitowa:
 
-- `0x0000` – wartość nieważna,
+- `0x0000` – wartość nieważna, zarezerwowana jako sentinel dla braku adresu / błędnej inicjalizacji,
 - `0x0001` – Raspberry Pi Gateway,
 - `0x0002..0xFFFE` – adresy node’ów,
 - `0xFFFF` – broadcast.
@@ -26,7 +26,7 @@ Adresacja w ramce `LAVIET_FRAME_V1` jest 16-bitowa:
 W systemie może działać:
 
 - **1 gateway**,
-- **254 urządzenia końcowe**.
+- **65 533 urządzenia końcowe** adresowane jako `0x0002..0xFFFE`.
 
 ---
 
@@ -280,7 +280,7 @@ graph TD
 
     GW --> N1["Node STM32 #1"]
     GW --> N2["Node STM32 #X"]
-    GW --> N3["Node STM32 #254"]
+    GW --> N3["Node STM32 #65533"]
 
     N1 --> UI1["Wyświetlacz"]
 
@@ -313,9 +313,18 @@ sequenceDiagram
     N->>N: Weryfikacja HMAC i counter
     N->>N: Odszyfrowanie payloadu
     N->>U: Wyświetlenie wiadomości
+    alt Wiadomość kończy się na ".", "?" albo "!"
+        N->>U: Pokazanie opcji YES / OK / NO
+        U->>N: Wybór odpowiedzi
+        N->>GW: RESP
+    end
     N->>GW: ACK
     GW->>O: Wynik operacji
 ```
+
+### Broadcast z odpowiedzią użytkownika
+
+Broadcast `DATA` nie ma `ACK_REQUIRED`, ale node nadal musi pokazać opcje `YES` / `OK` / `NO`, jeśli plaintext wiadomości po `strip()` kończy się na `.`, `?` albo `!`. Odpowiedź użytkownika jest odsyłana do gatewaya jako unicast `RESP` z payloadem ASCII `YES`, `OK` albo `NO`.
 
 ### Parowanie
 
