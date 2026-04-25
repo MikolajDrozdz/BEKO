@@ -25,4 +25,4 @@ export function formatHex(hex: string): string {
   return hex.toLowerCase().replace(/\s/g, '')
 }
 
-export const BROADCAST_ID = 65535
+export { BROADCAST_ID } from './protocol'

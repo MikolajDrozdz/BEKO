@@ -5,10 +5,11 @@ import type { Node } from '@/types/api'
 
 export const NODES_KEY = ['nodes']
 
-export function useNodes() {
+export function useNodes(autoRefresh: boolean = false, intervalMs: number = 5000) {
   return useQuery<Node[]>({
     queryKey: NODES_KEY,
     queryFn: ({ signal }) => nodesApi.getAll(signal),
+    refetchInterval: autoRefresh ? intervalMs : false,
     retry: 1,
   })
 }

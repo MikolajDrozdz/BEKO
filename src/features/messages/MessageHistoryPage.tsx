@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { History, RefreshCw, Search, MessageSquare, Radio } from 'lucide-react'
+import { Cpu, History, RefreshCw, Search, MessageSquare, Radio } from 'lucide-react'
 import { useMessageHistory } from '@/hooks/useMessages'
 import { SectionHeader } from '@/components/common/SectionHeader'
 import { EmptyState } from '@/components/common/EmptyState'
@@ -19,17 +19,32 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { formatTimestamp, formatNodeId } from '@/lib/utils/format'
-import { hexToText, BROADCAST_ID } from '@/lib/utils/hex'
+import { hexToText } from '@/lib/utils/hex'
+import { BROADCAST_ID, getMessageStatusLabel } from '@/lib/utils/protocol'
 import type { MessageRecord } from '@/types/api'
 
-function PayloadCell({ hex }: { hex: string }) {
+function getStatusVariant(status?: string) {
+  if (status === 'failed') return 'destructive'
+  if (status === 'pending' || status?.includes('waiting_response')) return 'warning'
+  if (status === 'delivered' || status === 'answered' || status === 'received' || status === 'response') return 'success'
+  if (status === 'sent' || status === 'ok') return 'default'
+  return 'outline'
+}
+
+function PayloadCell({ hex, status }: { hex: string; status?: string }) {
   const [showHex, setShowHex] = useState(false)
   const text = hexToText(hex)
+  const response = text.trim().toUpperCase()
+  const isNodeResponse = status === 'response' && ['YES', 'OK', 'NO'].includes(response)
 
   return (
     <div className="flex items-start gap-2 min-w-0">
       <div className="min-w-0 flex-1">
-        {showHex ? (
+        {isNodeResponse && !showHex ? (
+          <Badge variant={response === 'NO' ? 'warning' : 'success'} className="text-xs">
+            Odpowiedź noda: {response}
+          </Badge>
+        ) : showHex ? (
           <span className="font-mono-feature text-xs text-teal-700 dark:text-teal-300 break-all">{hex}</span>
         ) : (
           <span className="text-xs text-teal-900 dark:text-teal-50">
@@ -50,18 +65,32 @@ function PayloadCell({ hex }: { hex: string }) {
   )
 }
 
-function DestBadge({ dstId }: { dstId: number }) {
-  if (dstId === BROADCAST_ID) {
+function AddressBadge({ msg }: { msg: MessageRecord }) {
+  if ((msg.status === 'response' || msg.status === 'received') && msg.src_id !== undefined) {
+    return (
+      <div className="flex items-center gap-1.5">
+        <Cpu className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+        <span className="text-xs text-teal-500 dark:text-teal-400">Od noda</span>
+        <span className="font-mono-feature text-xs font-medium text-teal-900 dark:text-teal-50">
+          {formatNodeId(msg.src_id)}
+        </span>
+      </div>
+    )
+  }
+
+  if (msg.dst_id === BROADCAST_ID) {
     return (
       <div className="flex items-center gap-1.5">
         <Radio className="h-3 w-3 text-ivory-600 dark:text-ivory-400" />
-        <span className="text-xs font-medium text-ivory-700 dark:text-ivory-400">Broadcast</span>
+        <span className="text-xs font-medium text-ivory-700 dark:text-ivory-400">
+          Broadcast
+        </span>
       </div>
     )
   }
   return (
     <span className="font-mono-feature text-xs text-teal-900 dark:text-teal-50">
-      {formatNodeId(dstId)}
+      {formatNodeId(msg.dst_id)}
     </span>
   )
 }
@@ -79,8 +108,11 @@ export function MessageHistoryPage() {
       return (
         String(m.dst_id).includes(q) ||
         formatNodeId(m.dst_id).toLowerCase().includes(q) ||
+        (m.src_id !== undefined && String(m.src_id).includes(q)) ||
+        (m.src_id !== undefined && formatNodeId(m.src_id).toLowerCase().includes(q)) ||
         m.payload_hex.toLowerCase().includes(q) ||
-        hexToText(m.payload_hex).toLowerCase().includes(q)
+        hexToText(m.payload_hex).toLowerCase().includes(q) ||
+        getMessageStatusLabel(m.status).toLowerCase().includes(q)
       )
     })
 
@@ -138,7 +170,7 @@ export function MessageHistoryPage() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Timestamp</TableHead>
-                      <TableHead>Destination</TableHead>
+                      <TableHead>Adres</TableHead>
                       <TableHead>Payload</TableHead>
                       <TableHead>Coded</TableHead>
                       <TableHead>RSSI</TableHead>
@@ -154,10 +186,10 @@ export function MessageHistoryPage() {
                           </span>
                         </TableCell>
                         <TableCell>
-                          <DestBadge dstId={msg.dst_id} />
+                          <AddressBadge msg={msg} />
                         </TableCell>
                         <TableCell className="max-w-[240px]">
-                          <PayloadCell hex={msg.payload_hex} />
+                          <PayloadCell hex={msg.payload_hex} status={msg.status} />
                         </TableCell>
                         <TableCell>
                           {msg.coded !== undefined ? (
@@ -177,8 +209,11 @@ export function MessageHistoryPage() {
                         </TableCell>
                         <TableCell>
                           {msg.status ? (
-                            <Badge variant={msg.status === 'sent' || msg.status === 'ok' ? 'success' : 'default'}>
-                              {msg.status}
+                            <Badge
+                              variant={getStatusVariant(msg.status)}
+                              className="max-w-[260px] whitespace-normal"
+                            >
+                              {getMessageStatusLabel(msg.status)}
                             </Badge>
                           ) : (
                             <span className="text-xs text-teal-400">—</span>

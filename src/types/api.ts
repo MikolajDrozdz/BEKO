@@ -20,6 +20,7 @@ export interface SendMessageRequest {
   dst_id: number;
   payload_hex: string;
   coded?: boolean;
+  ack_required?: boolean;
 }
 
 export interface SendMessageResponse {
@@ -27,20 +28,80 @@ export interface SendMessageResponse {
   message?: string;
 }
 
+export type MessageStatus =
+  | 'pending'
+  | 'sent'
+  | 'failed'
+  | 'delivered'
+  | 'sent_waiting_response'
+  | 'delivered_waiting_response'
+  | 'answered'
+  | 'received'
+  | 'response'
+  | 'ok'
+  | string;
+
 export interface MessageRecord {
   id?: string | number;
   dst_id: number;
   src_id?: number;
+  is_ack?: boolean;
+  ack_required?: boolean;
+  ack_sent?: boolean;
+  message_type?: string;
   payload_hex: string;
   timestamp?: string;
   sent_at?: string;
   direction?: 'sent' | 'received';
-  status?: string;
+  status?: MessageStatus;
   rssi?: number;
   coded?: boolean;
 }
 
 export type MessageHistoryResponse = MessageRecord[] | { messages: MessageRecord[] };
+
+export interface MessageStatsBucket {
+  time?: string;
+  timestamp?: string;
+  sent?: number;
+  received?: number;
+  failed?: number;
+  response?: number;
+  total?: number;
+}
+
+export interface MessageStats {
+  total?: number;
+  sent?: number;
+  received?: number;
+  response?: number;
+  failed?: number;
+  pending?: number;
+  answered?: number;
+  avg_ack_ms?: number;
+  avg_response_ms?: number;
+  by_status?: Record<string, number>;
+  by_bucket?: MessageStatsBucket[];
+}
+
+export interface PendingAck {
+  message_id?: string | number;
+  dst_id: number;
+  sent_at?: string;
+  retry_count?: number;
+}
+
+export interface PendingResponse {
+  message_id?: string | number;
+  dst_id: number;
+  question?: string;
+  expires_at?: string;
+}
+
+export interface MessagePending {
+  pending_ack?: PendingAck[];
+  pending_response?: PendingResponse[];
+}
 
 // ─── Nodes ────────────────────────────────────────────────────────────────────
 
@@ -49,13 +110,23 @@ export interface Node {
   id?: number;
   name?: string;
   is_paired?: boolean;
+  online?: boolean;
   paired_code?: string;
   network_mode?: boolean;
   network_ttl?: number;
   paired_at?: string;
   last_seen?: string;
   counter?: number;
+  tx_counter?: number;
+  rx_counter?: number;
   rssi?: number;
+  snr?: number;
+  battery_percent?: number;
+  firmware?: string;
+  messages_sent?: number;
+  messages_delivered?: number;
+  messages_failed?: number;
+  pending_response?: boolean;
   coding_enabled?: boolean;
 }
 
@@ -70,6 +141,7 @@ export interface NodeActionResponse {
 
 export interface RadioInfo {
   frequency?: number;
+  frequency_hz?: number;
   bandwidth?: number;
   spreading_factor?: number;
   coding_rate?: string;
@@ -82,6 +154,7 @@ export interface SystemInfo {
   gateway_id_hex?: string;
   protocol_version?: number;
   status?: string;
+  online?: boolean;
   // extended fields (may not be present in all gateway versions)
   id?: number;
   version?: string;
@@ -96,6 +169,13 @@ export interface SystemInfo {
   cpu_temp?: number;
   memory_used?: number;
   memory_total?: number;
+  frequency_hz?: number;
+  spreading_factor?: number;
+  tx_power?: number;
+  radio_ready?: boolean;
+  radio_driver?: string;
+  radio_error?: string | null;
+  gateway?: GatewayInfo;
 }
 
 export interface SystemPairResponse {
@@ -103,20 +183,81 @@ export interface SystemPairResponse {
   message?: string;
 }
 
+export interface GatewayInfo {
+  online?: boolean;
+  gateway_id?: number;
+  gateway_id_hex?: string;
+  hostname?: string;
+  platform?: string;
+  version?: string;
+  frequency_hz?: number;
+  spreading_factor?: number;
+  tx_power?: number;
+}
+
+export interface SystemMetric {
+  timestamp?: string;
+  time?: string;
+  uptime?: number;
+  cpu_percent?: number;
+  cpu_temp?: number;
+  load_avg?: number[];
+  memory_used?: number;
+  memory_total?: number;
+  memory_percent?: number;
+  disk_used?: number;
+  disk_total?: number;
+  disk_percent?: number;
+}
+
+export type SystemMetricsHistoryResponse = SystemMetric[] | { metrics: SystemMetric[] };
+
+export interface RadioStatus {
+  ready?: boolean;
+  driver?: string;
+  last_error?: string | null;
+  runtime_label?: string;
+  frequency_hz?: number;
+  bandwidth?: number;
+  spreading_factor?: number;
+  coding_rate?: string;
+  tx_power?: number;
+  sync_word?: string | number;
+  rx_count?: number;
+  tx_count?: number;
+  tx_fail_count?: number;
+  crc_error_count?: number;
+  counters?: {
+    rx?: number;
+    tx?: number;
+    tx_failed?: number;
+    crc_errors?: number;
+    total?: number;
+  };
+  last_rx_at?: string;
+  last_tx_at?: string;
+  last_rssi?: number;
+  last_snr?: number;
+}
+
 // ─── Logs ────────────────────────────────────────────────────────────────────
 
 export type LogLevel = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
 
 export interface LogEntry {
+  id?: string | number;
   timestamp?: string;
+  created_at?: string;
   level?: LogLevel | string;
   message: string;
+  event?: string;
   source?: string;
   logger?: string;
 }
 
 export type LogsResponse = LogEntry[] | string[] | { logs: LogEntry[] | string[] };
 
+<<<<<<< HEAD
 // ─── Auth & Users ─────────────────────────────────────────────────────────────
 
 export type UserRole = 'admin' | 'user'
@@ -168,6 +309,14 @@ export interface UserUpdate {
   permissions?: Capability[]
   is_active?: boolean
   password?: string
+=======
+export interface LogsSummary {
+  by_level?: Record<string, number>;
+  counts?: Record<string, number>;
+  last_timestamp?: string;
+  last_created_at?: string;
+  total?: number;
+>>>>>>> 9562328 (Dodane kilka rzeczy do mesg i dashboard)
 }
 
 // ─── Generic ─────────────────────────────────────────────────────────────────
