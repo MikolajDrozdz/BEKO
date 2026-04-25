@@ -1,10 +1,14 @@
 import type { ApiError } from '@/types/api'
 
 const AUTH_URL_KEY = 'beko_auth_url'
-const DEFAULT_AUTH_URL = 'http://localhost:8001'
+
+function getDefaultAuthUrl(): string {
+  if (typeof window === 'undefined') return 'http://localhost:8001'
+  return `${window.location.protocol}//${window.location.hostname}:8001`
+}
 
 export function getAuthBaseUrl(): string {
-  return localStorage.getItem(AUTH_URL_KEY) ?? DEFAULT_AUTH_URL
+  return localStorage.getItem(AUTH_URL_KEY) ?? getDefaultAuthUrl()
 }
 
 export function setAuthBaseUrl(url: string): void {

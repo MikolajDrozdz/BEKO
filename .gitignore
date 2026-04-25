@@ -103,3 +103,9 @@ public
 # Temporary folders
 tmp/
 temp/
+# Python local
+backend/.venv/
+backend/__pycache__/
+backend/routers/__pycache__/
+**/__pycache__/
+*.pyc

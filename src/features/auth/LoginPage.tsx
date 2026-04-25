@@ -3,20 +3,13 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Radio, Eye, EyeOff, Settings2, Wifi } from 'lucide-react'
+import { Radio, Eye, EyeOff, Wifi } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { getAuthBaseUrl, setAuthBaseUrl } from '@/lib/api/authClient'
-import { getBaseUrl, setBaseUrl } from '@/lib/api/client'
+import { getAuthBaseUrl } from '@/lib/api/authClient'
+import { getBaseUrl } from '@/lib/api/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog'
 
 const schema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -32,9 +25,6 @@ export function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)
-  const [settingsOpen, setSettingsOpen] = useState(false)
-  const [authUrlInput, setAuthUrlInput] = useState(getAuthBaseUrl())
-  const [gatewayUrlInput, setGatewayUrlInput] = useState(getBaseUrl())
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -49,12 +39,6 @@ export function LoginPage() {
     } catch (err) {
       setLoginError(err instanceof Error ? err.message : 'Login failed')
     }
-  }
-
-  function handleSaveSettings() {
-    setAuthBaseUrl(authUrlInput.trim())
-    setBaseUrl(gatewayUrlInput.trim())
-    setSettingsOpen(false)
   }
 
   return (
@@ -134,61 +118,18 @@ export function LoginPage() {
 
         {/* Connection info */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5 text-teal-400 dark:text-teal-600">
+          <div className="flex min-w-0 flex-col gap-1 text-teal-400 dark:text-teal-600">
+            <div className="flex items-center gap-1.5">
+              <Wifi className="h-3 w-3 shrink-0" />
+              <span className="text-[10px] font-mono-feature truncate max-w-[260px]">{getAuthBaseUrl()}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
             <Wifi className="h-3 w-3" />
-            <span className="text-[10px] font-mono-feature truncate max-w-[200px]">{getAuthBaseUrl()}</span>
+              <span className="text-[10px] font-mono-feature truncate max-w-[260px]">{getBaseUrl()}</span>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="flex items-center gap-1 text-[10px] text-teal-400 dark:text-teal-600 hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
-          >
-            <Settings2 className="h-3 w-3" />
-            Configure
-          </button>
         </div>
       </div>
-
-      {/* Settings dialog */}
-      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Connection Settings</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="auth-url">Auth Service URL</Label>
-              <Input
-                id="auth-url"
-                value={authUrlInput}
-                onChange={(e) => setAuthUrlInput(e.target.value)}
-                placeholder="http://localhost:8001"
-                className="font-mono-feature text-xs"
-              />
-              <p className="text-[10px] text-teal-500 dark:text-teal-400">
-                BEKO Auth Service (handles login and users)
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="gateway-url">Gateway API URL</Label>
-              <Input
-                id="gateway-url"
-                value={gatewayUrlInput}
-                onChange={(e) => setGatewayUrlInput(e.target.value)}
-                placeholder="http://localhost:8000"
-                className="font-mono-feature text-xs"
-              />
-              <p className="text-[10px] text-teal-500 dark:text-teal-400">
-                BEKO LoRa Gateway API
-              </p>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setSettingsOpen(false)}>Cancel</Button>
-            <Button size="sm" onClick={handleSaveSettings}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

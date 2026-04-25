@@ -11,6 +11,7 @@ import { DashboardPage } from './features/dashboard/DashboardPage'
 import { PairingPage } from './features/pairing/PairingPage'
 import { NodesPage } from './features/nodes/NodesPage'
 import { MessengerPage } from './features/messages/MessengerPage'
+import { RestaurantPanelPage } from './features/restaurant/RestaurantPanelPage'
 import { SystemPage } from './features/system/SystemPage'
 import { LogsPage } from './features/logs/LogsPage'
 import { UsersPage } from './features/admin/UsersPage'
@@ -87,6 +88,14 @@ export default function App() {
                     element={
                       <PermissionPage permission="messages">
                         <MessengerPage />
+                      </PermissionPage>
+                    }
+                  />
+                  <Route
+                    path="/restaurant"
+                    element={
+                      <PermissionPage permission="messages">
+                        <RestaurantPanelPage />
                       </PermissionPage>
                     }
                   />

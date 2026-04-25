@@ -77,11 +77,13 @@ function UserMenu() {
 
 export function Topbar({ onToggleSidebar }: TopbarProps) {
   const { theme, toggleTheme } = useTheme()
+  const { isAdmin } = useAuth()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [gatewayUrlInput, setGatewayUrlInput] = useState(getBaseUrl())
   const [authUrlInput, setAuthUrlInput] = useState(getAuthBaseUrl())
 
   function handleSaveSettings() {
+    if (!isAdmin) return
     setBaseUrl(gatewayUrlInput.trim())
     setAuthBaseUrl(authUrlInput.trim())
     setSettingsOpen(false)
@@ -105,9 +107,11 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
           </span>
         </div>
 
-        <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Connection settings">
-          <Settings2 className="h-4 w-4" />
-        </Button>
+        {isAdmin && (
+          <Button variant="ghost" size="icon" onClick={() => setSettingsOpen(true)} title="Connection settings">
+            <Settings2 className="h-4 w-4" />
+          </Button>
+        )}
 
         <Button variant="ghost" size="icon" onClick={toggleTheme} title="Toggle theme">
           {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
@@ -117,7 +121,7 @@ export function Topbar({ onToggleSidebar }: TopbarProps) {
       </div>
 
       {/* Settings dialog */}
-      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+      <Dialog open={isAdmin && settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>Connection Settings</DialogTitle>

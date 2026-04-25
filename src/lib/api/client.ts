@@ -1,10 +1,14 @@
 import type { ApiError } from '@/types/api'
 
 const CONFIG_KEY = 'beko_api_base_url'
-const DEFAULT_BASE_URL = 'http://localhost:8000'
+
+function getDefaultBaseUrl(): string {
+  if (typeof window === 'undefined') return 'http://localhost:8000'
+  return `${window.location.protocol}//${window.location.hostname}:8000`
+}
 
 export function getBaseUrl(): string {
-  return localStorage.getItem(CONFIG_KEY) ?? DEFAULT_BASE_URL
+  return localStorage.getItem(CONFIG_KEY) ?? getDefaultBaseUrl()
 }
 
 export function setBaseUrl(url: string): void {

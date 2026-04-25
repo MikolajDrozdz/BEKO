@@ -8,6 +8,7 @@ import {
   ScrollText,
   Radio,
   Users,
+  UtensilsCrossed,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
 import { useAuth } from '@/context/AuthContext'
@@ -27,6 +28,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/pairing', label: 'Pairing', icon: Antenna, permission: 'pairing' },
   { to: '/nodes', label: 'Nodes', icon: Cpu, permission: 'nodes' },
   { to: '/messenger', label: 'Messenger', icon: MessageSquare, permission: 'messages' },
+  { to: '/restaurant', label: 'Restaurant', icon: UtensilsCrossed, permission: 'messages' },
   { to: '/system', label: 'System', icon: Settings, permission: 'system' },
   { to: '/logs', label: 'Logs', icon: ScrollText, permission: 'logs' },
   { to: '/users', label: 'Users', icon: Users, adminOnly: true },

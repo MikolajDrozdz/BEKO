@@ -24,6 +24,7 @@ export interface SendMessageRequest {
 }
 
 export interface SendMessageResponse {
+  id?: string | number;
   status?: string;
   message?: string;
 }
