@@ -362,7 +362,10 @@ class LoRaHardware:
             crc_errors = getattr(radio, "crc_error_count")
 
         with self._stats_lock:
-            return {
+            rx_count = self._rx_count
+            tx_count = self._tx_count
+            tx_fail_count = self._tx_fail_count
+            status = {
                 "ready": self.is_ready(),
                 "driver": self.get_driver_name(),
                 "last_error": self.get_last_error(),
@@ -372,15 +375,24 @@ class LoRaHardware:
                 "coding_rate": "4/5",
                 "tx_power": getattr(radio, "tx_power", _env_int("LAVIET_LORA_TX_POWER", 17)),
                 "sync_word": f"0x{getattr(radio, 'sync_word', _env_int('LAVIET_LORA_SYNC_WORD', 0x34)):02X}",
-                "rx_count": self._rx_count,
-                "tx_count": self._tx_count,
-                "tx_fail_count": self._tx_fail_count,
+                "rx_count": rx_count,
+                "tx_count": tx_count,
+                "tx_fail_count": tx_fail_count,
                 "crc_error_count": crc_errors,
                 "last_rx_at": self._last_rx_at,
                 "last_tx_at": self._last_tx_at,
                 "last_rssi": self._last_rssi,
                 "last_snr": self._last_snr,
             }
+            status["counters"] = {
+                "rx": rx_count,
+                "tx": tx_count,
+                "tx_failed": tx_fail_count,
+                "crc_errors": crc_errors,
+                "total": rx_count + tx_count + tx_fail_count + crc_errors,
+            }
+            status["runtime_label"] = "SX1276/RFM95 runtime status"
+            return status
 
     def _start_builtin_rx_loop(self) -> None:
         if self.driver_name != "builtin-sx1276":

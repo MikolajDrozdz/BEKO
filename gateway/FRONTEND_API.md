@@ -96,7 +96,24 @@ Odpytania wspierające diagnostykę i stabilizację protokołu radiowego.
 
 ### Kondycja Bramy
 `GET /api/system/`
-**Opis**: Pobiera wewnętrzny adres bramy (`0x0001` - `LAVIET_GATEWAY_ID`), naświetlając wersję protokołu.
+**Opis**: Pobiera wewnętrzny adres bramy (`0x0001` - `LAVIET_GATEWAY_ID`), wersję protokołu, podstawowe informacje gatewaya oraz zagnieżdżony status radia.
+
+### Gateway Info
+`GET /api/system/gateway`
+**Opis**: Zwraca dane do karty Gateway Info:
+```json
+{
+  "online": true,
+  "gateway_id": 1,
+  "gateway_id_hex": "0x1",
+  "hostname": "raspberrypi",
+  "platform": "Linux-...",
+  "version": "1.0.0",
+  "frequency_hz": 868500000,
+  "spreading_factor": 7,
+  "tx_power": 17
+}
+```
 
 ### Aktualne Metryki Systemu
 `GET /api/system/metrics`
@@ -108,7 +125,34 @@ Odpytania wspierające diagnostykę i stabilizację protokołu radiowego.
 
 ### Status Radia
 `GET /api/radio/status`
-**Opis**: Zwraca gotowość radia, driver, konfigurację LoRa, liczniki RX/TX, błędy CRC/TX oraz ostatnie RSSI/SNR.
+**Opis**: Zwraca gotowość radia, driver, konfigurację LoRa, liczniki RX/TX, błędy CRC/TX oraz ostatnie RSSI/SNR. Karta podobna do "Radio Counters" może używać:
+```json
+{
+  "ready": true,
+  "driver": "builtin-sx1276",
+  "runtime_label": "SX1276/RFM95 runtime status",
+  "rx_count": 142,
+  "tx_count": 39,
+  "tx_fail_count": 2,
+  "crc_error_count": 4,
+  "counters": {
+    "rx": 142,
+    "tx": 39,
+    "tx_failed": 2,
+    "crc_errors": 4,
+    "total": 187
+  },
+  "last_rssi": -72,
+  "last_snr": 8.5
+}
+```
+
+### Logi
+`GET /api/logs/?limit=100&level=ERROR&search=radio`
+**Opis**: Zwraca logi z bazy. Parametry `level` i `search` są opcjonalne, `limit` może mieć zakres `1..1000`.
+
+`GET /api/logs/summary`
+**Opis**: Zwraca licznik logów per poziom i timestamp ostatniego wpisu.
 
 ### Forcowanie Synchronizacji Licznika HMAC (Counter Override)
 `POST /api/system/nodes/{node_id}/sync_counter`

@@ -1,3 +1,6 @@
+import platform
+import socket
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 import time
 from sqlalchemy.orm import Session
@@ -12,22 +15,50 @@ from ...core.laviet_crypto import derive_unicast_base_key, get_aes_key, get_hmac
 from ...models import models
 
 router = APIRouter()
+GATEWAY_API_VERSION = "1.0.0"
+
+
+def _gateway_info(radio_status: dict) -> dict:
+    return {
+        "online": radio_status["ready"],
+        "gateway_id": LAVIET_GATEWAY_ID,
+        "gateway_id_hex": hex(LAVIET_GATEWAY_ID),
+        "hostname": socket.gethostname(),
+        "platform": platform.platform(),
+        "version": GATEWAY_API_VERSION,
+        "frequency_hz": radio_status["frequency_hz"],
+        "spreading_factor": radio_status["spreading_factor"],
+        "tx_power": radio_status["tx_power"],
+    }
 
 @router.get("/", summary="Informacje o stanie Gatewaya (LAVIET)")
 def get_system_status():
     """Zwraca podstawowe informacje o bramce LoRa."""
     radio_status = lora_device.get_status()
+    gateway_info = _gateway_info(radio_status)
     return {
         "gateway_id": LAVIET_GATEWAY_ID,
         "gateway_id_hex": hex(LAVIET_GATEWAY_ID),
+        "hostname": gateway_info["hostname"],
+        "platform": gateway_info["platform"],
+        "version": gateway_info["version"],
+        "frequency_hz": gateway_info["frequency_hz"],
+        "spreading_factor": gateway_info["spreading_factor"],
+        "tx_power": gateway_info["tx_power"],
         "protocol_version": LAVIET_FRAME_VERSION,
         "status": "online" if lora_device.is_ready() else "radio_not_ready",
         "radio_ready": radio_status["ready"],
         "radio_driver": radio_status["driver"],
         "radio_error": radio_status["last_error"],
         "unicast_key_mode": "pair32",
+        "gateway": gateway_info,
         "radio": radio_status,
     }
+
+
+@router.get("/gateway", summary="Gateway info dla dashboardu")
+def get_gateway_info():
+    return _gateway_info(lora_device.get_status())
 
 
 @router.get("/metrics", summary="Aktualne metryki systemu")
