@@ -27,6 +27,7 @@
 #define MENU_SETTINGS_PIN_UNLOCK_MS         60000UL
 #define MENU_PAIRING_WINDOW_MS              300000UL
 #define MENU_TRUSTED_DEVICE_SLOTS           16U
+#define MENU_TRUSTED_NODE_SLOTS             15U
 #define MENU_DEVICE_SLOT_INVALID            0xFFU
 
 typedef enum
@@ -46,6 +47,7 @@ typedef enum
     MENU_PAGE_DEVICES,
     MENU_PAGE_DEVICE_DELETE_LIST,
     MENU_PAGE_DEVICE_DELETE_ACTION,
+    MENU_PAGE_PIN_SETTINGS,
     MENU_PAGE_SECURITY,
     MENU_PAGE_SECURITY_FH,
     MENU_PAGE_SECURITY_CODING,
@@ -116,6 +118,9 @@ typedef enum
     MENU_ACTION_DEVICE_DELETE,
     MENU_ACTION_DEVICE_DELETE_CONFIRM,
     MENU_ACTION_DEVICE_INFO,
+    MENU_ACTION_PIN_TOGGLE,
+    MENU_ACTION_PIN_SET_USER,
+    MENU_ACTION_PIN_SET_ADMIN,
     MENU_ACTION_SEC_TOGGLE_FH,
     MENU_ACTION_SEC_FH_ENABLE,
     MENU_ACTION_SEC_FH_DISABLE,
@@ -368,6 +373,8 @@ typedef struct
     uint32_t quick_reply_deadline_ms;
     uint32_t quick_reply_last_seconds;
     char quick_reply_text[MENU_LINE_BUF_SIZE];
+    bool tx_ack_waiting;
+    char tx_sent_text[MENU_LINE_BUF_SIZE];
     menu_page_id_t pending_auth_page;
     menu_auth_level_t pending_auth_level;
     uint8_t pin_digits[MENU_SETTINGS_PIN_LEN];
@@ -397,8 +404,9 @@ static osThreadId_t s_menu_task = NULL;
 static osMessageQueueId_t s_menu_notify_queue = NULL;
 static StaticTask_t s_menu_task_cb;
 static StackType_t s_menu_task_stack[MENU_TASK_STACK_WORDS];
-static const uint8_t s_user_pin[MENU_SETTINGS_PIN_LEN] = { 0U, 0U, 0U, 0U };
-static const uint8_t s_admin_pin[MENU_SETTINGS_PIN_LEN] = { 9U, 9U, 9U, 9U };
+static uint8_t s_user_pin[MENU_SETTINGS_PIN_LEN] = { 0U, 0U, 0U, 0U };
+static uint8_t s_admin_pin[MENU_SETTINGS_PIN_LEN] = { 9U, 9U, 9U, 9U };
+static bool s_pin_enabled = true;
 
 static void menu_main_task_fn(void *argument);
 static const menu_page_t *menu_get_page(menu_page_id_t page_id);
@@ -414,6 +422,7 @@ static void menu_open_info_modal(menu_state_t *st,
                                  const char *l2,
                                  const char *l3);
 static void menu_close_modal(menu_state_t *st);
+static void menu_clear_tx_ack_state(menu_state_t *st);
 static void menu_handle_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_modal_button(menu_state_t *st, button_event_t evt);
 static void menu_handle_pin_button(menu_state_t *st, button_event_t evt);
@@ -424,6 +433,7 @@ static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text
 static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_text);
 static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action);
 static bool menu_is_send_action(menu_action_t action);
+static bool menu_is_send_target_allowed(uint32_t node_id);
 static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx);
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label);
 static void menu_open_send_target_page(menu_state_t *st, menu_action_t action);
@@ -440,6 +450,8 @@ static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id);
 static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_level);
 static bool menu_pin_matches(const menu_state_t *st);
 static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_auth_level_t auth_level);
+static void menu_start_pin_change(menu_state_t *st, menu_action_t action);
+static bool menu_is_pin_change_action(menu_action_t action);
 static void menu_clear_pin_state(menu_state_t *st);
 static void menu_line_clear(char *dst);
 static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars);
@@ -450,6 +462,8 @@ static uint8_t menu_line_append_freq_mhz(char *dst, uint8_t offset, uint32_t fre
 static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, const char *suffix);
 static void menu_line_format_i32(char *dst, const char *prefix, int32_t value, const char *suffix);
 static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value);
+static void menu_line_format_device_ref(char *dst, const char *prefix, uint32_t device_code);
+static void menu_line_format_source(char *dst, uint32_t device_code);
 static void menu_line_format_freq(char *dst, const char *prefix, uint32_t freq_hz);
 static void menu_line_format_fixed2(char *dst, const char *prefix, float value, const char *suffix);
 static void menu_line_copy_or_default(char *dst, const char *text, const char *fallback);
@@ -501,7 +515,6 @@ static const menu_item_t s_page_radio_settings_items[] =
 static const menu_item_t s_page_send_options_items[] =
 {
     { "STS:OK", MENU_PAGE_NONE, MENU_ACTION_SEND_DEFAULT },
-    { "Send msg directly", MENU_PAGE_SEND_DIRECT_LIST, MENU_ACTION_NONE },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -528,6 +541,7 @@ static const menu_item_t s_page_send_direct_list_items[] =
 
 static const menu_item_t s_page_send_target_list_items[] =
 {
+    { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
@@ -598,12 +612,20 @@ static const menu_item_t s_page_main_items[] =
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
+static const menu_item_t s_page_pin_settings_items[] =
+{
+    { "Toggle PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_TOGGLE },
+    { "Change user PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_SET_USER },
+    { "Change admin PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_SET_ADMIN },
+    { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
+};
+
 static const menu_item_t s_page_devices_items[] =
 {
     { "Add new device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD },
     { "Pair with network", MENU_PAGE_NONE, MENU_ACTION_DEVICE_ADD_NETWORK },
     { "Delete device", MENU_PAGE_DEVICE_DELETE_LIST, MENU_ACTION_NONE },
-    { "Info device", MENU_PAGE_NONE, MENU_ACTION_DEVICE_INFO },
+    { "Connection info", MENU_PAGE_NONE, MENU_ACTION_DEVICE_INFO },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -637,6 +659,7 @@ static const menu_item_t s_page_device_delete_action_items[] =
 
 static const menu_item_t s_page_security_items[] =
 {
+    { "PIN settings", MENU_PAGE_PIN_SETTINGS, MENU_ACTION_NONE },
     { "Frequency hopping", MENU_PAGE_SECURITY_FH, MENU_ACTION_NONE },
     { "TPM", MENU_PAGE_NONE, MENU_ACTION_SEC_TPM_INFO },
     { "Keys", MENU_PAGE_NONE, MENU_ACTION_SEC_ROTATE_KEYS },
@@ -1099,6 +1122,7 @@ static const menu_page_t s_pages[] =
     { "DEVICES", MENU_PAGE_MAIN, s_page_devices_items, (uint8_t)(sizeof(s_page_devices_items) / sizeof(s_page_devices_items[0])) },
     { "DELETE DEV", MENU_PAGE_DEVICES, s_page_device_delete_list_items, (uint8_t)(sizeof(s_page_device_delete_list_items) / sizeof(s_page_device_delete_list_items[0])) },
     { "DELETE DEV", MENU_PAGE_DEVICE_DELETE_LIST, s_page_device_delete_action_items, (uint8_t)(sizeof(s_page_device_delete_action_items) / sizeof(s_page_device_delete_action_items[0])) },
+    { "PIN SETTINGS", MENU_PAGE_SECURITY, s_page_pin_settings_items, (uint8_t)(sizeof(s_page_pin_settings_items) / sizeof(s_page_pin_settings_items[0])) },
     { "SECURITY", MENU_PAGE_MAIN, s_page_security_items, (uint8_t)(sizeof(s_page_security_items) / sizeof(s_page_security_items[0])) },
     { "SEC FH", MENU_PAGE_SECURITY, s_page_security_fh_items, (uint8_t)(sizeof(s_page_security_fh_items) / sizeof(s_page_security_fh_items[0])) },
     { "CODING", MENU_PAGE_SECURITY, s_page_security_coding_items, (uint8_t)(sizeof(s_page_security_coding_items) / sizeof(s_page_security_coding_items[0])) },
@@ -1466,6 +1490,7 @@ static void menu_enter_monitor(menu_state_t *st)
     st->quick_reply_last_seconds = 0U;
     st->user_unlock_until_ms = 0UL;
     st->admin_unlock_until_ms = 0UL;
+    menu_clear_tx_ack_state(st);
     menu_clear_pin_state(st);
     menu_line_clear(st->quick_reply_text);
     (void)lcd_main_set_mode(LCD_MODE_MONITOR);
@@ -1492,6 +1517,7 @@ static void menu_open_page(menu_state_t *st, menu_page_id_t page_id)
     st->quick_reply_src_id = 0U;
     st->quick_reply_deadline_ms = 0U;
     st->quick_reply_last_seconds = 0U;
+    menu_clear_tx_ack_state(st);
     menu_line_clear(st->quick_reply_text);
     page = menu_get_page(page_id);
     if (page != NULL)
@@ -1521,9 +1547,21 @@ static void menu_open_info_modal(menu_state_t *st,
         return;
     }
 
+    menu_clear_tx_ack_state(st);
     st->modal = MENU_MODAL_INFO;
     st->pending_action = MENU_ACTION_NONE;
     menu_render_popup(l0, l1, l2, l3);
+}
+
+static void menu_clear_tx_ack_state(menu_state_t *st)
+{
+    if (st == NULL)
+    {
+        return;
+    }
+
+    st->tx_ack_waiting = false;
+    menu_line_clear(st->tx_sent_text);
 }
 
 /* Closes the active modal and redraws the underlying page or monitor. */
@@ -1537,6 +1575,10 @@ static void menu_close_modal(menu_state_t *st)
     if (st->modal == MENU_MODAL_PIN)
     {
         menu_clear_pin_state(st);
+    }
+    if (st->modal == MENU_MODAL_INFO)
+    {
+        menu_clear_tx_ack_state(st);
     }
     st->modal = MENU_MODAL_NONE;
     st->pending_action = MENU_ACTION_NONE;
@@ -1726,6 +1768,32 @@ static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value
     (void)menu_line_append_hex32(dst, offset, value);
 }
 
+static void menu_line_format_device_ref(char *dst, const char *prefix, uint32_t device_code)
+{
+    uint8_t offset = 0U;
+
+    menu_line_clear(dst);
+    offset = menu_line_copy(dst, offset, prefix, MENU_LINE_CHARS);
+    if (device_code == LAVIET_GATEWAY_ID)
+    {
+        (void)menu_line_copy(dst, offset, "gateway", MENU_LINE_CHARS);
+        return;
+    }
+    if (device_code == LAVIET_BROADCAST_ID)
+    {
+        (void)menu_line_copy(dst, offset, "broadcast", MENU_LINE_CHARS);
+        return;
+    }
+
+    offset = menu_line_copy(dst, offset, "0x", 2U);
+    (void)menu_line_append_hex32(dst, offset, device_code);
+}
+
+static void menu_line_format_source(char *dst, uint32_t device_code)
+{
+    menu_line_format_device_ref(dst, "From ", device_code);
+}
+
 static void menu_line_format_freq(char *dst, const char *prefix, uint32_t freq_hz)
 {
     uint8_t offset = 0U;
@@ -1826,7 +1894,8 @@ static bool menu_gateway_slot_in_use(void)
 {
     trusted_info_t info;
 
-    return menu_get_trusted_slot(0U, &info);
+    return menu_get_trusted_slot(0U, &info) &&
+           (info.node_id == LAVIET_GATEWAY_ID);
 }
 
 static uint8_t menu_line_append_device_slot_name(char *dst, uint8_t offset, uint8_t slot)
@@ -1856,8 +1925,20 @@ static void menu_build_trusted_slot_label(uint8_t slot, const trusted_info_t *in
 
     menu_line_clear(dst);
     offset = menu_line_append_device_slot_name(dst, offset, slot);
-    offset = menu_line_copy(dst, offset, " 0x", 3U);
-    (void)menu_line_append_hex32(dst, offset, info->node_id);
+    offset = menu_line_copy(dst, offset, " ", 1U);
+    if (info->node_id == LAVIET_GATEWAY_ID)
+    {
+        (void)menu_line_copy(dst, offset, "gateway", 7U);
+    }
+    else if (info->node_id == LAVIET_BROADCAST_ID)
+    {
+        (void)menu_line_copy(dst, offset, "broadcast", 9U);
+    }
+    else
+    {
+        offset = menu_line_copy(dst, offset, "0x", 2U);
+        (void)menu_line_append_hex32(dst, offset, info->node_id);
+    }
 }
 
 static void menu_build_empty_trusted_slot_label(uint8_t slot, char *dst)
@@ -2310,6 +2391,12 @@ static void menu_build_item_label(const menu_state_t *st,
         return;
     }
 
+    if ((st->current_page == MENU_PAGE_PIN_SETTINGS) && (item_idx == 0U))
+    {
+        (void)menu_line_copy(dst, 0U, s_pin_enabled ? "PIN ON" : "PIN OFF", MENU_LINE_CHARS);
+        return;
+    }
+
     if ((st->current_page == MENU_PAGE_RADIO_SETTINGS) &&
         radio_main_get_runtime_cfg(&radio_cfg))
     {
@@ -2445,7 +2532,7 @@ static void menu_render_quick_reply(menu_state_t *st)
         return;
     }
 
-    menu_line_format_hex32(line1, "From ", st->quick_reply_src_id);
+    menu_line_format_source(line1, st->quick_reply_src_id);
     menu_line_copy_or_default(line2, "UP=no OK=ok DN=yes", "");
     menu_line_format_u32(line3, "Reply in ", st->quick_reply_last_seconds, " s");
     menu_render_popup(st->quick_reply_text, line1, line2, line3);
@@ -2466,6 +2553,14 @@ static void menu_render_pin(menu_state_t *st)
     if (st->pending_auth_level == MENU_AUTH_ADMIN)
     {
         title = "ADMIN PIN";
+    }
+    if (st->pending_action == MENU_ACTION_PIN_SET_USER)
+    {
+        title = "NEW USER PIN";
+    }
+    else if (st->pending_action == MENU_ACTION_PIN_SET_ADMIN)
+    {
+        title = "NEW ADMIN PIN";
     }
 
     menu_line_clear(line1);
@@ -2516,6 +2611,7 @@ static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id)
         case MENU_PAGE_DEVICES:
         case MENU_PAGE_DEVICE_DELETE_LIST:
         case MENU_PAGE_DEVICE_DELETE_ACTION:
+        case MENU_PAGE_PIN_SETTINGS:
         case MENU_PAGE_SECURITY:
         case MENU_PAGE_SECURITY_FH:
         case MENU_PAGE_SECURITY_CODING:
@@ -2570,6 +2666,11 @@ static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_le
 {
     uint32_t until_ms = 0UL;
 
+    if (!s_pin_enabled)
+    {
+        return true;
+    }
+
     if ((st == NULL) || (auth_level == MENU_AUTH_NONE))
     {
         return (auth_level == MENU_AUTH_NONE);
@@ -2616,6 +2717,12 @@ static bool menu_pin_matches(const menu_state_t *st)
     return (diff == 0U);
 }
 
+static bool menu_is_pin_change_action(menu_action_t action)
+{
+    return ((action == MENU_ACTION_PIN_SET_USER) ||
+            (action == MENU_ACTION_PIN_SET_ADMIN));
+}
+
 static void menu_clear_pin_state(menu_state_t *st)
 {
     if (st == NULL)
@@ -2627,6 +2734,22 @@ static void menu_clear_pin_state(menu_state_t *st)
     st->pin_index = 0U;
     st->pending_auth_page = MENU_PAGE_NONE;
     st->pending_auth_level = MENU_AUTH_NONE;
+}
+
+static void menu_start_pin_change(menu_state_t *st, menu_action_t action)
+{
+    if ((st == NULL) || !menu_is_pin_change_action(action))
+    {
+        return;
+    }
+
+    st->modal = MENU_MODAL_PIN;
+    st->pending_action = action;
+    st->pending_auth_page = MENU_PAGE_NONE;
+    st->pending_auth_level = MENU_AUTH_NONE;
+    memset(st->pin_digits, 0, sizeof(st->pin_digits));
+    st->pin_index = 0U;
+    menu_render_pin(st);
 }
 
 static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_auth_level_t auth_level)
@@ -2646,29 +2769,32 @@ static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_
 
 static bool menu_should_open_quick_reply(const char *text)
 {
+    uint8_t len;
+    char last;
+
     if (text == NULL)
     {
         return false;
     }
 
-    if (strcmp(text, "ASK: Is done?") == 0)
+    len = 0U;
+    while ((len < MENU_LINE_CHARS) && (text[len] != '\0'))
     {
-        return true;
-    }
-    if (strcmp(text, "ACT Come over.") == 0)
-    {
-        return true;
-    }
-    if (strcmp(text, "ACT: Stop!") == 0)
-    {
-        return true;
-    }
-    if (strcmp(text, "ASK: Is ready?") == 0)
-    {
-        return true;
+        len++;
     }
 
-    return false;
+    while ((len > 0U) && (text[len - 1U] == ' '))
+    {
+        len--;
+    }
+
+    if (len == 0U)
+    {
+        return false;
+    }
+
+    last = text[len - 1U];
+    return ((last == '.') || (last == '?') || (last == '!'));
 }
 
 static bool menu_modal_is_preemptible(menu_modal_t modal)
@@ -2702,6 +2828,10 @@ static void menu_show_action_result(menu_state_t *st, menu_notification_type_t t
     else if (type == MENU_NOTIFICATION_SECURITY)
     {
         title = "SECURITY";
+    }
+    else if (type == MENU_NOTIFICATION_DELIVERY)
+    {
+        title = "DELIVERED";
     }
     else if (type == MENU_NOTIFICATION_PAIRING)
     {
@@ -2749,20 +2879,29 @@ static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_te
     }
 
     menu_line_copy_or_default(line0, sent_text, "Message sent");
-    menu_line_copy_or_default(line1, "No delivery ACK", "");
+    menu_line_copy_or_default(line1, "Waiting for ACK", "");
     menu_open_info_modal(st, "TX SENT", line0, line1, "Any key=back");
+    menu_line_copy_or_default(st->tx_sent_text, line0, "");
+    st->tx_ack_waiting = true;
 }
 
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n)
 {
     char code_line[MENU_LINE_BUF_SIZE];
-    char rssi_line[MENU_LINE_BUF_SIZE];
     char source_line[MENU_LINE_BUF_SIZE];
     char text_safe[MENU_LINE_BUF_SIZE];
     bool has_text;
 
     if ((st == NULL) || (n == NULL))
     {
+        return;
+    }
+    if ((n->type == MENU_NOTIFICATION_DELIVERY) &&
+        st->tx_ack_waiting &&
+        (st->modal == MENU_MODAL_INFO))
+    {
+        st->tx_ack_waiting = false;
+        menu_render_popup("TX SENT", st->tx_sent_text, "Delivery ACK", "Any key=back");
         return;
     }
     if (st->modal != MENU_MODAL_NONE)
@@ -2787,10 +2926,12 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
 
     if (n->type == MENU_NOTIFICATION_RX)
     {
+        uint32_t source_id = (n->reply_device_code != 0UL) ? n->reply_device_code : n->device_code;
+
         if (menu_should_open_quick_reply(has_text ? text_safe : NULL))
         {
             st->modal = MENU_MODAL_QUICK_REPLY;
-            st->quick_reply_src_id = n->device_code;
+            st->quick_reply_src_id = source_id;
             st->quick_reply_deadline_ms = HAL_GetTick() + 30000UL;
             st->quick_reply_last_seconds = 30U;
             menu_line_copy_or_default(st->quick_reply_text, text_safe, "");
@@ -2798,9 +2939,8 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
             return;
         }
 
-        menu_line_format_hex32(source_line, "From ", n->device_code);
-        menu_line_format_i32(rssi_line, "RSSI ", n->rssi_dbm, " dBm");
-        menu_open_info_modal(st, "RX MESSAGE", has_text ? text_safe : "(empty)", source_line, rssi_line);
+        menu_line_format_source(source_line, source_id);
+        menu_open_info_modal(st, "RX MESSAGE", has_text ? text_safe : "(empty)", source_line, "Any key=back");
         return;
     }
 
@@ -2860,6 +3000,7 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
 static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
 {
     menu_page_id_t target_page;
+    menu_action_t pin_action;
 
     if ((st == NULL) || (evt == BUTTON_EVENT_NONE))
     {
@@ -2897,6 +3038,26 @@ static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
     {
         st->pin_index++;
         menu_render_pin(st);
+        return;
+    }
+
+    pin_action = st->pending_action;
+    if (menu_is_pin_change_action(pin_action))
+    {
+        if (pin_action == MENU_ACTION_PIN_SET_ADMIN)
+        {
+            memcpy(s_admin_pin, st->pin_digits, sizeof(s_admin_pin));
+            st->admin_unlock_until_ms = 0UL;
+        }
+        else
+        {
+            memcpy(s_user_pin, st->pin_digits, sizeof(s_user_pin));
+            st->user_unlock_until_ms = 0UL;
+        }
+        st->modal = MENU_MODAL_NONE;
+        st->pending_action = MENU_ACTION_NONE;
+        menu_clear_pin_state(st);
+        menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "PIN changed");
         return;
     }
 
@@ -3154,7 +3315,8 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                         char label[MENU_LINE_BUF_SIZE];
 
                         memset(&info, 0, sizeof(info));
-                        if (menu_get_trusted_slot(st->selected_idx, &info))
+                        if (menu_get_trusted_slot(st->selected_idx, &info) &&
+                            menu_is_send_target_allowed(info.node_id))
                         {
                             st->pending_target_node_id = info.node_id;
                             menu_build_trusted_slot_label(st->selected_idx, &info, label);
@@ -3177,7 +3339,8 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
                     char label[MENU_LINE_BUF_SIZE];
 
                     memset(&info, 0, sizeof(info));
-                    if (menu_get_trusted_slot(st->selected_idx, &info))
+                    if (menu_get_trusted_slot(st->selected_idx, &info) &&
+                        menu_is_send_target_allowed(info.node_id))
                     {
                         st->pending_target_node_id = info.node_id;
                         menu_build_trusted_slot_label(st->selected_idx, &info, label);
@@ -3261,7 +3424,8 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
         return;
     }
 
-    if (menu_is_send_action(action) && (st->pending_target_node_id == 0U))
+    if (menu_is_send_action(action) &&
+        !menu_is_send_target_allowed(st->pending_target_node_id))
     {
         st->send_target_action = MENU_ACTION_NONE;
         menu_show_action_result(st, MENU_NOTIFICATION_WARNING, "No target");
@@ -3310,7 +3474,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
                 break;
             }
             send_ok = radio_main_cmd_send_template(1U, 0U, st->pending_target_node_id);
-            menu_line_format_hex32(line0, "Sent to ", st->pending_target_node_id);
+            menu_line_format_device_ref(line0, "Sent to ", st->pending_target_node_id);
             menu_show_send_result(st, send_ok, line0);
             st->pending_target_node_id = 0U;
             st->send_target_action = MENU_ACTION_NONE;
@@ -3487,15 +3651,39 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
 
         case MENU_ACTION_DEVICE_INFO:
             count = 0U;
-            for (idx = 0U; idx < 16U; idx++)
+            for (idx = 1U; idx <= MENU_TRUSTED_NODE_SLOTS; idx++)
             {
-                if (security_main_cmd_get_device(idx, &info) && info.in_use)
+                if (security_main_cmd_get_device(idx, &info) &&
+                    info.in_use &&
+                    (info.node_id != LAVIET_GATEWAY_ID) &&
+                    (info.node_id != LAVIET_BROADCAST_ID) &&
+                    (info.node_id != 0U))
                 {
                     count++;
                 }
             }
-            menu_line_format_u32(line0, "Trusted count=", count, "");
-            menu_open_info_modal(st, "DEVICE INFO", line0, "Any key=back", "");
+            menu_line_copy_or_default(line0,
+                                      menu_gateway_slot_in_use() ? "Gateway connected" : "Gateway missing",
+                                      "");
+            menu_line_format_u32(line1, "Nodes ", count, "/15");
+            menu_open_info_modal(st, "CONNECTION INFO", line0, line1, "Any key=back");
+            break;
+
+        case MENU_ACTION_PIN_TOGGLE:
+            s_pin_enabled = !s_pin_enabled;
+            if (!s_pin_enabled)
+            {
+                st->user_unlock_until_ms = 0UL;
+                st->admin_unlock_until_ms = 0UL;
+            }
+            menu_show_action_result(st,
+                                    MENU_NOTIFICATION_SECURITY,
+                                    s_pin_enabled ? "PIN enabled" : "PIN disabled");
+            break;
+
+        case MENU_ACTION_PIN_SET_USER:
+        case MENU_ACTION_PIN_SET_ADMIN:
+            menu_start_pin_change(st, action);
             break;
 
         case MENU_ACTION_SEC_TOGGLE_FH:
@@ -3892,6 +4080,11 @@ static bool menu_is_send_action(menu_action_t action)
     }
 }
 
+static bool menu_is_send_target_allowed(uint32_t node_id)
+{
+    return ((node_id != 0UL) && (node_id != LAVIET_BROADCAST_ID));
+}
+
 static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx)
 {
     radio_main_runtime_cfg_t radio_cfg;
@@ -3919,7 +4112,29 @@ static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *p
             trusted_info_t info;
 
             memset(&info, 0, sizeof(info));
-            return (security_main_cmd_get_device(item_idx, &info) && info.in_use);
+            return (security_main_cmd_get_device(item_idx, &info) &&
+                    info.in_use &&
+                    menu_is_send_target_allowed(info.node_id));
+        }
+
+        return false;
+    }
+
+    if (st->current_page == MENU_PAGE_SEND_DIRECT_LIST)
+    {
+        if (item_idx == (uint8_t)(page->item_count - 1U))
+        {
+            return true;
+        }
+
+        if (item_idx < MENU_TRUSTED_DEVICE_SLOTS)
+        {
+            trusted_info_t info;
+
+            memset(&info, 0, sizeof(info));
+            return (security_main_cmd_get_device(item_idx, &info) &&
+                    info.in_use &&
+                    menu_is_send_target_allowed(info.node_id));
         }
 
         return false;

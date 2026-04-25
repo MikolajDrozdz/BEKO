@@ -15,7 +15,8 @@ typedef enum
     MENU_NOTIFICATION_WARNING,
     MENU_NOTIFICATION_ERROR,
     MENU_NOTIFICATION_PAIRING,
-    MENU_NOTIFICATION_SECURITY
+    MENU_NOTIFICATION_SECURITY,
+    MENU_NOTIFICATION_DELIVERY
 } menu_notification_type_t;
 
 typedef struct
@@ -23,6 +24,7 @@ typedef struct
     menu_notification_type_t type;
     int16_t rssi_dbm;
     uint32_t device_code;
+    uint32_t reply_device_code;
     char text[21];
 } menu_notification_t;
 

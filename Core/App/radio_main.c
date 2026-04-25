@@ -29,12 +29,15 @@
 #define RADIO_TX_GUARD_MIN_MS                200UL
 #define RADIO_TX_GUARD_LORA_MS               20000UL
 #define RADIO_TX_GUARD_MARGIN_MS             64UL
-#define RADIO_ACK_TIMEOUT_MIN_MS             750UL
-#define RADIO_ACK_TIMEOUT_MARGIN_MS          250UL
+#define RADIO_ACK_TIMEOUT_MIN_MS             6000UL
+#define RADIO_ACK_TIMEOUT_MARGIN_MS          1500UL
+#define RADIO_ACK_ACTIVE_POLL_MS             1U
+#define RADIO_IDLE_POLL_MS                   10U
 #define RADIO_ACK_CLOSED_TTL_MS              10000UL
 #define RADIO_ACK_RETRY_LIMIT                2U
 #define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
 #define RADIO_NETWORK_PAIR_RSSI_MIN_DBM      (-20)
+#define RADIO_TRUSTED_DEVICE_SLOTS           16U
 #define RADIO_LORA_BW_HZ_7_8                 7800UL
 #define RADIO_LORA_BW_HZ_10_4                10400UL
 #define RADIO_LORA_BW_HZ_15_6                15600UL
@@ -232,6 +235,7 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len);
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
 static void radio_main_post_rx_notification(int16_t rssi_dbm,
                                             uint16_t src_id,
+                                            uint16_t dst_id,
                                             const uint8_t *payload,
                                             uint8_t payload_len,
                                             laviet_frame_type_t frame_type);
@@ -243,6 +247,7 @@ static void radio_main_handle_ack_frame(uint16_t src_id, uint16_t acked_msg_id, 
 static void radio_main_handle_ack_timeout(void);
 static void radio_main_handle_events(void);
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt);
+static bool radio_main_source_is_trusted(uint16_t src_id);
 static void radio_main_handle_hopping(void);
 static void radio_main_handle_auto_ping(void);
 static void radio_main_ensure_rx_continuous(void);
@@ -259,6 +264,7 @@ static uint8_t radio_main_format_payload_text(const uint8_t *payload,
                                               char *out,
                                               uint8_t out_size);
 static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
+                                               uint16_t src_id,
                                                const uint8_t *payload,
                                                uint8_t payload_len);
 static void radio_main_log_gateway_rx_frame(const laviet_frame_t *raw_frame,
@@ -975,7 +981,8 @@ static void radio_main_task_fn(void *argument)
             radio_main_notify(MENU_NOTIFICATION_PAIRING, "Pairing timeout");
         }
 
-        osDelay(10U);
+        osDelay((s_ctx.tx_in_progress || s_ctx.ack_pending.active) ?
+                RADIO_ACK_ACTIVE_POLL_MS : RADIO_IDLE_POLL_MS);
     }
 }
 
@@ -1148,6 +1155,11 @@ static bool radio_main_ack_track_start(const laviet_frame_t *frame, const uint8_
     s_ctx.ack_pending.wait_ms = radio_main_ack_timeout_ms(raw_len);
     s_ctx.ack_pending.deadline_ms = radio_main_now_ms() + s_ctx.ack_pending.wait_ms;
     s_ctx.ack_pending.retries_done = 0U;
+    printf("RADIO ACK wait dst=0x%04X msg=0x%04X counter=%lu timeout=%lu ms\r\n",
+           (unsigned int)s_ctx.ack_pending.peer_id,
+           (unsigned int)s_ctx.ack_pending.msg_id,
+           (unsigned long)s_ctx.ack_pending.counter,
+           (unsigned long)s_ctx.ack_pending.wait_ms);
     return true;
 }
 
@@ -1188,6 +1200,7 @@ static void radio_main_handle_ack_frame(uint16_t src_id, uint16_t acked_msg_id, 
                (unsigned int)acked_msg_id,
                (unsigned long)acked_counter,
                (unsigned int)s_ctx.ack_pending.retries_done);
+        radio_main_notify(MENU_NOTIFICATION_DELIVERY, "Delivery ACK");
         radio_main_ack_track_close(false);
         return;
     }
@@ -2400,6 +2413,17 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
     {
         dst16 = (uint16_t)dst_id;
     }
+    if (dst16 == 0U)
+    {
+        radio_main_set_last_error("Bad dst_id");
+        return false;
+    }
+    if (((type == LAVIET_TYPE_DATA) || (type == LAVIET_TYPE_RESP)) &&
+        (dst16 == LAVIET_BROADCAST_ID))
+    {
+        radio_main_set_last_error("Broadcast disabled");
+        return false;
+    }
 
     if (s_ctx.ack_pending.active &&
         (dst_id != 0xFFFFFFFFUL) &&
@@ -2696,6 +2720,7 @@ static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, 
 
 static void radio_main_post_rx_notification(int16_t rssi_dbm,
                                             uint16_t src_id,
+                                            uint16_t dst_id,
                                             const uint8_t *payload,
                                             uint8_t payload_len,
                                             laviet_frame_type_t frame_type)
@@ -2707,7 +2732,8 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
     memset(&n, 0, sizeof(n));
     n.type = MENU_NOTIFICATION_RX;
     n.rssi_dbm = rssi_dbm;
-    n.device_code = src_id;
+    n.device_code = (dst_id == LAVIET_BROADCAST_ID) ? LAVIET_BROADCAST_ID : src_id;
+    n.reply_device_code = src_id;
 
     text_len = radio_main_format_payload_text(payload, payload_len, text_buf, sizeof(text_buf));
     if (text_len > 0U)
@@ -2720,9 +2746,10 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
         (void)snprintf(n.text, sizeof(n.text), "TYPE:%u", (unsigned int)frame_type);
     }
 
-    printf("RADIO RX NOTIFY type=%s src=0x%04X rssi=%d text=\"%s\"\r\n",
+    printf("RADIO RX NOTIFY type=%s src=0x%04X dst=0x%04X rssi=%d text=\"%s\"\r\n",
            radio_main_frame_type_text(frame_type),
            (unsigned int)src_id,
+           (unsigned int)dst_id,
            (int)rssi_dbm,
            n.text);
     (void)menu_main_post_notification(&n);
@@ -2908,6 +2935,30 @@ static void radio_main_handle_events(void)
     }
 }
 
+static bool radio_main_source_is_trusted(uint16_t src_id)
+{
+    trusted_info_t info;
+    uint8_t idx;
+
+    if ((src_id == 0U) || (src_id == LAVIET_BROADCAST_ID))
+    {
+        return false;
+    }
+
+    for (idx = 0U; idx < RADIO_TRUSTED_DEVICE_SLOTS; idx++)
+    {
+        memset(&info, 0, sizeof(info));
+        if (security_main_cmd_get_device(idx, &info) &&
+            info.in_use &&
+            (info.node_id == src_id))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 {
     laviet_frame_t frame;
@@ -2931,7 +2982,6 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     frame_status = laviet_frame_decode(pkt->data, pkt->length, &frame);
     if (frame_status != LAVIET_STATUS_OK)
     {
-        (void)lcd_main_push_message(pkt->rssi_dbm, pkt->data, pkt->length);
         printf("RADIO RX non-LAVIET drop status=%d\r\n", (int)frame_status);
         return;
     }
@@ -2998,6 +3048,15 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                (unsigned int)frame_decoded.dst_id);
         return;
     }
+    if (((frame_type == LAVIET_TYPE_DATA) || (frame_type == LAVIET_TYPE_RESP)) &&
+        !radio_main_source_is_trusted(frame_decoded.src_id))
+    {
+        printf("RADIO RX outside-network drop src=0x%04X dst=0x%04X type=%s\r\n",
+               (unsigned int)frame_decoded.src_id,
+               (unsigned int)frame_decoded.dst_id,
+               radio_main_frame_type_text(frame_type));
+        return;
+    }
 
     printf("RADIO RX OK type=%s src=0x%04X dst=0x%04X msg=0x%04X counter=%lu flags=0x%02X len=%u rssi=%d snr=%d\r\n",
            radio_main_frame_type_text(frame_type),
@@ -3040,6 +3099,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             if (frame_decoded.payload_len > 0U)
             {
                 bool stored = radio_main_push_payload_to_monitor(pkt->rssi_dbm,
+                                                                 frame_decoded.src_id,
                                                                  frame_decoded.payload,
                                                                  frame_decoded.payload_len);
 
@@ -3050,6 +3110,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             }
             radio_main_post_rx_notification(pkt->rssi_dbm,
                                             frame_decoded.src_id,
+                                            frame_decoded.dst_id,
                                             frame_decoded.payload,
                                             frame_decoded.payload_len,
                                             frame_type);
@@ -3064,6 +3125,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             if (frame_decoded.payload_len > 0U)
             {
                 bool stored = radio_main_push_payload_to_monitor(pkt->rssi_dbm,
+                                                                 frame_decoded.src_id,
                                                                  frame_decoded.payload,
                                                                  frame_decoded.payload_len);
 
@@ -3074,6 +3136,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
             }
             radio_main_post_rx_notification(pkt->rssi_dbm,
                                             frame_decoded.src_id,
+                                            frame_decoded.dst_id,
                                             frame_decoded.payload,
                                             frame_decoded.payload_len,
                                             frame_type);
@@ -3264,6 +3327,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
         {
             radio_main_post_rx_notification(pkt->rssi_dbm,
                                             frame_decoded.src_id,
+                                            frame_decoded.dst_id,
                                             frame_decoded.payload,
                                             frame_decoded.payload_len,
                                             frame_type);
@@ -3548,6 +3612,7 @@ static uint8_t radio_main_format_payload_text(const uint8_t *payload,
 }
 
 static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
+                                               uint16_t src_id,
                                                const uint8_t *payload,
                                                uint8_t payload_len)
 {
@@ -3560,7 +3625,7 @@ static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
         return false;
     }
 
-    return lcd_main_push_message(rssi_dbm, (const uint8_t *)text_buf, text_len);
+    return lcd_main_push_message_from(rssi_dbm, src_id, (const uint8_t *)text_buf, text_len);
 }
 
 static void radio_main_log_gateway_rx_frame(const laviet_frame_t *raw_frame,

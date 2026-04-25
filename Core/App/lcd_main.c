@@ -2,6 +2,7 @@
 
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
+#include "laviet_frame.h"
 #include "lcd_library/lcd.h"
 #include "task.h"
 
@@ -58,8 +59,12 @@ static bool s_render_cache_valid = false;
 
 static void lcd_main_task_fn(void *argument);
 static void lcd_main_fill_line(char *dst, const char *src);
-static void lcd_main_write_rssi_field(char *dst, int16_t rssi_dbm);
-static void lcd_main_fill_line_from_payload(char *dst, int16_t rssi_dbm, const uint8_t *data, uint32_t length);
+static void lcd_main_write_source_field(char *dst, uint32_t source_id);
+static void lcd_main_fill_line_from_payload(char *dst,
+                                            int16_t rssi_dbm,
+                                            uint32_t source_id,
+                                            const uint8_t *data,
+                                            uint32_t length);
 static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
 static void lcd_main_monitor_history_append(const char *line);
 static void lcd_main_monitor_rebuild_lines(void);
@@ -151,6 +156,11 @@ bool lcd_main_show_menu(const char *l0, const char *l1, const char *l2, const ch
 
 bool lcd_main_push_message(int16_t rssi_dbm, const uint8_t *data, uint32_t length)
 {
+    return lcd_main_push_message_from(rssi_dbm, 0U, data, length);
+}
+
+bool lcd_main_push_message_from(int16_t rssi_dbm, uint32_t source_id, const uint8_t *data, uint32_t length)
+{
     lcd_main_msg_t msg;
 
     if ((data == NULL) || (length == 0U))
@@ -160,7 +170,7 @@ bool lcd_main_push_message(int16_t rssi_dbm, const uint8_t *data, uint32_t lengt
 
     memset(&msg, 0, sizeof(msg));
     msg.type = LCD_MAIN_MSG_PUSH_MONITOR;
-    lcd_main_fill_line_from_payload(msg.text0, rssi_dbm, data, length);
+    lcd_main_fill_line_from_payload(msg.text0, rssi_dbm, source_id, data, length);
     return lcd_main_post_message(&msg);
 }
 
@@ -390,78 +400,72 @@ static void lcd_main_fill_line(char *dst, const char *src)
     dst[LCD_MAIN_COLS] = '\0';
 }
 
-/**
- * @brief Render RSSI into the fixed 4-character field used by the monitor view.
- *
- * The LCD format reserves columns 0..3 for RSSI and column 4 for ':'.
- * This helper keeps the full signed value visible down to -999 dBm instead of clipping at -99.
- */
-static void lcd_main_write_rssi_field(char *dst, int16_t rssi_dbm)
+static void lcd_main_write_source_field(char *dst, uint32_t source_id)
 {
-    int32_t value;
-    uint32_t magnitude;
-    int8_t pos;
+    static const char hex[] = "0123456789ABCDEF";
+    uint16_t source16;
 
     if (dst == NULL)
     {
         return;
     }
 
-    dst[0] = ' ';
-    dst[1] = ' ';
-    dst[2] = ' ';
-    dst[3] = ' ';
-
-    value = (int32_t)rssi_dbm;
-    if (value > 999)
+    if (source_id == LAVIET_GATEWAY_ID)
     {
-        value = 999;
+        dst[0] = 'G';
+        dst[1] = 'A';
+        dst[2] = 'T';
+        dst[3] = 'E';
+        return;
     }
-    else if (value < -999)
+    if (source_id == LAVIET_BROADCAST_ID)
     {
-        value = -999;
+        dst[0] = 'B';
+        dst[1] = 'C';
+        dst[2] = 'S';
+        dst[3] = 'T';
+        return;
+    }
+    if ((source_id == 0UL) || (source_id > 0xFFFFUL))
+    {
+        dst[0] = '-';
+        dst[1] = '-';
+        dst[2] = '-';
+        dst[3] = '-';
+        return;
     }
 
-    magnitude = (value < 0) ? (uint32_t)(-value) : (uint32_t)value;
-    pos = 3;
-
-    do
-    {
-        dst[pos] = (char)('0' + (magnitude % 10UL));
-        magnitude /= 10UL;
-        pos--;
-    } while ((magnitude != 0UL) && (pos >= 0));
-
-    if (value < 0)
-    {
-        if (pos >= 0)
-        {
-            dst[pos] = '-';
-        }
-        else
-        {
-            dst[0] = '-';
-        }
-    }
+    source16 = (uint16_t)source_id;
+    dst[0] = hex[(source16 >> 12) & 0x0FU];
+    dst[1] = hex[(source16 >> 8) & 0x0FU];
+    dst[2] = hex[(source16 >> 4) & 0x0FU];
+    dst[3] = hex[source16 & 0x0FU];
 }
 
-static void lcd_main_fill_line_from_payload(char *dst, int16_t rssi_dbm, const uint8_t *data, uint32_t length)
+static void lcd_main_fill_line_from_payload(char *dst,
+                                            int16_t rssi_dbm,
+                                            uint32_t source_id,
+                                            const uint8_t *data,
+                                            uint32_t length)
 {
     uint32_t i;
-    uint32_t msg_max_len = (LCD_MAIN_COLS - 5U);
+    uint32_t msg_start = 5U;
+    uint32_t msg_max_len = (LCD_MAIN_COLS - msg_start);
 
     if (dst == NULL)
     {
         return;
     }
 
-    lcd_main_write_rssi_field(dst, rssi_dbm);
+    (void)rssi_dbm;
+    lcd_main_fill_line(dst, NULL);
+    lcd_main_write_source_field(dst, source_id);
     dst[4] = ':';
 
     for (i = 0U; i < msg_max_len; i++)
     {
         uint32_t src_idx = i;
-        uint32_t dst_idx = i + 5U;
+        uint32_t dst_idx = i + msg_start;
         if ((src_idx < length) && (data != NULL))
         {
             char c = (char)data[src_idx];

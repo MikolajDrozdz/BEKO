@@ -16,6 +16,7 @@ bool lcd_main_set_line(uint8_t line_index, const char *text);
 bool lcd_main_set_lines(const char *line0, const char *line1);
 bool lcd_main_show_menu(const char *l0, const char *l1, const char *l2, const char *l3);
 bool lcd_main_push_message(int16_t rssi_dbm, const uint8_t *data, uint32_t length);
+bool lcd_main_push_message_from(int16_t rssi_dbm, uint32_t source_id, const uint8_t *data, uint32_t length);
 bool lcd_main_set_mode(lcd_main_mode_t mode);
 bool lcd_main_show_popup(const char *l0, const char *l1, const char *l2, const char *l3);
 bool lcd_main_show_boot_hello(void);
