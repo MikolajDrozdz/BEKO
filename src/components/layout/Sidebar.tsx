@@ -7,16 +7,29 @@ import {
   Settings,
   ScrollText,
   Radio,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils/cn'
+import { useAuth } from '@/context/AuthContext'
+import type { Capability } from '@/types/api'
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { to: '/pairing', label: 'Pairing', icon: Antenna },
-  { to: '/nodes', label: 'Nodes', icon: Cpu },
-  { to: '/messenger', label: 'Messenger', icon: MessageSquare },
-  { to: '/system', label: 'System', icon: Settings },
-  { to: '/logs', label: 'Logs', icon: ScrollText },
+interface NavItem {
+  to: string
+  label: string
+  icon: React.ElementType
+  exact?: boolean
+  permission?: Capability
+  adminOnly?: boolean
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true, permission: 'dashboard' },
+  { to: '/pairing', label: 'Pairing', icon: Antenna, permission: 'pairing' },
+  { to: '/nodes', label: 'Nodes', icon: Cpu, permission: 'nodes' },
+  { to: '/messenger', label: 'Messenger', icon: MessageSquare, permission: 'messages' },
+  { to: '/system', label: 'System', icon: Settings, permission: 'system' },
+  { to: '/logs', label: 'Logs', icon: ScrollText, permission: 'logs' },
+  { to: '/users', label: 'Users', icon: Users, adminOnly: true },
 ]
 
 interface SidebarProps {
@@ -25,6 +38,13 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const location = useLocation()
+  const { hasPermission, isAdmin } = useAuth()
+
+  const visibleItems = NAV_ITEMS.filter((item) => {
+    if (item.adminOnly) return isAdmin
+    if (item.permission) return hasPermission(item.permission)
+    return true
+  })
 
   return (
     <aside
@@ -49,7 +69,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive = item.exact
             ? location.pathname === item.to
             : location.pathname.startsWith(item.to)

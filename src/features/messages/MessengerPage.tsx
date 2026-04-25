@@ -30,11 +30,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { hexToText, textToHex, BROADCAST_ID } from '@/lib/utils/hex'
-import { formatNodeId } from '@/lib/utils/format'
+import { formatNodeId, formatTime, formatDateLabel, dateDayKey } from '@/lib/utils/format'
 import type { MessageRecord } from '@/types/api'
 
+const MAX_MESSAGE_LENGTH = 16
+
 const schema = z.object({
-  message: z.string().min(1, 'Type a message'),
+  message: z
+    .string()
+    .min(1, 'Message cannot be empty')
+    .max(MAX_MESSAGE_LENGTH, `Maximum ${MAX_MESSAGE_LENGTH} characters`),
 })
 type FormValues = z.infer<typeof schema>
 
@@ -43,48 +48,14 @@ type FormValues = z.infer<typeof schema>
 function isReceived(msg: MessageRecord): boolean {
   if (msg.direction === 'received') return true
   if (msg.direction === 'sent') return false
-  // fallback on status field
   if (msg.status === 'received') return true
   if (msg.status === 'sent' || msg.status === 'delivered' || msg.status === 'ok') return false
-  // fallback: received = has source node but no known destination
   if (msg.src_id !== undefined && msg.dst_id === undefined) return true
   return false
 }
 
 function getMsgTimestamp(msg: MessageRecord): string | undefined {
   return msg.timestamp ?? msg.sent_at
-}
-
-function formatTime(ts?: string | number): string {
-  if (!ts) return ''
-  try {
-    const d = typeof ts === 'number' ? new Date(ts * 1000) : new Date(ts)
-    return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  } catch {
-    return ''
-  }
-}
-
-function getDateKey(ts?: string): string {
-  if (!ts) return 'no-date'
-  try { return new Date(ts).toDateString() } catch { return 'no-date' }
-}
-
-function getDateLabel(ts?: string): string {
-  if (!ts) return 'Unknown date'
-  try {
-    const d = new Date(ts)
-    const today = new Date()
-    const yesterday = new Date(today)
-    yesterday.setDate(yesterday.getDate() - 1)
-    if (d.toDateString() === today.toDateString()) return 'Today'
-    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday'
-    return d.toLocaleDateString(undefined, {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-    })
-  } catch {
-    return String(ts)
-  }
 }
 
 // ─── Components ───────────────────────────────────────────────────────────────
@@ -188,6 +159,27 @@ function MessageBubble({ msg }: { msg: MessageRecord }) {
   )
 }
 
+// ─── Character counter ────────────────────────────────────────────────────────
+
+function CharCounter({ current }: { current: number }) {
+  const remaining = MAX_MESSAGE_LENGTH - current
+  const isOver = remaining < 0
+  const isWarning = remaining <= 4 && !isOver
+  return (
+    <span
+      className={`tabular-nums text-[10px] font-mono-feature shrink-0 ${
+        isOver
+          ? 'text-red-500 dark:text-red-400 font-semibold'
+          : isWarning
+          ? 'text-amber-500 dark:text-amber-400'
+          : 'text-teal-400 dark:text-teal-600'
+      }`}
+    >
+      {current}/{MAX_MESSAGE_LENGTH}
+    </span>
+  )
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 type DayGroup = { dateKey: string; label: string; messages: MessageRecord[] }
@@ -196,12 +188,12 @@ function groupByDate(messages: MessageRecord[]): DayGroup[] {
   const groups: DayGroup[] = []
   for (const msg of messages) {
     const ts = getMsgTimestamp(msg)
-    const key = getDateKey(ts)
+    const key = dateDayKey(ts)
     const last = groups[groups.length - 1]
     if (last && last.dateKey === key) {
       last.messages.push(msg)
     } else {
-      groups.push({ dateKey: key, label: getDateLabel(ts), messages: [msg] })
+      groups.push({ dateKey: key, label: formatDateLabel(ts), messages: [msg] })
     }
   }
   return groups
@@ -223,6 +215,8 @@ export function MessengerPage() {
     resolver: zodResolver(schema),
     defaultValues: { message: '' },
   })
+
+  const messageValue = form.watch('message')
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -329,7 +323,7 @@ export function MessengerPage() {
               </div>
               <p className="text-sm font-medium text-teal-600 dark:text-teal-400">No messages yet</p>
               <p className="text-xs text-teal-400 dark:text-teal-600 max-w-xs">
-                Send a message below — received messages from nodes will also appear here
+                Send a message below — received messages from nodes will also appear here.
               </p>
             </div>
           )}
@@ -396,16 +390,27 @@ export function MessengerPage() {
 
           {/* Bottom row: textarea + coded + send */}
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex items-end gap-2">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 space-y-1">
               <Textarea
-                placeholder={`Message to ${isBroadcast ? 'all nodes' : formatNodeId(Number(recipient))}… (Enter to send, Shift+Enter for newline)`}
+                placeholder={`Message to ${isBroadcast ? 'all nodes' : formatNodeId(Number(recipient))}… (Enter to send)`}
                 rows={1}
                 className="resize-none text-sm min-h-[40px] max-h-28 overflow-y-auto"
                 onKeyDown={handleKeyDown}
+                maxLength={MAX_MESSAGE_LENGTH}
                 {...form.register('message')}
               />
+              <div className="flex items-center justify-between px-0.5">
+                {form.formState.errors.message ? (
+                  <p className="text-xs text-red-500">{form.formState.errors.message.message}</p>
+                ) : (
+                  <span className="text-[10px] text-teal-400 dark:text-teal-600">
+                    Max {MAX_MESSAGE_LENGTH} characters
+                  </span>
+                )}
+                <CharCounter current={messageValue.length} />
+              </div>
             </div>
-            <div className="flex flex-col items-center gap-1 shrink-0 pb-0.5">
+            <div className="flex flex-col items-center gap-1 shrink-0 pb-5">
               <Label htmlFor="coded-msg" className="text-[10px] text-teal-500 dark:text-teal-400 cursor-pointer select-none">
                 Coded
               </Label>
@@ -414,16 +419,13 @@ export function MessengerPage() {
             <Button
               type="submit"
               loading={sendMessage.isPending}
-              disabled={!recipient}
-              className="shrink-0 h-10"
+              disabled={!recipient || messageValue.length === 0 || messageValue.length > MAX_MESSAGE_LENGTH}
+              className="shrink-0 h-10 mb-5"
             >
               <Send className="h-4 w-4" />
               Send
             </Button>
           </form>
-          {form.formState.errors.message && (
-            <p className="text-xs text-red-500 mt-1">{form.formState.errors.message.message}</p>
-          )}
         </div>
       </div>
     </div>

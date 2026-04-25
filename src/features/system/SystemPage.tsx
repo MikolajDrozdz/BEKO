@@ -166,7 +166,7 @@ export function SystemPage() {
             </div>
 
             <p className="text-xs text-teal-400 dark:text-teal-600">
-              Per-node actions (sync counter, rotate keys) are available in the Nodes view.
+              Per-node actions (key rotation, removal) are available in the Nodes view.
             </p>
           </CardContent>
         </Card>

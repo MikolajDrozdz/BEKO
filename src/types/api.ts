@@ -117,6 +117,59 @@ export interface LogEntry {
 
 export type LogsResponse = LogEntry[] | string[] | { logs: LogEntry[] | string[] };
 
+// ─── Auth & Users ─────────────────────────────────────────────────────────────
+
+export type UserRole = 'admin' | 'user'
+
+export type Capability =
+  | 'dashboard'
+  | 'pairing'
+  | 'nodes'
+  | 'messages'
+  | 'logs'
+  | 'system'
+  | 'users'
+
+export const ALL_CAPABILITIES: Capability[] = [
+  'dashboard',
+  'pairing',
+  'nodes',
+  'messages',
+  'logs',
+  'system',
+]
+
+export interface UserInfo {
+  id: number
+  username: string
+  role: UserRole
+  permissions: Capability[]
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface AuthToken {
+  access_token: string
+  token_type: string
+  user: UserInfo
+}
+
+export interface UserCreate {
+  username: string
+  password: string
+  role: UserRole
+  permissions: Capability[]
+  is_active: boolean
+}
+
+export interface UserUpdate {
+  role?: UserRole
+  permissions?: Capability[]
+  is_active?: boolean
+  password?: string
+}
+
 // ─── Generic ─────────────────────────────────────────────────────────────────
 
 export interface ApiError {

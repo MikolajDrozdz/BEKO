@@ -61,13 +61,6 @@ function NodeRow({ node, onDelete, onRotate, deleting, rotating }: {
         )}
       </TableCell>
       <TableCell>
-        {node.counter !== undefined ? (
-          <span className="font-mono-feature text-xs">{node.counter}</span>
-        ) : (
-          <span className="text-xs text-teal-400">—</span>
-        )}
-      </TableCell>
-      <TableCell>
         {node.rssi !== undefined ? (
           <span className="font-mono-feature text-xs">{node.rssi} dBm</span>
         ) : (
@@ -190,7 +183,6 @@ export function NodesPage() {
                       <TableHead>Node ID</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead>Coding</TableHead>
-                      <TableHead>Counter</TableHead>
                       <TableHead>RSSI</TableHead>
                       <TableHead>Last Seen</TableHead>
                       <TableHead className="w-[100px]">Actions</TableHead>
