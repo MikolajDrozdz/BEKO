@@ -13,10 +13,20 @@ Dokumenty pomocnicze:
 - Relay mesh/TTL został usunięty z bieżącej architektury; node działa w topologii gwiazdy z gatewayem.
 - Ochrona przed replay w pierwszym wdrożeniu używa monotonicznego `counter` dla relacji gateway-node i zapisuje go w małym slocie `secret` NVM.
 - `TPM PP` w obecnym hardware jest podłączony do samego modułu TPM, nie do GPIO MCU.
-  To znaczy, że nie wolno traktować go jak zwykłego przycisku aplikacji. Jeśli ma
-  sterować pairingiem albo operacjami administracyjnymi, trzeba użyć polityk TPM
-  (`PolicyPhysicalPresence`, policy session, ewentualnie NV/object auth), a nie
-  lokalnego odczytu stanu pinu przez STM32.
+  Pin TPM PP to pin `7`, aktywny stanem `VDD`.
+- Firmware używa TPM jako źródła trwałego root seeda:
+  - główny NV index: `0x01C10101`,
+  - legacy read-only/migration index: `0x01C10100`,
+  - atrybuty głównego indexu: `PPWRITE`, `OWNERREAD`, `NO_DA`.
+- Zapis lub rotacja root seeda wymaga aktywnego TPM PP. STM32 nie odczytuje tego
+  pinu jako GPIO; wymuszenie odbywa się przez TPM authorization (`TPM_RH_PLATFORM`
+  dla `NV_Write`).
+- Klucz szyfrowania sekretów EEPROM jest wyprowadzany z TPM-backed root seeda.
+  Przy pierwszym starcie po zmianie firmware próbuje przepisać stare wpisy EEPROM
+  z dawnego stałego klucza na klucz wyprowadzony z TPM.
+- PP nie zabezpiecza jeszcze całego pairingu radiowego. Jeśli pairing albo inne
+  operacje administracyjne mają wymagać fizycznej obecności, trzeba dodać osobne
+  TPM policy/session albo równoważny flow oparty o TPM.
 
 ## DoS / Flood Defense
 

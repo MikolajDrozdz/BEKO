@@ -1,243 +1,119 @@
 # TODO - BEKO Pager Network (`pager-rtos`)
 
-Ten plik zastepuje starsze TODO zwiazane z mesh i dawna dokumentacja `BEKO_NET_V1`.
-Aktualny stan repo dotyczy architektury:
+Aktualny kierunek projektu:
 - `1 Raspberry Pi Gateway + nody STM32`
-- topologia gwiazdy
+- topologia gwiazdy, bez mesh/relay jako celu wdrozenia
 - ramki `LAVIET_FRAME_V1`
+- adresacja 16-bit: gateway `0x0001`, broadcast `0xFFFF`, node `0x0002..0xFFFE`
 - `AES-CTR` + `HMAC-SHA256`
-- obowiazkowy `ACK` dla unicastu
+- ACK dla unicastu
 - model `TPM-first`
+- root seed w TPM NV z zapisem chronionym `PPWRITE`
 
-Data aktualizacji: `2026-04-19`
+Data aktualizacji: `2026-04-26`
 
 ---
 
-## 1. Stan wdrozony
+## Stan wdrozony
 
-- [x] Finalny format `LAVIET_FRAME_V1`
-- [x] Walidacja ramek, `payload_len`, typow i flag
+- [x] Finalny format `LAVIET_FRAME_V1`, parser, serializer i walidacja pol/flag/typow
 - [x] Obsluga `DATA`, `ACK`, `RESP`, `PAIR_REQ`, `PAIR_RESP`, `CFG`, `COUNTER_SYNC`, `KEY_ROTATE`, `ERROR`
-- [x] Limit `payload` do `0..16 B`
-- [x] `AES-CTR` dla `payload`
-- [x] `HMAC-SHA256` dla chronionej czesci ramki
-- [x] `ACK` dla poprawnych ramek unicast
-- [x] Timeout `ACK` i retransmisje po stronie noda
-- [x] Rozroznienie stanow `ACK`: poprawny / spozniony / zduplikowany / nieoczekiwany / timeout
-- [x] Pairing sieciowy: gateway inicjuje, node nasluchuje
-- [x] Osobny PIN uzytkownika i administratora
-- [x] Dokumentacja kontraktu w `gateway_docs/`
-- [x] Gateway backend w Pythonie (`gateway/`) z FastAPI + SQLite + LoRa SX1276
-
----
-
-## 2. Protokol i ramki
-
-- [x] Parser i serializer zgodne z `LAVIET_FRAME_V1`
-- [x] Big-endian dla pol wielobajtowych
-- [x] Walidacja `src_id`, `dst_id`, broadcastu i typow ramek
-- [x] Broadcast usuniety z normalnej sciezki UI uzytkownika
-- [x] `PAIR_REQ` sieciowy tylko od gatewaya
-
-### Uwagi
-
-- Broadcast nadal istnieje na poziomie protokolu.
-- UI noda nie daje juz uzytkownikowi zwyklej sciezki do wysylania broadcastu.
-
----
-
-## 3. ACK i niezawodnosc
-
-- [x] `ACK` dla poprawnego unicastu z `ACK_REQUIRED`
-- [x] Tracker oczekujacego `ACK` po stronie noda
-- [x] Retry i timeout `ACK` po stronie noda
-- [x] Mapowanie `ACK -> msg_id + counter`
-- [x] Gateway backend zapisuje i rozlicza `ACK` dla wyslanych wiadomosci
-
-### Otwarte
-
-- [ ] Dodac bardziej rozbudowany scheduler retry / kolejke retransmisji po stronie gatewaya
-- [ ] Dodac wyzszy poziom raportowania statusu dostarczenia w panelu operatorskim
-
----
-
-## 4. AES-CTR
-
-- [x] `AES-CTR` w firmware STM32
-- [x] Jednoznaczny `counter block` / nonce
-- [x] Zerowanie buforow z plaintextem i kluczami
-- [x] Runtime self-test hardware AES wzgledem referencji software
-
-### Otwarte
-
-- [ ] Dodac osobne testy regresyjne AES poza self-testem runtime
-
----
-
-## 5. HMAC-SHA256
-
-- [x] `HMAC-SHA256` w firmware STM32
-- [x] `HMAC-SHA256` w gateway backendzie
-- [x] `HMAC` liczony po `header || payload`
-- [x] Dla `ENCRYPTED=1` HMAC liczony po ciphertext
+- [x] Limit payloadu ramki do `16 B`
+- [x] `AES-CTR` dla payloadu i `HMAC-SHA256` po `header || payload`
 - [x] RX: najpierw HMAC, potem decrypt
-- [x] Staly testowy MAC `01 x 32` usuniety z aktywnej sciezki
-- [x] Dodane szczegolowe logi debug HMAC po obu stronach
-
-### Otwarte
-
-- [ ] Potwierdzic end-to-end po swiezym pairingu, ze direct `node -> gateway` i `gateway -> node` dzialaja na finalnym HMAC bez sciezek debug
-- [ ] Dodac zewnetrzne testy regresyjne / wektory HMAC poza firmware
-
----
-
-## 6. Pairing i trusted devices
-
-- [x] Finalny przebieg `PAIR_REQ` / `PAIR_RESP`
-- [x] Local consent na nodzie
-- [x] Zapis trusted devices w pamieci nieulotnej
-- [x] Slot `0` rezerwowany dla gatewaya (`G`)
-- [x] Usuwanie duplikatow gatewaya z innych slotow
-- [x] Gateway backend zapisuje `paired_code` od razu po `PAIR_RESP`
-- [x] Gateway backend sprawdza, ze `PAIR_RESP` zawiera dokladnie ten sam `code[8]`, ktory wyslal w `PAIR_REQ`
-- [x] Poprawka STM32: trusted-device code zwiekszony z `6 B` do `8 B`
-
-### Otwarte
-
-- [ ] Po kazdej zmianie formatu trusted storage wykonywac test migracji / re-pairingu
-- [ ] Przetestowac i domknac polityke RSSI dla pairingu sieciowego
-
-### Uwaga krytyczna
-
-- Stare wpisy trusted zapisane przed poprawka `8 B code` moga byc niezgodne z aktualnym KDF.
-- Po tej zmianie wymagany jest swiezy re-pairing urzadzen.
+- [x] ACK dla unicastu: tracker, timeout, retry, dopasowanie po `msg_id + counter`
+- [x] Pairing sieciowy z gatewayem i zapis trusted devices
+- [x] Slot `0` zarezerwowany dla gatewaya, node slots `1..15`
+- [x] Gateway backend: FastAPI + SQLite + SX1276/RFM95 na RPi
+- [x] UI noda: brak zwyklej wysylki broadcast, gateway/broadcast pokazywane nazwami
+- [x] PIN operator/admin, PIN settings w Security
+- [x] Operator moze czytac i odpowiadac na wiadomosci; menu wymaga swiadomego wejscia i PIN
+- [x] Popup RX z szybka odpowiedzia `YES/OK/NO` dla wiadomosci konczacych sie `.`, `?`, `!`
+- [x] Monitor LCD pokazuje nadawce i tresc bez RSSI
+- [x] TPM init przed EEPROM, root seed w TPM NV `0x01C10101`
+- [x] Rotacja lokalnego root seeda wymaga aktywnego pinu TPM PP
 
 ---
 
-## 7. Gateway Raspberry Pi
+## Najblizsze priorytety
 
-- [x] FastAPI + SQLite + modele `Node`, `Message`, `Log`
-- [x] Endpointy `messages`, `pairing`, `nodes`, `system`, `logs`
-- [x] Background listener LoRa
-- [x] Realny backend SX1276/RFM95 przez SPI na RPi
-- [x] Realne TX/RX zamiast symulacji
-- [x] Weryfikacja `PAIR_RESP` i zapisu kodu pairingu
-- [x] Debug HMAC dla TX i RX
-
-### Otwarte
-
-- [ ] Dodac pelniejszy panel operatorski / UI
-- [ ] Dodac twardsze recovery po bledach radia i watchdog dla backendu
-- [ ] Dopiac bardziej szczegolowa konfiguracje deploymentu na RPi
+1. Potwierdzic po swiezym re-pairingu finalne direct `node <-> gateway` na prawdziwym `PAIR_V1_32 + HMAC`.
+2. Przetestowac odtworzenie sekretow po reboocie: TPM NV `0x01C10101`, EEPROM key z root seeda i migracje ze starego `0x01C10100`.
+3. Domknac rollback-safe storage countera przy zaniku zasilania.
+4. Zaimplementowac i przetestowac `KEY_ROTATE`.
+5. Zrobic pelny test end-to-end i dluzszy test radiowy na RPi gateway + minimum 2 nody.
 
 ---
 
-## 8. TPM-first i zarzadzanie sekretami
+## Otwarte prace
 
-- [x] `TPM-first` bootstrap w `security_main`
-- [x] Fallback do entropii lokalnej, gdy TPM backend nie dostarcza danych
-- [x] Usuniecie jawnych testowych kluczy z glownej sciezki roboczej
+### Protokol, ACK, crypto
 
-### Otwarte
-
-- [ ] Dokonczyc trwala persystencje root seeda w backendzie TPM NV
-- [ ] Dodac testy odtwarzania sekretow po reboocie
-- [ ] Udokumentowac finalny model lifecycle kluczy
-
----
-
-## 9. Anti-replay i counters
-
-- [x] Liczniki per relacja gateway-node
-- [x] `ACK` odnosi sie do `msg_id + counter`
-- [x] Counter gatewaya jest zapisywany i odtwarzany
-
-### Otwarte
-
-- [ ] Domknac rollback-safe storage countera przy zaniku zasilania
+- [ ] Dodac scheduler retry / kolejke retransmisji po stronie gatewaya
+- [ ] Dodac zewnetrzne testy regresyjne AES/HMAC/frame poza runtime self-testami
 - [ ] Przywrocic finalna polityke anti-replay po zakonczeniu diagnostyki HMAC/direct
-- [ ] Dodac testy replay attack i restart/recovery
+- [ ] Dodac test replay attack oraz reset/recovery countera
 
----
+### Pairing i trusted storage
 
-## 10. Rotacja kluczy
+- [ ] Po zmianach formatu trusted storage wykonywac test migracji / re-pairingu
+- [ ] Przetestowac i domknac polityke RSSI dla pairingu sieciowego
+- [ ] Pamietac: stare trusted entries sprzed `8 B code` wymagaja swiezego re-pairingu
 
-- [ ] Wybrac finalny mechanizm rotacji (`DH` vs `ECDH` lub inny)
+### Gateway Raspberry Pi
+
+- [ ] Dopiac panel operatorski / UI
+- [ ] Dodac twardsze recovery po bledach radia i watchdog backendu
+- [ ] Dopiac konfiguracje deploymentu na RPi
+- [ ] Raportowac status dostarczenia w panelu operatorskim
+
+### TPM i sekrety
+
+- [x] Trwala persystencja root seeda w TPM NV
+- [x] Zapis root seeda chroniony TPM PP (`PPWRITE`, pin TPM 7 aktywny VDD)
+- [x] Klucz szyfrowania sekretow EEPROM wyprowadzany z TPM-backed root seeda
+- [ ] Dodac test odtwarzania sekretow po reboocie
+- [ ] Przetestowac migracje z legacy TPM NV `0x01C10100` do `0x01C10101`
+- [ ] Udokumentowac finalny lifecycle kluczy
+
+### Rotacja kluczy
+
+- [x] Lokalna rotacja root seeda przez menu `Security -> Keys` wymaga TPM PP
+- [ ] Wybrac finalny mechanizm rotacji (`DH`, `ECDH` albo inny)
 - [ ] Zaimplementowac `KEY_ROTATE`
 - [ ] Dodac derivation nowych kluczy
 - [ ] Dodac bezpieczne przelaczanie starych/nowych kluczy
 - [ ] Dodac logi i testy rotacji
 
----
-
-## 11. Warstwa radiowa
-
-- [x] Radio pozostaje `SX1276/RFM95`
-- [x] Konfiguracja zgodna z aktualnym firmware (`868.5 MHz`, `BW500k`, `SF7`, `CR4/5`, `sync=0x34`)
-- [x] Gateway ma realny backend sprzetowy zamiast samego mocka
-
-### Otwarte
+### Radio i diagnostyka
 
 - [ ] Potwierdzic zachowanie przy slabszym sygnale i zakloceniach
-- [ ] Dodac bardziej rozbudowane logi timeoutow / bledow radiowych po stronie gatewaya
 - [ ] Dodac testy dlugiej pracy i recovery po bledach SPI / IRQ
-
----
-
-## 12. Role i kontrola dostepu
-
-- [x] Rozdzielenie PIN user/admin
-- [x] Osobny PIN do menu administratora
-
-### Otwarte
-
-- [ ] Pelny model rol `administrator / operator / uzytkownik / serwisant`
-- [ ] Polityki uprawnien dla menu i operacji radiowych
-- [ ] Logowanie dzialan uprzywilejowanych
-
----
-
-## 13. Diagnostyka i startup
-
-- [x] Rozbudowane logi UART dla RX/TX
-- [x] Rozbudowane logi HMAC i kluczy diagnostycznych
-- [x] Gateway loguje szczegoly TX/RX i walidacji MAC
-
-### Otwarte
-
-- [ ] Dodac pelny raport startupu z czasami init
 - [ ] Rozdzielic finalnie logi debug vs production
-- [ ] Dodac kontrole zgodnosci firmware/config przy starcie
+- [ ] Dodac raport startupu z czasami init i kontrola zgodnosci firmware/config
+
+### Role i uprawnienia
+
+- [ ] Domknac model rol: administrator / operator / user / serwisant
+- [ ] Logowac dzialania uprzywilejowane
+- [ ] Doprecyzowac, ktore operacje radiowe sa admin-only
 
 ---
 
-## 14. Testy i walidacja koncowa
+## Walidacja koncowa
 
-- [ ] Pelny test end-to-end: `PAIR_REQ -> PAIR_RESP -> direct DATA -> ACK`
-- [ ] Test `gateway -> node` plaintext i ciphertext
-- [ ] Test `node -> gateway` plaintext i ciphertext
-- [ ] Test replay / reset / restore countera
-- [ ] Test zaniku zasilania podczas zapisu storage
-- [ ] Test pracy na 2 urzadzeniach i z gatewayem RPi przez dluzszy czas
-- [ ] Testy regresyjne parsera / frame / crypto poza runtime self-testami
-
----
-
-## 15. Najblizsze priorytety
-
-1. Potwierdzic po swiezym re-pairingu finalne direct `node <-> gateway` na prawdziwym `PAIR_V1_32 + HMAC`.
-2. Domknac persystencje TPM NV dla root seeda.
-3. Domknac rollback-safe counter storage.
-4. Zaimplementowac `KEY_ROTATE`.
-5. Zrobic pelne testy end-to-end i walidacje radiowa.
+- [ ] `PAIR_REQ -> PAIR_RESP -> DATA -> ACK`
+- [ ] `gateway -> node` plaintext i ciphertext
+- [ ] `node -> gateway` plaintext i ciphertext
+- [ ] Broadcast RX z wymuszona odpowiedzia, odpowiedz unicast do nadawcy
+- [ ] Zanik zasilania podczas zapisu storage
+- [ ] Dluzsza praca: RPi gateway + 2 nody
 
 ---
 
 ## Zarchiwizowane / nieaktualne zalozenia
 
-Te punkty nie sa juz celem aktywnego wdrozenia:
-
-- mesh / relay / forwarding
+- mesh / relay / forwarding jako cel produktu
 - TTL w ramce aplikacyjnej
 - stare `BEKO_NET_V1`
 - `AuthTag 4 B`

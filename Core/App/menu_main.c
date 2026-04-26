@@ -119,7 +119,7 @@ typedef enum
     MENU_ACTION_DEVICE_DELETE_CONFIRM,
     MENU_ACTION_DEVICE_INFO,
     MENU_ACTION_PIN_TOGGLE,
-    MENU_ACTION_PIN_SET_USER,
+    MENU_ACTION_PIN_SET_OPERATOR,
     MENU_ACTION_PIN_SET_ADMIN,
     MENU_ACTION_SEC_TOGGLE_FH,
     MENU_ACTION_SEC_FH_ENABLE,
@@ -355,7 +355,7 @@ typedef enum
 typedef enum
 {
     MENU_AUTH_NONE = 0,
-    MENU_AUTH_USER,
+    MENU_AUTH_OPERATOR,
     MENU_AUTH_ADMIN
 } menu_auth_level_t;
 
@@ -379,7 +379,7 @@ typedef struct
     menu_auth_level_t pending_auth_level;
     uint8_t pin_digits[MENU_SETTINGS_PIN_LEN];
     uint8_t pin_index;
-    uint32_t user_unlock_until_ms;
+    uint32_t operator_unlock_until_ms;
     uint32_t admin_unlock_until_ms;
     bool popup_enabled;
     uint32_t last_input_ms;
@@ -404,7 +404,7 @@ static osThreadId_t s_menu_task = NULL;
 static osMessageQueueId_t s_menu_notify_queue = NULL;
 static StaticTask_t s_menu_task_cb;
 static StackType_t s_menu_task_stack[MENU_TASK_STACK_WORDS];
-static uint8_t s_user_pin[MENU_SETTINGS_PIN_LEN] = { 0U, 0U, 0U, 0U };
+static uint8_t s_operator_pin[MENU_SETTINGS_PIN_LEN] = { 0U, 0U, 0U, 0U };
 static uint8_t s_admin_pin[MENU_SETTINGS_PIN_LEN] = { 9U, 9U, 9U, 9U };
 static bool s_pin_enabled = true;
 
@@ -615,7 +615,7 @@ static const menu_item_t s_page_main_items[] =
 static const menu_item_t s_page_pin_settings_items[] =
 {
     { "Toggle PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_TOGGLE },
-    { "Change user PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_SET_USER },
+    { "Change operator PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_SET_OPERATOR },
     { "Change admin PIN", MENU_PAGE_NONE, MENU_ACTION_PIN_SET_ADMIN },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
@@ -1488,7 +1488,7 @@ static void menu_enter_monitor(menu_state_t *st)
     st->quick_reply_src_id = 0U;
     st->quick_reply_deadline_ms = 0U;
     st->quick_reply_last_seconds = 0U;
-    st->user_unlock_until_ms = 0UL;
+    st->operator_unlock_until_ms = 0UL;
     st->admin_unlock_until_ms = 0UL;
     menu_clear_tx_ack_state(st);
     menu_clear_pin_state(st);
@@ -2541,7 +2541,7 @@ static void menu_render_quick_reply(menu_state_t *st)
 static void menu_render_pin(menu_state_t *st)
 {
     char line1[MENU_LINE_BUF_SIZE];
-    const char *title = "USER PIN";
+    const char *title = "OPERATOR PIN";
     uint8_t offset;
     uint8_t i;
 
@@ -2554,9 +2554,9 @@ static void menu_render_pin(menu_state_t *st)
     {
         title = "ADMIN PIN";
     }
-    if (st->pending_action == MENU_ACTION_PIN_SET_USER)
+    if (st->pending_action == MENU_ACTION_PIN_SET_OPERATOR)
     {
-        title = "NEW USER PIN";
+        title = "NEW OPERATOR PIN";
     }
     else if (st->pending_action == MENU_ACTION_PIN_SET_ADMIN)
     {
@@ -2605,7 +2605,7 @@ static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id)
         case MENU_PAGE_GROUP_STATUS:
         case MENU_PAGE_GROUP_SERVICE:
         case MENU_PAGE_GROUP_QUICK:
-            return MENU_AUTH_USER;
+            return MENU_AUTH_OPERATOR;
 
         case MENU_PAGE_MAIN:
         case MENU_PAGE_DEVICES:
@@ -2682,7 +2682,7 @@ static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_le
     }
     else
     {
-        until_ms = st->user_unlock_until_ms;
+        until_ms = st->operator_unlock_until_ms;
     }
 
     if (until_ms == 0UL)
@@ -2695,7 +2695,7 @@ static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_le
 
 static bool menu_pin_matches(const menu_state_t *st)
 {
-    const uint8_t *pin_ref = s_user_pin;
+    const uint8_t *pin_ref = s_operator_pin;
     uint8_t diff = 0U;
     uint8_t i;
 
@@ -2719,7 +2719,7 @@ static bool menu_pin_matches(const menu_state_t *st)
 
 static bool menu_is_pin_change_action(menu_action_t action)
 {
-    return ((action == MENU_ACTION_PIN_SET_USER) ||
+    return ((action == MENU_ACTION_PIN_SET_OPERATOR) ||
             (action == MENU_ACTION_PIN_SET_ADMIN));
 }
 
@@ -3051,8 +3051,8 @@ static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
         }
         else
         {
-            memcpy(s_user_pin, st->pin_digits, sizeof(s_user_pin));
-            st->user_unlock_until_ms = 0UL;
+            memcpy(s_operator_pin, st->pin_digits, sizeof(s_operator_pin));
+            st->operator_unlock_until_ms = 0UL;
         }
         st->modal = MENU_MODAL_NONE;
         st->pending_action = MENU_ACTION_NONE;
@@ -3073,11 +3073,11 @@ static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
     if (st->pending_auth_level == MENU_AUTH_ADMIN)
     {
         st->admin_unlock_until_ms = HAL_GetTick() + MENU_SETTINGS_PIN_UNLOCK_MS;
-        st->user_unlock_until_ms = st->admin_unlock_until_ms;
+        st->operator_unlock_until_ms = st->admin_unlock_until_ms;
     }
-    else if (st->pending_auth_level == MENU_AUTH_USER)
+    else if (st->pending_auth_level == MENU_AUTH_OPERATOR)
     {
-        st->user_unlock_until_ms = HAL_GetTick() + MENU_SETTINGS_PIN_UNLOCK_MS;
+        st->operator_unlock_until_ms = HAL_GetTick() + MENU_SETTINGS_PIN_UNLOCK_MS;
     }
     st->modal = MENU_MODAL_NONE;
     menu_clear_pin_state(st);
@@ -3215,9 +3215,16 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
         {
             (void)lcd_main_monitor_scroll_down();
         }
-        else if ((evt == BUTTON_EVENT_OK_SHORT) || (evt == BUTTON_EVENT_OK_LONG))
+        else if (evt == BUTTON_EVENT_OK_LONG)
         {
-            menu_request_pin(st, MENU_PAGE_PAGER, MENU_AUTH_USER);
+            if (menu_auth_unlocked(st, MENU_AUTH_OPERATOR))
+            {
+                menu_open_page(st, MENU_PAGE_PAGER);
+            }
+            else
+            {
+                menu_request_pin(st, MENU_PAGE_PAGER, MENU_AUTH_OPERATOR);
+            }
         }
         return;
     }
@@ -3673,7 +3680,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
             s_pin_enabled = !s_pin_enabled;
             if (!s_pin_enabled)
             {
-                st->user_unlock_until_ms = 0UL;
+                st->operator_unlock_until_ms = 0UL;
                 st->admin_unlock_until_ms = 0UL;
             }
             menu_show_action_result(st,
@@ -3681,7 +3688,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
                                     s_pin_enabled ? "PIN enabled" : "PIN disabled");
             break;
 
-        case MENU_ACTION_PIN_SET_USER:
+        case MENU_ACTION_PIN_SET_OPERATOR:
         case MENU_ACTION_PIN_SET_ADMIN:
             menu_start_pin_change(st, action);
             break;
@@ -3756,7 +3763,18 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
 
         case MENU_ACTION_SEC_ROTATE_KEYS:
             ok = security_main_cmd_rotate_key();
-            menu_show_ok_or_error(st, ok, "Key rotated", "Keys: not ready");
+            if (ok)
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_SECURITY, "Key rotated");
+            }
+            else if (security_main_get_tpm_ready(&tpm_ready) && tpm_ready)
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Hold TPM PP button");
+            }
+            else
+            {
+                menu_show_action_result(st, MENU_NOTIFICATION_ERROR, "Keys: not ready");
+            }
             break;
 
         case MENU_ACTION_SEC_CODING_ON:

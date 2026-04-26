@@ -6,8 +6,11 @@ BEKO to bezprzewodowy system pagerowy pracujący w topologii **gwiazdy**.
 W systemie występuje:
 
 - jeden węzeł centralny: **Raspberry Pi Gateway**,
-- do **254 node’ów STM32**,
+- adresy node’ów STM32 w zakresie `0x0002..0xFFFE`,
 - komunikacja radiowa przez obecny backend **SX1276/RFM95**.
+
+Firmware noda przechowuje obecnie do **15 zaufanych urządzeń** w lokalnych
+slotach trusted storage. Nie jest to limit adresacji radiowej.
 
 Gateway wysyła wiadomości do wybranego node’a albo do całej sieci.  
 Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez node ramką `ACK`.
@@ -26,7 +29,8 @@ Adresacja w ramce `LAVIET_FRAME_V1` jest 16-bitowa:
 W systemie może działać:
 
 - **1 gateway**,
-- **254 urządzenia końcowe**.
+- wiele urządzeń końcowych w zakresie adresów `0x0002..0xFFFE`,
+- aktualnie do **15 sparowanych wpisów trusted** na jednym nodzie.
 
 ---
 
@@ -188,9 +192,22 @@ TPM jest używany do:
 - przechowywania sekretu głównego urządzenia,
 - ochrony kluczy,
 - generowania danych losowych,
-- wsparcia parowania,
-- wsparcia rotacji kluczy,
-- odpieczętowywania materiału kryptograficznego.
+- ochrony sekretów EEPROM,
+- wsparcia lokalnej rotacji root seeda.
+
+Aktualny lifecycle sekretu:
+
+1. Przy starcie firmware inicjalizuje TPM przed storage.
+2. Root seed jest odczytywany z TPM NV.
+3. Główny, PP-protected index to `0x01C10101`.
+4. Starszy index `0x01C10100` jest odczytywany tylko jako ścieżka migracyjna.
+5. Jeśli seed musi zostać utworzony albo nadpisany, zapis do TPM NV wymaga aktywnego pinu **TPM PP**.
+6. Pin PP jest podłączony do samego TPM, pin `7`, aktywny stanem `VDD`; nie jest odczytywany jako GPIO STM32.
+7. Klucz szyfrowania sekretów EEPROM jest wyprowadzany z TPM-backed root seeda.
+
+Index `0x01C10101` jest definiowany z `PPWRITE`, `OWNERREAD` i `NO_DA`.
+W praktyce rotacja klucza z menu `Security -> Keys` wymaga trzymania
+przycisku TPM PP; bez tego UI pokaże `Hold TPM PP button`.
 
 Klucze nie mogą być przechowywane w firmware w postaci jawnej.  
 Są wyprowadzane lub ładowane bezpiecznie przy starcie, a następnie używane tylko tymczasowo.
@@ -244,6 +261,10 @@ Rotacja może być uruchamiana:
 - na żądanie administratora,
 - po incydencie bezpieczeństwa.
 
+Lokalna rotacja root seeda na nodzie jest już zabezpieczona TPM PP.
+Radiowy protokół `KEY_ROTATE` i docelowa wymiana DH/ECDH nadal wymagają
+dokończenia jako osobny przepływ.
+
 ---
 
 ## 11. Logi UART i kontrola startu
@@ -280,7 +301,7 @@ graph TD
 
     GW --> N1["Node STM32 #1"]
     GW --> N2["Node STM32 #X"]
-    GW --> N3["Node STM32 #254"]
+    GW --> N3["Node STM32 #15 trusted"]
 
     N1 --> UI1["Wyświetlacz"]
 
@@ -365,6 +386,7 @@ sequenceDiagram
 
     A->>GW: Uruchomienie rotacji kluczy
     GW->>N: KEY_ROTATE
+    N->>TPM: Wymagana aktywna linia PP dla zapisu root seeda
     GW->>TPM: Operacje DH / materiał kluczowy
     N->>TPM: Operacje DH / materiał kluczowy
     GW->>N: Wymiana danych

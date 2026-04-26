@@ -45,6 +45,9 @@ extern "C" {
 #define ST33KTPM2X_TPM2_CC_GET_RANDOM      0x0000017BUL
 #define ST33KTPM2X_TPM2_CC_GET_CAPABILITY  0x0000017AUL
 #define ST33KTPM2X_TPM2_CC_PCR_READ        0x0000017EUL
+#define ST33KTPM2X_TPM2_CC_NV_DEFINE_SPACE 0x0000012AUL
+#define ST33KTPM2X_TPM2_CC_NV_WRITE        0x00000137UL
+#define ST33KTPM2X_TPM2_CC_NV_READ         0x0000014EUL
 
 #define ST33KTPM2X_TPM2_SU_CLEAR           0x0000U
 #define ST33KTPM2X_TPM2_SU_STATE           0x0001U
@@ -339,7 +342,7 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_policy_or(st33ktpm2x_t *ctx,
                                                uint32_t *tpm_rc);
 
 /**
- * @brief Define NV index (scaffold API).
+ * @brief Define NV index using owner empty-password authorization.
  * @param ctx Driver context.
  * @param nv_index NV index handle.
  * @param data_size NV data size.
@@ -354,7 +357,7 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_define(st33ktpm2x_t *ctx,
                                               uint32_t *tpm_rc);
 
 /**
- * @brief Read bytes from NV index (scaffold API).
+ * @brief Read bytes from NV index using owner empty-password authorization.
  * @param ctx Driver context.
  * @param nv_index NV index handle.
  * @param offset Offset in bytes.
@@ -373,7 +376,7 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_read(st33ktpm2x_t *ctx,
                                             uint32_t *tpm_rc);
 
 /**
- * @brief Write bytes to NV index (scaffold API).
+ * @brief Write bytes to NV index using owner empty-password authorization.
  * @param ctx Driver context.
  * @param nv_index NV index handle.
  * @param offset Offset in bytes.
@@ -388,6 +391,23 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write(st33ktpm2x_t *ctx,
                                              const uint8_t *data,
                                              uint16_t data_len,
                                              uint32_t *tpm_rc);
+
+/**
+ * @brief Write bytes to NV index using platform authorization with hardware Physical Presence.
+ * @param ctx Driver context.
+ * @param nv_index NV index handle.
+ * @param offset Offset in bytes.
+ * @param data Input data.
+ * @param data_len Input data length.
+ * @param tpm_rc [out] TPM response code.
+ * @return Status code.
+ */
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write_platform_pp(st33ktpm2x_t *ctx,
+                                                         uint32_t nv_index,
+                                                         uint16_t offset,
+                                                         const uint8_t *data,
+                                                         uint16_t data_len,
+                                                         uint32_t *tpm_rc);
 
 /**
  * @brief Flush transient context/session handle (scaffold API).

@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SECURITY_TASK_STACK_SIZE            6144U
+#define SECURITY_TASK_STACK_SIZE            10240U
 #define SECURITY_TASK_STACK_WORDS           (SECURITY_TASK_STACK_SIZE / sizeof(StackType_t))
 #define SECURITY_CMD_QUEUE_DEPTH            16U
 #define SECURITY_CMD_WAIT_MS                3000U
@@ -33,7 +33,17 @@
 #define SECURITY_KEY_SEED_BYTES             8U
 #define SECURITY_CODE_MAX                   I2C_MEM_STORE_TRUSTED_CODE_MAX
 #define SECURITY_TRUSTED_ID_LEN             4U
-#define SECURITY_TPM_ROOT_NV_INDEX          0x01C10100UL
+#define SECURITY_TPM_ROOT_NV_INDEX          0x01C10101UL
+#define SECURITY_TPM_ROOT_LEGACY_NV_INDEX   0x01C10100UL
+#define SECURITY_TPM_NV_PPWRITE             0x00000001UL
+#define SECURITY_TPM_NV_OWNERWRITE          0x00000002UL
+#define SECURITY_TPM_NV_AUTHWRITE           0x00000004UL
+#define SECURITY_TPM_NV_OWNERREAD           0x00020000UL
+#define SECURITY_TPM_NV_AUTHREAD            0x00040000UL
+#define SECURITY_TPM_NV_NO_DA               0x02000000UL
+#define SECURITY_TPM_ROOT_NV_ATTRS          (SECURITY_TPM_NV_PPWRITE | \
+                                             SECURITY_TPM_NV_OWNERREAD | \
+                                             SECURITY_TPM_NV_NO_DA)
 
 typedef enum
 {
@@ -184,6 +194,8 @@ static security_runtime_cfg_t s_runtime_cfg =
     .radio_profiles_persisted = false
 };
 static uint8_t s_network_key[16];
+static bool s_key_seed_tpm_backed = false;
+static bool s_key_seed_tpm_pp_backed = false;
 static const uint8_t s_shared_frame_root_key[16] =
 {
     (uint8_t)'L', (uint8_t)'A', (uint8_t)'V', (uint8_t)'I',
@@ -233,16 +245,19 @@ static const uint32_t s_fh_period_options_ms[] =
 };
 
 static void security_main_task_fn(void *argument);
+static void security_log_stack_high_water(const char *tag);
 static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_ms);
 static bool security_main_enqueue_sync(const security_cmd_t *cmd, security_cmd_sync_t *sync);
 
 static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16]);
+static void security_key_seed_to_store_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16]);
+static bool security_seed_has_data(const uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint32_t peer_node_id,
                                           const uint8_t *code,
                                           uint8_t code_len,
                                           uint8_t key_out[16]);
-static bool security_load_runtime_and_seed_from_store(void);
+static bool security_load_runtime_and_seed_from_store(bool *seed_loaded_out);
 static bool security_save_runtime_and_seed_to_store(void);
 static bool security_commit_runtime_cfg_soft(void);
 static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg);
@@ -279,11 +294,13 @@ static void security_be32_write(uint8_t *dst, uint32_t value);
 static uint32_t security_be32_read(const uint8_t *src);
 static bool security_store_trusted_slot(uint8_t idx);
 static bool security_erase_trusted_slot(uint8_t idx);
-static void security_load_trusted_from_store(void);
+static uint8_t security_load_trusted_from_store(void);
+static bool security_migrate_secrets_from_default_store_key(const i2c_mem_store_cfg_t *tpm_cfg);
 static bool security_load_gateway_counter_from_store(void);
 static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_t tx_counter);
 static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BYTES]);
+static bool security_tpm_define_root_seed(void);
 static bool security_get_entropy_bytes(uint8_t *out, uint8_t len);
 static void security_bootstrap_tpm(void);
 static void security_bootstrap_store(void);
@@ -835,8 +852,10 @@ static void security_main_task_fn(void *argument)
     (void)argument;
     memset(s_trusted, 0, sizeof(s_trusted));
 
-    security_bootstrap_store();
     security_bootstrap_tpm();
+    security_log_stack_high_water("after_tpm");
+    security_bootstrap_store();
+    security_log_stack_high_water("after_store");
 
     if (osMutexAcquire(s_security_mutex, 1000U) == osOK)
     {
@@ -963,6 +982,17 @@ static void security_main_task_fn(void *argument)
     }
 }
 
+static void security_log_stack_high_water(const char *tag)
+{
+    UBaseType_t words;
+
+    words = uxTaskGetStackHighWaterMark(NULL);
+    printf("SEC: stack %s high-water=%lu words (%lu B)\r\n",
+           (tag != NULL) ? tag : "now",
+           (unsigned long)words,
+           (unsigned long)(words * sizeof(StackType_t)));
+}
+
 static bool security_main_enqueue_sync(const security_cmd_t *cmd, security_cmd_sync_t *sync)
 {
     security_cmd_t local;
@@ -1030,6 +1060,48 @@ static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES]
         memset(key_out, 0, 16U);
     }
     laviet_secure_zero(digest, sizeof(digest));
+}
+
+static void security_key_seed_to_store_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16])
+{
+    static const uint8_t label[] = "SEC:EEPROM:KEY";
+    uint8_t digest[LAVIET_SHA256_LEN];
+
+    if ((seed == NULL) || (key_out == NULL))
+    {
+        return;
+    }
+
+    memset(digest, 0, sizeof(digest));
+    if (laviet_hmac_sha256(seed,
+                           SECURITY_KEY_SEED_BYTES,
+                           label,
+                           (uint16_t)(sizeof(label) - 1U),
+                           digest))
+    {
+        memcpy(key_out, digest, 16U);
+    }
+    laviet_secure_zero(digest, sizeof(digest));
+}
+
+static bool security_seed_has_data(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
+{
+    uint8_t i;
+
+    if (seed == NULL)
+    {
+        return false;
+    }
+
+    for (i = 0U; i < SECURITY_KEY_SEED_BYTES; i++)
+    {
+        if (seed[i] != 0U)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
@@ -1237,9 +1309,14 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
     laviet_secure_zero(digest, sizeof(digest));
 }
 
-static bool security_load_runtime_and_seed_from_store(void)
+static bool security_load_runtime_and_seed_from_store(bool *seed_loaded_out)
 {
     security_store_wire_t w;
+
+    if (seed_loaded_out != NULL)
+    {
+        *seed_loaded_out = false;
+    }
 
     if (!s_runtime_shadow_valid)
     {
@@ -1272,7 +1349,14 @@ static bool security_load_runtime_and_seed_from_store(void)
                                                          2000UL) :
                                  2000UL;
     s_runtime_cfg.radio_profiles_persisted = false;
-    memcpy(s_key_seed_cached, w.seed, SECURITY_KEY_SEED_BYTES);
+    if (security_seed_has_data(w.seed))
+    {
+        memcpy(s_key_seed_cached, w.seed, SECURITY_KEY_SEED_BYTES);
+        if (seed_loaded_out != NULL)
+        {
+            *seed_loaded_out = true;
+        }
+    }
 
     if (w.version >= 2U)
     {
@@ -1310,7 +1394,10 @@ static bool security_save_runtime_and_seed_to_store(void)
                                                                           (uint8_t)(sizeof(s_fh_period_options_ms) /
                                                                                     sizeof(s_fh_period_options_ms[0])),
                                                                           1U));
-    memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
+    if (!s_key_seed_tpm_backed)
+    {
+        memcpy(w.seed, s_key_seed_cached, SECURITY_KEY_SEED_BYTES);
+    }
     s_runtime_shadow_store = w;
     s_runtime_shadow_valid = true;
 
@@ -1563,23 +1650,40 @@ static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     uint16_t out_len = 0U;
     uint32_t tpm_rc = 0UL;
+    uint32_t nv_index;
     st33ktpm2x_status_t rc;
+    uint8_t attempt;
 
     if ((seed == NULL) || !s_tpm_ready)
     {
         return false;
     }
 
-    rc = st33ktpm2x_tpm2_nv_read(&s_tpm,
-                                 SECURITY_TPM_ROOT_NV_INDEX,
-                                 0U,
-                                 seed,
-                                 SECURITY_KEY_SEED_BYTES,
-                                 &out_len,
-                                 &tpm_rc);
-    if ((rc == ST33KTPM2X_OK) && (out_len == SECURITY_KEY_SEED_BYTES))
+    for (attempt = 0U; attempt < 2U; attempt++)
     {
-        return true;
+        nv_index = (attempt == 0U) ? SECURITY_TPM_ROOT_NV_INDEX : SECURITY_TPM_ROOT_LEGACY_NV_INDEX;
+        memset(seed, 0, SECURITY_KEY_SEED_BYTES);
+        out_len = 0U;
+        tpm_rc = 0UL;
+
+        rc = st33ktpm2x_tpm2_nv_read(&s_tpm,
+                                     nv_index,
+                                     0U,
+                                     seed,
+                                     SECURITY_KEY_SEED_BYTES,
+                                     &out_len,
+                                     &tpm_rc);
+        if ((rc == ST33KTPM2X_OK) &&
+            (out_len == SECURITY_KEY_SEED_BYTES) &&
+            security_seed_has_data(seed))
+        {
+            s_key_seed_tpm_pp_backed = (nv_index == SECURITY_TPM_ROOT_NV_INDEX);
+            if (nv_index == SECURITY_TPM_ROOT_LEGACY_NV_INDEX)
+            {
+                printf("SEC: legacy TPM root seed loaded; hold PP during key rotation to migrate\r\n");
+            }
+            return true;
+        }
     }
 
     if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
@@ -1592,25 +1696,72 @@ static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
     return false;
 }
 
+static bool security_tpm_define_root_seed(void)
+{
+    uint32_t tpm_rc = 0UL;
+    st33ktpm2x_status_t rc;
+
+    if (!s_tpm_ready)
+    {
+        return false;
+    }
+
+    rc = st33ktpm2x_tpm2_nv_define(&s_tpm,
+                                   SECURITY_TPM_ROOT_NV_INDEX,
+                                   SECURITY_KEY_SEED_BYTES,
+                                   SECURITY_TPM_ROOT_NV_ATTRS,
+                                   &tpm_rc);
+    if (rc == ST33KTPM2X_OK)
+    {
+        return true;
+    }
+
+    if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
+    {
+        printf("SEC: TPM root seed define failed rc=%d tpm_rc=0x%08lX\r\n",
+               (int)rc,
+               (unsigned long)tpm_rc);
+    }
+
+    return false;
+}
+
 static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     uint32_t tpm_rc = 0UL;
     st33ktpm2x_status_t rc;
 
-    if ((seed == NULL) || !s_tpm_ready)
+    if ((seed == NULL) || !s_tpm_ready || !security_seed_has_data(seed))
     {
         return false;
     }
 
-    rc = st33ktpm2x_tpm2_nv_write(&s_tpm,
-                                  SECURITY_TPM_ROOT_NV_INDEX,
-                                  0U,
-                                  seed,
-                                  SECURITY_KEY_SEED_BYTES,
-                                  &tpm_rc);
+    rc = st33ktpm2x_tpm2_nv_write_platform_pp(&s_tpm,
+                                              SECURITY_TPM_ROOT_NV_INDEX,
+                                              0U,
+                                              seed,
+                                              SECURITY_KEY_SEED_BYTES,
+                                              &tpm_rc);
     if (rc == ST33KTPM2X_OK)
     {
+        s_key_seed_tpm_pp_backed = true;
         return true;
+    }
+
+    if ((rc == ST33KTPM2X_ETPM_RC) && security_tpm_define_root_seed())
+    {
+        tpm_rc = 0UL;
+        rc = st33ktpm2x_tpm2_nv_write_platform_pp(&s_tpm,
+                                                  SECURITY_TPM_ROOT_NV_INDEX,
+                                                  0U,
+                                                  seed,
+                                                  SECURITY_KEY_SEED_BYTES,
+                                                  &tpm_rc);
+        if (rc == ST33KTPM2X_OK)
+        {
+            s_key_seed_tpm_pp_backed = true;
+            return true;
+        }
     }
 
     if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
@@ -1687,9 +1838,25 @@ static bool security_rotate_key_internal(void)
         return false;
     }
 
+    if (s_tpm_ready)
+    {
+        if (!security_tpm_store_root_seed(seed))
+        {
+            printf("SEC: root seed write requires TPM PP button\r\n");
+            laviet_secure_zero(seed, sizeof(seed));
+            return false;
+        }
+        s_key_seed_tpm_backed = true;
+        s_key_seed_tpm_pp_backed = true;
+    }
+    else
+    {
+        s_key_seed_tpm_backed = false;
+        s_key_seed_tpm_pp_backed = false;
+    }
+
     memcpy(s_key_seed_cached, seed, SECURITY_KEY_SEED_BYTES);
     security_key_seed_to_key(seed, s_network_key);
-    (void)security_tpm_store_root_seed(seed);
     if (s_mem_ready)
     {
         (void)security_save_runtime_and_seed_to_store();
@@ -1902,14 +2069,15 @@ static bool security_erase_trusted_slot(uint8_t idx)
     return (rc == I2C_MEM_STORE_OK);
 }
 
-static void security_load_trusted_from_store(void)
+static uint8_t security_load_trusted_from_store(void)
 {
     uint8_t idx;
     uint8_t capacity = security_trusted_store_capacity();
+    uint8_t loaded = 0U;
 
     if (!s_mem_ready)
     {
-        return;
+        return 0U;
     }
 
     for (idx = 0U; idx < capacity; idx++)
@@ -1947,9 +2115,67 @@ static void security_load_trusted_from_store(void)
         {
             memcpy(s_trusted[idx].code, rec.code, s_trusted[idx].code_len);
         }
+        loaded++;
     }
 
-    printf("SEC: trusted slots persisted=%u\r\n", capacity);
+    printf("SEC: trusted slots persisted=%u loaded=%u\r\n", capacity, loaded);
+    return loaded;
+}
+
+static bool security_migrate_secrets_from_default_store_key(const i2c_mem_store_cfg_t *tpm_cfg)
+{
+    i2c_mem_store_cfg_t legacy_cfg;
+    uint8_t loaded;
+    uint8_t idx;
+    bool counter_loaded;
+
+    if ((tpm_cfg == NULL) || !s_key_seed_tpm_backed)
+    {
+        return false;
+    }
+
+    i2c_mem_store_default_cfg_m24c01r(&legacy_cfg, &hi2c1);
+    legacy_cfg.secret_area_bytes = tpm_cfg->secret_area_bytes;
+
+    if (i2c_mem_store_init(&s_mem_store, &legacy_cfg, false) != I2C_MEM_STORE_OK)
+    {
+        (void)i2c_mem_store_init(&s_mem_store, tpm_cfg, false);
+        return false;
+    }
+
+    memset(s_trusted, 0, sizeof(s_trusted));
+    counter_loaded = security_load_gateway_counter_from_store();
+    loaded = security_load_trusted_from_store();
+    if ((loaded == 0U) && !counter_loaded)
+    {
+        (void)i2c_mem_store_init(&s_mem_store, tpm_cfg, false);
+        return false;
+    }
+
+    if (i2c_mem_store_init(&s_mem_store, tpm_cfg, false) != I2C_MEM_STORE_OK)
+    {
+        printf("SEC: trusted TPM-key reinit failed after legacy load\r\n");
+        memset(s_trusted, 0, sizeof(s_trusted));
+        return false;
+    }
+
+    if (counter_loaded && !security_store_gateway_counter_to_store(s_gateway_rx_counter, s_gateway_tx_counter))
+    {
+        printf("SEC: gateway counter TPM-key migration failed\r\n");
+        return false;
+    }
+
+    for (idx = 0U; idx < SECURITY_TRUSTED_MAX; idx++)
+    {
+        if (s_trusted[idx].in_use && !security_store_trusted_slot(idx))
+        {
+            printf("SEC: trusted TPM-key migration failed idx=%u\r\n", idx);
+            return false;
+        }
+    }
+
+    printf("SEC: EEPROM secrets migrated to TPM-derived key\r\n");
+    return true;
 }
 
 static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len, bool gateway_slot)
@@ -2155,13 +2381,50 @@ static void security_bootstrap_store(void)
     bool loaded = false;
     bool loaded_v1 = false;
     bool runtime_loaded = false;
-    bool seed_loaded_from_tpm = false;
+    bool store_seed_loaded = false;
+    bool counter_loaded = false;
+    uint8_t trusted_loaded = 0U;
 
     i2c_mem_store_default_cfg_m24c01r(&mem_cfg, &hi2c1);
     /* M24C01-R has only 128 B, so keep EEPROM only for trusted devices. */
     mem_cfg.secret_area_bytes = 72U;
     memset(s_key_seed_cached, 0, sizeof(s_key_seed_cached));
+    s_key_seed_tpm_backed = false;
+    s_key_seed_tpm_pp_backed = false;
     security_load_default_radio_profiles(&s_runtime_cfg);
+
+    if (security_tpm_load_root_seed(s_key_seed_cached))
+    {
+        s_key_seed_tpm_backed = true;
+        loaded = true;
+        printf("SEC: root seed loaded from TPM\r\n");
+        if (!s_key_seed_tpm_pp_backed)
+        {
+            if (security_tpm_store_root_seed(s_key_seed_cached))
+            {
+                s_key_seed_tpm_pp_backed = true;
+                printf("SEC: root seed migrated to TPM PP-protected NV index\r\n");
+            }
+            else
+            {
+                printf("SEC: root seed PP migration pending; hold TPM PP during next boot or key rotation\r\n");
+            }
+        }
+    }
+    else if (s_tpm_ready)
+    {
+        loaded = security_rotate_key_internal();
+        if (loaded && s_key_seed_tpm_backed)
+        {
+            printf("SEC: root seed generated and stored in TPM\r\n");
+        }
+    }
+
+    if (s_key_seed_tpm_backed && security_seed_has_data(s_key_seed_cached))
+    {
+        security_key_seed_to_store_key(s_key_seed_cached, mem_cfg.crypto_key);
+        printf("SEC: MEM secret key derived from TPM root seed\r\n");
+    }
 
     if (i2c_mem_store_init(&s_mem_store, &mem_cfg, true) == I2C_MEM_STORE_OK)
     {
@@ -2180,16 +2443,9 @@ static void security_bootstrap_store(void)
         printf("SEC: MEM store unavailable\r\n");
     }
 
-    if (security_tpm_load_root_seed(s_key_seed_cached))
-    {
-        seed_loaded_from_tpm = true;
-        loaded = true;
-        printf("SEC: root seed loaded from TPM\r\n");
-    }
-
     if (s_mem_ready)
     {
-        runtime_loaded = security_load_runtime_and_seed_from_store();
+        runtime_loaded = security_load_runtime_and_seed_from_store(&store_seed_loaded);
         loaded_v1 = runtime_loaded && !s_runtime_cfg.radio_profiles_persisted;
         if (!runtime_loaded)
         {
@@ -2197,15 +2453,35 @@ static void security_bootstrap_store(void)
                 security_load_key_seed_legacy_from_store(s_key_seed_cached))
             {
                 runtime_loaded = true;
+                store_seed_loaded = security_seed_has_data(s_key_seed_cached);
             }
         }
-        if (runtime_loaded && !seed_loaded_from_tpm)
+        if (!loaded && runtime_loaded && store_seed_loaded)
         {
-            loaded = true;
+            if (s_tpm_ready)
+            {
+                if (security_tpm_store_root_seed(s_key_seed_cached))
+                {
+                    s_key_seed_tpm_backed = true;
+                    s_key_seed_tpm_pp_backed = true;
+                    loaded = true;
+                    security_key_seed_to_store_key(s_key_seed_cached, mem_cfg.crypto_key);
+                    (void)i2c_mem_store_init(&s_mem_store, &mem_cfg, false);
+                    printf("SEC: legacy root seed migrated to TPM; EEPROM key updated\r\n");
+                }
+                else
+                {
+                    printf("SEC: legacy root seed ignored until TPM PP button is held\r\n");
+                }
+            }
+            else
+            {
+                loaded = true;
+            }
         }
     }
 
-    if (loaded)
+    if (loaded && security_seed_has_data(s_key_seed_cached))
     {
         security_key_seed_to_key(s_key_seed_cached, s_network_key);
     }
@@ -2225,12 +2501,17 @@ static void security_bootstrap_store(void)
             security_migrate_trusted_slot_v1_to_v2();
         }
         (void)security_save_runtime_and_seed_to_store();
-        if (security_load_gateway_counter_from_store())
+        counter_loaded = security_load_gateway_counter_from_store();
+        if (counter_loaded)
         {
             printf("SEC: gateway counters rx=%lu tx=%lu\r\n",
                    (unsigned long)s_gateway_rx_counter,
                    (unsigned long)s_gateway_tx_counter);
         }
-        security_load_trusted_from_store();
+        trusted_loaded = security_load_trusted_from_store();
+        if (s_key_seed_tpm_backed && (trusted_loaded == 0U) && !counter_loaded)
+        {
+            (void)security_migrate_secrets_from_default_store_key(&mem_cfg);
+        }
     }
 }

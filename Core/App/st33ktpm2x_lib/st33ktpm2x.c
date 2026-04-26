@@ -30,6 +30,12 @@
 #define ST33_STS_EXPECT                 0x08U
 
 #define ST33_TPM_HEADER_SIZE            10U
+#define ST33_TPM_RH_OWNER               0x40000001UL
+#define ST33_TPM_RH_PLATFORM            0x4000000CUL
+#define ST33_TPM_RS_PW                  0x40000009UL
+#define ST33_TPM_PW_AUTH_SIZE           9U
+#define ST33_TPM_RANDOM_MAX_BYTES       64U
+#define ST33_TPM_NV_TRANSFER_MAX_BYTES  64U
 
 static uint16_t st33_min_u16(uint16_t a, uint16_t b)
 {
@@ -61,6 +67,15 @@ static void st33_be32_write(uint8_t *buf, uint32_t v)
     buf[1] = (uint8_t)(v >> 16);
     buf[2] = (uint8_t)(v >> 8);
     buf[3] = (uint8_t)v;
+}
+
+static uint16_t st33_write_empty_password_auth(uint8_t *buf)
+{
+    st33_be32_write(&buf[0], ST33_TPM_RS_PW);
+    st33_be16_write(&buf[4], 0U);
+    buf[6] = 0U;
+    st33_be16_write(&buf[7], 0U);
+    return ST33_TPM_PW_AUTH_SIZE;
 }
 
 static st33ktpm2x_status_t st33_i2c_read(st33ktpm2x_t *ctx,
@@ -671,12 +686,16 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_get_random(st33ktpm2x_t *ctx,
                                                uint32_t *tpm_rc)
 {
     uint8_t cmd[12];
-    uint8_t rsp[ST33KTPM2X_RSP_MAX_BYTES];
+    uint8_t rsp[ST33_TPM_HEADER_SIZE + 2U + ST33_TPM_RANDOM_MAX_BYTES];
     uint16_t rsp_len = 0U;
     uint16_t rnd_len = 0U;
     st33ktpm2x_status_t rc;
 
-    if ((random_out == NULL) || (random_len == NULL))
+    if ((random_out == NULL) ||
+        (random_len == NULL) ||
+        (requested_bytes == 0U) ||
+        (requested_bytes > ST33_TPM_RANDOM_MAX_BYTES) ||
+        (random_capacity < requested_bytes))
     {
         return ST33KTPM2X_EINVAL;
     }
@@ -946,15 +965,58 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_define(st33ktpm2x_t *ctx,
                                               uint32_t attributes,
                                               uint32_t *tpm_rc)
 {
-    (void)ctx;
-    (void)nv_index;
-    (void)data_size;
-    (void)attributes;
-    if (tpm_rc != NULL)
+    uint8_t cmd[45];
+    uint8_t rsp[ST33_TPM_HEADER_SIZE + 4U + ST33_TPM_PW_AUTH_SIZE];
+    uint16_t off = 0U;
+    uint16_t rsp_len = 0U;
+
+    if ((ctx == NULL) || (!ctx->initialized) || (data_size == 0U))
     {
-        *tpm_rc = 0UL;
+        return ST33KTPM2X_EINVAL;
     }
-    return ST33KTPM2X_ENOTSUP;
+
+    st33_be16_write(&cmd[off], ST33KTPM2X_TPM2_ST_SESSIONS);
+    off = (uint16_t)(off + 2U);
+    st33_be32_write(&cmd[off], (uint32_t)sizeof(cmd));
+    off = (uint16_t)(off + 4U);
+    st33_be32_write(&cmd[off], ST33KTPM2X_TPM2_CC_NV_DEFINE_SPACE);
+    off = (uint16_t)(off + 4U);
+
+    st33_be32_write(&cmd[off], ST33_TPM_RH_OWNER);
+    off = (uint16_t)(off + 4U);
+
+    st33_be32_write(&cmd[off], ST33_TPM_PW_AUTH_SIZE);
+    off = (uint16_t)(off + 4U);
+    off = (uint16_t)(off + st33_write_empty_password_auth(&cmd[off]));
+
+    st33_be16_write(&cmd[off], 0U); /* TPM2B_AUTH userAuth */
+    off = (uint16_t)(off + 2U);
+
+    st33_be16_write(&cmd[off], 14U); /* TPM2B_NV_PUBLIC.size */
+    off = (uint16_t)(off + 2U);
+    st33_be32_write(&cmd[off], nv_index);
+    off = (uint16_t)(off + 4U);
+    st33_be16_write(&cmd[off], ST33KTPM2X_TPM2_ALG_SHA256);
+    off = (uint16_t)(off + 2U);
+    st33_be32_write(&cmd[off], attributes);
+    off = (uint16_t)(off + 4U);
+    st33_be16_write(&cmd[off], 0U); /* TPM2B_DIGEST authPolicy */
+    off = (uint16_t)(off + 2U);
+    st33_be16_write(&cmd[off], data_size);
+    off = (uint16_t)(off + 2U);
+
+    if (off != sizeof(cmd))
+    {
+        return ST33KTPM2X_EPROTO;
+    }
+
+    return st33ktpm2x_transceive(ctx,
+                                 cmd,
+                                 (uint16_t)sizeof(cmd),
+                                 rsp,
+                                 (uint16_t)sizeof(rsp),
+                                 &rsp_len,
+                                 tpm_rc);
 }
 
 st33ktpm2x_status_t st33ktpm2x_tpm2_nv_read(st33ktpm2x_t *ctx,
@@ -965,20 +1027,148 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_read(st33ktpm2x_t *ctx,
                                             uint16_t *out_len,
                                             uint32_t *tpm_rc)
 {
-    (void)ctx;
-    (void)nv_index;
-    (void)offset;
-    (void)out_data;
-    (void)out_capacity;
-    if (out_len != NULL)
+    uint8_t cmd[35];
+    uint8_t rsp[ST33_TPM_HEADER_SIZE + 4U + 2U + ST33_TPM_NV_TRANSFER_MAX_BYTES + ST33_TPM_PW_AUTH_SIZE];
+    uint16_t cmd_off = 0U;
+    uint16_t rsp_off = ST33_TPM_HEADER_SIZE;
+    uint16_t rsp_len = 0U;
+    uint16_t data_len = 0U;
+    st33ktpm2x_status_t rc;
+
+    if ((ctx == NULL) ||
+        (!ctx->initialized) ||
+        (out_data == NULL) ||
+        (out_len == NULL) ||
+        (out_capacity == 0U) ||
+        (out_capacity > ST33_TPM_NV_TRANSFER_MAX_BYTES))
     {
-        *out_len = 0U;
+        return ST33KTPM2X_EINVAL;
     }
-    if (tpm_rc != NULL)
+
+    *out_len = 0U;
+
+    st33_be16_write(&cmd[cmd_off], ST33KTPM2X_TPM2_ST_SESSIONS);
+    cmd_off = (uint16_t)(cmd_off + 2U);
+    st33_be32_write(&cmd[cmd_off], (uint32_t)sizeof(cmd));
+    cmd_off = (uint16_t)(cmd_off + 4U);
+    st33_be32_write(&cmd[cmd_off], ST33KTPM2X_TPM2_CC_NV_READ);
+    cmd_off = (uint16_t)(cmd_off + 4U);
+
+    st33_be32_write(&cmd[cmd_off], ST33_TPM_RH_OWNER);
+    cmd_off = (uint16_t)(cmd_off + 4U);
+    st33_be32_write(&cmd[cmd_off], nv_index);
+    cmd_off = (uint16_t)(cmd_off + 4U);
+
+    st33_be32_write(&cmd[cmd_off], ST33_TPM_PW_AUTH_SIZE);
+    cmd_off = (uint16_t)(cmd_off + 4U);
+    cmd_off = (uint16_t)(cmd_off + st33_write_empty_password_auth(&cmd[cmd_off]));
+
+    st33_be16_write(&cmd[cmd_off], out_capacity);
+    cmd_off = (uint16_t)(cmd_off + 2U);
+    st33_be16_write(&cmd[cmd_off], offset);
+    cmd_off = (uint16_t)(cmd_off + 2U);
+
+    if (cmd_off != sizeof(cmd))
     {
-        *tpm_rc = 0UL;
+        return ST33KTPM2X_EPROTO;
     }
-    return ST33KTPM2X_ENOTSUP;
+
+    rc = st33ktpm2x_transceive(ctx,
+                               cmd,
+                               (uint16_t)sizeof(cmd),
+                               rsp,
+                               (uint16_t)sizeof(rsp),
+                               &rsp_len,
+                               tpm_rc);
+    if (rc != ST33KTPM2X_OK)
+    {
+        return rc;
+    }
+
+    if (rsp_len < (ST33_TPM_HEADER_SIZE + 4U + 2U))
+    {
+        return ST33KTPM2X_EPROTO;
+    }
+
+    rsp_off = (uint16_t)(rsp_off + 4U); /* parameterSize */
+    data_len = st33_be16_read(&rsp[rsp_off]);
+    rsp_off = (uint16_t)(rsp_off + 2U);
+    if ((uint16_t)(rsp_off + data_len) > rsp_len)
+    {
+        return ST33KTPM2X_EPROTO;
+    }
+    if (data_len > out_capacity)
+    {
+        return ST33KTPM2X_EOVERFLOW;
+    }
+
+    memcpy(out_data, &rsp[rsp_off], data_len);
+    *out_len = data_len;
+    return ST33KTPM2X_OK;
+}
+
+static st33ktpm2x_status_t st33_tpm2_nv_write_auth(st33ktpm2x_t *ctx,
+                                                   uint32_t auth_handle,
+                                                   uint32_t nv_index,
+                                                   uint16_t offset,
+                                                   const uint8_t *data,
+                                                   uint16_t data_len,
+                                                   uint32_t *tpm_rc)
+{
+    uint8_t cmd[35U + ST33_TPM_NV_TRANSFER_MAX_BYTES];
+    uint8_t rsp[ST33_TPM_HEADER_SIZE + 4U + ST33_TPM_PW_AUTH_SIZE];
+    uint16_t off = 0U;
+    uint16_t rsp_len = 0U;
+    uint16_t cmd_len;
+
+    if ((ctx == NULL) ||
+        (!ctx->initialized) ||
+        ((data == NULL) && (data_len > 0U)) ||
+        (data_len > ST33_TPM_NV_TRANSFER_MAX_BYTES))
+    {
+        return ST33KTPM2X_EINVAL;
+    }
+
+    cmd_len = (uint16_t)(35U + data_len);
+
+    st33_be16_write(&cmd[off], ST33KTPM2X_TPM2_ST_SESSIONS);
+    off = (uint16_t)(off + 2U);
+    st33_be32_write(&cmd[off], cmd_len);
+    off = (uint16_t)(off + 4U);
+    st33_be32_write(&cmd[off], ST33KTPM2X_TPM2_CC_NV_WRITE);
+    off = (uint16_t)(off + 4U);
+
+    st33_be32_write(&cmd[off], auth_handle);
+    off = (uint16_t)(off + 4U);
+    st33_be32_write(&cmd[off], nv_index);
+    off = (uint16_t)(off + 4U);
+
+    st33_be32_write(&cmd[off], ST33_TPM_PW_AUTH_SIZE);
+    off = (uint16_t)(off + 4U);
+    off = (uint16_t)(off + st33_write_empty_password_auth(&cmd[off]));
+
+    st33_be16_write(&cmd[off], data_len);
+    off = (uint16_t)(off + 2U);
+    if (data_len > 0U)
+    {
+        memcpy(&cmd[off], data, data_len);
+        off = (uint16_t)(off + data_len);
+    }
+    st33_be16_write(&cmd[off], offset);
+    off = (uint16_t)(off + 2U);
+
+    if (off != cmd_len)
+    {
+        return ST33KTPM2X_EPROTO;
+    }
+
+    return st33ktpm2x_transceive(ctx,
+                                 cmd,
+                                 cmd_len,
+                                 rsp,
+                                 (uint16_t)sizeof(rsp),
+                                 &rsp_len,
+                                 tpm_rc);
 }
 
 st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write(st33ktpm2x_t *ctx,
@@ -988,16 +1178,29 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write(st33ktpm2x_t *ctx,
                                              uint16_t data_len,
                                              uint32_t *tpm_rc)
 {
-    (void)ctx;
-    (void)nv_index;
-    (void)offset;
-    (void)data;
-    (void)data_len;
-    if (tpm_rc != NULL)
-    {
-        *tpm_rc = 0UL;
-    }
-    return ST33KTPM2X_ENOTSUP;
+    return st33_tpm2_nv_write_auth(ctx,
+                                   ST33_TPM_RH_OWNER,
+                                   nv_index,
+                                   offset,
+                                   data,
+                                   data_len,
+                                   tpm_rc);
+}
+
+st33ktpm2x_status_t st33ktpm2x_tpm2_nv_write_platform_pp(st33ktpm2x_t *ctx,
+                                                         uint32_t nv_index,
+                                                         uint16_t offset,
+                                                         const uint8_t *data,
+                                                         uint16_t data_len,
+                                                         uint32_t *tpm_rc)
+{
+    return st33_tpm2_nv_write_auth(ctx,
+                                   ST33_TPM_RH_PLATFORM,
+                                   nv_index,
+                                   offset,
+                                   data,
+                                   data_len,
+                                   tpm_rc);
 }
 
 st33ktpm2x_status_t st33ktpm2x_tpm2_flush_context(st33ktpm2x_t *ctx,

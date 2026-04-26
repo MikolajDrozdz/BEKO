@@ -178,7 +178,7 @@ typedef struct
     radio_main_ook_cfg_t ook;                  /**< Profil OOK. */
     bool fh_enabled;                           /**< Flaga frequency hopping. */
     uint32_t fh_period_ms;                     /**< Okres przeskoku kanału [ms] dla FH w LoRa. */
-    bool coding_enabled;                       /**< Flaga szyfrowania ruchu `USER`. */
+    bool coding_enabled;                       /**< Flaga szyfrowania ruchu `OPERATOR`. */
     bool auto_ping_enabled;                    /**< Flaga automatycznego `PING`. */
 } radio_main_runtime_cfg_t;
 
