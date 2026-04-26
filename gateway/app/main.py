@@ -6,7 +6,7 @@ from datetime import datetime
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from .api.endpoints import logs, messages, nodes, pairing, radio, system
+from .api.endpoints import logs, messages, nodes, pairing, radio, system, gateway
 from .core.laviet_crypto import (
     LAVIET_SHARED_V1,
     derive_unicast_base_key,
@@ -20,6 +20,7 @@ from .models import models
 from .models.database import Base, SessionLocal, engine
 from .services import message_tracker
 from .services import system_metrics
+from .services.gateway_counter import reserve_gateway_tx_counter
 from .services.laviet_frame import (
     LAVIET_BROADCAST_ID,
     LAVIET_FLAG_ACK_REQUIRED,
@@ -70,6 +71,7 @@ async def log_request_body(request: Request, call_next):
 app.include_router(messages.router, prefix="/api/messages", tags=["messages"])
 app.include_router(nodes.router, prefix="/api/nodes", tags=["nodes"])
 app.include_router(system.router, prefix="/api/system", tags=["system"])
+app.include_router(gateway.router, prefix="/api/gateway", tags=["gateway"])
 app.include_router(radio.router, prefix="/api/radio", tags=["radio"])
 app.include_router(logs.router, prefix="/api/logs", tags=["logs"])
 app.include_router(pairing.router, prefix="/api/pairing", tags=["pairing"])
@@ -223,9 +225,11 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired
         print(f"[LoRa ACK] Skip ACK for {hex(frame.src_id)}: node is not paired")
         return
 
-    node.counter += 1
-    db.commit()
-    db.refresh(node)
+    try:
+        counter = reserve_gateway_tx_counter(db)
+    except ValueError as exc:
+        print(f"[LoRa ACK] Skip ACK for {hex(frame.src_id)}: {exc}")
+        return
 
     ack_payload = struct.pack(">HI", frame.msg_id & 0xFFFF, frame.counter & 0xFFFFFFFF)
     _, hmac_key = _derive_node_keys(frame.src_id, paired_code)
@@ -234,8 +238,8 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired
         flags=LAVIET_FLAG_IS_ACK,
         src_id=LAVIET_GATEWAY_ID,
         dst_id=frame.src_id,
-        msg_id=int(time.time() * 1000) & 0xFFFF,
-        counter=node.counter,
+        msg_id=(int(time.time() * 1000) & 0xFFFF) or 1,
+        counter=counter,
         payload_len=len(ack_payload),
         payload=ack_payload,
     )
@@ -246,6 +250,8 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired
 
     time.sleep(ACK_TX_DELAY_SECONDS)
     if lora_device.send_frame(final_frame):
+        node.counter = max(int(node.counter or 0), counter)
+        db.commit()
         print(
             f"[LoRa ACK] Sent ACK to {hex(frame.src_id)} for msg=0x{frame.msg_id:04X} counter={frame.counter}"
         )

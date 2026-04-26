@@ -5,12 +5,18 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 import time
 from sqlalchemy.orm import Session
 from ...models.database import get_db
-from ...services import system_metrics
+from ...services import message_tracker, system_metrics
+from ...services.gateway_counter import (
+    get_gateway_tx_counter,
+    reserve_gateway_tx_counter,
+    reserve_gateway_tx_counter_for_sync,
+    set_gateway_tx_counter_at_least,
+)
 from ...services.lora_hardware import lora_device
 from ...services.laviet_frame import (
     LavietFrameBuilder, LavietFrame, LavietType, LAVIET_FRAME_VERSION,
-    LAVIET_GATEWAY_ID, LAVIET_FLAG_COUNTER_OVERRIDE, LAVIET_FLAG_ENCRYPTED,
-    LAVIET_FLAG_KEY_UPDATE
+    LAVIET_GATEWAY_ID, LAVIET_FLAG_ACK_REQUIRED, LAVIET_FLAG_COUNTER_OVERRIDE,
+    LAVIET_FLAG_ENCRYPTED, LAVIET_FLAG_KEY_UPDATE
 )
 from ...core.laviet_crypto import derive_unicast_base_key, get_aes_key, get_hmac_key, laviet_aes_ctr_crypt, laviet_generate_mac
 from ...models import models
@@ -33,7 +39,7 @@ def _gateway_info(radio_status: dict) -> dict:
     }
 
 @router.get("/", summary="Informacje o stanie Gatewaya (LAVIET)")
-def get_system_status():
+def get_system_status(db: Session = Depends(get_db)):
     """Zwraca podstawowe informacje o bramce LoRa."""
     radio_status = lora_device.get_status()
     gateway_info = _gateway_info(radio_status)
@@ -52,6 +58,7 @@ def get_system_status():
         "radio_driver": radio_status["driver"],
         "radio_error": radio_status["last_error"],
         "unicast_key_mode": "pair32",
+        "gateway_tx_counter": get_gateway_tx_counter(db),
         "gateway": gateway_info,
         "radio": radio_status,
     }
@@ -77,7 +84,16 @@ def get_metrics_history(
     return system_metrics.get_history(range_seconds, step_seconds)
 
 
-def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
+def _send_system_frame(
+    node_id: int,
+    type_id: int,
+    flags: int,
+    db: Session,
+    *,
+    counter_sync_value: int | None = None,
+    ack_required: bool = False,
+    payload_override: bytes | None = None,
+):
     node = db.query(models.Node).filter(models.Node.node_id == node_id).first()
     if not node or not node.paired_code:
         raise HTTPException(status_code=400, detail="Węzeł nie jest sparowany.")
@@ -88,21 +104,53 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
     elif not isinstance(code, bytes):
         code = bytes(code)
 
+    if (
+        type_id == LavietType.COUNTER_SYNC
+        and counter_sync_value is not None
+        and (counter_sync_value < 1 or counter_sync_value > 0xFFFFFFFF)
+    ):
+        raise HTTPException(status_code=400, detail="counter poza zakresem uint32")
+    if payload_override is not None and len(payload_override) > 16:
+        raise HTTPException(status_code=400, detail="Payload systemowy przekracza 16 B")
+    if payload_override is not None and type_id != LavietType.KEY_ROTATE:
+        raise HTTPException(status_code=400, detail="payload_override jest obslugiwany tylko dla KEY_ROTATE")
+
     base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, node_id, code)
     domain_id = min(LAVIET_GATEWAY_ID, node_id)
     aes_key = get_aes_key(base_key, domain_id)
     hmac_key = get_hmac_key(base_key, domain_id)
 
-    msg_id = int(time.time() % 65535)
-    counter = (node.counter or 0) + 1
-
+    msg_id = (int(time.time()) % 65535) or 1
     payload = b""
     if type_id == LavietType.COUNTER_SYNC:
+        if payload_override is not None:
+            raise HTTPException(status_code=400, detail="COUNTER_SYNC nie przyjmuje payload_override")
         flags |= LAVIET_FLAG_COUNTER_OVERRIDE | LAVIET_FLAG_ENCRYPTED
-        payload = counter.to_bytes(4, "big")
-    elif type_id == LavietType.KEY_ROTATE:
-        flags |= LAVIET_FLAG_KEY_UPDATE | LAVIET_FLAG_ENCRYPTED
-        payload = b"\x01"
+        if ack_required:
+            flags |= LAVIET_FLAG_ACK_REQUIRED
+        try:
+            if counter_sync_value is not None:
+                counter = reserve_gateway_tx_counter_for_sync(db, counter_sync_value)
+                new_counter = counter_sync_value
+            else:
+                counter = reserve_gateway_tx_counter(db)
+                new_counter = counter
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        payload = new_counter.to_bytes(4, "big")
+    else:
+        try:
+            counter = reserve_gateway_tx_counter(db)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        if type_id == LavietType.KEY_ROTATE:
+            flags |= LAVIET_FLAG_KEY_UPDATE | LAVIET_FLAG_ENCRYPTED
+            if ack_required:
+                flags |= LAVIET_FLAG_ACK_REQUIRED
+            payload = payload_override if payload_override is not None else b"\x01"
+
+    if len(payload) > 16:
+        raise HTTPException(status_code=400, detail="Payload systemowy przekracza 16 B")
 
     cipher_payload = laviet_aes_ctr_crypt(payload, aes_key, LAVIET_GATEWAY_ID, node_id, msg_id, counter)
 
@@ -120,21 +168,59 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
     raw_no_mac = LavietFrameBuilder.build_mac_input(net_frame)
     net_frame.mac_tag = laviet_generate_mac(hmac_key, raw_no_mac, b"")
     final_frame = LavietFrameBuilder.build_frame(net_frame)
-    
-    node.counter = counter
-    db.commit()
+
+    db_msg = None
+    if ack_required:
+        db_msg = models.Message(
+            dst_id=node_id,
+            src_id=LAVIET_GATEWAY_ID,
+            payload_hex=payload.hex(),
+            status="pending",
+        )
+        db.add(db_msg)
+        db.commit()
+        db.refresh(db_msg)
+        message_tracker.register_pending_ack(db_msg.id, node_id, msg_id, counter)
 
     if not lora_device.send_frame(final_frame):
+        if db_msg is not None:
+            message_tracker.drop_pending_ack(node_id, msg_id, counter)
+            db_msg.status = "failed"
+            db.commit()
         raise HTTPException(status_code=503, detail=f"Radio TX failed: {lora_device.get_last_error()}")
+
+    gateway_tx_counter = counter
+    if type_id == LavietType.COUNTER_SYNC:
+        gateway_tx_counter = set_gateway_tx_counter_at_least(db, new_counter)
+
+    node.counter = max(int(node.counter or 0), counter, gateway_tx_counter)
+    db.commit()
+
+    return {
+        "node_id": node_id,
+        "type": type_id,
+        "msg_id": msg_id,
+        "frame_counter": counter,
+        "gateway_tx_counter": gateway_tx_counter,
+        "flags": flags,
+        "payload_hex": payload.hex(),
+        "message_id": db_msg.id if db_msg is not None else None,
+    }
 
 @router.post("/nodes/{node_id}/sync_counter", summary="Synchronizacja licznika węzła (ADMIN)")
 def sync_counter(node_id: int, db: Session = Depends(get_db)):
     """Wysyła ramkę synchronizacji licznika (COUNTER_SYNC)."""
-    _send_system_frame(node_id, LavietType.COUNTER_SYNC, LAVIET_FLAG_COUNTER_OVERRIDE, db)
-    return {"status": f"sync requested for node {node_id}"}
+    result = _send_system_frame(
+        node_id,
+        LavietType.COUNTER_SYNC,
+        LAVIET_FLAG_COUNTER_OVERRIDE,
+        db,
+        ack_required=True,
+    )
+    return {"status": f"sync requested for node {node_id}", **result}
 
 @router.post("/nodes/{node_id}/rotate_keys", summary="Rotacja kluczy węzła (ADMIN)")
 def rotate_keys(node_id: int, db: Session = Depends(get_db)):
     """Wysyła ramkę rotacji kluczy (KEY_ROTATE)."""
-    _send_system_frame(node_id, LavietType.KEY_ROTATE, 0, db)
-    return {"status": f"key rotation requested for node {node_id}"}
+    result = _send_system_frame(node_id, LavietType.KEY_ROTATE, 0, db)
+    return {"status": f"key rotation requested for node {node_id}", **result}

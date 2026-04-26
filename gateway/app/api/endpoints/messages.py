@@ -18,6 +18,8 @@ from ...models.database import get_db
 from ...schemas import schemas
 from ...services import message_tracker
 from ...services import system_metrics
+from ...services.broadcast_security import get_active_broadcast_frame_keys
+from ...services.gateway_counter import reserve_gateway_tx_counter
 from ...services.laviet_frame import (
     LAVIET_BROADCAST_ID,
     LAVIET_FLAG_ACK_REQUIRED,
@@ -112,10 +114,22 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     db.refresh(db_msg)
 
     if dst_id_16 == LAVIET_BROADCAST_ID:
-        domain_id = LAVIET_BROADCAST_ID
-        aes_key = get_aes_key(LAVIET_SHARED_V1, domain_id)
-        hmac_key = get_hmac_key(LAVIET_SHARED_V1, domain_id)
-        counter = 0
+        if msg.coded:
+            try:
+                group_epoch, aes_key, hmac_key = get_active_broadcast_frame_keys(db)
+            except LookupError as exc:
+                db_msg.status = "failed"
+                db.commit()
+                raise HTTPException(
+                    status_code=409,
+                    detail="Brak aktywnego broadcast group key. Wywolaj /api/gateway/broadcast-key/rotate.",
+                ) from exc
+            key_mode = f"broadcast-group:{group_epoch}"
+        else:
+            domain_id = LAVIET_BROADCAST_ID
+            aes_key = get_aes_key(LAVIET_SHARED_V1, domain_id)
+            hmac_key = get_hmac_key(LAVIET_SHARED_V1, domain_id)
+            key_mode = "shared-broadcast"
     else:
         if not isinstance(paired_code, bytes):
             paired_code = bytes(paired_code)
@@ -128,17 +142,32 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         print(f"[TX HMAC DBG] domain_id=0x{domain_id:04X}")
         _debug_hex("[TX HMAC DBG] aes_key=", aes_key)
         _debug_hex("[TX HMAC DBG] hmac_key=", hmac_key)
-        node.counter += 1
-        db.commit()
-        db.refresh(node)
-        counter = node.counter
+        key_mode = "pair32"
 
-    msg_id = db_msg.id & 0xFFFF
+    try:
+        counter = reserve_gateway_tx_counter(db)
+    except ValueError as exc:
+        db_msg.status = "failed"
+        db.commit()
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    msg_id = (db_msg.id & 0xFFFF) or 1
     flags = 0
     ack_required = bool(msg.ack_required) and dst_id_16 != LAVIET_BROADCAST_ID
     if dst_id_16 == LAVIET_BROADCAST_ID:
         flags |= LAVIET_FLAG_BROADCAST
-        cipher_payload = payload_bytes
+        if msg.coded:
+            flags |= LAVIET_FLAG_ENCRYPTED
+            cipher_payload = laviet_aes_ctr_crypt(
+                payload_bytes,
+                aes_key,
+                LAVIET_GATEWAY_ID,
+                dst_id_16,
+                msg_id,
+                counter,
+            )
+        else:
+            cipher_payload = payload_bytes
     else:
         if ack_required:
             flags |= LAVIET_FLAG_ACK_REQUIRED
@@ -176,7 +205,7 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         f"[TX] LAVIET src={hex(LAVIET_GATEWAY_ID)} dst={hex(dst_id_16)} "
         f"msg_id=0x{msg_id:04X} counter={counter} coded={msg.coded} ack_required={ack_required} "
         f"flags=0x{flags:02X} "
-        f"key_mode={'pair32' if dst_id_16 != LAVIET_BROADCAST_ID else 'shared-broadcast'} "
+        f"key_mode={key_mode} "
         f"payload={payload_bytes.hex()}"
     )
     tx_ok = bool(lora_device.send_frame(final_frame))
@@ -186,6 +215,8 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         db.refresh(db_msg)
         raise HTTPException(status_code=503, detail="Radio TX failed")
 
+    if node is not None:
+        node.counter = max(int(node.counter or 0), counter)
     if requires_user_response:
         db_msg.status = "sent_waiting_response"
     elif ack_required:

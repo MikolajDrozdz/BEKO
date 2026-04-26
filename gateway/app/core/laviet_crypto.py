@@ -3,6 +3,7 @@ import hmac
 import struct
 
 LAVIET_SHARED_V1 = b"LAVIET_SHARED_V1"
+BROADCAST_GROUP_INFO = b"LAVIET:BCAST:GROUP:V1"
 
 
 def security_peer_link_key_derive(local_node_id: int, peer_node_id: int, code: bytes) -> bytes:
@@ -29,6 +30,11 @@ def get_aes_key(base_key: bytes, domain_id: int) -> bytes:
 
 def get_hmac_key(base_key: bytes, domain_id: int) -> bytes:
     return _derive_subkey(base_key, domain_id, 2)
+
+
+def derive_broadcast_group_base_key(group_key: bytes, epoch: int, group_id: int = 0xFFFF) -> bytes:
+    msg = BROADCAST_GROUP_INFO + struct.pack(">IH", epoch & 0xFFFFFFFF, group_id & 0xFFFF)
+    return hmac.new(group_key, msg, hashlib.sha256).digest()[:16]
 
 
 def laviet_aes_ctr_crypt(

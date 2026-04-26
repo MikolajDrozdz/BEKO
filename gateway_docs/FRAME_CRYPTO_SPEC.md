@@ -119,7 +119,7 @@ Mapa bitowa `flags`:
 - jezeli plaintext po `strip()` konczy sie na `.`, `?` albo `!`, node pokazuje mozliwosc odpowiedzi `YES` / `OK` / `NO` takze dla broadcastu
 - szyfrowanie:
   - unicast po sparowaniu: tak
-  - broadcast: nie
+  - broadcast: opcjonalnie, gdy ustawione jest `ENCRYPTED`; produkcyjny model klucza grupy i rotacji opisuje `../BROADCAST_SECURITY_REKEY.md`
 
 ### 7.2. `ACK`
 
@@ -433,7 +433,7 @@ Czyli:
 - `base_key = pair_base_key` z kodu pairingowego
 - `domain_id = min(0x0001, node_id)` zwykle `0x0001`
 - `DATA` i `RESP` unicast zwykle z `ACK_REQUIRED`
-- broadcast `DATA` uzywa `SHARED`, ma flage `BROADCAST` i nie moze miec `ACK_REQUIRED`
+- broadcast `DATA` w trybie V1/kompatybilnym uzywa `SHARED`; produkcyjnie powinien uzywac group key, ma flage `BROADCAST` i nie moze miec `ACK_REQUIRED`
 - broadcast moze wymagac odpowiedzi uzytkownika, jesli plaintext konczy sie na `.`, `?` albo `!`; odpowiedz wraca jako unicast `RESP`
 
 ### 16.5. `ACK`
@@ -558,7 +558,7 @@ frame = header || cipher_payload || mac_tag
 
 Nowy gateway, ktory ma byc zgodny z aktualnym node STM32, powinien:
 
-- dla pairingu i broadcastu uzywac `SHARED`
+- dla pairingu uzywac `SHARED`; dla broadcastu V1 dopuszcza `SHARED`, ale produkcyjnie uzyc group key z rotacja
 - dla zwyklego unicastu po sparowaniu uzywac `PAIR_V1_32`
 - liczyc HMAC po ciphertext
 - szyfrowac tylko payload
@@ -577,5 +577,5 @@ ale tylko jako kompatybilnosc.
 
 Jesli projektujesz nowy gateway od zera, wybieraj:
 
-- `SHARED` dla bootstrap/pairing/broadcast
+- `SHARED` dla bootstrap/pairing oraz tylko kompatybilnosciowego broadcastu
 - `PAIR_V1_32` dla normalnego unicastu po sparowaniu

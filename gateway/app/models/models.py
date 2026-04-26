@@ -33,3 +33,20 @@ class Log(Base):
     level = Column(String, default="INFO")
     event = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class GatewayState(Base):
+    __tablename__ = "gateway_state"
+
+    key = Column(String, primary_key=True, index=True)
+    value = Column(Integer, default=0)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+class BroadcastGroupKey(Base):
+    __tablename__ = "broadcast_group_keys"
+
+    group_id = Column(Integer, primary_key=True, index=True)
+    epoch = Column(Integer, default=0)
+    key_blob = Column(LargeBinary, nullable=False)
+    active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())

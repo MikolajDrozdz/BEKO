@@ -11,6 +11,7 @@ from typing import Callable, Dict, Optional
 from ..core.laviet_crypto import LAVIET_SHARED_V1, get_hmac_key, laviet_generate_mac, laviet_mac_equal
 from ..models import models
 from ..models.database import SessionLocal
+from .gateway_counter import reserve_gateway_tx_counter
 from .laviet_frame import (
     LAVIET_BROADCAST_ID,
     LAVIET_FLAG_BROADCAST,
@@ -76,9 +77,16 @@ class PairingManager:
             db.close()
 
     def start_pairing(self, target_node_id: int = LAVIET_BROADCAST_ID) -> bool:
-        msg_id = int(time.time() % 65535)
-        counter = int(time.time()) & 0xFFFFFFFF
+        msg_id = (int(time.time()) % 65535) or 1
         raw_payload = os.urandom(8)
+        db = SessionLocal()
+        try:
+            counter = reserve_gateway_tx_counter(db)
+        except ValueError as exc:
+            print(f"[PAIRING] Cannot reserve gateway counter: {exc}")
+            return False
+        finally:
+            db.close()
 
         domain_id = (
             LAVIET_BROADCAST_ID

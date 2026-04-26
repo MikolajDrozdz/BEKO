@@ -198,6 +198,23 @@ curl -X POST http://localhost:8000/api/messages/send \
   }'
 ```
 
+Wysyłka broadcast z kodowaniem payloadu:
+
+```bash
+curl -X POST http://localhost:8000/api/messages/send \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "dst_id": 65535,
+    "payload_hex": "4f4b3f",
+    "coded": true,
+    "ack_required": false
+  }'
+```
+
+Uwaga: produkcyjny model bezpiecznego broadcastu wymaga osobnego klucza grupy
+i rotacji kluczy. Projekt wdrozenia jest opisany w
+[BROADCAST_SECURITY_REKEY.md](BROADCAST_SECURITY_REKEY.md).
+
 Wysyłka do konkretnego noda, np. `0x1234` = `4660`:
 
 ```bash
@@ -316,6 +333,7 @@ sudo systemctl stop laviet-gateway
 ## 10. Gdzie jest dokumentacja
 
 - [README.md](README.md) - opis systemu
+- [BROADCAST_SECURITY_REKEY.md](BROADCAST_SECURITY_REKEY.md) - szyfrowany broadcast i rotacja kluczy
 - [gateway/README.md](gateway/README.md) - kontrakt gateway/node
 - [gateway/FRAME_CRYPTO_SPEC.md](gateway/FRAME_CRYPTO_SPEC.md) - ramka i kryptografia
 - [gateway/FRONTEND_API.md](gateway/FRONTEND_API.md) - API dla frontendu

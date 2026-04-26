@@ -50,7 +50,7 @@ class MessageBase(BaseModel):
 class MessageCreate(MessageBase):
     coded: bool = Field(
         default=False,
-        description="False = plaintext unicast/broadcast, True = AES-CTR dla unicastu.",
+        description="False = plaintext unicast/broadcast, True = AES-CTR dla unicastu lub broadcastu.",
     )
     ack_required: bool = Field(
         default=True,
