@@ -4134,12 +4134,7 @@ static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *p
 
         if (item_idx < MENU_TRUSTED_DEVICE_SLOTS)
         {
-            trusted_info_t info;
-
-            memset(&info, 0, sizeof(info));
-            return (security_main_cmd_get_device(item_idx, &info) &&
-                    info.in_use &&
-                    menu_is_send_target_allowed(info.node_id));
+            return true;
         }
 
         return false;
@@ -4154,12 +4149,7 @@ static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *p
 
         if (item_idx < MENU_TRUSTED_DEVICE_SLOTS)
         {
-            trusted_info_t info;
-
-            memset(&info, 0, sizeof(info));
-            return (security_main_cmd_get_device(item_idx, &info) &&
-                    info.in_use &&
-                    menu_is_send_target_allowed(info.node_id));
+            return true;
         }
 
         return false;

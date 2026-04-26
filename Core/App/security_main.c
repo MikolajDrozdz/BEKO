@@ -2108,6 +2108,16 @@ static bool security_store_trusted_slot(uint8_t idx)
     }
 
     rc = i2c_mem_store_trusted_device_write(&s_mem_store, security_trusted_store_slot(idx), &rec);
+    if (rc != I2C_MEM_STORE_OK)
+    {
+        printf("SEC: trusted store write failed idx=%u slot=%u rc=%d cap=%u secret_slots=%u code_len=%u\r\n",
+               (unsigned int)idx,
+               (unsigned int)security_trusted_store_slot(idx),
+               (int)rc,
+               (unsigned int)capacity,
+               (unsigned int)s_mem_store.secret_slot_count,
+               (unsigned int)rec.code_len);
+    }
     return (rc == I2C_MEM_STORE_OK);
 }
 
@@ -2292,7 +2302,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
         persist_ok = security_store_trusted_slot(0U);
         if (!persist_ok)
         {
-            printf("SEC: trusted gateway persist failed idx=0\r\n");
+            printf("SEC: trusted gateway persist failed idx=0; continuing with volatile pairing\r\n");
         }
 
         for (i = 1U; i < max_slots; i++)
@@ -2307,7 +2317,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
             }
         }
 
-        return persist_ok;
+        return true;
     }
 
     for (i = 0U; i < max_slots; i++)

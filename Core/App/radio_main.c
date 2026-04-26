@@ -248,6 +248,7 @@ static void radio_main_handle_ack_timeout(void);
 static void radio_main_handle_events(void);
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt);
 static bool radio_main_source_is_trusted(uint16_t src_id);
+static bool radio_main_source_is_allowed_for_data(const laviet_frame_t *frame);
 static void radio_main_handle_hopping(void);
 static void radio_main_handle_auto_ping(void);
 static void radio_main_ensure_rx_continuous(void);
@@ -2852,17 +2853,43 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
         {
             candidate_ok = true;
         }
+        else if (frame->src_id == LAVIET_GATEWAY_ID)
+        {
+            trusted_info_t gateway_info;
+
+            memset(&gateway_info, 0, sizeof(gateway_info));
+            if (security_main_cmd_get_device(0U, &gateway_info) && gateway_info.in_use)
+            {
+                printf("RADIO RX HMAC no-key mode=%s src=0x%04X dst=0x%04X peer=0x%04X slot0=0x%04lX code_len=%u\r\n",
+                       radio_main_key_mode_text(candidates[idx]),
+                       (unsigned int)frame->src_id,
+                       (unsigned int)frame->dst_id,
+                       (unsigned int)peer_id,
+                       (unsigned long)gateway_info.node_id,
+                       (unsigned int)gateway_info.code_len);
+            }
+            else
+            {
+                printf("RADIO RX HMAC no-key mode=%s src=0x%04X dst=0x%04X peer=0x%04X slot0=<empty>\r\n",
+                       radio_main_key_mode_text(candidates[idx]),
+                       (unsigned int)frame->src_id,
+                       (unsigned int)frame->dst_id,
+                       (unsigned int)peer_id);
+            }
+        }
 
         if (candidate_ok &&
             laviet_frame_hmac_sha256(frame, hmac_key, expected))
         {
-            if (peer_id == LAVIET_GATEWAY_ID)
+            if (frame->src_id == LAVIET_GATEWAY_ID)
             {
                 radio_main_log_hmac_debug("RADIO RX HMAC DBG",
                                           frame,
                                           candidates[idx],
-                                          s_ctx.gateway_pair_code_valid ? s_ctx.gateway_pair_code : NULL,
-                                          s_ctx.gateway_pair_code_valid ? s_ctx.gateway_pair_code_len : 0U,
+                                          ((peer_id == LAVIET_GATEWAY_ID) && s_ctx.gateway_pair_code_valid) ?
+                                              s_ctx.gateway_pair_code : NULL,
+                                          ((peer_id == LAVIET_GATEWAY_ID) && s_ctx.gateway_pair_code_valid) ?
+                                              s_ctx.gateway_pair_code_len : 0U,
                                           hmac_key,
                                           expected);
             }
@@ -2959,6 +2986,22 @@ static bool radio_main_source_is_trusted(uint16_t src_id)
     return false;
 }
 
+static bool radio_main_source_is_allowed_for_data(const laviet_frame_t *frame)
+{
+    if (frame == NULL)
+    {
+        return false;
+    }
+
+    if ((frame->src_id == LAVIET_GATEWAY_ID) &&
+        (frame->dst_id == LAVIET_BROADCAST_ID))
+    {
+        return true;
+    }
+
+    return radio_main_source_is_trusted(frame->src_id);
+}
+
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 {
     laviet_frame_t frame;
@@ -2977,6 +3020,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
     printf("RADIO RX len=%u RSSI=%d SNR=%d\r\n", pkt->length, pkt->rssi_dbm, pkt->snr_db);
     radio_main_print_rx_ascii(pkt->data, pkt->length);
+    radio_main_print_hex_bytes("RADIO RX HEX: ", pkt->data, pkt->length);
     (void)security_main_log_message(pkt->rssi_dbm, pkt->data, pkt->length);
 
     frame_status = laviet_frame_decode(pkt->data, pkt->length, &frame);
@@ -3048,8 +3092,12 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                (unsigned int)frame_decoded.dst_id);
         return;
     }
+    if (frame_decoded.src_id == LAVIET_GATEWAY_ID)
+    {
+        radio_main_log_gateway_rx_frame(&frame, &frame_decoded, pkt->rssi_dbm, pkt->snr_db);
+    }
     if (((frame_type == LAVIET_TYPE_DATA) || (frame_type == LAVIET_TYPE_RESP)) &&
-        !radio_main_source_is_trusted(frame_decoded.src_id))
+        !radio_main_source_is_allowed_for_data(&frame_decoded))
     {
         printf("RADIO RX outside-network drop src=0x%04X dst=0x%04X type=%s\r\n",
                (unsigned int)frame_decoded.src_id,
@@ -3069,11 +3117,6 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
            (int)pkt->rssi_dbm,
            (int)pkt->snr_db);
 
-    if (frame_decoded.src_id == LAVIET_GATEWAY_ID)
-    {
-        radio_main_log_gateway_rx_frame(&frame, &frame_decoded, pkt->rssi_dbm, pkt->snr_db);
-    }
-
     if (frame_decoded.payload_len > 0U)
     {
         char text_buf[21];
@@ -3085,7 +3128,9 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                            sizeof(text_buf)) > 0U)
         {
             printf("RADIO RX DEC TXT: \"%s\"\r\n", text_buf);
-            if (strncmp(text_buf, "HEX:", 4U) == 0)
+            if (((frame_type == LAVIET_TYPE_DATA) || (frame_type == LAVIET_TYPE_RESP)) &&
+                ((frame_decoded.flags & LAVIET_FLAG_ENCRYPTED) != 0U) &&
+                (strncmp(text_buf, "HEX:", 4U) == 0))
             {
                 printf("RADIO RX WARN non-printable payload after decrypt; check gateway nonce fields src/dst/msg/counter\r\n");
             }

@@ -834,6 +834,11 @@ Po sparowaniu:
 3. późniejsze ramki unicast używają pair-derived keys,
 4. RX od nieznanego źródła jest odrzucany dla `DATA` i `RESP`.
 
+Wyjątek: gateway (`src_id=0x0001`) może wysłać `DATA/RESP` jako broadcast
+(`dst_id=0xFFFF`) po poprawnym HMAC w domenie broadcast/shared. Taka ramka nie
+wymaga wpisu w trusted slotach, ale nie dostaje ACK i nie powinna przenosić
+sekretów. Unicast `DATA/RESP` nadal wymaga sparowanego źródła.
+
 Przykład RX spoza sieci:
 
 ```text
@@ -895,10 +900,15 @@ Nadawca akceptuje ACK tylko, jeśli pasują:
 - `msg_id`,
 - `counter`.
 
+Tu `msg_id` i `counter` oznaczają pola z payloadu ACK, czyli
+`acked_msg_id` i `acked_counter`. Zewnętrzne pole `counter` samej ramki ACK jest
+osobnym licznikiem TX nadawcy ACK i nie musi być równe `acked_counter`.
+
 Przykład:
 
 ```text
 RADIO ACK wait dst=0x0001 msg=0x0042 counter=123 timeout=6000 ms
+RADIO RX OK type=ACK src=0x0001 dst=0x77CD msg=0x2F5E counter=456 flags=0x04 len=6
 RADIO RX ACK src=0x0001 ack_msg=0x0042 ack_counter=123
 RADIO ACK delivered src=0x0001 msg=0x0042 counter=123 retries=0
 ```
@@ -920,6 +930,35 @@ Firmware przechowuje:
 s_gateway_rx_counter
 s_gateway_tx_counter
 ```
+
+Gateway/backend powinien przechowywać analogiczne, rozdzielone wartości:
+
+```text
+gateway_tx_counter          ostatni counter użyty przez gateway w ramce do noda
+node_rx_counter[node_id]    ostatni counter zaakceptowany od danego noda
+```
+
+`gateway_tx_counter` musi być trwały i monotoniczny. Backend nie powinien
+zerować go przy restarcie procesu. Dla każdej ramki gateway -> node:
+
+```text
+counter = gateway_tx_counter + 1
+persist gateway_tx_counter = counter
+zbuduj nonce/AES/HMAC z tym counterem
+wyślij ramkę
+```
+
+Dla ACK wysyłanego przez gateway zewnętrzny `frame.counter` też pochodzi z
+`gateway_tx_counter`, natomiast payload ACK musi zawierać `msg_id` i `counter`
+oryginalnej ramki noda:
+
+```text
+ack_payload = acked_msg_id || acked_counter
+```
+
+Przy odbiorze ACK od noda backend musi dopasowywać potwierdzenie po payloadzie
+ACK (`acked_msg_id`, `acked_counter`), a nie po zewnętrznym `frame.counter`
+ramki ACK.
 
 W EEPROM slot counter ma:
 
@@ -977,6 +1016,26 @@ Użycie:
 payload = new_counter_be32
 ```
 
+Jeżeli backend utracił trwały `gateway_tx_counter` albo node zapamiętał wyższy
+licznik niż backend, nie trzeba restartować firmware noda. Backend powinien
+wysłać kontrolną ramkę `COUNTER_SYNC`:
+
+```text
+ver_type = 0x17                         # v1 + COUNTER_SYNC
+flags    = 0x41                         # ENCRYPTED | COUNTER_OVERRIDE
+flags    = 0x43                         # ENCRYPTED | ACK_REQUIRED | COUNTER_OVERRIDE, gdy backend chce ACK
+src_id   = 0x0001
+dst_id   = node_id
+payload  = AES_CTR(new_counter_be32)
+mac      = HMAC(header || encrypted_payload)
+```
+
+Po wysłaniu `COUNTER_SYNC` backend ustawia swój `gateway_tx_counter` na co
+najmniej `new_counter`, a następna zwykła ramka gateway -> node musi mieć
+`counter > new_counter`. `new_counter` nie powinien być mniejszy od wartości,
+którą node mógł już zapamiętać; w praktyce wybiera się aktualny trwały licznik
+backendu albo większą wartość z zapasem.
+
 Dlaczego to jest bezpieczne:
 
 - tylko gateway może wysłać poprawnie uwierzytelnioną synchronizację,
@@ -999,6 +1058,7 @@ Zasady:
 - broadcast nie może mieć `ACK_REQUIRED`,
 - node nie wysyła zwykłych wiadomości na broadcast,
 - broadcast może być używany przez gateway,
+- gateway broadcast `DATA/RESP` jest akceptowany po poprawnym HMAC shared/broadcast nawet przed trusted-list,
 - broadcast nie powinien przenosić sekretów.
 
 Dlaczego broadcast jest słabszy:
