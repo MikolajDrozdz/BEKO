@@ -433,7 +433,8 @@ Czyli:
 - `base_key = pair_base_key` z kodu pairingowego
 - `domain_id = min(0x0001, node_id)` zwykle `0x0001`
 - `DATA` i `RESP` unicast zwykle z `ACK_REQUIRED`
-- broadcast `DATA` nie jest rekomendowany jako nowa implementacja gatewaya
+- broadcast `DATA` uzywa `SHARED`, ma flage `BROADCAST` i nie moze miec `ACK_REQUIRED`
+- broadcast moze wymagac odpowiedzi uzytkownika, jesli plaintext konczy sie na `.`, `?` albo `!`; odpowiedz wraca jako unicast `RESP`
 
 ### 16.5. `ACK`
 
@@ -495,6 +496,10 @@ Dla unicastu z `ACK_REQUIRED` gateway powinien:
    - `acked_msg_id`
    - `acked_counter`
 5. uznac ramke za dostarczona tylko gdy oba pola pasuja
+
+Aktualny backend gatewaya czeka ok. `100 ms` przed wyslaniem wlasnego `ACK`
+do noda, zeby node zdazyl wrocic z TX/RX do nasluchu. To opoznienie nie jest
+czescia formatu ramki, tylko zachowaniem runtime gatewaya.
 
 ## 20. Najczestsze bledy gatewaya
 

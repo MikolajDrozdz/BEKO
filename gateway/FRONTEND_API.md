@@ -22,11 +22,18 @@ Najważniejszy komponent do codziennej pracy oraz rozsyłania poleceń do końc�
 ```json
 {
   "dst_id": 65535, 
-  "payload_hex": "48656c6c6f"
+  "payload_hex": "48656c6c6f",
+  "coded": false,
+  "ack_required": false
 }
 ```
 - `dst_id` [int] - Adres docelowy (2-bajtowy hex oddany w int). Użyj `65535` dla Broadcastu.
 - `payload_hex` [str] - Treść wiadomości zakodowana szesnastkowo. Zamiast operować na surowych charach wysyłasz HEX-string.
+- `coded` [bool] - `false` plaintext, `true` AES-CTR dla unicastu.
+- `ack_required` [bool] - `true` ustawia flagę `ACK_REQUIRED` dla unicastu i dodaje wiadomość do pending ACK. Dla broadcastu backend zawsze traktuje ACK jako wyłączony.
+
+Jeśli plaintext wiadomości po `strip()` kończy się na `.`, `?` albo `!`,
+backend traktuje wiadomość jako wymagającą odpowiedzi `YES` / `OK` / `NO`.
 
 **Odpowiedź (200 OK)**:
 Potwierdzenie bazy danych z unikalnym `msg_id`.
@@ -36,6 +43,18 @@ Potwierdzenie bazy danych z unikalnym `msg_id`.
 ### Historia Wysłanych
 `GET /api/messages/history`
 **Opis**: Zwraca całą historię lokalną SQLite wysłanych wiadomości.
+
+Najważniejsze statusy:
+
+- `pending` - wysłano unicast z ACK i gateway czeka na ACK,
+- `sent` - wysłano bez oczekiwania na ACK/odpowiedź,
+- `sent_waiting_response` - wysłano i gateway czeka na odpowiedź użytkownika,
+- `delivered` - ACK pasuje do wysłanej wiadomości,
+- `delivered_waiting_response` - ACK przyszedł, ale brakuje `YES` / `OK` / `NO`,
+- `answered` - przyszła odpowiedź użytkownika,
+- `received` - gateway odebrał zwykłą ramkę `DATA`,
+- `response` - gateway odebrał ramkę `RESP`,
+- `failed` - błąd TX.
 
 ### Statystyki Wiadomości
 `GET /api/messages/stats?range=24h`
@@ -83,6 +102,10 @@ W starym systemie BEKO to STM32 wysyłał zapytania (JOIN_REQ). **Teraz STM32 u�
 ### Lista Sparowanych Urządzeń
 `GET /api/nodes/`
 **Opis**: Odczyt wszystkich zaklasyfikowanych przez gateway Node'ów, które wymieniły się tajnymi kodami relacyjnymi wpisanymi w pole `paired_code`. Zwraca historię counterów wymaganą do zapobiegania atakom typu *Replay*.
+
+Odpowiedź zawiera także pola dashboardowe: `online`, `rssi`, `snr`,
+`battery_percent`, `firmware`, `tx_counter`, `rx_counter`, `messages_sent`,
+`messages_delivered`, `messages_failed`, `pending_response`.
 
 ### Usuwanie Węzła
 `DELETE /api/nodes/{node_id}`
@@ -164,4 +187,4 @@ Odpytania wspierające diagnostykę i stabilizację protokołu radiowego.
 
 ---
 
-*Ten dokument stanowi ostateczną wersję dokumentacji interfejsów zgodną ze stanem pliku `gateway/app/main.py` na czas przejścia z BEKO na system środowiska LAVIET.*
+*Ten dokument opisuje aktualny kontrakt frontendu z backendem `gateway/app`.*

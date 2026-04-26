@@ -1,6 +1,11 @@
 # Raspberry Pi + SX1276/RFM95
 
-Ten dokument opisuje rekomendowany sposob wdrozenia gatewaya na Raspberry Pi z tym samym modulem radiowym co node STM32.
+Ten dokument opisuje wdrozenie gatewaya na Raspberry Pi z modulem SX1276/RFM95.
+Aktualne repo ma juz backend FastAPI w `gateway/app` oraz wbudowany driver
+`builtin-sx1276` w `gateway/app/services/lora_hardware.py`.
+
+Uwaga: ten dokument dotyczy SX1276/RFM95. Nie opisuje SX1262/SX1762; te uklady
+maja inny interfejs SPI i wymagalyby osobnego drivera.
 
 ## 1. Zalecana architektura
 
@@ -64,6 +69,18 @@ Powod:
 - prostsza obsluga IRQ,
 - latwiejsza zgodnosc z obecnym stylem `radio_main`,
 - dobra kontrola retry i state machine.
+
+### Opcja aktualnie zaimplementowana w tym repo
+
+- Python/FastAPI jako panel, API i runtime gatewaya,
+- wbudowany driver `builtin-sx1276` oparty o `spidev`,
+- GPIO przez `lgpio` albo `RPi.GPIO`,
+- opcjonalny zewnetrzny `radio_handle.py`, jesli istnieje w projekcie,
+- runtime status radia pod `GET /api/radio/status`,
+- metryki systemu pod `GET /api/system/metrics`.
+
+Ta sciezka jest wygodna do testow i integracji panelu. Przy bardzo ciasnych
+czasach RX/TX albo duzej liczbie nodow dalej warto rozwazyc osobny worker radiowy.
 
 ### Opcja alternatywna
 
@@ -208,7 +225,17 @@ To jest najwygodniejszy model, gdy `node_id` nie jest znane przed parowaniem.
 
 ## 9. Moduly po stronie RPi
 
-Minimalny podzial kodu:
+Aktualny podzial kodu w tym repo:
+
+- `gateway/app/services/lora_hardware.py` - driver SX1276/RFM95, SPI/GPIO, liczniki RX/TX,
+- `gateway/app/services/laviet_frame.py` - ramka `LAVIET_FRAME_V1`,
+- `gateway/app/core/laviet_crypto.py` - AES-CTR, HMAC i wyprowadzanie kluczy,
+- `gateway/app/services/pairing.py` - pairing `PAIR_REQ/PAIR_RESP`,
+- `gateway/app/services/message_tracker.py` - pending ACK/response i ostatnie RSSI/SNR per node,
+- `gateway/app/services/system_metrics.py` - historia metryk systemowych,
+- `gateway/app/api/endpoints/` - API FastAPI dla panelu.
+
+Minimalny podzial przy ewentualnym przepisaniu na C/C++:
 
 - `sx1276_hal.*`
 - `laviet_frame.*`

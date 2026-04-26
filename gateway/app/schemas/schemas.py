@@ -52,6 +52,10 @@ class MessageCreate(MessageBase):
         default=False,
         description="False = plaintext unicast/broadcast, True = AES-CTR dla unicastu.",
     )
+    ack_required: bool = Field(
+        default=True,
+        description="True = ustaw flage ACK_REQUIRED dla unicastu; broadcast zawsze ignoruje ACK.",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -60,6 +64,7 @@ class MessageCreate(MessageBase):
                     "dst_id": 65535,
                     "payload_hex": "48656c6c6f",
                     "coded": False,
+                    "ack_required": False,
                 }
             ]
         }

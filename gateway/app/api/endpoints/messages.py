@@ -135,11 +135,13 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
 
     msg_id = db_msg.id & 0xFFFF
     flags = 0
+    ack_required = bool(msg.ack_required) and dst_id_16 != LAVIET_BROADCAST_ID
     if dst_id_16 == LAVIET_BROADCAST_ID:
         flags |= LAVIET_FLAG_BROADCAST
         cipher_payload = payload_bytes
     else:
-        flags |= LAVIET_FLAG_ACK_REQUIRED
+        if ack_required:
+            flags |= LAVIET_FLAG_ACK_REQUIRED
         if msg.coded:
             flags |= LAVIET_FLAG_ENCRYPTED
             cipher_payload = laviet_aes_ctr_crypt(
@@ -172,7 +174,8 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
 
     print(
         f"[TX] LAVIET src={hex(LAVIET_GATEWAY_ID)} dst={hex(dst_id_16)} "
-        f"msg_id=0x{msg_id:04X} counter={counter} coded={msg.coded} "
+        f"msg_id=0x{msg_id:04X} counter={counter} coded={msg.coded} ack_required={ack_required} "
+        f"flags=0x{flags:02X} "
         f"key_mode={'pair32' if dst_id_16 != LAVIET_BROADCAST_ID else 'shared-broadcast'} "
         f"payload={payload_bytes.hex()}"
     )
@@ -183,11 +186,16 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         db.refresh(db_msg)
         raise HTTPException(status_code=503, detail="Radio TX failed")
 
-    db_msg.status = "sent_waiting_response" if requires_user_response else "sent"
+    if requires_user_response:
+        db_msg.status = "sent_waiting_response"
+    elif ack_required:
+        db_msg.status = "pending"
+    else:
+        db_msg.status = "sent"
     db.commit()
     db.refresh(db_msg)
 
-    if dst_id_16 != LAVIET_BROADCAST_ID and (flags & LAVIET_FLAG_ACK_REQUIRED):
+    if ack_required:
         message_tracker.register_pending_ack(db_msg.id, dst_id_16, msg_id, counter)
     if requires_user_response:
         message_tracker.register_pending_response(

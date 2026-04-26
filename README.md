@@ -12,6 +12,9 @@ W systemie występuje:
 Gateway wysyła wiadomości do wybranego node’a albo do całej sieci.  
 Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez node ramką `ACK`.
 
+Aktualny backend gatewaya znajduje się w katalogu `gateway/`. Instrukcja
+uruchomienia z gotowymi komendami jest w [INTRUKCJA.md](INTRUKCJA.md).
+
 ---
 
 ## 2. Adresacja
@@ -290,7 +293,7 @@ graph TD
 
     DEV --> GW
     DEV --> N2
-````
+```
 
 ---
 
@@ -313,18 +316,32 @@ sequenceDiagram
     N->>N: Weryfikacja HMAC i counter
     N->>N: Odszyfrowanie payloadu
     N->>U: Wyświetlenie wiadomości
+    N->>GW: ACK
     alt Wiadomość kończy się na ".", "?" albo "!"
         N->>U: Pokazanie opcji YES / OK / NO
         U->>N: Wybór odpowiedzi
         N->>GW: RESP
     end
-    N->>GW: ACK
     GW->>O: Wynik operacji
 ```
 
 ### Broadcast z odpowiedzią użytkownika
 
 Broadcast `DATA` nie ma `ACK_REQUIRED`, ale node nadal musi pokazać opcje `YES` / `OK` / `NO`, jeśli plaintext wiadomości po `strip()` kończy się na `.`, `?` albo `!`. Odpowiedź użytkownika jest odsyłana do gatewaya jako unicast `RESP` z payloadem ASCII `YES`, `OK` albo `NO`.
+
+### Backend i dashboard
+
+Backend FastAPI udostępnia API dla frontendu:
+
+- `POST /api/messages/send` - wysyłka wiadomości,
+- `GET /api/messages/history` - historia,
+- `GET /api/messages/stats?range=24h` - statystyki,
+- `GET /api/messages/pending` - pending ACK/response,
+- `GET /api/nodes/` - rozszerzony status node’ów,
+- `GET /api/system/gateway` - karta Gateway Info,
+- `GET /api/system/metrics` i `/history` - metryki systemu,
+- `GET /api/radio/status` - licznik i status SX1276/RFM95,
+- `GET /api/logs/` i `/summary` - logi.
 
 ### Parowanie
 

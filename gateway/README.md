@@ -315,10 +315,25 @@ Dla kazdego node'a gateway powinien przechowywac:
 - licznik retry,
 - ostatni profil radiowy.
 
-## 10. Co nie jest jeszcze w tym repo
+## 10. Stan implementacji w tym repo
 
-W tym repo nie ma implementacji gatewaya.
-Folder `gateway_docs` opisuje tylko kontrakt i rekomendowany kierunek.
+W tym repo jest dzialajaca implementacja backendu gatewaya w `gateway/app`.
+Aktualny backend:
+
+- wystawia API FastAPI,
+- obsluguje SQLite przez SQLAlchemy,
+- ma wbudowany driver `builtin-sx1276` dla SX1276/RFM95 przez `spidev` + GPIO,
+- opcjonalnie probuje uzyc zewnetrznego `radio_handle.py`, jesli jest dostepny,
+- buduje i parsuje ramki `LAVIET_FRAME_V1`,
+- obsluguje pairing `PAIR_REQ/PAIR_RESP`,
+- wysyla `DATA`, `COUNTER_SYNC`, `KEY_ROTATE`,
+- mapuje `ACK` po `acked_msg_id + acked_counter`,
+- wysyla ACK do noda po odebraniu poprawnej ramki z `ACK_REQUIRED` z opoznieniem ok. `100 ms`,
+- rozpoznaje wiadomosci wymagajace odpowiedzi po koncowce plaintextu `.`, `?` albo `!`,
+- przyjmuje `RESP` z payloadem ASCII `YES`, `OK` albo `NO`,
+- udostepnia metryki systemu, status radia, logi, pending ACK/response i statystyki wiadomosci.
+
+Folder `gateway_docs` jest kopia dokumentacji kontraktu i kierunku wdrozenia.
 
 ## 11. Zrodla techniczne
 
