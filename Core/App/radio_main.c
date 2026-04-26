@@ -32,6 +32,7 @@
 #define RADIO_ACK_TIMEOUT_MIN_MS             6000UL
 #define RADIO_ACK_TIMEOUT_MARGIN_MS          1500UL
 #define RADIO_ACK_ACTIVE_POLL_MS             1U
+#define RADIO_ACK_TX_DELAY_MS                100UL
 #define RADIO_IDLE_POLL_MS                   10U
 #define RADIO_ACK_CLOSED_TTL_MS              10000UL
 #define RADIO_ACK_RETRY_LIMIT                2U
@@ -2611,22 +2612,76 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
 static bool radio_main_send_ack(const laviet_frame_t *frame)
 {
     uint8_t payload[LAVIET_ACK_PAYLOAD_LEN];
+    bool sent;
 
-    if ((frame == NULL) ||
-        (frame->dst_id != s_ctx.node_id) ||
-        (frame->dst_id == LAVIET_BROADCAST_ID) ||
-        ((frame->flags & LAVIET_FLAG_ACK_REQUIRED) == 0U) ||
-        (laviet_frame_type(frame) == LAVIET_TYPE_ACK))
+    if (frame == NULL)
     {
+        printf("RADIO ACK skip reason=null-frame\r\n");
+        return false;
+    }
+
+    if (frame->dst_id != s_ctx.node_id)
+    {
+        printf("RADIO ACK skip reason=dst src=0x%04X dst=0x%04X node=0x%04X msg=0x%04X flags=0x%02X\r\n",
+               (unsigned int)frame->src_id,
+               (unsigned int)frame->dst_id,
+               (unsigned int)s_ctx.node_id,
+               (unsigned int)frame->msg_id,
+               (unsigned int)frame->flags);
+        return false;
+    }
+
+    if (frame->dst_id == LAVIET_BROADCAST_ID)
+    {
+        printf("RADIO ACK skip reason=broadcast src=0x%04X msg=0x%04X flags=0x%02X\r\n",
+               (unsigned int)frame->src_id,
+               (unsigned int)frame->msg_id,
+               (unsigned int)frame->flags);
+        return false;
+    }
+
+    if ((frame->flags & LAVIET_FLAG_ACK_REQUIRED) == 0U)
+    {
+        printf("RADIO ACK skip reason=no-ack-required src=0x%04X dst=0x%04X msg=0x%04X flags=0x%02X\r\n",
+               (unsigned int)frame->src_id,
+               (unsigned int)frame->dst_id,
+               (unsigned int)frame->msg_id,
+               (unsigned int)frame->flags);
+        return false;
+    }
+
+    if (laviet_frame_type(frame) == LAVIET_TYPE_ACK)
+    {
+        printf("RADIO ACK skip reason=ack-frame src=0x%04X msg=0x%04X flags=0x%02X\r\n",
+               (unsigned int)frame->src_id,
+               (unsigned int)frame->msg_id,
+               (unsigned int)frame->flags);
         return false;
     }
 
     if (!laviet_frame_write_ack_payload(frame->msg_id, frame->counter, payload))
     {
+        printf("RADIO ACK build failed src=0x%04X msg=0x%04X counter=%lu\r\n",
+               (unsigned int)frame->src_id,
+               (unsigned int)frame->msg_id,
+               (unsigned long)frame->counter);
         return false;
     }
 
-    return radio_main_send_system_frame(LAVIET_TYPE_ACK, frame->src_id, payload, sizeof(payload));
+    printf("RADIO ACK tx delay=%lu ms dst=0x%04X ack_msg=0x%04X ack_counter=%lu\r\n",
+           (unsigned long)RADIO_ACK_TX_DELAY_MS,
+           (unsigned int)frame->src_id,
+           (unsigned int)frame->msg_id,
+           (unsigned long)frame->counter);
+    osDelay(RADIO_ACK_TX_DELAY_MS);
+    sent = radio_main_send_system_frame(LAVIET_TYPE_ACK, frame->src_id, payload, sizeof(payload));
+    printf("RADIO ACK tx %s dst=0x%04X ack_msg=0x%04X ack_counter=%lu\r\n",
+           sent ? "ok" : "failed",
+           (unsigned int)frame->src_id,
+           (unsigned int)frame->msg_id,
+           (unsigned long)frame->counter);
+
+    return sent;
 }
 
 /*
@@ -3172,6 +3227,20 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     {
         if (frame_type == LAVIET_TYPE_DATA)
         {
+            if (frame_decoded.dst_id == s_ctx.node_id)
+            {
+                bool ack_ok = radio_main_send_ack(&frame_decoded);
+
+                if (((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U) && !ack_ok)
+                {
+                    printf("RADIO RX DATA ACK failed src=0x%04X msg=0x%04X counter=%lu flags=0x%02X\r\n",
+                           (unsigned int)frame_decoded.src_id,
+                           (unsigned int)frame_decoded.msg_id,
+                           (unsigned long)frame_decoded.counter,
+                           (unsigned int)frame_decoded.flags);
+                }
+                (void)security_main_get_gateway_counter(&rx_counter, &tx_counter);
+            }
             if (frame_decoded.payload_len > 0U)
             {
                 bool stored = radio_main_push_payload_to_monitor(pkt->rssi_dbm,
@@ -3190,14 +3259,23 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                             frame_decoded.payload,
                                             frame_decoded.payload_len,
                                             frame_type);
-            if (frame_decoded.dst_id == s_ctx.node_id)
-            {
-                (void)radio_main_send_ack(&frame_decoded);
-                (void)security_main_get_gateway_counter(&rx_counter, &tx_counter);
-            }
         }
         else if (frame_type == LAVIET_TYPE_RESP)
         {
+            if ((frame_decoded.dst_id == s_ctx.node_id) &&
+                ((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U))
+            {
+                bool ack_ok = radio_main_send_ack(&frame_decoded);
+
+                if (!ack_ok)
+                {
+                    printf("RADIO RX RESP ACK failed src=0x%04X msg=0x%04X counter=%lu flags=0x%02X\r\n",
+                           (unsigned int)frame_decoded.src_id,
+                           (unsigned int)frame_decoded.msg_id,
+                           (unsigned long)frame_decoded.counter,
+                           (unsigned int)frame_decoded.flags);
+                }
+            }
             if (frame_decoded.payload_len > 0U)
             {
                 bool stored = radio_main_push_payload_to_monitor(pkt->rssi_dbm,
@@ -3216,11 +3294,6 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                             frame_decoded.payload,
                                             frame_decoded.payload_len,
                                             frame_type);
-            if ((frame_decoded.dst_id == s_ctx.node_id) &&
-                ((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U))
-            {
-                (void)radio_main_send_ack(&frame_decoded);
-            }
         }
         else if (frame_type == LAVIET_TYPE_COUNTER_SYNC)
         {
@@ -3382,7 +3455,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
             if (!key_ok)
             {
-                radio_main_notify(MENU_NOTIFICATION_ERROR, "BCAST key fail");
+                printf("RADIO RX KEY_ROTATE ignored\r\n");
             }
             if ((frame_decoded.dst_id == s_ctx.node_id) &&
                 ((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U))
@@ -3877,7 +3950,6 @@ static bool radio_main_handle_key_rotate_frame(const laviet_frame_t *frame)
         laviet_secure_zero(enc_key, sizeof(enc_key));
         laviet_secure_zero(hmac_key, sizeof(hmac_key));
         printf("RADIO RX BCAST KEY active epoch=%lu\r\n", (unsigned long)epoch);
-        radio_main_notify(MENU_NOTIFICATION_PAIRING, "BCAST key OK");
         return true;
     }
 
