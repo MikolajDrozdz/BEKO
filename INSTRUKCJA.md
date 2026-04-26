@@ -14,6 +14,8 @@ Na Raspberry Pi uruchamiasz trzy procesy:
 - Auth Service: `http://<IP_RPI>:8001`,
 - frontend: `http://<IP_RPI>:5173`.
 
+Gateway API i Auth Service możesz uruchomić razem jedną komendą z repo frontendu.
+
 Na komputerze użytkownika zwykle wystarczy otworzyć przeglądarkę i wejść na frontend.
 
 ## 1. Ustaw zmienne
@@ -132,7 +134,48 @@ login: admin
 hasło: admin123
 ```
 
-## 6. Uruchom frontend
+## 6. Uruchom Gateway API i Auth Service jedną komendą
+
+Jeśli repo i zależności są już pobrane, najwygodniej uruchomić oba backendy jednym skryptem z katalogu frontendu:
+
+```bash
+cd "$FRONTEND_DIR"
+npm run dev:backends
+```
+
+Ten skrypt:
+
+- tworzy venv dla Auth Service i Gateway API, jeśli ich nie ma,
+- instaluje zależności z `requirements.txt`, jeśli tworzy venv albo brakuje `uvicorn`,
+- tworzy konto admina, jeśli jeszcze nie istnieje,
+- uruchamia Gateway API na porcie `8000`,
+- uruchamia Auth Service na porcie `8001`,
+- zatrzymuje oba backendy po `Ctrl+C`.
+
+Jeśli gateway masz w innym katalogu niż domyślny `"$WORKDIR/gateway-repo/gateway"`, podaj ścieżkę przy starcie:
+
+```bash
+cd "$FRONTEND_DIR"
+GATEWAY_DIR="/sciezka/do/gateway" npm run dev:backends
+```
+
+Jeśli chcesz wymusić ponowną instalację zależności:
+
+```bash
+cd "$FRONTEND_DIR"
+INSTALL_DEPS=1 npm run dev:backends
+```
+
+Jeśli chcesz całkowicie pominąć sprawdzanie instalacji zależności:
+
+```bash
+cd "$FRONTEND_DIR"
+INSTALL_DEPS=0 npm run dev:backends
+```
+
+To jest odpowiednik ręcznego uruchomienia Terminala 1 i Terminala 2 z poprzednich sekcji.
+
+## 7. Uruchom frontend
 
 Terminal 3 na Raspberry Pi:
 
@@ -162,9 +205,11 @@ Gateway API: http://<ADRES_IP_RPI>:8000
 Auth Service: http://<ADRES_IP_RPI>:8001
 ```
 
-Adresy API może zmienić w panelu tylko użytkownik z rolą admin.
+W głównym panelu po zalogowaniu adresy API może zmienić tylko użytkownik z rolą admin.
 
-## 7. Szybki start w trzech terminalach
+Na ekranie logowania jest też przycisk ustawień połączenia. Jest potrzebny wtedy, gdy frontend otwiera się poprawnie, ale wskazuje na zły adres Auth Service i nie da się jeszcze zalogować.
+
+## 8. Szybki start ręcznie w trzech terminalach
 
 Jeśli repo i zależności są już pobrane:
 
@@ -200,7 +245,7 @@ cd "$FRONTEND_DIR"
 npm run dev -- --host 0.0.0.0
 ```
 
-## 8. Build produkcyjny frontendu
+## 9. Build produkcyjny frontendu
 
 Sprawdzenie buildu:
 
@@ -221,7 +266,7 @@ Domyślny adres preview:
 http://<ADRES_IP_RPI>:4173
 ```
 
-## 9. Aktualizacja kodu
+## 10. Aktualizacja kodu
 
 Frontend i Auth Service:
 
@@ -243,7 +288,7 @@ pip install -r requirements.txt
 
 Po aktualizacji zrestartuj procesy w terminalach.
 
-## 10. Najczęstsze problemy
+## 11. Najczęstsze problemy
 
 ### `externally-managed-environment`
 
@@ -339,7 +384,7 @@ ss -ltnp | grep -E ':8000|:8001|:5173|:4173'
 
 Zatrzymaj stary proces albo uruchom usługę na innym porcie.
 
-## 11. Co uruchamiać na komputerze użytkownika
+## 12. Co uruchamiać na komputerze użytkownika
 
 Na komputerze, z którego chcesz korzystać z dashboardu, nie musisz instalować Node.js ani Pythona, jeśli wszystko działa na Raspberry Pi.
 
@@ -351,7 +396,7 @@ http://<ADRES_IP_RPI>:5173
 
 Komputer i Raspberry Pi muszą być w tej samej sieci albo Raspberry Pi musi być dostępne przez VPN / routing.
 
-## 12. Czego nie commitować
+## 13. Czego nie commitować
 
 Nie dodawaj do Gita lokalnych plików i katalogów:
 

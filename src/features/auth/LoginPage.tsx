@@ -3,13 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Radio, Eye, EyeOff, Wifi } from 'lucide-react'
+import { Radio, Eye, EyeOff, Wifi, Settings2 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
-import { getAuthBaseUrl } from '@/lib/api/authClient'
-import { getBaseUrl } from '@/lib/api/client'
+import { getAuthBaseUrl, setAuthBaseUrl } from '@/lib/api/authClient'
+import { getBaseUrl, setBaseUrl } from '@/lib/api/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 const schema = z.object({
   username: z.string().min(1, 'Username is required'),
@@ -25,11 +32,60 @@ export function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState<string | null>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [gatewayUrlInput, setGatewayUrlInput] = useState(getBaseUrl())
+  const [authUrlInput, setAuthUrlInput] = useState(getAuthBaseUrl())
+  const [settingsError, setSettingsError] = useState<string | null>(null)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { username: '', password: '' },
   })
+
+  function normalizeHttpUrl(value: string): string {
+    const trimmed = value.trim().replace(/\/$/, '')
+    if (!trimmed) throw new Error('Both URLs are required')
+
+    try {
+      const parsed = new URL(trimmed)
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        throw new Error('URL must start with http:// or https://')
+      }
+      return parsed.toString().replace(/\/$/, '')
+    } catch {
+      throw new Error('Enter valid http(s) URLs')
+    }
+  }
+
+  function openSettings() {
+    setGatewayUrlInput(getBaseUrl())
+    setAuthUrlInput(getAuthBaseUrl())
+    setSettingsError(null)
+    setSettingsOpen(true)
+  }
+
+  function useCurrentHost() {
+    if (typeof window === 'undefined') return
+    const base = `${window.location.protocol}//${window.location.hostname}`
+    setGatewayUrlInput(`${base}:8000`)
+    setAuthUrlInput(`${base}:8001`)
+    setSettingsError(null)
+  }
+
+  function saveSettings() {
+    try {
+      const gatewayUrl = normalizeHttpUrl(gatewayUrlInput)
+      const authUrl = normalizeHttpUrl(authUrlInput)
+      setBaseUrl(gatewayUrl)
+      setAuthBaseUrl(authUrl)
+      setGatewayUrlInput(gatewayUrl)
+      setAuthUrlInput(authUrl)
+      setSettingsError(null)
+      setSettingsOpen(false)
+    } catch (err) {
+      setSettingsError(err instanceof Error ? err.message : 'Invalid connection settings')
+    }
+  }
 
   async function onSubmit(values: FormValues) {
     setLoginError(null)
@@ -124,11 +180,57 @@ export function LoginPage() {
               <span className="text-[10px] font-mono-feature truncate max-w-[260px]">{getAuthBaseUrl()}</span>
             </div>
             <div className="flex items-center gap-1.5">
-            <Wifi className="h-3 w-3" />
+              <Wifi className="h-3 w-3" />
               <span className="text-[10px] font-mono-feature truncate max-w-[260px]">{getBaseUrl()}</span>
             </div>
           </div>
+          <Button type="button" variant="ghost" size="icon" onClick={openSettings} title="Connection settings">
+            <Settings2 className="h-4 w-4" />
+          </Button>
         </div>
+
+        <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Connection Settings</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="login-auth-url">Auth Service URL</Label>
+                <Input
+                  id="login-auth-url"
+                  value={authUrlInput}
+                  onChange={(e) => setAuthUrlInput(e.target.value)}
+                  placeholder="http://raspberrypi.local:8001"
+                  className="font-mono-feature text-xs"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="login-gateway-url">Gateway API URL</Label>
+                <Input
+                  id="login-gateway-url"
+                  value={gatewayUrlInput}
+                  onChange={(e) => setGatewayUrlInput(e.target.value)}
+                  placeholder="http://raspberrypi.local:8000"
+                  className="font-mono-feature text-xs"
+                />
+              </div>
+              {settingsError && (
+                <div className="rounded-md bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-3 py-2">
+                  <p className="text-xs text-red-600 dark:text-red-400">{settingsError}</p>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" size="sm" onClick={useCurrentHost}>
+                Use current host
+              </Button>
+              <Button type="button" size="sm" onClick={saveSettings}>
+                Save
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

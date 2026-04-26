@@ -97,18 +97,18 @@ Panel administracyjny użytkowników. Dostępny tylko dla admina.
 
 Frontend korzysta z dwóch usług:
 
+Backend gatewaya i Auth Service można uruchomić razem z katalogu frontendu:
+
+```bash
+npm run dev:backends
+```
+
 ### Gateway API
 
 Domyślnie:
 
 ```text
-http://<IP_RPI>:8000
-```
-
-Przykładowo:
-
-```text
-http://10.69.72.11:8000
+http://<ADRES_IP_RPI>:8000
 ```
 
 Najważniejsze endpointy:
@@ -129,13 +129,7 @@ Najważniejsze endpointy:
 Domyślnie:
 
 ```text
-http://<IP_RPI>:8001
-```
-
-Przykładowo:
-
-```text
-http://10.69.72.11:8001
+http://<ADRES_IP_RPI>:8001
 ```
 
 Endpointy:
@@ -151,11 +145,11 @@ Endpointy:
 
 Frontend domyślnie wylicza adresy API z hosta, z którego otwarto stronę:
 
-- frontend: `http://10.69.72.11:5173`
-- Gateway API: `http://10.69.72.11:8000`
-- Auth Service: `http://10.69.72.11:8001`
+- frontend: `http://<ADRES_IP_RPI>:5173`
+- Gateway API: `http://<ADRES_IP_RPI>:8000`
+- Auth Service: `http://<ADRES_IP_RPI>:8001`
 
-Po zalogowaniu tylko admin może zmieniać adresy API w ustawieniach połączenia.
+Na ekranie logowania można zmienić adresy API przed logowaniem, jeśli frontend wskazuje na zły Auth Service. Po zalogowaniu ustawienia połączenia w głównym panelu są dostępne tylko dla admina.
 
 ## Uprawnienia
 
@@ -246,4 +240,3 @@ Nie commitować:
 - `__pycache__/`
 - `*.pyc`
 - lokalnych baz testowych, jeśli nie są celowo wersjonowane.
-
