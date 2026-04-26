@@ -3,6 +3,39 @@
 Ten plik opisuje, gdzie wejść, co zainstalować i jak uruchomić backend
 gatewaya LAVIET/BEKO.
 
+## 0. Pobranie programu
+
+Program pobiera się z repozytorium Git projektu. W komendach niżej podmień
+`<URL_REPOZYTORIUM>` na właściwy adres repo, np. z GitHuba/GitLaba.
+
+Przykład pobrania do katalogu `/opt/beko`:
+
+```bash
+sudo mkdir -p /opt/beko
+sudo chown "$USER":"$USER" /opt/beko
+cd /opt/beko
+git clone <URL_REPOZYTORIUM> BEKO
+cd BEKO
+```
+
+Jeśli repozytorium zostało pobrane jako plik ZIP:
+
+```bash
+sudo mkdir -p /opt/beko
+sudo chown "$USER":"$USER" /opt/beko
+cd /opt/beko
+unzip /sciezka/do/pobranego_pliku.zip
+mv <katalog_po_rozpakowaniu> BEKO
+cd BEKO
+```
+
+Po pobraniu sprawdź, czy widzisz katalog `gateway`:
+
+```bash
+ls -la
+ls -la gateway
+```
+
 W instrukcji używam zmiennej `BEKO_HOME`. Ustaw ją na katalog, w którym masz
 repozytorium `BEKO`.
 
