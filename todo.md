@@ -74,7 +74,7 @@ Data aktualizacji: `2026-04-26`
 - [x] Klucz szyfrowania sekretow EEPROM wyprowadzany z TPM-backed root seeda
 - [ ] Dodac test odtwarzania sekretow po reboocie
 - [ ] Przetestowac migracje z legacy TPM NV `0x01C10100` do `0x01C10101`
-- [ ] Udokumentowac finalny lifecycle kluczy
+- [x] Udokumentowac aktualny lifecycle kluczy (`Core/App/security/SECURITY_ARCHITECTURE.md`)
 
 ### Rotacja kluczy
 

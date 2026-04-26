@@ -3,6 +3,7 @@
 Ten katalog zbiera założenia i zadania dla bezpieczeństwa komunikacji BEKO.
 
 Dokumenty pomocnicze:
+- `SECURITY_ARCHITECTURE.md` - pełny opis architektury bezpieczeństwa: TPM, AES/HMAC, root seed, EEPROM, ramki, ACK, anti-replay, PIN i przykłady,
 - `THREAT_MODEL.md` - skrócony model zagrożeń dla bieżącej architektury,
 - `STRIDE_CIA_ANALYSIS.md` - tabela klas ataków, obecnych zabezpieczeń i dalszych mitigacji.
 
