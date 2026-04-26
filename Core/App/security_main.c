@@ -34,6 +34,8 @@
 #define SECURITY_KEY_SEED_BYTES             8U
 #define SECURITY_CODE_MAX                   I2C_MEM_STORE_TRUSTED_CODE_MAX
 #define SECURITY_TRUSTED_ID_LEN             4U
+#define SECURITY_TRUSTED_STORE_RETRIES      3U
+#define SECURITY_TRUSTED_STORE_RETRY_MS     10U
 #define SECURITY_TPM_ROOT_NV_INDEX          0x01C10101UL
 #define SECURITY_TPM_ROOT_LEGACY_NV_INDEX   0x01C10100UL
 #define SECURITY_TPM_NV_PPWRITE             0x00000001UL
@@ -307,6 +309,10 @@ static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRU
 static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID_LEN]);
 static void security_be32_write(uint8_t *dst, uint32_t value);
 static uint32_t security_be32_read(const uint8_t *src);
+static bool security_trusted_record_matches(const i2c_mem_store_trusted_device_t *rec,
+                                            const security_trusted_entry_t *entry);
+static bool security_write_trusted_entry_to_store(uint8_t idx,
+                                                  const security_trusted_entry_t *entry);
 static bool security_store_trusted_slot(uint8_t idx);
 static bool security_erase_trusted_slot(uint8_t idx);
 static uint8_t security_load_trusted_from_store(void);
@@ -2074,69 +2080,199 @@ static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_
     return (rc == I2C_MEM_STORE_OK);
 }
 
-static bool security_store_trusted_slot(uint8_t idx)
+static bool security_trusted_record_matches(const i2c_mem_store_trusted_device_t *rec,
+                                            const security_trusted_entry_t *entry)
+{
+    uint8_t id[SECURITY_TRUSTED_ID_LEN];
+    uint8_t code_len;
+
+    if ((rec == NULL) || (entry == NULL) || !entry->in_use)
+    {
+        return false;
+    }
+    if (rec->id_len != SECURITY_TRUSTED_ID_LEN)
+    {
+        return false;
+    }
+    code_len = entry->code_len;
+    if (code_len > SECURITY_CODE_MAX)
+    {
+        code_len = SECURITY_CODE_MAX;
+    }
+    if (rec->code_len != code_len)
+    {
+        return false;
+    }
+
+    security_node_id_to_bytes(entry->node_id, id);
+    if (memcmp(rec->id, id, SECURITY_TRUSTED_ID_LEN) != 0)
+    {
+        return false;
+    }
+
+    if ((code_len > 0U) && (memcmp(rec->code, entry->code, code_len) != 0))
+    {
+        return false;
+    }
+
+    return true;
+}
+
+static bool security_write_trusted_entry_to_store(uint8_t idx,
+                                                  const security_trusted_entry_t *entry)
 {
     i2c_mem_store_trusted_device_t rec;
-    i2c_mem_store_status_t rc;
+    i2c_mem_store_trusted_device_t verify;
+    i2c_mem_store_status_t rc = I2C_MEM_STORE_ESTATE;
+    i2c_mem_store_status_t verify_rc = I2C_MEM_STORE_ESTATE;
+    uint8_t capacity = security_trusted_store_capacity();
+    uint8_t attempt;
+
+    if (!s_mem_ready)
+    {
+        printf("SEC: trusted store unavailable idx=%u\r\n", (unsigned int)idx);
+        return false;
+    }
+    if ((idx >= capacity) || (entry == NULL) || !entry->in_use)
+    {
+        printf("SEC: trusted store no persistent slot idx=%u cap=%u secret_slots=%u\r\n",
+               (unsigned int)idx,
+               (unsigned int)capacity,
+               (unsigned int)s_mem_store.secret_slot_count);
+        return false;
+    }
+
+    memset(&rec, 0, sizeof(rec));
+    rec.id_len = SECURITY_TRUSTED_ID_LEN;
+    rec.code_len = entry->code_len;
+    if (rec.code_len > I2C_MEM_STORE_TRUSTED_CODE_MAX)
+    {
+        rec.code_len = I2C_MEM_STORE_TRUSTED_CODE_MAX;
+    }
+
+    security_node_id_to_bytes(entry->node_id, rec.id);
+    if (rec.code_len > 0U)
+    {
+        memcpy(rec.code, entry->code, rec.code_len);
+    }
+
+    for (attempt = 0U; attempt < SECURITY_TRUSTED_STORE_RETRIES; attempt++)
+    {
+        rc = i2c_mem_store_trusted_device_write(&s_mem_store,
+                                                security_trusted_store_slot(idx),
+                                                &rec);
+        if (rc == I2C_MEM_STORE_OK)
+        {
+            memset(&verify, 0, sizeof(verify));
+            verify_rc = i2c_mem_store_trusted_device_read(&s_mem_store,
+                                                          security_trusted_store_slot(idx),
+                                                          &verify);
+            if ((verify_rc == I2C_MEM_STORE_OK) &&
+                security_trusted_record_matches(&verify, entry))
+            {
+                printf("SEC: trusted stored idx=%u slot=%u node=0x%08lX code_len=%u\r\n",
+                       (unsigned int)idx,
+                       (unsigned int)security_trusted_store_slot(idx),
+                       (unsigned long)entry->node_id,
+                       (unsigned int)rec.code_len);
+                laviet_secure_zero(&verify, sizeof(verify));
+                laviet_secure_zero(&rec, sizeof(rec));
+                return true;
+            }
+        }
+
+        printf("SEC: trusted store retry idx=%u slot=%u attempt=%u rc=%d verify_rc=%d cap=%u secret_slots=%u code_len=%u\r\n",
+               (unsigned int)idx,
+               (unsigned int)security_trusted_store_slot(idx),
+               (unsigned int)(attempt + 1U),
+               (int)rc,
+               (int)verify_rc,
+               (unsigned int)capacity,
+               (unsigned int)s_mem_store.secret_slot_count,
+               (unsigned int)rec.code_len);
+        app_delay_ms(SECURITY_TRUSTED_STORE_RETRY_MS);
+    }
+
+    laviet_secure_zero(&verify, sizeof(verify));
+    laviet_secure_zero(&rec, sizeof(rec));
+    return false;
+}
+
+static bool security_store_trusted_slot(uint8_t idx)
+{
     uint8_t capacity = security_trusted_store_capacity();
 
     if (!s_mem_ready)
     {
-        return true;
+        printf("SEC: trusted store unavailable idx=%u\r\n", (unsigned int)idx);
+        return false;
     }
     if (idx >= capacity)
     {
-        return true;
+        printf("SEC: trusted store no persistent slot idx=%u cap=%u secret_slots=%u\r\n",
+               (unsigned int)idx,
+               (unsigned int)capacity,
+               (unsigned int)s_mem_store.secret_slot_count);
+        return false;
     }
     if (!s_trusted[idx].in_use)
     {
         return security_erase_trusted_slot(idx);
     }
 
-    memset(&rec, 0, sizeof(rec));
-    rec.id_len = SECURITY_TRUSTED_ID_LEN;
-    rec.code_len = s_trusted[idx].code_len;
-    if (rec.code_len > I2C_MEM_STORE_TRUSTED_CODE_MAX)
-    {
-        rec.code_len = I2C_MEM_STORE_TRUSTED_CODE_MAX;
-    }
-
-    security_node_id_to_bytes(s_trusted[idx].node_id, rec.id);
-    if (rec.code_len > 0U)
-    {
-        memcpy(rec.code, s_trusted[idx].code, rec.code_len);
-    }
-
-    rc = i2c_mem_store_trusted_device_write(&s_mem_store, security_trusted_store_slot(idx), &rec);
-    if (rc != I2C_MEM_STORE_OK)
-    {
-        printf("SEC: trusted store write failed idx=%u slot=%u rc=%d cap=%u secret_slots=%u code_len=%u\r\n",
-               (unsigned int)idx,
-               (unsigned int)security_trusted_store_slot(idx),
-               (int)rc,
-               (unsigned int)capacity,
-               (unsigned int)s_mem_store.secret_slot_count,
-               (unsigned int)rec.code_len);
-    }
-    return (rc == I2C_MEM_STORE_OK);
+    return security_write_trusted_entry_to_store(idx, &s_trusted[idx]);
 }
 
 static bool security_erase_trusted_slot(uint8_t idx)
 {
     uint8_t capacity = security_trusted_store_capacity();
-    i2c_mem_store_status_t rc;
+    i2c_mem_store_status_t rc = I2C_MEM_STORE_ESTATE;
+    i2c_mem_store_status_t verify_rc = I2C_MEM_STORE_ESTATE;
+    i2c_mem_store_trusted_device_t verify;
+    uint8_t attempt;
 
     if (!s_mem_ready)
     {
-        return true;
+        printf("SEC: trusted erase store unavailable idx=%u\r\n", (unsigned int)idx);
+        return false;
     }
     if (idx >= capacity)
     {
-        return true;
+        printf("SEC: trusted erase no persistent slot idx=%u cap=%u secret_slots=%u\r\n",
+               (unsigned int)idx,
+               (unsigned int)capacity,
+               (unsigned int)s_mem_store.secret_slot_count);
+        return false;
     }
 
-    rc = i2c_mem_store_secret_erase(&s_mem_store, security_trusted_store_slot(idx));
-    return (rc == I2C_MEM_STORE_OK);
+    for (attempt = 0U; attempt < SECURITY_TRUSTED_STORE_RETRIES; attempt++)
+    {
+        rc = i2c_mem_store_secret_erase(&s_mem_store, security_trusted_store_slot(idx));
+        if (rc == I2C_MEM_STORE_OK)
+        {
+            memset(&verify, 0, sizeof(verify));
+            verify_rc = i2c_mem_store_trusted_device_read(&s_mem_store,
+                                                          security_trusted_store_slot(idx),
+                                                          &verify);
+            if (verify_rc == I2C_MEM_STORE_ENOTFOUND)
+            {
+                laviet_secure_zero(&verify, sizeof(verify));
+                return true;
+            }
+            laviet_secure_zero(&verify, sizeof(verify));
+        }
+
+        printf("SEC: trusted erase retry idx=%u slot=%u attempt=%u rc=%d verify_rc=%d\r\n",
+               (unsigned int)idx,
+               (unsigned int)security_trusted_store_slot(idx),
+               (unsigned int)(attempt + 1U),
+               (int)rc,
+               (int)verify_rc);
+        app_delay_ms(SECURITY_TRUSTED_STORE_RETRY_MS);
+    }
+
+    laviet_secure_zero(&verify, sizeof(verify));
+    return false;
 }
 
 static uint8_t security_load_trusted_from_store(void)
@@ -2253,6 +2389,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     uint8_t i;
     uint8_t free_idx = 0xFFU;
     uint8_t max_slots = SECURITY_TRUSTED_MAX;
+    security_trusted_entry_t new_entry;
 
     if (node_id == 0U)
     {
@@ -2262,24 +2399,24 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     {
         len = SECURITY_CODE_MAX;
     }
-    if (s_mem_ready)
+    if (!s_mem_ready)
     {
-        max_slots = security_trusted_store_capacity();
-        if (max_slots == 0U)
-        {
-            return false;
-        }
+        printf("SEC: trusted add failed; MEM store unavailable node=0x%08lX\r\n",
+               (unsigned long)node_id);
+        return false;
+    }
+
+    max_slots = security_trusted_store_capacity();
+    if (max_slots == 0U)
+    {
+        printf("SEC: trusted add failed; no persistent slots node=0x%08lX secret_slots=%u\r\n",
+               (unsigned long)node_id,
+               (unsigned int)s_mem_store.secret_slot_count);
+        return false;
     }
 
     if (gateway_slot)
     {
-        bool persist_ok;
-
-        if (max_slots == 0U)
-        {
-            return false;
-        }
-
         if (s_trusted[0].in_use &&
             (s_trusted[0].node_id != 0U) &&
             (s_trusted[0].node_id != node_id))
@@ -2289,30 +2426,34 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
                    (unsigned long)node_id);
         }
 
-        memset(&s_trusted[0], 0, sizeof(s_trusted[0]));
-        s_trusted[0].in_use = true;
-        s_trusted[0].is_master = true;
-        s_trusted[0].node_id = node_id;
-        s_trusted[0].code_len = len;
+        memset(&new_entry, 0, sizeof(new_entry));
+        new_entry.in_use = true;
+        new_entry.is_master = true;
+        new_entry.node_id = node_id;
+        new_entry.code_len = len;
         if ((len > 0U) && (code != NULL))
         {
-            memcpy(s_trusted[0].code, code, len);
+            memcpy(new_entry.code, code, len);
         }
 
-        persist_ok = security_store_trusted_slot(0U);
-        if (!persist_ok)
+        if (!security_write_trusted_entry_to_store(0U, &new_entry))
         {
-            printf("SEC: trusted gateway persist failed idx=0; continuing with volatile pairing\r\n");
+            printf("SEC: trusted gateway persist failed idx=0\r\n");
+            return false;
         }
+        s_trusted[0] = new_entry;
 
         for (i = 1U; i < max_slots; i++)
         {
             if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
             {
-                memset(&s_trusted[i], 0, sizeof(s_trusted[i]));
                 if (!security_erase_trusted_slot(i))
                 {
                     printf("SEC: trusted duplicate erase failed idx=%u\r\n", i);
+                }
+                else
+                {
+                    memset(&s_trusted[i], 0, sizeof(s_trusted[i]));
                 }
             }
         }
@@ -2324,16 +2465,19 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     {
         if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
         {
-            s_trusted[i].code_len = len;
-            memset(s_trusted[i].code, 0, sizeof(s_trusted[i].code));
+            new_entry = s_trusted[i];
+            new_entry.code_len = len;
+            memset(new_entry.code, 0, sizeof(new_entry.code));
             if ((len > 0U) && (code != NULL))
             {
-                memcpy(s_trusted[i].code, code, len);
+                memcpy(new_entry.code, code, len);
             }
-            if (!security_store_trusted_slot(i))
+            if (!security_write_trusted_entry_to_store(i, &new_entry))
             {
                 printf("SEC: trusted update persist failed idx=%u\r\n", i);
+                return false;
             }
+            s_trusted[i] = new_entry;
             return true;
         }
     }
@@ -2352,20 +2496,22 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
         return false;
     }
 
-    s_trusted[free_idx].in_use = true;
-    s_trusted[free_idx].is_master = gateway_slot;
-    s_trusted[free_idx].node_id = node_id;
-    s_trusted[free_idx].code_len = len;
-    memset(s_trusted[free_idx].code, 0, sizeof(s_trusted[free_idx].code));
+    memset(&new_entry, 0, sizeof(new_entry));
+    new_entry.in_use = true;
+    new_entry.is_master = gateway_slot;
+    new_entry.node_id = node_id;
+    new_entry.code_len = len;
     if ((len > 0U) && (code != NULL))
     {
-        memcpy(s_trusted[free_idx].code, code, len);
+        memcpy(new_entry.code, code, len);
     }
 
-    if (!security_store_trusted_slot(free_idx))
+    if (!security_write_trusted_entry_to_store(free_idx, &new_entry))
     {
         printf("SEC: trusted add persist failed idx=%u\r\n", free_idx);
+        return false;
     }
+    s_trusted[free_idx] = new_entry;
     return true;
 }
 
@@ -2377,11 +2523,12 @@ static bool security_delete_device_internal(uint32_t node_id)
     {
         if (s_trusted[i].in_use && (s_trusted[i].node_id == node_id))
         {
-            memset(&s_trusted[i], 0, sizeof(s_trusted[i]));
             if (!security_erase_trusted_slot(i))
             {
                 printf("SEC: trusted erase persist failed idx=%u\r\n", i);
+                return false;
             }
+            memset(&s_trusted[i], 0, sizeof(s_trusted[i]));
             return true;
         }
     }

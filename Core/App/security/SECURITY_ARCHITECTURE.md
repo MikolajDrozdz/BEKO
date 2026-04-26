@@ -771,6 +771,18 @@ secret slots      = 3
 log slots         = 0
 ```
 
+Przy tym układzie slot `2` jest zarezerwowany na gateway counters, więc trwałe
+trusted devices mają pojemność:
+
+```text
+trusted slot 0 = gateway
+trusted slot 1 = dodatkowy node
+```
+
+Firmware nie powinien akceptować trusted device jako zapisanego, jeżeli wpis nie
+został rzeczywiście utrwalony. Zapis trusted wykonuje write -> read-back ->
+compare; dopiero po poprawnej weryfikacji wpis trafia do RAM jako zaufany.
+
 Log:
 
 ```text
@@ -1060,6 +1072,32 @@ Zasady:
 - broadcast może być używany przez gateway,
 - gateway broadcast `DATA/RESP` jest akceptowany po poprawnym HMAC shared/broadcast nawet przed trusted-list,
 - broadcast nie powinien przenosić sekretów.
+
+Gateway z branchu `gateway` dla `coded=true` broadcast używa `broadcast_group_key`,
+nie samego `LAVIET_SHARED_V1`. Node musi najpierw odebrać unicastowe
+`KEY_ROTATE` od gatewaya:
+
+```text
+B7 01 epoch_be32 fragment_index fragment_count fragment[8]
+B7 01 epoch_be32 fragment_index fragment_count fragment[8]
+B7 02 epoch_be32 00 00 00 00 00 00 00 00 00 00
+```
+
+Po aktywacji node wyprowadza:
+
+```text
+broadcast_base_key = HMAC_SHA256(
+    key  = broadcast_group_key[16],
+    data = "LAVIET:BCAST:GROUP:V1" || epoch_be32 || 0xFFFF
+)[0..15]
+
+broadcast_aes_key  = HMAC_SHA256(broadcast_base_key, "LV1K" || 0xFFFF || 00 || 01)[0..15]
+broadcast_hmac_key = HMAC_SHA256(broadcast_base_key, "LV1K" || 0xFFFF || 00 || 02)
+```
+
+Dla zaszyfrowanego broadcastu RX próbuje najpierw aktywny group key, a potem
+fallback `SHARED`. Jeśli `KEY_ROTATE` nie dotarł albo nie został aktywowany,
+`flags=0x21` (`ENCRYPTED | BROADCAST`) zakończy się `HMAC drop`.
 
 Dlaczego broadcast jest słabszy:
 

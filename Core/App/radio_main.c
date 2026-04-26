@@ -38,6 +38,12 @@
 #define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
 #define RADIO_NETWORK_PAIR_RSSI_MIN_DBM      (-20)
 #define RADIO_TRUSTED_DEVICE_SLOTS           16U
+#define RADIO_BCAST_CTRL_MAGIC               0xB7U
+#define RADIO_BCAST_CTRL_INSTALL_FRAGMENT    1U
+#define RADIO_BCAST_CTRL_ACTIVATE            2U
+#define RADIO_BCAST_GROUP_KEY_LEN            16U
+#define RADIO_BCAST_GROUP_FRAGMENT_LEN       8U
+#define RADIO_BCAST_GROUP_FRAGMENT_COUNT     2U
 #define RADIO_LORA_BW_HZ_7_8                 7800UL
 #define RADIO_LORA_BW_HZ_10_4                10400UL
 #define RADIO_LORA_BW_HZ_15_6                15600UL
@@ -154,6 +160,14 @@ typedef struct
     bool gateway_pair_code_valid;
     uint8_t gateway_pair_code_len;
     uint8_t gateway_pair_code[8];
+    bool broadcast_group_key_valid;
+    uint32_t broadcast_group_epoch;
+    uint8_t broadcast_group_aes_key[16];
+    uint8_t broadcast_group_hmac_key[32];
+    bool broadcast_group_pending_valid;
+    uint32_t broadcast_group_pending_epoch;
+    uint8_t broadcast_group_pending_mask;
+    uint8_t broadcast_group_pending_key[RADIO_BCAST_GROUP_KEY_LEN];
     bool pairing_active;
     bool pairing_network_mode;
     uint32_t pairing_until_ms;
@@ -260,6 +274,14 @@ static void radio_main_load_gateway_pair_code_from_security(void);
 static bool radio_main_get_gateway_cached_frame_keys(security_frame_key_mode_t mode,
                                                      uint8_t enc_key_out[16],
                                                      uint8_t hmac_key_out[32]);
+static void radio_main_clear_broadcast_group_state(void);
+static uint32_t radio_main_be32_read(const uint8_t *src);
+static bool radio_main_derive_broadcast_group_frame_keys(const uint8_t group_key[RADIO_BCAST_GROUP_KEY_LEN],
+                                                         uint32_t epoch,
+                                                         uint8_t enc_key_out[16],
+                                                         uint8_t hmac_key_out[32]);
+static bool radio_main_try_broadcast_group_rx(const laviet_frame_t *frame, uint8_t enc_key[16]);
+static bool radio_main_handle_key_rotate_frame(const laviet_frame_t *frame);
 static uint8_t radio_main_format_payload_text(const uint8_t *payload,
                                               uint8_t payload_len,
                                               char *out,
@@ -682,6 +704,7 @@ static void radio_main_task_fn(void *argument)
     s_ctx.next_msg_id = 1U;
     s_ctx.crypto_ready = laviet_crypto_init();
     radio_main_clear_gateway_pair_code();
+    radio_main_clear_broadcast_group_state();
     (void)security_main_get_gateway_counter(&s_ctx.gateway_rx_counter, &s_ctx.gateway_tx_counter);
     s_ctx.modulation_id = RADIO_MAIN_MODULATION_LORA;
     s_ctx.backend_modulation_id = s_ctx.modulation_id;
@@ -2825,6 +2848,14 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
                      (frame_type != LAVIET_TYPE_ERROR) &&
                      (peer_id != LAVIET_BROADCAST_ID));
 
+    if (radio_main_try_broadcast_group_rx(frame, enc_key))
+    {
+        laviet_secure_zero(trial_enc, sizeof(trial_enc));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        laviet_secure_zero(expected, sizeof(expected));
+        return true;
+    }
+
     if (!use_pair_link)
     {
         candidates[candidate_count++] = SECURITY_FRAME_KEY_MODE_SHARED;
@@ -3302,25 +3333,39 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                                              code_text,
                                              (uint8_t)sizeof(code_text));
 
-                if (code_match &&
-                    ((s_ctx.pairing_outgoing_network &&
-                      security_main_cmd_add_gateway(frame_decoded.src_id,
-                                                    s_ctx.pairing_outgoing_code,
-                                                    s_ctx.pairing_outgoing_code_len)) ||
-                     (!s_ctx.pairing_outgoing_network &&
-                      security_main_cmd_add_device(frame_decoded.src_id,
-                                                   s_ctx.pairing_outgoing_code,
-                                                   s_ctx.pairing_outgoing_code_len))))
+                if (code_match)
                 {
-                    char pair_note[21];
+                    bool saved;
+
                     if (s_ctx.pairing_outgoing_network)
                     {
-                        radio_main_set_gateway_pair_code(s_ctx.pairing_outgoing_code,
-                                                         s_ctx.pairing_outgoing_code_len);
+                        saved = security_main_cmd_add_gateway(frame_decoded.src_id,
+                                                              s_ctx.pairing_outgoing_code,
+                                                              s_ctx.pairing_outgoing_code_len);
                     }
-                    snprintf(pair_note, sizeof(pair_note), "PAIR_OK %s", code_text);
-                    radio_main_notify(MENU_NOTIFICATION_PAIRING, pair_note);
-                    s_ctx.pairing_active = false;
+                    else
+                    {
+                        saved = security_main_cmd_add_device(frame_decoded.src_id,
+                                                            s_ctx.pairing_outgoing_code,
+                                                            s_ctx.pairing_outgoing_code_len);
+                    }
+
+                    if (saved)
+                    {
+                        char pair_note[21];
+                        if (s_ctx.pairing_outgoing_network)
+                        {
+                            radio_main_set_gateway_pair_code(s_ctx.pairing_outgoing_code,
+                                                             s_ctx.pairing_outgoing_code_len);
+                        }
+                        snprintf(pair_note, sizeof(pair_note), "PAIR_OK %s", code_text);
+                        radio_main_notify(MENU_NOTIFICATION_PAIRING, pair_note);
+                        s_ctx.pairing_active = false;
+                    }
+                    else
+                    {
+                        radio_main_notify(MENU_NOTIFICATION_ERROR, "Pairing save failed");
+                    }
                 }
                 else
                 {
@@ -3329,6 +3374,20 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 
                 s_ctx.pairing_outgoing_pending = false;
                 s_ctx.pairing_outgoing_network = false;
+            }
+        }
+        else if (frame_type == LAVIET_TYPE_KEY_ROTATE)
+        {
+            bool key_ok = radio_main_handle_key_rotate_frame(&frame_decoded);
+
+            if (!key_ok)
+            {
+                radio_main_notify(MENU_NOTIFICATION_ERROR, "BCAST key fail");
+            }
+            if ((frame_decoded.dst_id == s_ctx.node_id) &&
+                ((frame_decoded.flags & LAVIET_FLAG_ACK_REQUIRED) != 0U))
+            {
+                (void)radio_main_send_ack(&frame_decoded);
             }
         }
         else if (frame_type == LAVIET_TYPE_ERROR)
@@ -3588,6 +3647,244 @@ static bool radio_main_get_gateway_cached_frame_keys(security_frame_key_mode_t m
                                                  s_ctx.gateway_pair_code_len,
                                                  enc_key_out,
                                                  hmac_key_out);
+}
+
+static void radio_main_clear_broadcast_group_state(void)
+{
+    s_ctx.broadcast_group_key_valid = false;
+    s_ctx.broadcast_group_epoch = 0UL;
+    laviet_secure_zero(s_ctx.broadcast_group_aes_key, sizeof(s_ctx.broadcast_group_aes_key));
+    laviet_secure_zero(s_ctx.broadcast_group_hmac_key, sizeof(s_ctx.broadcast_group_hmac_key));
+    s_ctx.broadcast_group_pending_valid = false;
+    s_ctx.broadcast_group_pending_epoch = 0UL;
+    s_ctx.broadcast_group_pending_mask = 0U;
+    laviet_secure_zero(s_ctx.broadcast_group_pending_key, sizeof(s_ctx.broadcast_group_pending_key));
+}
+
+static uint32_t radio_main_be32_read(const uint8_t *src)
+{
+    if (src == NULL)
+    {
+        return 0UL;
+    }
+
+    return ((uint32_t)src[0] << 24) |
+           ((uint32_t)src[1] << 16) |
+           ((uint32_t)src[2] << 8) |
+           (uint32_t)src[3];
+}
+
+static bool radio_main_derive_broadcast_group_frame_keys(const uint8_t group_key[RADIO_BCAST_GROUP_KEY_LEN],
+                                                         uint32_t epoch,
+                                                         uint8_t enc_key_out[16],
+                                                         uint8_t hmac_key_out[32])
+{
+    static const uint8_t group_info_label[] = "LAVIET:BCAST:GROUP:V1";
+    uint8_t group_info[(sizeof(group_info_label) - 1U) + 6U];
+    uint8_t digest[32];
+    uint8_t base_key[16];
+    uint8_t key_info[8];
+    uint8_t off = 0U;
+    bool ok;
+
+    if ((group_key == NULL) || (enc_key_out == NULL) || (hmac_key_out == NULL) || (epoch == 0UL))
+    {
+        return false;
+    }
+
+    memset(group_info, 0, sizeof(group_info));
+    memset(digest, 0, sizeof(digest));
+    memset(base_key, 0, sizeof(base_key));
+    memcpy(&group_info[off], group_info_label, sizeof(group_info_label) - 1U);
+    off = (uint8_t)(off + (uint8_t)(sizeof(group_info_label) - 1U));
+    group_info[off++] = (uint8_t)(epoch >> 24);
+    group_info[off++] = (uint8_t)(epoch >> 16);
+    group_info[off++] = (uint8_t)(epoch >> 8);
+    group_info[off++] = (uint8_t)epoch;
+    group_info[off++] = (uint8_t)(LAVIET_BROADCAST_ID >> 8);
+    group_info[off++] = (uint8_t)LAVIET_BROADCAST_ID;
+
+    ok = laviet_hmac_sha256(group_key,
+                            RADIO_BCAST_GROUP_KEY_LEN,
+                            group_info,
+                            sizeof(group_info),
+                            digest);
+    if (ok)
+    {
+        memcpy(base_key, digest, sizeof(base_key));
+        key_info[0] = (uint8_t)'L';
+        key_info[1] = (uint8_t)'V';
+        key_info[2] = (uint8_t)'1';
+        key_info[3] = (uint8_t)'K';
+        key_info[4] = (uint8_t)(LAVIET_BROADCAST_ID >> 8);
+        key_info[5] = (uint8_t)LAVIET_BROADCAST_ID;
+        key_info[6] = 0U;
+        key_info[7] = 1U;
+        ok = laviet_hmac_sha256(base_key, sizeof(base_key), key_info, sizeof(key_info), digest);
+        if (ok)
+        {
+            memcpy(enc_key_out, digest, 16U);
+            key_info[7] = 2U;
+            ok = laviet_hmac_sha256(base_key, sizeof(base_key), key_info, sizeof(key_info), hmac_key_out);
+        }
+    }
+
+    laviet_secure_zero(group_info, sizeof(group_info));
+    laviet_secure_zero(digest, sizeof(digest));
+    laviet_secure_zero(base_key, sizeof(base_key));
+    laviet_secure_zero(key_info, sizeof(key_info));
+    if (!ok)
+    {
+        laviet_secure_zero(enc_key_out, 16U);
+        laviet_secure_zero(hmac_key_out, 32U);
+    }
+    return ok;
+}
+
+static bool radio_main_try_broadcast_group_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
+{
+    uint8_t expected[LAVIET_MAC_TAG_LEN];
+    bool mac_match = false;
+    bool ok = false;
+
+    if ((frame == NULL) || (enc_key == NULL) ||
+        !s_ctx.broadcast_group_key_valid ||
+        (frame->src_id != LAVIET_GATEWAY_ID) ||
+        (frame->dst_id != LAVIET_BROADCAST_ID) ||
+        ((frame->flags & LAVIET_FLAG_ENCRYPTED) == 0U))
+    {
+        return false;
+    }
+
+    memset(expected, 0, sizeof(expected));
+    if (laviet_frame_hmac_sha256(frame, s_ctx.broadcast_group_hmac_key, expected))
+    {
+        printf("RADIO RX HMAC DBG mode=BCAST_GROUP epoch=%lu src=0x%04X dst=0x%04X msg=0x%04X counter=%lu flags=0x%02X payload_len=%u\r\n",
+               (unsigned long)s_ctx.broadcast_group_epoch,
+               (unsigned int)frame->src_id,
+               (unsigned int)frame->dst_id,
+               (unsigned int)frame->msg_id,
+               (unsigned long)frame->counter,
+               (unsigned int)frame->flags,
+               (unsigned int)frame->payload_len);
+        mac_match = laviet_mac_equal(expected, frame->mac_tag);
+    }
+    if (mac_match)
+    {
+        memcpy(enc_key, s_ctx.broadcast_group_aes_key, 16U);
+        ok = true;
+    }
+
+    laviet_secure_zero(expected, sizeof(expected));
+    return ok;
+}
+
+static bool radio_main_handle_key_rotate_frame(const laviet_frame_t *frame)
+{
+    uint32_t epoch;
+    uint8_t command;
+
+    if ((frame == NULL) ||
+        (frame->src_id != LAVIET_GATEWAY_ID) ||
+        (frame->dst_id != s_ctx.node_id) ||
+        (frame->payload_len != LAVIET_MAX_PAYLOAD) ||
+        (frame->payload[0] != RADIO_BCAST_CTRL_MAGIC))
+    {
+        printf("RADIO RX KEY_ROTATE unsupported\r\n");
+        return false;
+    }
+
+    command = frame->payload[1];
+    epoch = radio_main_be32_read(&frame->payload[2]);
+    if (epoch == 0UL)
+    {
+        printf("RADIO RX BCAST KEY bad epoch\r\n");
+        return false;
+    }
+
+    if (command == RADIO_BCAST_CTRL_INSTALL_FRAGMENT)
+    {
+        uint8_t fragment_index = frame->payload[6];
+        uint8_t fragment_count = frame->payload[7];
+
+        if ((fragment_count != RADIO_BCAST_GROUP_FRAGMENT_COUNT) ||
+            (fragment_index >= RADIO_BCAST_GROUP_FRAGMENT_COUNT))
+        {
+            printf("RADIO RX BCAST KEY bad fragment idx=%u count=%u\r\n",
+                   (unsigned int)fragment_index,
+                   (unsigned int)fragment_count);
+            return false;
+        }
+
+        if ((!s_ctx.broadcast_group_pending_valid) ||
+            (s_ctx.broadcast_group_pending_epoch != epoch))
+        {
+            s_ctx.broadcast_group_pending_valid = true;
+            s_ctx.broadcast_group_pending_epoch = epoch;
+            s_ctx.broadcast_group_pending_mask = 0U;
+            laviet_secure_zero(s_ctx.broadcast_group_pending_key,
+                               sizeof(s_ctx.broadcast_group_pending_key));
+        }
+
+        memcpy(&s_ctx.broadcast_group_pending_key[fragment_index * RADIO_BCAST_GROUP_FRAGMENT_LEN],
+               &frame->payload[8],
+               RADIO_BCAST_GROUP_FRAGMENT_LEN);
+        s_ctx.broadcast_group_pending_mask |= (uint8_t)(1U << fragment_index);
+        printf("RADIO RX BCAST KEY fragment epoch=%lu idx=%u mask=0x%02X\r\n",
+               (unsigned long)epoch,
+               (unsigned int)fragment_index,
+               (unsigned int)s_ctx.broadcast_group_pending_mask);
+        return true;
+    }
+
+    if (command == RADIO_BCAST_CTRL_ACTIVATE)
+    {
+        uint8_t enc_key[16];
+        uint8_t hmac_key[32];
+        uint8_t full_mask = (uint8_t)((1U << RADIO_BCAST_GROUP_FRAGMENT_COUNT) - 1U);
+
+        memset(enc_key, 0, sizeof(enc_key));
+        memset(hmac_key, 0, sizeof(hmac_key));
+        if ((!s_ctx.broadcast_group_pending_valid) ||
+            (s_ctx.broadcast_group_pending_epoch != epoch) ||
+            ((s_ctx.broadcast_group_pending_mask & full_mask) != full_mask))
+        {
+            printf("RADIO RX BCAST KEY activate missing epoch=%lu pending_epoch=%lu mask=0x%02X\r\n",
+                   (unsigned long)epoch,
+                   (unsigned long)s_ctx.broadcast_group_pending_epoch,
+                   (unsigned int)s_ctx.broadcast_group_pending_mask);
+            return false;
+        }
+
+        if (!radio_main_derive_broadcast_group_frame_keys(s_ctx.broadcast_group_pending_key,
+                                                          epoch,
+                                                          enc_key,
+                                                          hmac_key))
+        {
+            printf("RADIO RX BCAST KEY derive failed epoch=%lu\r\n", (unsigned long)epoch);
+            return false;
+        }
+
+        memcpy(s_ctx.broadcast_group_aes_key, enc_key, sizeof(s_ctx.broadcast_group_aes_key));
+        memcpy(s_ctx.broadcast_group_hmac_key, hmac_key, sizeof(s_ctx.broadcast_group_hmac_key));
+        s_ctx.broadcast_group_epoch = epoch;
+        s_ctx.broadcast_group_key_valid = true;
+        s_ctx.broadcast_group_pending_valid = false;
+        s_ctx.broadcast_group_pending_epoch = 0UL;
+        s_ctx.broadcast_group_pending_mask = 0U;
+        laviet_secure_zero(s_ctx.broadcast_group_pending_key,
+                           sizeof(s_ctx.broadcast_group_pending_key));
+        laviet_secure_zero(enc_key, sizeof(enc_key));
+        laviet_secure_zero(hmac_key, sizeof(hmac_key));
+        printf("RADIO RX BCAST KEY active epoch=%lu\r\n", (unsigned long)epoch);
+        radio_main_notify(MENU_NOTIFICATION_PAIRING, "BCAST key OK");
+        return true;
+    }
+
+    printf("RADIO RX BCAST KEY unknown cmd=%u epoch=%lu\r\n",
+           (unsigned int)command,
+           (unsigned long)epoch);
+    return false;
 }
 
 static uint8_t radio_main_format_payload_text(const uint8_t *payload,

@@ -298,7 +298,9 @@ static bool i2c_mem_store_meta_decode(i2c_mem_store_t *ctx, const uint8_t in[I2C
 
     write_slot = i2c_mem_store_le16_read(&in[6]);
     valid_count = i2c_mem_store_le16_read(&in[8]);
-    if ((write_slot >= ctx->slot_count) || (valid_count > ctx->slot_count))
+    if (((ctx->slot_count == 0U) && (write_slot != 0U)) ||
+        ((ctx->slot_count > 0U) && (write_slot >= ctx->slot_count)) ||
+        (valid_count > ctx->slot_count))
     {
         return false;
     }
