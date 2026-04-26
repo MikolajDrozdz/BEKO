@@ -2,9 +2,6 @@ import hashlib
 import hmac
 import struct
 
-from Crypto.Cipher import AES
-from Crypto.Util import Counter
-
 LAVIET_SHARED_V1 = b"LAVIET_SHARED_V1"
 
 
@@ -44,6 +41,12 @@ def laviet_aes_ctr_crypt(
 ) -> bytes:
     if not data:
         return b""
+
+    try:
+        from Crypto.Cipher import AES
+        from Crypto.Util import Counter
+    except ImportError as exc:
+        raise RuntimeError("Brak pycryptodome, AES-CTR jest niedostepny") from exc
 
     prefix = struct.pack(
         ">4sHHHI",

@@ -166,7 +166,7 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
         payload=cipher_payload,
     )
 
-    raw_frame_no_mac = LavietFrameBuilder.build_frame(net_frame)
+    raw_frame_no_mac = LavietFrameBuilder.build_mac_input(net_frame)
     net_frame.mac_tag = laviet_generate_mac(hmac_key, raw_frame_no_mac, b"")
     _debug_hex("[TX HMAC DBG] mac_input=", raw_frame_no_mac)
     _debug_hex("[TX HMAC DBG] mac_tag=", net_frame.mac_tag)

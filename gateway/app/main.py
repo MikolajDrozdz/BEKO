@@ -240,7 +240,7 @@ def _send_ack_for_frame(db, frame: LavietFrame, node: models.Node | None, paired
         payload=ack_payload,
     )
 
-    raw_frame = LavietFrameBuilder.build_frame(ack_frame)
+    raw_frame = LavietFrameBuilder.build_mac_input(ack_frame)
     ack_frame.mac_tag = laviet_generate_mac(hmac_key, raw_frame, b"")
     final_frame = LavietFrameBuilder.build_frame(ack_frame)
 

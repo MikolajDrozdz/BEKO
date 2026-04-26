@@ -5,6 +5,7 @@ from typing import Optional
 LAVIET_FRAME_VERSION = 1
 LAVIET_MAX_PAYLOAD = 16
 LAVIET_MAC_TAG_LEN = 32
+LAVIET_FRAME_HEADER_LEN = 13
 LAVIET_FRAME_MIN_LEN = 45
 LAVIET_FRAME_MAX_LEN = 61
 
@@ -47,6 +48,32 @@ class LavietFrame:
 
 class LavietFrameBuilder:
     @staticmethod
+    def _ver_type(frame_type: int) -> int:
+        return ((LAVIET_FRAME_VERSION & 0x0F) << 4) | (frame_type & 0x0F)
+
+    @staticmethod
+    def build_mac_input(f: LavietFrame) -> bytes:
+        payload = bytes(f.payload)
+        payload_len = f.payload_len
+        if payload_len != len(payload):
+            raise ValueError(
+                f"payload_len ({payload_len}) nie pasuje do faktycznej dlugosci ({len(payload)})"
+            )
+        if payload_len > LAVIET_MAX_PAYLOAD:
+            raise ValueError("Payload zbyt duży")
+
+        return struct.pack(
+            ">BBHHHIB",
+            LavietFrameBuilder._ver_type(f.type),
+            f.flags,
+            f.src_id,
+            f.dst_id,
+            f.msg_id,
+            f.counter,
+            payload_len,
+        ) + payload
+
+    @staticmethod
     def parse_frame(frame: bytes) -> LavietFrame:
         if len(frame) < LAVIET_FRAME_MIN_LEN or len(frame) > LAVIET_FRAME_MAX_LEN:
             raise ValueError(f"Błędna długość ramki: {len(frame)} to nie [45, 61]")
@@ -59,7 +86,7 @@ class LavietFrameBuilder:
         msg_type = ver_type & 0x0F
         flags = frame[1]
         
-        src_id, dst_id, msg_id, counter, payload_len = struct.unpack(">HHHI B", frame[2:13])
+        src_id, dst_id, msg_id, counter, payload_len = struct.unpack(">HHHIB", frame[2:13])
         
         if payload_len > LAVIET_MAX_PAYLOAD:
             raise ValueError(f"Odrzucono, dlugosc payloadu przekracza maks ({payload_len} > 16)")
@@ -88,24 +115,10 @@ class LavietFrameBuilder:
 
     @staticmethod
     def build_frame(f: LavietFrame) -> bytes:
-        from ..core.laviet_crypto import laviet_generate_mac
-        
-        ver_type = ((LAVIET_FRAME_VERSION & 0x0F) << 4) | (f.type & 0x0F)
-        
-        payload_len = len(f.payload)
-        if payload_len > LAVIET_MAX_PAYLOAD:
-            raise ValueError("Payload zbyt duży")
-            
-        header = struct.pack(">BB HHHI B", ver_type, f.flags, f.src_id, f.dst_id, f.msg_id, f.counter, payload_len)
-        
-        if f.mac_tag is None:
-            # mac_tag powinien byc wygenerowany i zasilony przed wywolaniem tej metody
-            # albo to uzytkownik dba o kryptografie, tutaj na razie budujemy tylko surowa strukture
-            pass
-            
-        out = bytearray(header)
-        out.extend(f.payload)
+        out = bytearray(LavietFrameBuilder.build_mac_input(f))
         if f.mac_tag:
+            if len(f.mac_tag) != LAVIET_MAC_TAG_LEN:
+                raise ValueError("mac_tag musi miec 32 B")
             out.extend(f.mac_tag)
             
         return bytes(out)

@@ -102,7 +102,7 @@ class PairingManager:
             payload=raw_payload,
         )
 
-        raw_frame = LavietFrameBuilder.build_frame(frame)
+        raw_frame = LavietFrameBuilder.build_mac_input(frame)
         frame.mac_tag = laviet_generate_mac(hmac_key, raw_frame, b"")
         final_bytes = LavietFrameBuilder.build_frame(frame)
 

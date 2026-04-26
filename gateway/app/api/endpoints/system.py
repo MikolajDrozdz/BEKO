@@ -9,7 +9,8 @@ from ...services import system_metrics
 from ...services.lora_hardware import lora_device
 from ...services.laviet_frame import (
     LavietFrameBuilder, LavietFrame, LavietType, LAVIET_FRAME_VERSION,
-    LAVIET_GATEWAY_ID, LAVIET_FLAG_COUNTER_OVERRIDE
+    LAVIET_GATEWAY_ID, LAVIET_FLAG_COUNTER_OVERRIDE, LAVIET_FLAG_ENCRYPTED,
+    LAVIET_FLAG_KEY_UPDATE
 )
 from ...core.laviet_crypto import derive_unicast_base_key, get_aes_key, get_hmac_key, laviet_aes_ctr_crypt, laviet_generate_mac
 from ...models import models
@@ -84,6 +85,8 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
     code = node.paired_code
     if isinstance(code, str):
         code = code.encode('ascii')
+    elif not isinstance(code, bytes):
+        code = bytes(code)
 
     base_key = derive_unicast_base_key(LAVIET_GATEWAY_ID, node_id, code)
     domain_id = min(LAVIET_GATEWAY_ID, node_id)
@@ -91,10 +94,16 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
     hmac_key = get_hmac_key(base_key, domain_id)
 
     msg_id = int(time.time() % 65535)
-    counter = node.counter
-    
-    # 0 bajtów payloadu dla komend prostych
+    counter = (node.counter or 0) + 1
+
     payload = b""
+    if type_id == LavietType.COUNTER_SYNC:
+        flags |= LAVIET_FLAG_COUNTER_OVERRIDE | LAVIET_FLAG_ENCRYPTED
+        payload = counter.to_bytes(4, "big")
+    elif type_id == LavietType.KEY_ROTATE:
+        flags |= LAVIET_FLAG_KEY_UPDATE | LAVIET_FLAG_ENCRYPTED
+        payload = b"\x01"
+
     cipher_payload = laviet_aes_ctr_crypt(payload, aes_key, LAVIET_GATEWAY_ID, node_id, msg_id, counter)
 
     net_frame = LavietFrame(
@@ -108,11 +117,11 @@ def _send_system_frame(node_id: int, type_id: int, flags: int, db: Session):
         payload=cipher_payload
     )
     
-    raw_no_mac = LavietFrameBuilder.build_frame(net_frame)
+    raw_no_mac = LavietFrameBuilder.build_mac_input(net_frame)
     net_frame.mac_tag = laviet_generate_mac(hmac_key, raw_no_mac, b"")
     final_frame = LavietFrameBuilder.build_frame(net_frame)
     
-    node.counter += 1
+    node.counter = counter
     db.commit()
 
     if not lora_device.send_frame(final_frame):
