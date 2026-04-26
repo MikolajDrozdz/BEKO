@@ -57,7 +57,7 @@ import {
   requiresNodeResponse,
 } from '@/lib/utils/protocol'
 import { formatNodeId } from '@/lib/utils/format'
-import type { MessageRecord } from '@/types/api'
+import type { MessageRecord, MessageStatus } from '@/types/api'
 
 const schema = z.object({
   message: z.string().min(1, 'Type a message'),
@@ -163,6 +163,59 @@ function getStatusVariant(status?: string) {
   return 'outline'
 }
 
+function getMessageTimeMs(msg: MessageRecord): number | undefined {
+  const ts = getMsgTimestamp(msg)
+  if (!ts) return undefined
+  const time = new Date(ts).getTime()
+  return Number.isNaN(time) ? undefined : time
+}
+
+function isSentNodeMessageWaitingForResponse(msg: MessageRecord): boolean {
+  if (isReceived(msg)) return false
+  if (!isNodeAddress(msg.dst_id)) return false
+  if (msg.ack_required === false) return false
+  return msg.status === 'sent_waiting_response' || msg.status === 'delivered_waiting_response'
+}
+
+function isNodeResponseForSentMessage(sent: MessageRecord, response: MessageRecord): boolean {
+  if (response.status !== 'response') return false
+  if (!isReceived(response)) return false
+  if (response.src_id !== sent.dst_id) return false
+
+  const sentAt = getMessageTimeMs(sent)
+  const responseAt = getMessageTimeMs(response)
+  if (sentAt === undefined || responseAt === undefined) return false
+
+  const elapsedMs = responseAt - sentAt
+  return elapsedMs >= 0 && elapsedMs <= RESPONSE_TIMEOUT_SECONDS * 1000
+}
+
+function buildDeliveredAfterResponseKeys(messages: MessageRecord[]): Set<string> {
+  const deliveredKeys = new Set<string>()
+  const sentCandidates = messages.filter(isSentNodeMessageWaitingForResponse)
+  const responses = messages
+    .filter((msg) => msg.status === 'response' && isReceived(msg))
+    .sort((a, b) => (getMessageTimeMs(a) ?? 0) - (getMessageTimeMs(b) ?? 0))
+
+  for (const response of responses) {
+    const candidate = sentCandidates
+      .filter((sent) => !deliveredKeys.has(getMessageKey(sent)) && isNodeResponseForSentMessage(sent, response))
+      .sort((a, b) => (getMessageTimeMs(b) ?? 0) - (getMessageTimeMs(a) ?? 0))[0]
+
+    if (candidate) deliveredKeys.add(getMessageKey(candidate))
+  }
+
+  return deliveredKeys
+}
+
+function getDisplayStatus(msg: MessageRecord, deliveredAfterResponse: boolean): MessageStatus | undefined {
+  if (deliveredAfterResponse) return 'delivered'
+  if (!isReceived(msg) && msg.status === 'answered' && isNodeAddress(msg.dst_id) && msg.ack_required !== false) {
+    return 'delivered'
+  }
+  return msg.status
+}
+
 function getMessageKey(msg: MessageRecord): string {
   return String(msg.id ?? `${msg.src_id ?? 'src'}-${msg.dst_id}-${getMsgTimestamp(msg) ?? 'time'}-${msg.payload_hex}`)
 }
@@ -198,12 +251,21 @@ function DateDivider({ label }: { label: string }) {
   )
 }
 
-function MessageBubble({ msg, addressBook }: { msg: MessageRecord; addressBook: AddressBook }) {
+function MessageBubble({
+  msg,
+  addressBook,
+  deliveredAfterResponse,
+}: {
+  msg: MessageRecord
+  addressBook: AddressBook
+  deliveredAfterResponse: boolean
+}) {
   const received = isReceived(msg)
   const text = hexToText(msg.payload_hex)
   const ts = getMsgTimestamp(msg)
   const timeStr = formatTime(ts)
   const peerId = getMessagePeerId(msg)
+  const displayStatus = getDisplayStatus(msg, deliveredAfterResponse)
 
   const nodeId = peerId !== undefined ? getAddressLabel(peerId, addressBook) : 'Unknown node'
   const nodeAddress = peerId !== undefined ? formatNodeId(peerId) : undefined
@@ -268,12 +330,12 @@ function MessageBubble({ msg, addressBook }: { msg: MessageRecord; addressBook: 
               {msg.rssi} dBm
             </span>
           )}
-          {msg.status && (
+          {displayStatus && (
             <Badge
-              variant={getStatusVariant(msg.status)}
+              variant={getStatusVariant(displayStatus)}
               className="h-auto max-w-[220px] whitespace-normal py-0 text-[9px]"
             >
-              {getMessageStatusLabel(msg.status)}
+              {getMessageStatusLabel(displayStatus)}
             </Badge>
           )}
           {isAckConfirmedReceived(msg) && (
@@ -551,11 +613,16 @@ export function MessengerPage() {
     return [...ids].sort((a, b) => a - b)
   }, [messages, nodes])
 
-  const sorted = [...(messages ?? [])].sort((a, b) => {
+  const sorted = useMemo(() => [...(messages ?? [])].sort((a, b) => {
     const ta = getMsgTimestamp(a) ?? ''
     const tb = getMsgTimestamp(b) ?? ''
     return ta < tb ? -1 : ta > tb ? 1 : 0
-  })
+  }), [messages])
+
+  const deliveredAfterResponseKeys = useMemo(
+    () => buildDeliveredAfterResponseKeys(sorted),
+    [sorted],
+  )
 
   const filteredMessages = sorted.filter((msg) => {
     if (chatFilter === ALL_CHATS) return true
@@ -669,6 +736,7 @@ export function MessengerPage() {
                     key={msg.id ?? `${dateKey}-${idx}`}
                     msg={msg}
                     addressBook={addressBook}
+                    deliveredAfterResponse={deliveredAfterResponseKeys.has(getMessageKey(msg))}
                   />
                 ))}
               </AnimatePresence>
