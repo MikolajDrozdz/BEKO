@@ -8,6 +8,12 @@ Status: etap V1 wdrozony w backendzie i `pager-rtos`.
 Wdrozone teraz:
 
 - backend ma `POST /api/gateway/broadcast-key/rotate`,
+- backend automatycznie instaluje aktywny group key przy `coded=true`
+  broadcast, bez osobnego wywolywania endpointu,
+- po sparowaniu noda backend uruchamia asynchroniczna probe instalacji
+  aktywnego group key dla tego noda,
+- automatyczna instalacja zaczyna od unicast `COUNTER_SYNC`, zeby naprawic
+  rozjazd counterow przed ramkami `KEY_ROTATE`,
 - gateway generuje losowy `broadcast_group_key[16]`,
 - klucz jest przechowywany w DB jako zaszyfrowany blob z HMAC,
 - instalacja do noda idzie unicastem przez sparowany link jako 2 zaszyfrowane

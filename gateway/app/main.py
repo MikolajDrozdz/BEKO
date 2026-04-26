@@ -1,5 +1,6 @@
 import asyncio
 import struct
+import threading
 import time
 from datetime import datetime
 
@@ -20,6 +21,7 @@ from .models import models
 from .models.database import Base, SessionLocal, engine
 from .services import message_tracker
 from .services import system_metrics
+from .services.broadcast_security import ensure_broadcast_group_key_ready
 from .services.gateway_counter import reserve_gateway_tx_counter
 from .services.laviet_frame import (
     LAVIET_BROADCAST_ID,
@@ -80,6 +82,38 @@ pairing_manager.set_send_callback(lora_device.send_frame)
 
 VALID_USER_RESPONSES = {"YES", "OK", "NO"}
 ACK_TX_DELAY_SECONDS = 0.100
+
+
+def _auto_install_broadcast_key_after_pair(node_id: int) -> None:
+    def _worker():
+        time.sleep(1.0)
+        db = SessionLocal()
+        try:
+            result = ensure_broadcast_group_key_ready(
+                db,
+                system._send_system_frame,
+                node_ids=[node_id],
+                ack_required=False,
+                force_install=True,
+            )
+            print(
+                f"[BCAST KEY AUTO] post-pair node={hex(node_id)} "
+                f"epoch={result['epoch']} installed={result['installed']}"
+            )
+        except Exception as exc:
+            print(f"[BCAST KEY AUTO] post-pair install failed node={hex(node_id)}: {exc}")
+            db.rollback()
+        finally:
+            db.close()
+
+    threading.Thread(
+        target=_worker,
+        name=f"laviet-bcast-key-install-{node_id:04x}",
+        daemon=True,
+    ).start()
+
+
+pairing_manager.set_paired_callback(_auto_install_broadcast_key_after_pair)
 
 
 def _debug_hex(label: str, data: bytes | None) -> None:

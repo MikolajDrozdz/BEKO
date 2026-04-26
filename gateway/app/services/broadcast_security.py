@@ -3,13 +3,26 @@ import hmac
 import os
 import stat
 import threading
+import time
+from collections.abc import Callable
 from pathlib import Path
 
 from sqlalchemy.orm import Session
 
 from ..core.laviet_crypto import derive_broadcast_group_base_key, get_aes_key, get_hmac_key
 from ..models import models
-from .laviet_frame import LAVIET_BROADCAST_ID
+from .laviet_frame import LAVIET_BROADCAST_ID, LavietType
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None or raw == "":
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
 
 DEFAULT_GROUP_ID = LAVIET_BROADCAST_ID
 BROADCAST_GROUP_KEY_LEN = 16
@@ -19,6 +32,7 @@ BROADCAST_CTRL_INSTALL_FRAGMENT = 1
 BROADCAST_CTRL_ACTIVATE = 2
 BROADCAST_CTRL_FRAGMENT_LEN = 8
 BROADCAST_CTRL_FRAGMENT_COUNT = 2
+BROADCAST_AUTO_INSTALL_DELAY_S = _env_float("LAVIET_BCAST_AUTO_INSTALL_DELAY_S", 0.12)
 
 _lock = threading.RLock()
 
@@ -106,6 +120,16 @@ def get_active_group(db: Session, group_id: int = DEFAULT_GROUP_ID) -> tuple[int
         return int(row.epoch or 0), _decrypt_key(bytes(row.key_blob))
 
 
+def get_or_create_active_group(db: Session, group_id: int = DEFAULT_GROUP_ID) -> tuple[int, bytes, bool]:
+    with _lock:
+        group = get_active_group(db, group_id)
+        if group is not None:
+            epoch, group_key = group
+            return epoch, group_key, False
+        epoch, group_key = rotate_group_key(db, group_id)
+        return epoch, group_key, True
+
+
 def get_active_broadcast_frame_keys(db: Session, group_id: int = DEFAULT_GROUP_ID) -> tuple[int, bytes, bytes]:
     group = get_active_group(db, group_id)
     if group is None:
@@ -142,6 +166,123 @@ def rotate_group_key(db: Session, group_id: int = DEFAULT_GROUP_ID) -> tuple[int
             current.active = True
         db.commit()
         return next_epoch, group_key
+
+
+def resolve_paired_node_ids(db: Session, node_ids: list[int] | None = None) -> list[int]:
+    if node_ids:
+        resolved = []
+        for node_id in node_ids:
+            node_id_16 = int(node_id) & 0xFFFF
+            if node_id_16 == 0 or node_id_16 == LAVIET_BROADCAST_ID:
+                raise ValueError(f"Nieprawidlowy node_id={node_id}")
+            node = db.query(models.Node).filter(models.Node.node_id == node_id_16).first()
+            if node is None or not node.paired_code or not node.is_paired:
+                raise LookupError(f"Node {node_id_16} nie jest sparowany")
+            resolved.append(node_id_16)
+        return sorted(set(resolved))
+
+    rows = (
+        db.query(models.Node)
+        .filter(models.Node.paired_code.isnot(None), models.Node.is_paired.is_(True))
+        .order_by(models.Node.node_id.asc())
+        .all()
+    )
+    return [int(row.node_id) & 0xFFFF for row in rows if int(row.node_id or 0) not in (0, LAVIET_BROADCAST_ID)]
+
+
+def install_broadcast_group_key(
+    db: Session,
+    send_system_frame: Callable,
+    epoch: int,
+    group_key: bytes,
+    node_ids: list[int] | None = None,
+    *,
+    ack_required: bool = False,
+    frame_delay_s: float = BROADCAST_AUTO_INSTALL_DELAY_S,
+    counter_sync_first: bool = True,
+) -> list[dict]:
+    resolved_nodes = resolve_paired_node_ids(db, node_ids)
+    if not resolved_nodes:
+        raise LookupError("Brak sparowanych node'ow do instalacji broadcast group key")
+
+    sent = []
+    for node_id in resolved_nodes:
+        frames = []
+        if counter_sync_first:
+            frames.append(
+                send_system_frame(
+                    node_id,
+                    LavietType.COUNTER_SYNC,
+                    0,
+                    db,
+                    ack_required=False,
+                )
+            )
+            if frame_delay_s > 0:
+                time.sleep(frame_delay_s)
+        for fragment_index in range(BROADCAST_CTRL_FRAGMENT_COUNT):
+            frames.append(
+                send_system_frame(
+                    node_id,
+                    LavietType.KEY_ROTATE,
+                    0,
+                    db,
+                    ack_required=ack_required,
+                    payload_override=build_install_payload(epoch, fragment_index, group_key),
+                )
+            )
+            if frame_delay_s > 0:
+                time.sleep(frame_delay_s)
+        frames.append(
+            send_system_frame(
+                node_id,
+                LavietType.KEY_ROTATE,
+                0,
+                db,
+                ack_required=ack_required,
+                payload_override=build_activate_payload(epoch),
+            )
+        )
+        if frame_delay_s > 0:
+            time.sleep(frame_delay_s)
+        sent.append({"node_id": node_id, "frames": frames})
+    return sent
+
+
+def ensure_broadcast_group_key_ready(
+    db: Session,
+    send_system_frame: Callable,
+    node_ids: list[int] | None = None,
+    *,
+    ack_required: bool = False,
+    force_install: bool = True,
+) -> dict:
+    resolved_nodes = resolve_paired_node_ids(db, node_ids)
+    if not resolved_nodes:
+        raise LookupError("Brak sparowanych node'ow do instalacji broadcast group key")
+
+    epoch, group_key, created = get_or_create_active_group(db)
+    sent = []
+    try:
+        if created or force_install:
+            sent = install_broadcast_group_key(
+                db,
+                send_system_frame,
+                epoch,
+                group_key,
+                resolved_nodes,
+                ack_required=ack_required,
+            )
+    finally:
+        group_key = b"\x00" * len(group_key)
+
+    return {
+        "epoch": epoch,
+        "created": created,
+        "installed": bool(sent),
+        "node_count": len(resolved_nodes),
+        "nodes": sent,
+    }
 
 
 def build_install_payload(epoch: int, fragment_index: int, group_key: bytes) -> bytes:

@@ -31,9 +31,13 @@ class PairingManager:
         self._pending_reqs: Dict[int, dict] = {}
         self._paired_nodes: Dict[int, bytes] = {}
         self._send_frame_cb: Optional[Callable[[bytes], bool]] = None
+        self._paired_cb: Optional[Callable[[int], None]] = None
 
     def set_send_callback(self, cb: Callable[[bytes], bool]) -> None:
         self._send_frame_cb = cb
+
+    def set_paired_callback(self, cb: Callable[[int], None]) -> None:
+        self._paired_cb = cb
 
     def _prune_pending_locked(self, now: Optional[float] = None) -> None:
         now = time.monotonic() if now is None else now
@@ -196,6 +200,11 @@ class PairingManager:
 
         self._persist_paired_node(frame.src_id, code)
         print(f"[PAIRING] Accepted PAIR_RESP from {hex(frame.src_id)}. Code={code.hex()}")
+        if self._paired_cb is not None:
+            try:
+                self._paired_cb(frame.src_id)
+            except Exception as exc:
+                print(f"[PAIRING] post-pair broadcast key install failed for {hex(frame.src_id)}: {exc}")
         return True
 
     def get_paired_code(self, node_id: int) -> Optional[bytes]:

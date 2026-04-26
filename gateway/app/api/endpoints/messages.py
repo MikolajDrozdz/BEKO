@@ -18,7 +18,10 @@ from ...models.database import get_db
 from ...schemas import schemas
 from ...services import message_tracker
 from ...services import system_metrics
-from ...services.broadcast_security import get_active_broadcast_frame_keys
+from ...services.broadcast_security import (
+    ensure_broadcast_group_key_ready,
+    get_active_broadcast_frame_keys,
+)
 from ...services.gateway_counter import reserve_gateway_tx_counter
 from ...services.laviet_frame import (
     LAVIET_BROADCAST_ID,
@@ -32,6 +35,7 @@ from ...services.laviet_frame import (
 )
 from ...services.lora_hardware import lora_device
 from ...services.pairing import pairing_manager
+from .system import _send_system_frame
 
 router = APIRouter()
 
@@ -116,14 +120,32 @@ def send_message(msg: schemas.MessageCreate, db: Session = Depends(get_db)):
     if dst_id_16 == LAVIET_BROADCAST_ID:
         if msg.coded:
             try:
+                auto_install = ensure_broadcast_group_key_ready(
+                    db,
+                    _send_system_frame,
+                    ack_required=False,
+                    force_install=True,
+                )
+                print(
+                    f"[BCAST KEY AUTO] epoch={auto_install['epoch']} "
+                    f"nodes={auto_install['node_count']} installed={auto_install['installed']}"
+                )
                 group_epoch, aes_key, hmac_key = get_active_broadcast_frame_keys(db)
+            except HTTPException:
+                db_msg.status = "failed"
+                db.commit()
+                raise
             except LookupError as exc:
                 db_msg.status = "failed"
                 db.commit()
                 raise HTTPException(
                     status_code=409,
-                    detail="Brak aktywnego broadcast group key. Wywolaj /api/gateway/broadcast-key/rotate.",
+                    detail=f"Nie mozna automatycznie zainstalowac broadcast group key: {exc}",
                 ) from exc
+            except ValueError as exc:
+                db_msg.status = "failed"
+                db.commit()
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
             key_mode = f"broadcast-group:{group_epoch}"
         else:
             domain_id = LAVIET_BROADCAST_ID
