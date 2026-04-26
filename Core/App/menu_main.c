@@ -13,6 +13,7 @@
 #include "task.h"
 #include "tof_main.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #define MENU_TASK_STACK_SIZE                8192U
@@ -1375,6 +1376,7 @@ void menu_main_create_task(void)
         s_menu_notify_queue = osMessageQueueNew(MENU_NOTIFY_QUEUE_DEPTH, sizeof(menu_notification_t), NULL);
         if (s_menu_notify_queue == NULL)
         {
+            printf("MENU: notify queue create failed\r\n");
             return;
         }
     }
@@ -1382,6 +1384,10 @@ void menu_main_create_task(void)
     if (s_menu_task == NULL)
     {
         s_menu_task = osThreadNew(menu_main_task_fn, NULL, &s_menu_task_attr);
+        if (s_menu_task == NULL)
+        {
+            printf("MENU: task create failed\r\n");
+        }
     }
 }
 
@@ -1426,6 +1432,7 @@ static void menu_main_task_fn(void *argument)
     }
 
     menu_enter_monitor(&st);
+    printf("MENU: task ready\r\n");
 
     for (;;)
     {
@@ -3215,7 +3222,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
         {
             (void)lcd_main_monitor_scroll_down();
         }
-        else if (evt == BUTTON_EVENT_OK_LONG)
+        else if ((evt == BUTTON_EVENT_OK_SHORT) || (evt == BUTTON_EVENT_OK_LONG))
         {
             if (menu_auth_unlocked(st, MENU_AUTH_OPERATOR))
             {

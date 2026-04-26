@@ -4,8 +4,9 @@ Biblioteka dla ST33KTPM2X (TPM 2.0) po I2C (TIS/FIFO) pod STM32 HAL.
 
 ## Założenia
 
-- Interfejs TPM: `I2C3` (`hi2c3`).
-- Pin reset TPM: `PB0` (`TMP_RESET_Pin`/`TMP_RESET_GPIO_Port` z `main.h`).
+- Interfejs TPM: `I2C3` (`hi2c3`, `PC0` = SCL, `PC1` = SDA).
+- Pin reset TPM: `PB0` (`TPM_RESET__Pin`/`TPM_RESET__GPIO_Port` z `main.h`), aktywny niskim stanem.
+- Pin `TPM_DAVINT#` / `PIRQ`: `PH0` (`TPM_DAVINT__Pin`/`TPM_DAVINT__GPIO_Port`), wejście `EXTI0`, aktywne niskim stanem.
 - Jeśli PP jest wyprowadzony do STM32 GPIO, może być konfigurowany w `st33ktpm2x_cfg_t`.
 - W aktualnym hardware BEKO PP jest podłączony do samego TPM: pin `7`, aktywny stanem `VDD`.
   Tego pinu nie czyta STM32 jako zwykłego przycisku; jest używany przez TPM przy

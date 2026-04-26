@@ -59,6 +59,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define TPM_DAVINT__Pin GPIO_PIN_0
+#define TPM_DAVINT__GPIO_Port GPIOH
+#define TPM_DAVINT__EXTI_IRQn EXTI0_IRQn
 #define VL53L3CX_INT_Pin GPIO_PIN_2
 #define VL53L3CX_INT_GPIO_Port GPIOC
 #define VL53L3CX_xshout_Pin GPIO_PIN_3
@@ -67,10 +70,10 @@ void Error_Handler(void);
 #define DIG_B3_GPIO_Port GPIOA
 #define DIG_B1_Pin GPIO_PIN_3
 #define DIG_B1_GPIO_Port GPIOA
-#define TPM_RESET__Pin GPIO_PIN_7
-#define TPM_RESET__GPIO_Port GPIOA
-#define TMP_RESET_Pin GPIO_PIN_0
-#define TMP_RESET_GPIO_Port GPIOB
+#define PA7_Pin GPIO_PIN_7
+#define PA7_GPIO_Port GPIOA
+#define TPM_RESET__Pin GPIO_PIN_0
+#define TPM_RESET__GPIO_Port GPIOB
 #define RFM_DIO1_EXIT_1_Pin GPIO_PIN_1
 #define RFM_DIO1_EXIT_1_GPIO_Port GPIOB
 #define RFM_DIO1_EXIT_1_EXTI_IRQn EXTI1_IRQn

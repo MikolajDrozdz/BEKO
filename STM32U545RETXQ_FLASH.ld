@@ -61,8 +61,8 @@ SECTIONS
   /* The program code and other data into "FLASH" Rom type memory */
   .text :
   {
-    *(.text)           /* .text sections (code) */
-    *(.text*)          /* .text* sections (code) */
+    *(EXCLUDE_FILE (*Core/App/security_main.o) .text)           /* .text sections (code) */
+    *(EXCLUDE_FILE (*Core/App/security_main.o) .text*)          /* .text* sections (code) */
     *(.glue_7)         /* glue arm to thumb code */
     *(.glue_7t)        /* glue thumb to arm code */
     *(.eh_frame)
@@ -76,8 +76,8 @@ SECTIONS
   /* Constant data into "FLASH" Rom type memory */
   .rodata :
   {
-    *(.rodata)         /* .rodata sections (constants, strings, etc.) */
-    *(.rodata*)        /* .rodata* sections (constants, strings, etc.) */
+    *(EXCLUDE_FILE (*Core/App/security_main.o) .rodata)         /* .rodata sections (constants, strings, etc.) */
+    *(EXCLUDE_FILE (*Core/App/security_main.o) .rodata*)        /* .rodata* sections (constants, strings, etc.) */
   } >FLASH
 
   .ARM.extab (READONLY) : /* The READONLY keyword is only supported in GCC11 and later, remove it if using GCC10 or earlier. */
@@ -113,6 +113,22 @@ SECTIONS
     KEEP (*(.fini_array*))
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
+
+  /* Security module code and constants: loaded from FLASH, executed from RAM. */
+  _sisecurity_ram = LOADADDR(.security_ram);
+  .security_ram :
+  {
+    . = ALIGN(4);
+    _ssecurity_ram = .;
+    __security_ram_start__ = .;
+    *Core/App/security_main.o(.text)
+    *Core/App/security_main.o(.text*)
+    *Core/App/security_main.o(.rodata)
+    *Core/App/security_main.o(.rodata*)
+    . = ALIGN(4);
+    _esecurity_ram = .;
+    __security_ram_end__ = .;
+  } >RAM AT> FLASH
 
   /* Used by the startup to initialize data */
   _sidata = LOADADDR(.data);

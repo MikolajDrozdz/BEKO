@@ -18,6 +18,9 @@
   .extern SystemInit
   .extern __libc_init_array
   .extern _estack
+  .extern _sisecurity_ram
+  .extern _ssecurity_ram
+  .extern _esecurity_ram
   .extern _sidata
   .extern _sdata
   .extern _edata
@@ -28,6 +31,22 @@
   .weak Reset_Handler
   .type Reset_Handler, %function
 Reset_Handler:
+  ldr r0, =_ssecurity_ram
+  ldr r1, =_esecurity_ram
+  ldr r2, =_sisecurity_ram
+  movs r3, #0
+  b CopySecurityRamLoop
+
+CopySecurityRam:
+  ldr r4, [r2, r3]
+  str r4, [r0, r3]
+  adds r3, r3, #4
+
+CopySecurityRamLoop:
+  adds r4, r0, r3
+  cmp r4, r1
+  bcc CopySecurityRam
+
   ldr r0, =_sdata
   ldr r1, =_edata
   ldr r2, =_sidata

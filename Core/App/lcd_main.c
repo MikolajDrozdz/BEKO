@@ -72,7 +72,6 @@ static void lcd_main_render_mode(void);
 static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U]);
 static void lcd_main_invalidate_render_cache(void);
 static bool lcd_main_is_monitor_message_type(lcd_main_msg_type_t type);
-static bool lcd_main_is_fullscreen_ui_message_type(lcd_main_msg_type_t type);
 static void lcd_main_drop_pending_messages(void);
 static bool lcd_main_post_message(const lcd_main_msg_t *msg);
 
@@ -338,6 +337,7 @@ static void lcd_main_task_fn(void *argument)
                     s_monitor_history_head = 0U;
                     s_monitor_history_count = 0U;
                     s_monitor_view_offset = 0U;
+                    lcd_main_monitor_rebuild_lines();
                     lcd_main_invalidate_render_cache();
                     render_required = true;
                     break;
@@ -607,41 +607,6 @@ static void lcd_main_invalidate_render_cache(void)
 static bool lcd_main_is_monitor_message_type(lcd_main_msg_type_t type)
 {
     return (type == LCD_MAIN_MSG_PUSH_MONITOR);
-}
-
-static bool lcd_main_is_fullscreen_ui_message_type(lcd_main_msg_type_t type)
-{
-    if (type == LCD_MAIN_MSG_SHOW_MENU)
-    {
-        return true;
-    }
-
-    if (type == LCD_MAIN_MSG_SHOW_POPUP)
-    {
-        return true;
-    }
-
-    if (type == LCD_MAIN_MSG_SET_MODE)
-    {
-        return true;
-    }
-
-    if (type == LCD_MAIN_MSG_SET_LINES)
-    {
-        return true;
-    }
-
-    if (type == LCD_MAIN_MSG_SHOW_BOOT)
-    {
-        return true;
-    }
-
-    if (type == LCD_MAIN_MSG_CLEAR)
-    {
-        return true;
-    }
-
-    return false;
 }
 
 /*

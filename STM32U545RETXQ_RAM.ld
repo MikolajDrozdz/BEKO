@@ -114,6 +114,18 @@ SECTIONS
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >RAM
 
+  /* Empty in RAM builds; FLASH builds copy security_main.o into this range. */
+  _sisecurity_ram = LOADADDR(.security_ram);
+  .security_ram :
+  {
+    . = ALIGN(4);
+    _ssecurity_ram = .;
+    __security_ram_start__ = .;
+    . = ALIGN(4);
+    _esecurity_ram = .;
+    __security_ram_end__ = .;
+  } >RAM
+
   /* Used by the startup to initialize data */
   _sidata = LOADADDR(.data);
 

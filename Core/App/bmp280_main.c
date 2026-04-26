@@ -1,5 +1,11 @@
 #include "bmp280_main.h"
 
+#include "pager_config.h"
+
+#include <stdio.h>
+
+#if PAGER_CONFIG_BMP280_MOUNTED
+
 #include "app.h"
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
@@ -7,7 +13,6 @@
 #include "task.h"
 #include "main.h"
 
-#include <stdio.h>
 #include <string.h>
 
 extern I2C_HandleTypeDef hi2c1;
@@ -42,8 +47,15 @@ static const osThreadAttr_t s_bmp280_task_attr =
     .cb_size = sizeof(s_bmp280_task_cb)
 };
 
+#else
+
+static bool s_bmp280_not_mounted_logged = false;
+
+#endif
+
 void bmp280_main_create_task(void)
 {
+#if PAGER_CONFIG_BMP280_MOUNTED
     if (s_bmp280_data_mutex == NULL)
     {
         s_bmp280_data_mutex = osMutexNew(&s_bmp280_data_mutex_attr);
@@ -53,10 +65,18 @@ void bmp280_main_create_task(void)
     {
         s_bmp280_task = osThreadNew(bmp280_main_task_fn, NULL, &s_bmp280_task_attr);
     }
+#else
+    if (!s_bmp280_not_mounted_logged)
+    {
+        printf("BMP280: not mounted, task disabled\r\n");
+        s_bmp280_not_mounted_logged = true;
+    }
+#endif
 }
 
 bool bmp280_main_get_last(bmp280_api_data_t *out_data)
 {
+#if PAGER_CONFIG_BMP280_MOUNTED
     bool has_data;
 
     if ((out_data == NULL) || (s_bmp280_data_mutex == NULL))
@@ -77,8 +97,13 @@ bool bmp280_main_get_last(bmp280_api_data_t *out_data)
 
     (void)osMutexRelease(s_bmp280_data_mutex);
     return has_data;
+#else
+    (void)out_data;
+    return false;
+#endif
 }
 
+#if PAGER_CONFIG_BMP280_MOUNTED
 static void bmp280_main_task_fn(void *argument)
 {
     bmp280_api_data_t sample;
@@ -126,3 +151,4 @@ static void bmp280_main_task_fn(void *argument)
         osDelay(1000U);
     }
 }
+#endif

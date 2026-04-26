@@ -8,19 +8,25 @@
 #include "app_delay.h"
 #include "main.h"
 
+#include <stdio.h>
 #include <string.h>
 
-/* TIS register map (locality 0 base). */
-#define ST33_REG_ACCESS                 0x0000U
-#define ST33_REG_STS                    0x0018U
-#define ST33_REG_DATA_FIFO              0x0024U
-#define ST33_REG_DID_VID                0x0F00U
-#define ST33_REG_RID                    0x0F04U
+/* I2C TPM register map (locality 0). */
+#define ST33_REG_LOC_SEL                0x00U
+#define ST33_REG_ACCESS                 0x04U
+#define ST33_REG_STS                    0x18U
+#define ST33_REG_DATA_FIFO              0x24U
+#define ST33_REG_INTERFACE_CAPABILITY   0x30U
+#define ST33_REG_DID_VID                0x48U
+#define ST33_REG_RID                    0x4CU
+
+#define ST33_I2C_MAX_RETRIES            3U
 
 /* ACCESS bits. */
 #define ST33_ACCESS_VALID               0x80U
 #define ST33_ACCESS_ACTIVE_LOCALITY     0x20U
 #define ST33_ACCESS_REQUEST_USE         0x02U
+#define ST33_ACCESS_READ_ZERO           0x48U
 
 /* STS bits. */
 #define ST33_STS_VALID                  0x80U
@@ -28,14 +34,23 @@
 #define ST33_STS_TPM_GO                 0x20U
 #define ST33_STS_DATA_AVAIL             0x10U
 #define ST33_STS_EXPECT                 0x08U
+#define ST33_STS_READ_ZERO              0x23U
 
 #define ST33_TPM_HEADER_SIZE            10U
 #define ST33_TPM_RH_OWNER               0x40000001UL
 #define ST33_TPM_RH_PLATFORM            0x4000000CUL
 #define ST33_TPM_RS_PW                  0x40000009UL
 #define ST33_TPM_PW_AUTH_SIZE           9U
-#define ST33_TPM_RANDOM_MAX_BYTES       64U
-#define ST33_TPM_NV_TRANSFER_MAX_BYTES  64U
+#define ST33_TPM_RANDOM_MAX_BYTES       256U
+#define ST33_TPM_NV_TRANSFER_MAX_BYTES  512U
+
+#if defined(TPM_INIT_LOG)
+#define ST33_TRACE(...)                 printf(__VA_ARGS__)
+#else
+#define ST33_TRACE(...)                 do { if (0) { printf(__VA_ARGS__); } } while (0)
+#endif
+
+static uint8_t s_st33_i2c_tx[1U + ST33KTPM2X_CMD_MAX_BYTES];
 
 static uint16_t st33_min_u16(uint16_t a, uint16_t b)
 {
@@ -53,6 +68,54 @@ static uint32_t st33_be32_read(const uint8_t *buf)
            ((uint32_t)buf[1] << 16) |
            ((uint32_t)buf[2] << 8) |
            (uint32_t)buf[3];
+}
+
+static uint32_t st33_le32_read(const uint8_t *buf)
+{
+    return ((uint32_t)buf[3] << 24) |
+           ((uint32_t)buf[2] << 16) |
+           ((uint32_t)buf[1] << 8) |
+           (uint32_t)buf[0];
+}
+
+static bool st33_identity_is_valid(uint32_t did_vid, uint8_t rid)
+{
+    if ((did_vid == 0xFFFFFFFFUL) || (did_vid == 0x00000000UL))
+    {
+        return false;
+    }
+    if (rid == 0xFFU)
+    {
+        return false;
+    }
+    return true;
+}
+
+static const char *st33_status_text(st33ktpm2x_status_t rc)
+{
+    switch (rc)
+    {
+        case ST33KTPM2X_OK:
+            return "OK";
+        case ST33KTPM2X_EINVAL:
+            return "EINVAL";
+        case ST33KTPM2X_ESTATE:
+            return "ESTATE";
+        case ST33KTPM2X_EHAL:
+            return "EHAL";
+        case ST33KTPM2X_ETIMEOUT:
+            return "ETIMEOUT";
+        case ST33KTPM2X_EOVERFLOW:
+            return "EOVERFLOW";
+        case ST33KTPM2X_EPROTO:
+            return "EPROTO";
+        case ST33KTPM2X_ETPM_RC:
+            return "ETPM_RC";
+        case ST33KTPM2X_ENOTSUP:
+            return "ENOTSUP";
+        default:
+            return "?";
+    }
 }
 
 static void st33_be16_write(uint8_t *buf, uint16_t v)
@@ -79,28 +142,42 @@ static uint16_t st33_write_empty_password_auth(uint8_t *buf)
 }
 
 static st33ktpm2x_status_t st33_i2c_read(st33ktpm2x_t *ctx,
-                                         uint16_t reg,
+                                         uint8_t reg,
                                          uint8_t *data,
                                          uint16_t len)
 {
-    HAL_StatusTypeDef hal_st;
+    HAL_StatusTypeDef hal_st = HAL_ERROR;
+    uint8_t attempt;
 
     if ((ctx == NULL) || (data == NULL) || (len == 0U))
     {
         return ST33KTPM2X_EINVAL;
     }
 
-    hal_st = HAL_I2C_Mem_Read(ctx->cfg.hi2c,
-                              (uint16_t)(ctx->cfg.i2c_addr_7bit << 1),
-                              reg,
-                              I2C_MEMADD_SIZE_16BIT,
-                              data,
-                              len,
-                              ctx->cfg.io_timeout_ms);
-    if (hal_st == HAL_OK)
+    for (attempt = 0U; attempt < ST33_I2C_MAX_RETRIES; attempt++)
     {
-        return ST33KTPM2X_OK;
+        hal_st = HAL_I2C_Master_Transmit(ctx->cfg.hi2c,
+                                         (uint16_t)(ctx->cfg.i2c_addr_7bit << 1),
+                                         &reg,
+                                         1U,
+                                         ctx->cfg.io_timeout_ms);
+        if (hal_st == HAL_OK)
+        {
+            app_delay_ms(1U);
+            hal_st = HAL_I2C_Master_Receive(ctx->cfg.hi2c,
+                                            (uint16_t)(ctx->cfg.i2c_addr_7bit << 1),
+                                            data,
+                                            len,
+                                            ctx->cfg.io_timeout_ms);
+        }
+        if (hal_st == HAL_OK)
+        {
+            app_delay_ms(1U);
+            return ST33KTPM2X_OK;
+        }
+        app_delay_ms(1U);
     }
+
     if (hal_st == HAL_TIMEOUT)
     {
         return ST33KTPM2X_ETIMEOUT;
@@ -109,28 +186,40 @@ static st33ktpm2x_status_t st33_i2c_read(st33ktpm2x_t *ctx,
 }
 
 static st33ktpm2x_status_t st33_i2c_write(st33ktpm2x_t *ctx,
-                                          uint16_t reg,
+                                          uint8_t reg,
                                           const uint8_t *data,
                                           uint16_t len)
 {
-    HAL_StatusTypeDef hal_st;
+    HAL_StatusTypeDef hal_st = HAL_ERROR;
+    uint8_t attempt;
 
     if ((ctx == NULL) || (data == NULL) || (len == 0U))
     {
         return ST33KTPM2X_EINVAL;
     }
-
-    hal_st = HAL_I2C_Mem_Write(ctx->cfg.hi2c,
-                               (uint16_t)(ctx->cfg.i2c_addr_7bit << 1),
-                               reg,
-                               I2C_MEMADD_SIZE_16BIT,
-                               (uint8_t *)data,
-                               len,
-                               ctx->cfg.io_timeout_ms);
-    if (hal_st == HAL_OK)
+    if (len > ST33KTPM2X_CMD_MAX_BYTES)
     {
-        return ST33KTPM2X_OK;
+        return ST33KTPM2X_EOVERFLOW;
     }
+
+    s_st33_i2c_tx[0] = reg;
+    memcpy(&s_st33_i2c_tx[1], data, len);
+
+    for (attempt = 0U; attempt < ST33_I2C_MAX_RETRIES; attempt++)
+    {
+        hal_st = HAL_I2C_Master_Transmit(ctx->cfg.hi2c,
+                                         (uint16_t)(ctx->cfg.i2c_addr_7bit << 1),
+                                         s_st33_i2c_tx,
+                                         (uint16_t)(len + 1U),
+                                         ctx->cfg.io_timeout_ms);
+        if (hal_st == HAL_OK)
+        {
+            app_delay_ms(1U);
+            return ST33KTPM2X_OK;
+        }
+        app_delay_ms(1U);
+    }
+
     if (hal_st == HAL_TIMEOUT)
     {
         return ST33KTPM2X_ETIMEOUT;
@@ -140,12 +229,35 @@ static st33ktpm2x_status_t st33_i2c_write(st33ktpm2x_t *ctx,
 
 static st33ktpm2x_status_t st33_read_access(st33ktpm2x_t *ctx, uint8_t *access)
 {
-    return st33_i2c_read(ctx, ST33_REG_ACCESS, access, 1U);
+    uint8_t value = 0U;
+    st33ktpm2x_status_t rc;
+
+    if (access == NULL)
+    {
+        return ST33KTPM2X_EINVAL;
+    }
+
+    rc = st33_i2c_read(ctx, ST33_REG_ACCESS, &value, 1U);
+    *access = value;
+    if (rc != ST33KTPM2X_OK)
+    {
+        return rc;
+    }
+    if ((value & ST33_ACCESS_READ_ZERO) != 0U)
+    {
+        return ST33KTPM2X_EPROTO;
+    }
+    return ST33KTPM2X_OK;
 }
 
 static st33ktpm2x_status_t st33_write_access(st33ktpm2x_t *ctx, uint8_t value)
 {
     return st33_i2c_write(ctx, ST33_REG_ACCESS, &value, 1U);
+}
+
+static st33ktpm2x_status_t st33_write_loc_sel(st33ktpm2x_t *ctx, uint8_t locality)
+{
+    return st33_i2c_write(ctx, ST33_REG_LOC_SEL, &locality, 1U);
 }
 
 static st33ktpm2x_status_t st33_read_sts(st33ktpm2x_t *ctx, uint8_t *sts, uint16_t *burst_count)
@@ -167,6 +279,10 @@ static st33ktpm2x_status_t st33_read_sts(st33ktpm2x_t *ctx, uint8_t *sts, uint16
     {
         *burst_count = (uint16_t)raw[1] | ((uint16_t)raw[2] << 8);
     }
+    if ((raw[0] & ST33_STS_READ_ZERO) != 0U)
+    {
+        return ST33KTPM2X_EPROTO;
+    }
 
     return ST33KTPM2X_OK;
 }
@@ -183,12 +299,16 @@ static st33ktpm2x_status_t st33_wait_access_bits(st33ktpm2x_t *ctx,
 {
     uint32_t start_ms;
     uint8_t access = 0U;
+    uint8_t last_access = 0U;
     st33ktpm2x_status_t rc;
+    st33ktpm2x_status_t last_rc = ST33KTPM2X_ETIMEOUT;
 
     start_ms = HAL_GetTick();
     do
     {
         rc = st33_read_access(ctx, &access);
+        last_rc = rc;
+        last_access = access;
         if (rc == ST33KTPM2X_OK)
         {
             if ((access & mask) == expected)
@@ -199,6 +319,13 @@ static st33ktpm2x_status_t st33_wait_access_bits(st33ktpm2x_t *ctx,
         app_delay_ms(1U);
     } while ((HAL_GetTick() - start_ms) < timeout_ms);
 
+    ST33_TRACE("TPM TIS wait ACCESS timeout mask=0x%02X expected=0x%02X last_rc=%d(%s) last=0x%02X timeout=%lu\r\n",
+               (unsigned int)mask,
+               (unsigned int)expected,
+               (int)last_rc,
+               st33_status_text(last_rc),
+               (unsigned int)last_access,
+               (unsigned long)timeout_ms);
     return ST33KTPM2X_ETIMEOUT;
 }
 
@@ -209,12 +336,17 @@ static st33ktpm2x_status_t st33_wait_sts_bits(st33ktpm2x_t *ctx,
 {
     uint32_t start_ms;
     uint8_t sts = 0U;
+    uint8_t last_sts = 0U;
+    uint16_t last_burst = 0U;
     st33ktpm2x_status_t rc;
+    st33ktpm2x_status_t last_rc = ST33KTPM2X_ETIMEOUT;
 
     start_ms = HAL_GetTick();
     do
     {
-        rc = st33_read_sts(ctx, &sts, NULL);
+        rc = st33_read_sts(ctx, &sts, &last_burst);
+        last_rc = rc;
+        last_sts = sts;
         if (rc == ST33KTPM2X_OK)
         {
             if ((sts & mask) == expected)
@@ -225,6 +357,14 @@ static st33ktpm2x_status_t st33_wait_sts_bits(st33ktpm2x_t *ctx,
         app_delay_ms(1U);
     } while ((HAL_GetTick() - start_ms) < timeout_ms);
 
+    ST33_TRACE("TPM TIS wait STS timeout mask=0x%02X expected=0x%02X last_rc=%d(%s) sts=0x%02X burst=%u timeout=%lu\r\n",
+               (unsigned int)mask,
+               (unsigned int)expected,
+               (int)last_rc,
+               st33_status_text(last_rc),
+               (unsigned int)last_sts,
+               (unsigned int)last_burst,
+               (unsigned long)timeout_ms);
     return ST33KTPM2X_ETIMEOUT;
 }
 
@@ -233,7 +373,10 @@ static st33ktpm2x_status_t st33_wait_burst(st33ktpm2x_t *ctx, uint16_t *burst_ou
     uint32_t start_ms;
     uint8_t sts = 0U;
     uint16_t burst = 0U;
+    uint8_t last_sts = 0U;
+    uint16_t last_burst = 0U;
     st33ktpm2x_status_t rc;
+    st33ktpm2x_status_t last_rc = ST33KTPM2X_ETIMEOUT;
 
     if (burst_out == NULL)
     {
@@ -244,6 +387,9 @@ static st33ktpm2x_status_t st33_wait_burst(st33ktpm2x_t *ctx, uint16_t *burst_ou
     do
     {
         rc = st33_read_sts(ctx, &sts, &burst);
+        last_rc = rc;
+        last_sts = sts;
+        last_burst = burst;
         if (rc == ST33KTPM2X_OK)
         {
             if ((sts & ST33_STS_VALID) != 0U)
@@ -258,7 +404,54 @@ static st33ktpm2x_status_t st33_wait_burst(st33ktpm2x_t *ctx, uint16_t *burst_ou
         app_delay_ms(1U);
     } while ((HAL_GetTick() - start_ms) < ctx->cfg.burst_timeout_ms);
 
+    ST33_TRACE("TPM TIS wait burst timeout data_avail=%u last_rc=%d(%s) sts=0x%02X burst=%u timeout=%lu\r\n",
+               (unsigned int)require_data_avail,
+               (int)last_rc,
+               st33_status_text(last_rc),
+               (unsigned int)last_sts,
+               (unsigned int)last_burst,
+               (unsigned long)ctx->cfg.burst_timeout_ms);
     return ST33KTPM2X_ETIMEOUT;
+}
+
+static void st33_trace_tis(st33ktpm2x_t *ctx, const char *tag)
+{
+    uint8_t access = 0U;
+    uint8_t sts = 0U;
+    uint16_t burst = 0U;
+    st33ktpm2x_status_t access_rc;
+    st33ktpm2x_status_t sts_rc;
+
+    access_rc = st33_read_access(ctx, &access);
+    sts_rc = st33_read_sts(ctx, &sts, &burst);
+    ST33_TRACE("TPM TIS %s access_rc=%d(%s) access=0x%02X sts_rc=%d(%s) sts=0x%02X burst=%u loc=%u hal_err=0x%08lX\r\n",
+               (tag != NULL) ? tag : "state",
+               (int)access_rc,
+               st33_status_text(access_rc),
+               (unsigned int)access,
+               (int)sts_rc,
+               st33_status_text(sts_rc),
+               (unsigned int)sts,
+               (unsigned int)burst,
+               ctx->locality0_acquired ? 1U : 0U,
+               (unsigned long)HAL_I2C_GetError(ctx->cfg.hi2c));
+}
+
+static st33ktpm2x_status_t st33_trace_fail(st33ktpm2x_t *ctx,
+                                           const char *stage,
+                                           st33ktpm2x_status_t rc,
+                                           bool release_locality)
+{
+    ST33_TRACE("TPM TIS fail stage=%s rc=%d(%s)\r\n",
+               (stage != NULL) ? stage : "?",
+               (int)rc,
+               st33_status_text(rc));
+    st33_trace_tis(ctx, stage);
+    if (release_locality)
+    {
+        (void)st33ktpm2x_release_locality0(ctx);
+    }
+    return rc;
 }
 
 static st33ktpm2x_status_t st33_fifo_write(st33ktpm2x_t *ctx, const uint8_t *data, uint16_t len)
@@ -309,18 +502,22 @@ void st33ktpm2x_default_cfg(st33ktpm2x_cfg_t *cfg, I2C_HandleTypeDef *hi2c)
     cfg->hi2c = hi2c;
     cfg->i2c_addr_7bit = ST33KTPM2X_I2C_ADDR_DEFAULT;
 
-    cfg->reset_port = TMP_RESET_GPIO_Port;
-    cfg->reset_pin = TMP_RESET_Pin;
+    cfg->reset_port = TPM_RESET__GPIO_Port;
+    cfg->reset_pin = TPM_RESET__Pin;
     cfg->reset_pulse_ms = 5U;
-    cfg->reset_recovery_ms = 50U;
+    cfg->reset_recovery_ms = 100U;
+
+    cfg->davint_port = TPM_DAVINT__GPIO_Port;
+    cfg->davint_pin = TPM_DAVINT__Pin;
+    cfg->davint_active_state = GPIO_PIN_RESET;
 
     cfg->pp_port = NULL;
     cfg->pp_pin = 0U;
     cfg->pp_active_state = GPIO_PIN_SET;
 
     cfg->io_timeout_ms = 100U;
-    cfg->locality_timeout_ms = 100U;
-    cfg->burst_timeout_ms = 100U;
+    cfg->locality_timeout_ms = 1000U;
+    cfg->burst_timeout_ms = 1000U;
 }
 
 st33ktpm2x_status_t st33ktpm2x_init(st33ktpm2x_t *ctx, const st33ktpm2x_cfg_t *cfg)
@@ -355,6 +552,9 @@ st33ktpm2x_status_t st33ktpm2x_deinit(st33ktpm2x_t *ctx)
 
 st33ktpm2x_status_t st33ktpm2x_hard_reset(st33ktpm2x_t *ctx)
 {
+    st33ktpm2x_status_t rc;
+    uint8_t locality = 0U;
+
     if ((ctx == NULL) || (!ctx->initialized))
     {
         return ST33KTPM2X_ESTATE;
@@ -365,6 +565,35 @@ st33ktpm2x_status_t st33ktpm2x_hard_reset(st33ktpm2x_t *ctx)
     HAL_GPIO_WritePin(ctx->cfg.reset_port, ctx->cfg.reset_pin, GPIO_PIN_SET);
     app_delay_ms(ctx->cfg.reset_recovery_ms);
     ctx->locality0_acquired = false;
+
+    rc = st33_write_loc_sel(ctx, locality);
+    ST33_TRACE("TPM TIS LOC_SEL after reset rc=%d(%s) locality=%u\r\n",
+               (int)rc,
+               st33_status_text(rc),
+               (unsigned int)locality);
+    if (rc == ST33KTPM2X_OK)
+    {
+        st33_trace_tis(ctx, "after_loc_sel");
+    }
+    return rc;
+}
+
+st33ktpm2x_status_t st33ktpm2x_davint_is_asserted(st33ktpm2x_t *ctx, bool *asserted)
+{
+    GPIO_PinState state;
+
+    if ((ctx == NULL) || (!ctx->initialized) || (asserted == NULL))
+    {
+        return ST33KTPM2X_EINVAL;
+    }
+
+    if ((ctx->cfg.davint_port == NULL) || (ctx->cfg.davint_pin == 0U))
+    {
+        return ST33KTPM2X_ENOTSUP;
+    }
+
+    state = HAL_GPIO_ReadPin(ctx->cfg.davint_port, ctx->cfg.davint_pin);
+    *asserted = (state == ctx->cfg.davint_active_state);
     return ST33KTPM2X_OK;
 }
 
@@ -419,6 +648,7 @@ st33ktpm2x_status_t st33ktpm2x_pp_wait_pressed(st33ktpm2x_t *ctx, uint32_t timeo
 st33ktpm2x_status_t st33ktpm2x_request_locality0(st33ktpm2x_t *ctx)
 {
     uint8_t access = 0U;
+    uint8_t locality = 0U;
     st33ktpm2x_status_t rc;
 
     if ((ctx == NULL) || (!ctx->initialized))
@@ -428,22 +658,33 @@ st33ktpm2x_status_t st33ktpm2x_request_locality0(st33ktpm2x_t *ctx)
 
     if (ctx->locality0_acquired)
     {
+        st33_trace_tis(ctx, "request_locality_cached");
         return ST33KTPM2X_OK;
+    }
+
+    rc = st33_write_loc_sel(ctx, locality);
+    if (rc != ST33KTPM2X_OK)
+    {
+        return st33_trace_fail(ctx, "write_loc_sel", rc, false);
     }
 
     rc = st33_read_access(ctx, &access);
     if (rc != ST33KTPM2X_OK)
     {
-        return rc;
+        return st33_trace_fail(ctx, "read_access_initial", rc, false);
     }
+    ST33_TRACE("TPM TIS request locality initial access=0x%02X timeout=%lu\r\n",
+               (unsigned int)access,
+               (unsigned long)ctx->cfg.locality_timeout_ms);
 
     if ((access & ST33_ACCESS_ACTIVE_LOCALITY) == 0U)
     {
         rc = st33_write_access(ctx, ST33_ACCESS_REQUEST_USE);
         if (rc != ST33KTPM2X_OK)
         {
-            return rc;
+            return st33_trace_fail(ctx, "write_request_use", rc, false);
         }
+        st33_trace_tis(ctx, "after_request_use");
     }
 
     rc = st33_wait_access_bits(ctx,
@@ -453,6 +694,11 @@ st33ktpm2x_status_t st33ktpm2x_request_locality0(st33ktpm2x_t *ctx)
     if (rc == ST33KTPM2X_OK)
     {
         ctx->locality0_acquired = true;
+        st33_trace_tis(ctx, "locality_acquired");
+    }
+    else
+    {
+        (void)st33_trace_fail(ctx, "locality_timeout", rc, false);
     }
     return rc;
 }
@@ -472,6 +718,9 @@ st33ktpm2x_status_t st33ktpm2x_release_locality0(st33ktpm2x_t *ctx)
     }
 
     rc = st33_write_access(ctx, ST33_ACCESS_ACTIVE_LOCALITY);
+    ST33_TRACE("TPM TIS release locality rc=%d(%s)\r\n",
+               (int)rc,
+               st33_status_text(rc));
     if (rc == ST33KTPM2X_OK)
     {
         ctx->locality0_acquired = false;
@@ -495,9 +744,19 @@ st33ktpm2x_status_t st33ktpm2x_read_identity(st33ktpm2x_t *ctx, uint32_t *did_vi
         return rc;
     }
 
-    *did_vid = st33_be32_read(id_raw);
+    *did_vid = st33_le32_read(id_raw);
     rc = st33_i2c_read(ctx, ST33_REG_RID, rid, 1U);
-    return rc;
+    if (rc != ST33KTPM2X_OK)
+    {
+        return rc;
+    }
+
+    if (!st33_identity_is_valid(*did_vid, *rid))
+    {
+        return ST33KTPM2X_EPROTO;
+    }
+
+    return ST33KTPM2X_OK;
 }
 
 st33ktpm2x_status_t st33ktpm2x_transceive(st33ktpm2x_t *ctx,
@@ -513,6 +772,7 @@ st33ktpm2x_status_t st33ktpm2x_transceive(st33ktpm2x_t *ctx,
     uint16_t sent = 0U;
     uint16_t chunk = 0U;
     uint16_t rsp_total = 0U;
+    uint32_t command_code = 0UL;
     st33ktpm2x_status_t rc;
 
     if ((ctx == NULL) || (!ctx->initialized) || (command == NULL) || (response == NULL) || (response_len == NULL))
@@ -530,90 +790,109 @@ st33ktpm2x_status_t st33ktpm2x_transceive(st33ktpm2x_t *ctx,
         *tpm_rc = 0UL;
     }
 
+    command_code = st33_be32_read(&command[6]);
+    ST33_TRACE("TPM TIS transceive start cc=0x%08lX cmd_len=%u rsp_cap=%u\r\n",
+               (unsigned long)command_code,
+               (unsigned int)command_len,
+               (unsigned int)response_capacity);
+
     rc = st33ktpm2x_request_locality0(ctx);
     if (rc != ST33KTPM2X_OK)
     {
-        return rc;
+        return st33_trace_fail(ctx, "request_locality", rc, false);
     }
+    st33_trace_tis(ctx, "transceive_after_locality");
 
     rc = st33_write_sts(ctx, ST33_STS_COMMAND_READY);
     if (rc != ST33KTPM2X_OK)
     {
-        (void)st33ktpm2x_release_locality0(ctx);
-        return rc;
+        return st33_trace_fail(ctx, "write_command_ready", rc, true);
     }
+    st33_trace_tis(ctx, "after_write_command_ready");
 
-    rc = st33_wait_sts_bits(ctx, ST33_STS_COMMAND_READY, ST33_STS_COMMAND_READY, ctx->cfg.burst_timeout_ms);
+    rc = st33_wait_sts_bits(ctx,
+                            (uint8_t)(ST33_STS_VALID | ST33_STS_COMMAND_READY),
+                            (uint8_t)(ST33_STS_VALID | ST33_STS_COMMAND_READY),
+                            ctx->cfg.burst_timeout_ms);
     if (rc != ST33KTPM2X_OK)
     {
-        (void)st33ktpm2x_release_locality0(ctx);
-        return rc;
+        return st33_trace_fail(ctx, "wait_command_ready", rc, true);
     }
+    st33_trace_tis(ctx, "command_ready");
 
     while (sent < command_len)
     {
         rc = st33_wait_burst(ctx, &burst, 0U);
         if (rc != ST33KTPM2X_OK)
         {
-            (void)st33ktpm2x_release_locality0(ctx);
-            return rc;
+            return st33_trace_fail(ctx, "wait_write_burst", rc, true);
         }
 
         chunk = st33_min_u16((uint16_t)(command_len - sent), burst);
+        ST33_TRACE("TPM TIS write FIFO chunk=%u sent_before=%u burst=%u\r\n",
+                   (unsigned int)chunk,
+                   (unsigned int)sent,
+                   (unsigned int)burst);
         rc = st33_fifo_write(ctx, &command[sent], chunk);
         if (rc != ST33KTPM2X_OK)
         {
-            (void)st33ktpm2x_release_locality0(ctx);
-            return rc;
+            return st33_trace_fail(ctx, "fifo_write", rc, true);
         }
 
         sent = (uint16_t)(sent + chunk);
         rc = st33_read_sts(ctx, &sts, NULL);
         if (rc != ST33KTPM2X_OK)
         {
-            (void)st33ktpm2x_release_locality0(ctx);
-            return rc;
+            return st33_trace_fail(ctx, "read_sts_after_fifo_write", rc, true);
         }
+        ST33_TRACE("TPM TIS after FIFO sent=%u/%u sts=0x%02X expect=%u\r\n",
+                   (unsigned int)sent,
+                   (unsigned int)command_len,
+                   (unsigned int)sts,
+                   ((sts & ST33_STS_EXPECT) != 0U) ? 1U : 0U);
         if ((sent < command_len) && ((sts & ST33_STS_EXPECT) == 0U))
         {
-            (void)st33ktpm2x_release_locality0(ctx);
-            return ST33KTPM2X_EPROTO;
+            return st33_trace_fail(ctx, "expect_cleared_before_command_end", ST33KTPM2X_EPROTO, true);
         }
     }
 
     rc = st33_write_sts(ctx, ST33_STS_TPM_GO);
     if (rc != ST33KTPM2X_OK)
     {
-        (void)st33ktpm2x_release_locality0(ctx);
-        return rc;
+        return st33_trace_fail(ctx, "write_tpm_go", rc, true);
     }
+    st33_trace_tis(ctx, "after_tpm_go");
 
-    rc = st33_wait_sts_bits(ctx, ST33_STS_DATA_AVAIL, ST33_STS_DATA_AVAIL, ctx->cfg.burst_timeout_ms);
+    rc = st33_wait_sts_bits(ctx,
+                            (uint8_t)(ST33_STS_VALID | ST33_STS_DATA_AVAIL),
+                            (uint8_t)(ST33_STS_VALID | ST33_STS_DATA_AVAIL),
+                            ctx->cfg.burst_timeout_ms);
     if (rc != ST33KTPM2X_OK)
     {
-        (void)st33ktpm2x_release_locality0(ctx);
-        return rc;
+        return st33_trace_fail(ctx, "wait_data_avail", rc, true);
     }
+    st33_trace_tis(ctx, "data_avail");
 
     rc = st33_read_response_stream(ctx, response, ST33_TPM_HEADER_SIZE);
     if (rc != ST33KTPM2X_OK)
     {
-        (void)st33ktpm2x_release_locality0(ctx);
-        return rc;
+        return st33_trace_fail(ctx, "read_response_header", rc, true);
     }
 
     rsp_total = (uint16_t)st33_be32_read(&response[2]);
+    ST33_TRACE("TPM TIS response header cc=0x%08lX total=%u tpm_rc=0x%08lX\r\n",
+               (unsigned long)command_code,
+               (unsigned int)rsp_total,
+               (unsigned long)st33_be32_read(&response[6]));
     if ((rsp_total < ST33_TPM_HEADER_SIZE) || (rsp_total > ST33KTPM2X_RSP_MAX_BYTES))
     {
         (void)st33_write_sts(ctx, ST33_STS_COMMAND_READY);
-        (void)st33ktpm2x_release_locality0(ctx);
-        return ST33KTPM2X_EPROTO;
+        return st33_trace_fail(ctx, "response_size_invalid", ST33KTPM2X_EPROTO, true);
     }
     if (rsp_total > response_capacity)
     {
         (void)st33_write_sts(ctx, ST33_STS_COMMAND_READY);
-        (void)st33ktpm2x_release_locality0(ctx);
-        return ST33KTPM2X_EOVERFLOW;
+        return st33_trace_fail(ctx, "response_capacity", ST33KTPM2X_EOVERFLOW, true);
     }
 
     if (rsp_total > ST33_TPM_HEADER_SIZE)
@@ -624,8 +903,7 @@ st33ktpm2x_status_t st33ktpm2x_transceive(st33ktpm2x_t *ctx,
         if (rc != ST33KTPM2X_OK)
         {
             (void)st33_write_sts(ctx, ST33_STS_COMMAND_READY);
-            (void)st33ktpm2x_release_locality0(ctx);
-            return rc;
+            return st33_trace_fail(ctx, "read_response_body", rc, true);
         }
     }
 
@@ -640,9 +918,15 @@ st33ktpm2x_status_t st33ktpm2x_transceive(st33ktpm2x_t *ctx,
 
     if ((tpm_rc != NULL) && (*tpm_rc != ST33KTPM2X_TPM2_RC_SUCCESS))
     {
+        ST33_TRACE("TPM TIS command TPM_RC cc=0x%08lX tpm_rc=0x%08lX\r\n",
+                   (unsigned long)command_code,
+                   (unsigned long)*tpm_rc);
         return ST33KTPM2X_ETPM_RC;
     }
 
+    ST33_TRACE("TPM TIS transceive OK cc=0x%08lX rsp_len=%u\r\n",
+               (unsigned long)command_code,
+               (unsigned int)*response_len);
     return ST33KTPM2X_OK;
 }
 

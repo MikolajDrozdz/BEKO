@@ -53,10 +53,10 @@ HASH_HandleTypeDef hhash;
 __ALIGN_BEGIN static const uint8_t pKeyHASH[1] __ALIGN_END = {
                             0x00};
 
-RNG_HandleTypeDef hrng;
-
 I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c3;
+
+RNG_HandleTypeDef hrng;
 
 RTC_HandleTypeDef hrtc;
 
@@ -100,6 +100,23 @@ int __io_putchar(int ch)
   uint8_t c = (uint8_t)ch;
   HAL_UART_Transmit(&huart1, &c, 1, 0xFFFF);
   return ch;
+}
+
+int _write(int file, char *ptr, int len)
+{
+  uint32_t primask;
+
+  (void)file;
+  if ((ptr == NULL) || (len <= 0))
+  {
+    return 0;
+  }
+
+  primask = __get_PRIMASK();
+  __disable_irq();
+  (void)HAL_UART_Transmit(&huart1, (uint8_t *)ptr, (uint16_t)len, HAL_MAX_DELAY);
+  __set_PRIMASK(primask);
+  return len;
 }
 /* USER CODE END 0 */
 
@@ -363,33 +380,6 @@ static void MX_HASH_Init(void)
 }
 
 /**
-  * @brief RNG Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_RNG_Init(void)
-{
-
-  /* USER CODE BEGIN RNG_Init 0 */
-
-  /* USER CODE END RNG_Init 0 */
-
-  /* USER CODE BEGIN RNG_Init 1 */
-
-  /* USER CODE END RNG_Init 1 */
-  hrng.Instance = RNG;
-  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
-  if (HAL_RNG_Init(&hrng) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN RNG_Init 2 */
-
-  /* USER CODE END RNG_Init 2 */
-
-}
-
-/**
   * @brief I2C1 Initialization Function
   * @param None
   * @retval None
@@ -453,7 +443,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.Timing = 0x00100413;
+  hi2c3.Init.Timing = 0x00300F38;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -521,6 +511,33 @@ static void MX_ICACHE_Init(void)
   /* USER CODE BEGIN ICACHE_Init 2 */
 
   /* USER CODE END ICACHE_Init 2 */
+
+}
+
+/**
+  * @brief RNG Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RNG_Init(void)
+{
+
+  /* USER CODE BEGIN RNG_Init 0 */
+
+  /* USER CODE END RNG_Init 0 */
+
+  /* USER CODE BEGIN RNG_Init 1 */
+
+  /* USER CODE END RNG_Init 1 */
+  hrng.Instance = RNG;
+  hrng.Init.ClockErrorDetection = RNG_CED_ENABLE;
+  if (HAL_RNG_Init(&hrng) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RNG_Init 2 */
+
+  /* USER CODE END RNG_Init 2 */
 
 }
 
@@ -691,6 +708,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -698,16 +716,28 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, VL53L3CX_xshout_Pin|SPI_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(TMP_RESET_GPIO_Port, TMP_RESET_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(TPM_RESET__GPIO_Port, TPM_RESET__Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RMF_RST_GPIO_Port, RMF_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : VL53L3CX_INT_Pin DIG_B2_Pin */
-  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin|DIG_B2_Pin;
+  /*Configure GPIO pin : TPM_DAVINT__Pin */
+  GPIO_InitStruct.Pin = TPM_DAVINT__Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(TPM_DAVINT__GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : VL53L3CX_INT_Pin */
+  GPIO_InitStruct.Pin = VL53L3CX_INT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DIG_B2_Pin */
+  GPIO_InitStruct.Pin = DIG_B2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(DIG_B2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : VL53L3CX_xshout_Pin */
   GPIO_InitStruct.Pin = VL53L3CX_xshout_Pin;
@@ -719,15 +749,15 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pins : DIG_B3_Pin DIG_B1_Pin */
   GPIO_InitStruct.Pin = DIG_B3_Pin|DIG_B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : TMP_RESET_Pin */
-  GPIO_InitStruct.Pin = TMP_RESET_Pin;
+  /*Configure GPIO pin : TPM_RESET__Pin */
+  GPIO_InitStruct.Pin = TPM_RESET__Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(TMP_RESET_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(TPM_RESET__GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : RFM_DIO1_EXIT_1_Pin RFM_DIO0_EXIT_2_Pin RFM_DIO5_EXIT_8_Pin */
   GPIO_InitStruct.Pin = RFM_DIO1_EXIT_1_Pin|RFM_DIO0_EXIT_2_Pin|RFM_DIO5_EXIT_8_Pin;
@@ -788,6 +818,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI0_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
   HAL_NVIC_SetPriority(EXTI1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(EXTI1_IRQn);
 

@@ -90,6 +90,10 @@ typedef struct
     uint32_t reset_pulse_ms;       /**< Reset low pulse width. */
     uint32_t reset_recovery_ms;    /**< Delay after reset release. */
 
+    GPIO_TypeDef *davint_port;     /**< Optional TPM_DAVINT# / PIRQ port. */
+    uint16_t davint_pin;           /**< Optional TPM_DAVINT# / PIRQ pin. */
+    GPIO_PinState davint_active_state; /**< Logical active level for DAVINT# (normally low). */
+
     GPIO_TypeDef *pp_port;         /**< Optional Physical Presence button port. */
     uint16_t pp_pin;               /**< Optional Physical Presence button pin. */
     GPIO_PinState pp_active_state; /**< Logical active level for PP button. */
@@ -137,6 +141,14 @@ st33ktpm2x_status_t st33ktpm2x_deinit(st33ktpm2x_t *ctx);
  * @return Status code.
  */
 st33ktpm2x_status_t st33ktpm2x_hard_reset(st33ktpm2x_t *ctx);
+
+/**
+ * @brief Read TPM_DAVINT# / PIRQ state.
+ * @param ctx Driver context.
+ * @param asserted [out] `true` if active-low interrupt line is asserted.
+ * @return Status code (`ST33KTPM2X_ENOTSUP` if DAVINT pin is not configured).
+ */
+st33ktpm2x_status_t st33ktpm2x_davint_is_asserted(st33ktpm2x_t *ctx, bool *asserted);
 
 /**
  * @brief Read state of optional Physical Presence button.

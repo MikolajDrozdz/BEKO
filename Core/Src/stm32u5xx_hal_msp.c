@@ -163,50 +163,6 @@ void HAL_HASH_MspDeInit(HASH_HandleTypeDef* hhash)
 }
 
 /**
-  * @brief RNG MSP Initialization
-  * This function configures the hardware resources used in this example
-  * @param hrng: RNG handle pointer
-  * @retval None
-  */
-void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
-{
-  if(hrng->Instance==RNG)
-  {
-    /* USER CODE BEGIN RNG_MspInit 0 */
-
-    /* USER CODE END RNG_MspInit 0 */
-    /* Peripheral clock enable */
-    __HAL_RCC_RNG_CLK_ENABLE();
-    /* USER CODE BEGIN RNG_MspInit 1 */
-
-    /* USER CODE END RNG_MspInit 1 */
-  }
-
-}
-
-/**
-  * @brief RNG MSP De-Initialization
-  * This function freeze the hardware resources used in this example
-  * @param hrng: RNG handle pointer
-  * @retval None
-  */
-void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
-{
-  if(hrng->Instance==RNG)
-  {
-    /* USER CODE BEGIN RNG_MspDeInit 0 */
-
-    /* USER CODE END RNG_MspDeInit 0 */
-    /* Peripheral clock disable */
-    __HAL_RCC_RNG_CLK_DISABLE();
-    /* USER CODE BEGIN RNG_MspDeInit 1 */
-
-    /* USER CODE END RNG_MspDeInit 1 */
-  }
-
-}
-
-/**
   * @brief I2C MSP Initialization
   * This function configures the hardware resources used in this example
   * @param hi2c: I2C handle pointer
@@ -337,6 +293,62 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* hi2c)
 }
 
 /**
+  * @brief RNG MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hrng: RNG handle pointer
+  * @retval None
+  */
+void HAL_RNG_MspInit(RNG_HandleTypeDef* hrng)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+  if(hrng->Instance==RNG)
+  {
+    /* USER CODE BEGIN RNG_MspInit 0 */
+
+    /* USER CODE END RNG_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RNG;
+    PeriphClkInit.RngClockSelection = RCC_RNGCLKSOURCE_HSI48;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* Peripheral clock enable */
+    __HAL_RCC_RNG_CLK_ENABLE();
+    /* USER CODE BEGIN RNG_MspInit 1 */
+
+    /* USER CODE END RNG_MspInit 1 */
+
+  }
+
+}
+
+/**
+  * @brief RNG MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hrng: RNG handle pointer
+  * @retval None
+  */
+void HAL_RNG_MspDeInit(RNG_HandleTypeDef* hrng)
+{
+  if(hrng->Instance==RNG)
+  {
+    /* USER CODE BEGIN RNG_MspDeInit 0 */
+
+    /* USER CODE END RNG_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_RNG_CLK_DISABLE();
+    /* USER CODE BEGIN RNG_MspDeInit 1 */
+
+    /* USER CODE END RNG_MspDeInit 1 */
+  }
+
+}
+
+/**
   * @brief RTC MSP Initialization
   * This function configures the hardware resources used in this example
   * @param hrtc: RTC handle pointer
@@ -430,7 +442,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     PA6     ------> SPI1_MISO
     PA7     ------> SPI1_MOSI
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|TPM_RESET__Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_5|GPIO_PIN_6|PA7_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -466,7 +478,7 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
     PA6     ------> SPI1_MISO
     PA7     ------> SPI1_MOSI
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5|GPIO_PIN_6|TPM_RESET__Pin);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5|GPIO_PIN_6|PA7_Pin);
 
     /* USER CODE BEGIN SPI1_MspDeInit 1 */
 

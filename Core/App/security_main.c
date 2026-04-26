@@ -1,5 +1,6 @@
 #include "security_main.h"
 
+#include "app_delay.h"
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
 #include "i2c_mem_store_lib/i2c_mem_store.h"
@@ -12,7 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SECURITY_TASK_STACK_SIZE            10240U
+#define SECURITY_TASK_STACK_SIZE            15360U
 #define SECURITY_TASK_STACK_WORDS           (SECURITY_TASK_STACK_SIZE / sizeof(StackType_t))
 #define SECURITY_CMD_QUEUE_DEPTH            16U
 #define SECURITY_CMD_WAIT_MS                3000U
@@ -44,6 +45,20 @@
 #define SECURITY_TPM_ROOT_NV_ATTRS          (SECURITY_TPM_NV_PPWRITE | \
                                              SECURITY_TPM_NV_OWNERREAD | \
                                              SECURITY_TPM_NV_NO_DA)
+#define SECURITY_TPM_REG_LOC_SEL            0x00U
+#define SECURITY_TPM_REG_ACCESS             0x04U
+#define SECURITY_TPM_REG_STS                0x18U
+#define SECURITY_TPM_REG_DATA_FIFO          0x24U
+#define SECURITY_TPM_REG_IF_CAP             0x30U
+#define SECURITY_TPM_REG_DID_VID            0x48U
+#define SECURITY_TPM_REG_RID                0x4CU
+#define SECURITY_TPM_DIAG_TIMEOUT_MS        20U
+
+#if defined(TPM_INIT_LOG)
+#define SECURITY_TPM_INIT_LOG(...)          printf(__VA_ARGS__)
+#else
+#define SECURITY_TPM_INIT_LOG(...)          do { if (0) { printf(__VA_ARGS__); } } while (0)
+#endif
 
 typedef enum
 {
@@ -302,6 +317,17 @@ static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BYTES]);
 static bool security_tpm_define_root_seed(void);
 static bool security_get_entropy_bytes(uint8_t *out, uint8_t len);
+static const char *security_tpm_status_text(st33ktpm2x_status_t rc);
+static uint32_t security_le32_read(const uint8_t *src);
+static void security_tpm_log_i2c_state(const char *tag, I2C_HandleTypeDef *hi2c);
+static void security_tpm_log_lines(const char *tag, const st33ktpm2x_cfg_t *cfg);
+static void security_tpm_scan_i2c3(const st33ktpm2x_cfg_t *cfg);
+static void security_tpm_dump_reg(const st33ktpm2x_cfg_t *cfg,
+                                  const char *name,
+                                  uint16_t reg,
+                                  uint16_t mem_addr_size,
+                                  uint8_t len);
+static void security_tpm_dump_raw_regs(const st33ktpm2x_cfg_t *cfg);
 static void security_bootstrap_tpm(void);
 static void security_bootstrap_store(void);
 
@@ -339,6 +365,12 @@ void security_main_create_task(void)
 
     if (s_security_task == NULL)
     {
+        memset(&s_security_task_cb, 0, sizeof(s_security_task_cb));
+        memset(s_security_task_stack, 0, sizeof(s_security_task_stack));
+        printf("SEC: task memory cb=%p stack=%p size=%lu\r\n",
+               (void *)&s_security_task_cb,
+               (void *)s_security_task_stack,
+               (unsigned long)sizeof(s_security_task_stack));
         s_security_task = osThreadNew(security_main_task_fn, NULL, &s_security_task_attr);
         if (s_security_task == NULL)
         {
@@ -1673,6 +1705,13 @@ static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
                                      SECURITY_KEY_SEED_BYTES,
                                      &out_len,
                                      &tpm_rc);
+        printf("SEC: TPM NV read idx=0x%08lX rc=%d(%s) tpm_rc=0x%08lX len=%u nonzero=%u\r\n",
+               (unsigned long)nv_index,
+               (int)rc,
+               security_tpm_status_text(rc),
+               (unsigned long)tpm_rc,
+               (unsigned int)out_len,
+               security_seed_has_data(seed) ? 1U : 0U);
         if ((rc == ST33KTPM2X_OK) &&
             (out_len == SECURITY_KEY_SEED_BYTES) &&
             security_seed_has_data(seed))
@@ -1688,8 +1727,9 @@ static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 
     if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
     {
-        printf("SEC: TPM root seed read failed rc=%d tpm_rc=0x%08lX\r\n",
+        printf("SEC: TPM root seed read failed rc=%d(%s) tpm_rc=0x%08lX\r\n",
                (int)rc,
+               security_tpm_status_text(rc),
                (unsigned long)tpm_rc);
     }
 
@@ -1711,6 +1751,12 @@ static bool security_tpm_define_root_seed(void)
                                    SECURITY_KEY_SEED_BYTES,
                                    SECURITY_TPM_ROOT_NV_ATTRS,
                                    &tpm_rc);
+    printf("SEC: TPM NV define idx=0x%08lX attrs=0x%08lX rc=%d(%s) tpm_rc=0x%08lX\r\n",
+           (unsigned long)SECURITY_TPM_ROOT_NV_INDEX,
+           (unsigned long)SECURITY_TPM_ROOT_NV_ATTRS,
+           (int)rc,
+           security_tpm_status_text(rc),
+           (unsigned long)tpm_rc);
     if (rc == ST33KTPM2X_OK)
     {
         return true;
@@ -1718,8 +1764,9 @@ static bool security_tpm_define_root_seed(void)
 
     if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
     {
-        printf("SEC: TPM root seed define failed rc=%d tpm_rc=0x%08lX\r\n",
+        printf("SEC: TPM root seed define failed rc=%d(%s) tpm_rc=0x%08lX\r\n",
                (int)rc,
+               security_tpm_status_text(rc),
                (unsigned long)tpm_rc);
     }
 
@@ -1742,6 +1789,11 @@ static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BY
                                               seed,
                                               SECURITY_KEY_SEED_BYTES,
                                               &tpm_rc);
+    printf("SEC: TPM NV write PP idx=0x%08lX rc=%d(%s) tpm_rc=0x%08lX\r\n",
+           (unsigned long)SECURITY_TPM_ROOT_NV_INDEX,
+           (int)rc,
+           security_tpm_status_text(rc),
+           (unsigned long)tpm_rc);
     if (rc == ST33KTPM2X_OK)
     {
         s_key_seed_tpm_pp_backed = true;
@@ -1757,6 +1809,11 @@ static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BY
                                                   seed,
                                                   SECURITY_KEY_SEED_BYTES,
                                                   &tpm_rc);
+        printf("SEC: TPM NV write PP retry idx=0x%08lX rc=%d(%s) tpm_rc=0x%08lX\r\n",
+               (unsigned long)SECURITY_TPM_ROOT_NV_INDEX,
+               (int)rc,
+               security_tpm_status_text(rc),
+               (unsigned long)tpm_rc);
         if (rc == ST33KTPM2X_OK)
         {
             s_key_seed_tpm_pp_backed = true;
@@ -1766,8 +1823,9 @@ static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BY
 
     if ((rc != ST33KTPM2X_ENOTSUP) && (rc != ST33KTPM2X_ETPM_RC))
     {
-        printf("SEC: TPM root seed write failed rc=%d tpm_rc=0x%08lX\r\n",
+        printf("SEC: TPM root seed write failed rc=%d(%s) tpm_rc=0x%08lX\r\n",
                (int)rc,
+               security_tpm_status_text(rc),
                (unsigned long)tpm_rc);
     }
 
@@ -1799,9 +1857,11 @@ static bool security_get_entropy_bytes(uint8_t *out, uint8_t len)
             return true;
         }
 
-        printf("SEC: TPM random unavailable rc=%d tpm_rc=0x%08lX\r\n",
+        printf("SEC: TPM random unavailable rc=%d(%s) tpm_rc=0x%08lX len=%u\r\n",
                (int)tpm_st,
-               (unsigned long)tpm_rc);
+               security_tpm_status_text(tpm_st),
+               (unsigned long)tpm_rc,
+               (unsigned int)out_len);
         s_tpm_ready = false;
     }
 
@@ -2344,34 +2404,312 @@ static bool security_get_device_internal(uint8_t idx, trusted_info_t *out)
     return true;
 }
 
+static const char *security_tpm_status_text(st33ktpm2x_status_t rc)
+{
+    switch (rc)
+    {
+        case ST33KTPM2X_OK:
+            return "OK";
+        case ST33KTPM2X_EINVAL:
+            return "EINVAL";
+        case ST33KTPM2X_ESTATE:
+            return "ESTATE";
+        case ST33KTPM2X_EHAL:
+            return "EHAL";
+        case ST33KTPM2X_ETIMEOUT:
+            return "ETIMEOUT";
+        case ST33KTPM2X_EOVERFLOW:
+            return "EOVERFLOW";
+        case ST33KTPM2X_EPROTO:
+            return "EPROTO";
+        case ST33KTPM2X_ETPM_RC:
+            return "ETPM_RC";
+        case ST33KTPM2X_ENOTSUP:
+            return "ENOTSUP";
+        default:
+            return "?";
+    }
+}
+
+static uint32_t security_le32_read(const uint8_t *src)
+{
+    return ((uint32_t)src[3] << 24) |
+           ((uint32_t)src[2] << 16) |
+           ((uint32_t)src[1] << 8) |
+           (uint32_t)src[0];
+}
+
+static void security_tpm_log_i2c_state(const char *tag, I2C_HandleTypeDef *hi2c)
+{
+    if (hi2c == NULL)
+    {
+        SECURITY_TPM_INIT_LOG("SEC: TPM I2C %s handle=NULL\r\n", (tag != NULL) ? tag : "state");
+        return;
+    }
+
+    SECURITY_TPM_INIT_LOG("SEC: TPM I2C %s inst=%p state=%d mode=%d err=0x%08lX timing=0x%08lX\r\n",
+                          (tag != NULL) ? tag : "state",
+                          (void *)hi2c->Instance,
+                          (int)HAL_I2C_GetState(hi2c),
+                          (int)HAL_I2C_GetMode(hi2c),
+                          (unsigned long)HAL_I2C_GetError(hi2c),
+                          (unsigned long)hi2c->Init.Timing);
+}
+
+static void security_tpm_log_lines(const char *tag, const st33ktpm2x_cfg_t *cfg)
+{
+    GPIO_PinState reset_state = GPIO_PIN_RESET;
+    GPIO_PinState davint_state = GPIO_PIN_RESET;
+    GPIO_PinState scl_state;
+    GPIO_PinState sda_state;
+
+    scl_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);
+    sda_state = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_1);
+    if ((cfg != NULL) && (cfg->reset_port != NULL) && (cfg->reset_pin != 0U))
+    {
+        reset_state = HAL_GPIO_ReadPin(cfg->reset_port, cfg->reset_pin);
+    }
+    if ((cfg != NULL) && (cfg->davint_port != NULL) && (cfg->davint_pin != 0U))
+    {
+        davint_state = HAL_GPIO_ReadPin(cfg->davint_port, cfg->davint_pin);
+    }
+
+    SECURITY_TPM_INIT_LOG("SEC: TPM lines %s SCL_PC0=%u SDA_PC1=%u RESET#=%u DAVINT#=%u\r\n",
+                          (tag != NULL) ? tag : "now",
+                          (unsigned int)scl_state,
+                          (unsigned int)sda_state,
+                          (unsigned int)reset_state,
+                          (unsigned int)davint_state);
+}
+
+static void security_tpm_scan_i2c3(const st33ktpm2x_cfg_t *cfg)
+{
+    uint8_t addr;
+    uint8_t hits = 0U;
+
+    if ((cfg == NULL) || (cfg->hi2c == NULL))
+    {
+        return;
+    }
+
+    for (addr = 0x08U; addr <= 0x77U; addr++)
+    {
+        HAL_StatusTypeDef st = HAL_I2C_IsDeviceReady(cfg->hi2c, (uint16_t)(addr << 1), 1U, 2U);
+        if (st == HAL_OK)
+        {
+            hits++;
+            SECURITY_TPM_INIT_LOG("SEC: TPM I2C3 scan hit addr=0x%02X\r\n", (unsigned int)addr);
+        }
+    }
+
+    if (hits == 0U)
+    {
+        SECURITY_TPM_INIT_LOG("SEC: TPM I2C3 scan no devices\r\n");
+    }
+    security_tpm_log_i2c_state("after_scan", cfg->hi2c);
+}
+
+static void security_tpm_dump_reg(const st33ktpm2x_cfg_t *cfg,
+                                  const char *name,
+                                  uint16_t reg,
+                                  uint16_t mem_addr_size,
+                                  uint8_t len)
+{
+    uint8_t buf[8];
+    HAL_StatusTypeDef st;
+    uint8_t i;
+
+    if ((cfg == NULL) || (cfg->hi2c == NULL) || (len == 0U) || (len > sizeof(buf)))
+    {
+        return;
+    }
+
+    memset(buf, 0xEE, sizeof(buf));
+    if (mem_addr_size == I2C_MEMADD_SIZE_8BIT)
+    {
+        uint8_t reg8 = (uint8_t)reg;
+
+        st = HAL_I2C_Master_Transmit(cfg->hi2c,
+                                     (uint16_t)(cfg->i2c_addr_7bit << 1),
+                                     &reg8,
+                                     1U,
+                                     SECURITY_TPM_DIAG_TIMEOUT_MS);
+        if (st == HAL_OK)
+        {
+            app_delay_ms(1U);
+            st = HAL_I2C_Master_Receive(cfg->hi2c,
+                                        (uint16_t)(cfg->i2c_addr_7bit << 1),
+                                        buf,
+                                        len,
+                                        SECURITY_TPM_DIAG_TIMEOUT_MS);
+        }
+    }
+    else
+    {
+        st = HAL_I2C_Mem_Read(cfg->hi2c,
+                              (uint16_t)(cfg->i2c_addr_7bit << 1),
+                              reg,
+                              mem_addr_size,
+                              buf,
+                              len,
+                              SECURITY_TPM_DIAG_TIMEOUT_MS);
+    }
+
+    SECURITY_TPM_INIT_LOG("SEC: TPM reg%s %s addr=0x%02X reg=0x%04X len=%u st=%d err=0x%08lX data=",
+                          (mem_addr_size == I2C_MEMADD_SIZE_8BIT) ? "8" : "16",
+                          (name != NULL) ? name : "?",
+                          (unsigned int)cfg->i2c_addr_7bit,
+                          (unsigned int)reg,
+                          (unsigned int)len,
+                          (int)st,
+                          (unsigned long)HAL_I2C_GetError(cfg->hi2c));
+    for (i = 0U; i < len; i++)
+    {
+        SECURITY_TPM_INIT_LOG("%02X", (unsigned int)buf[i]);
+    }
+    if ((st == HAL_OK) && (len == 4U))
+    {
+        SECURITY_TPM_INIT_LOG(" le=0x%08lX be=0x%08lX",
+                              (unsigned long)security_le32_read(buf),
+                              (unsigned long)security_be32_read(buf));
+    }
+    SECURITY_TPM_INIT_LOG("\r\n");
+}
+
+static void security_tpm_dump_raw_regs(const st33ktpm2x_cfg_t *cfg)
+{
+    security_tpm_dump_reg(cfg, "LOCSEL", SECURITY_TPM_REG_LOC_SEL, I2C_MEMADD_SIZE_8BIT, 1U);
+    security_tpm_dump_reg(cfg, "ACCESS", SECURITY_TPM_REG_ACCESS, I2C_MEMADD_SIZE_8BIT, 1U);
+    security_tpm_dump_reg(cfg, "STS", SECURITY_TPM_REG_STS, I2C_MEMADD_SIZE_8BIT, 3U);
+    security_tpm_dump_reg(cfg, "IFCAP", SECURITY_TPM_REG_IF_CAP, I2C_MEMADD_SIZE_8BIT, 4U);
+    security_tpm_dump_reg(cfg, "DIDVID", SECURITY_TPM_REG_DID_VID, I2C_MEMADD_SIZE_8BIT, 4U);
+    security_tpm_dump_reg(cfg, "RID", SECURITY_TPM_REG_RID, I2C_MEMADD_SIZE_8BIT, 1U);
+    security_tpm_dump_reg(cfg, "DIDVID", SECURITY_TPM_REG_DID_VID, I2C_MEMADD_SIZE_16BIT, 4U);
+    security_tpm_dump_reg(cfg, "RID", SECURITY_TPM_REG_RID, I2C_MEMADD_SIZE_16BIT, 1U);
+}
+
 static void security_bootstrap_tpm(void)
 {
     st33ktpm2x_cfg_t cfg;
+    st33ktpm2x_status_t rc;
+    HAL_StatusTypeDef i2c_probe;
     uint32_t tpm_rc = 0UL;
     uint32_t did_vid = 0UL;
     uint8_t rid = 0U;
+    bool davint_asserted = false;
 
     st33ktpm2x_default_cfg(&cfg, &hi2c3);
-    if (st33ktpm2x_init(&s_tpm, &cfg) != ST33KTPM2X_OK)
+    SECURITY_TPM_INIT_LOG("SEC: TPM cfg hi2c=%p inst=%p addr7=0x%02X io=%lu locality=%lu burst=%lu reset_port=%p reset_pin=0x%04X davint_port=%p davint_pin=0x%04X\r\n",
+                          (void *)cfg.hi2c,
+                          (cfg.hi2c != NULL) ? (void *)cfg.hi2c->Instance : NULL,
+                          (unsigned int)cfg.i2c_addr_7bit,
+                          (unsigned long)cfg.io_timeout_ms,
+                          (unsigned long)cfg.locality_timeout_ms,
+                          (unsigned long)cfg.burst_timeout_ms,
+                          (void *)cfg.reset_port,
+                          (unsigned int)cfg.reset_pin,
+                          (void *)cfg.davint_port,
+                          (unsigned int)cfg.davint_pin);
+    security_tpm_log_i2c_state("before_init", cfg.hi2c);
+    security_tpm_log_lines("before_reset", &cfg);
+
+    rc = st33ktpm2x_init(&s_tpm, &cfg);
+    if (rc != ST33KTPM2X_OK)
     {
-        printf("SEC: TPM init failed\r\n");
+        printf("SEC: TPM init failed rc=%d(%s)\r\n",
+               (int)rc,
+               security_tpm_status_text(rc));
         s_tpm_ready = false;
         return;
     }
 
-    (void)st33ktpm2x_hard_reset(&s_tpm);
-    (void)st33ktpm2x_tpm2_startup(&s_tpm, ST33KTPM2X_TPM2_SU_CLEAR, &tpm_rc);
-    (void)st33ktpm2x_tpm2_self_test(&s_tpm, false, &tpm_rc);
-
-    if (st33ktpm2x_read_identity(&s_tpm, &did_vid, &rid) == ST33KTPM2X_OK)
+    SECURITY_TPM_INIT_LOG("SEC: TPM hard reset pulse=%lu recovery=%lu\r\n",
+                          (unsigned long)cfg.reset_pulse_ms,
+                          (unsigned long)cfg.reset_recovery_ms);
+    rc = st33ktpm2x_hard_reset(&s_tpm);
+    SECURITY_TPM_INIT_LOG("SEC: TPM hard reset rc=%d(%s)\r\n",
+                          (int)rc,
+                          security_tpm_status_text(rc));
+    security_tpm_log_lines("after_reset", &cfg);
+    security_tpm_log_i2c_state("after_reset", cfg.hi2c);
+    if (st33ktpm2x_davint_is_asserted(&s_tpm, &davint_asserted) == ST33KTPM2X_OK)
     {
-        s_tpm_ready = true;
-        printf("SEC: TPM ready DIDVID=0x%08lX RID=0x%02X\r\n", (unsigned long)did_vid, rid);
+        SECURITY_TPM_INIT_LOG("SEC: TPM DAVINT# %s\r\n", davint_asserted ? "asserted" : "idle");
+    }
+
+    security_tpm_scan_i2c3(&cfg);
+
+    i2c_probe = HAL_I2C_IsDeviceReady(cfg.hi2c,
+                                      (uint16_t)(cfg.i2c_addr_7bit << 1),
+                                      3U,
+                                      cfg.io_timeout_ms);
+    SECURITY_TPM_INIT_LOG("SEC: TPM I2C probe addr=0x%02X status=%d err=0x%08lX\r\n",
+                          (unsigned int)cfg.i2c_addr_7bit,
+                          (int)i2c_probe,
+                          (unsigned long)HAL_I2C_GetError(cfg.hi2c));
+    security_tpm_dump_raw_regs(&cfg);
+
+    rc = st33ktpm2x_read_identity(&s_tpm, &did_vid, &rid);
+    if (rc != ST33KTPM2X_OK)
+    {
+        s_tpm_ready = false;
+        printf("SEC: TPM identity invalid rc=%d(%s) DIDVID=0x%08lX RID=0x%02X\r\n",
+               (int)rc,
+               security_tpm_status_text(rc),
+               (unsigned long)did_vid,
+               rid);
+        security_tpm_log_i2c_state("identity_failed", cfg.hi2c);
+        return;
+    }
+    SECURITY_TPM_INIT_LOG("SEC: TPM identity OK DIDVID=0x%08lX RID=0x%02X\r\n",
+                          (unsigned long)did_vid,
+                          rid);
+
+    rc = st33ktpm2x_tpm2_startup(&s_tpm, ST33KTPM2X_TPM2_SU_CLEAR, &tpm_rc);
+    SECURITY_TPM_INIT_LOG("SEC: TPM startup rc=%d(%s) tpm_rc=0x%08lX\r\n",
+                          (int)rc,
+                          security_tpm_status_text(rc),
+                          (unsigned long)tpm_rc);
+    if ((rc != ST33KTPM2X_OK) && (rc != ST33KTPM2X_ETPM_RC))
+    {
+        s_tpm_ready = false;
+        printf("SEC: TPM startup failed rc=%d(%s) tpm_rc=0x%08lX; define TPM_INIT_LOG for bus trace\r\n",
+               (int)rc,
+               security_tpm_status_text(rc),
+               (unsigned long)tpm_rc);
+        security_tpm_log_i2c_state("startup_failed", cfg.hi2c);
+        security_tpm_dump_raw_regs(&cfg);
+        return;
+    }
+
+    rc = st33ktpm2x_tpm2_self_test(&s_tpm, false, &tpm_rc);
+    SECURITY_TPM_INIT_LOG("SEC: TPM self-test rc=%d(%s) tpm_rc=0x%08lX\r\n",
+                          (int)rc,
+                          security_tpm_status_text(rc),
+                          (unsigned long)tpm_rc);
+    if ((rc != ST33KTPM2X_OK) && (rc != ST33KTPM2X_ETPM_RC))
+    {
+        s_tpm_ready = false;
+        printf("SEC: TPM self-test failed rc=%d(%s) tpm_rc=0x%08lX; define TPM_INIT_LOG for bus trace\r\n",
+               (int)rc,
+               security_tpm_status_text(rc),
+               (unsigned long)tpm_rc);
+        security_tpm_log_i2c_state("self_test_failed", cfg.hi2c);
+        security_tpm_dump_raw_regs(&cfg);
+        return;
+    }
+
+    s_tpm_ready = true;
+    if ((rc == ST33KTPM2X_ETPM_RC) && (tpm_rc != ST33KTPM2X_TPM2_RC_SUCCESS))
+    {
+        printf("SEC: TPM ready DIDVID=0x%08lX RID=0x%02X self_test_tpm_rc=0x%08lX\r\n",
+               (unsigned long)did_vid,
+               rid,
+               (unsigned long)tpm_rc);
     }
     else
     {
-        s_tpm_ready = false;
-        printf("SEC: TPM not ready\r\n");
+        printf("SEC: TPM ready DIDVID=0x%08lX RID=0x%02X\r\n", (unsigned long)did_vid, rid);
     }
 }
 

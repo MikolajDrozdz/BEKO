@@ -14,6 +14,7 @@ Dokumenty pomocnicze:
 - Ochrona przed replay w pierwszym wdrożeniu używa monotonicznego `counter` dla relacji gateway-node i zapisuje go w małym slocie `secret` NVM.
 - `TPM PP` w obecnym hardware jest podłączony do samego modułu TPM, nie do GPIO MCU.
   Pin TPM PP to pin `7`, aktywny stanem `VDD`.
+- TPM jest podłączony przez `I2C3` (`PC0` = SCL, `PC1` = SDA); reset `TPM_RESET#` jest na `PB0`, a `TPM_DAVINT#` / `PIRQ` na `PH0` jako `EXTI0`, aktywny niskim stanem.
 - Firmware używa TPM jako źródła trwałego root seeda:
   - główny NV index: `0x01C10101`,
   - legacy read-only/migration index: `0x01C10100`,

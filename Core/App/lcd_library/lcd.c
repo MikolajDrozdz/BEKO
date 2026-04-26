@@ -8,8 +8,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#define LCD_I2C_ADDR_7BIT                0x27U
-#define LCD_I2C_ADDR_8BIT                (LCD_I2C_ADDR_7BIT << 1)
+#define LCD_I2C_ADDR_DEFAULT_7BIT        0x27U
+#define LCD_I2C_ADDR_ALT_7BIT            0x3FU
 
 #define LCD_RS_MASK                      0x01U
 #define LCD_EN_MASK                      0x04U
@@ -33,6 +33,7 @@ typedef struct
 {
     bool initialized;
     uint8_t backlight;
+    uint8_t addr_7bit;
 } lcd_state_t;
 
 extern I2C_HandleTypeDef hi2c1;
@@ -40,8 +41,12 @@ extern I2C_HandleTypeDef hi2c1;
 static lcd_state_t s_lcd_state =
 {
     .initialized = false,
-    .backlight = LCD_BL_MASK
+    .backlight = LCD_BL_MASK,
+    .addr_7bit = LCD_I2C_ADDR_DEFAULT_7BIT
 };
+
+static bool s_lcd_ready_logged = false;
+static bool s_lcd_failure_logged = false;
 
 static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t length);
 static bool lcd_write_nibble_locked(uint8_t nibble, bool rs);
@@ -70,7 +75,7 @@ static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t length)
     }
 
     return (app_i2c_master_transmit(&hi2c1,
-                                    LCD_I2C_ADDR_8BIT,
+                                    (uint16_t)(s_lcd_state.addr_7bit << 1),
                                     data,
                                     length,
                                     LCD_I2C_TIMEOUT_MS) == HAL_OK);
@@ -171,80 +176,107 @@ static uint8_t lcd_ddram_base(uint8_t row)
  */
 static bool lcd_init_locked(void)
 {
+    uint8_t candidates[3];
+    uint32_t candidate_idx;
     uint32_t attempt;
 
-    for (attempt = 0U; attempt < LCD_INIT_RETRY_COUNT; attempt++)
+    candidates[0] = s_lcd_state.addr_7bit;
+    candidates[1] = LCD_I2C_ADDR_DEFAULT_7BIT;
+    candidates[2] = LCD_I2C_ADDR_ALT_7BIT;
+
+    for (candidate_idx = 0U; candidate_idx < (sizeof(candidates) / sizeof(candidates[0])); candidate_idx++)
     {
-        app_delay_ms(60U);
+        uint32_t previous_idx;
+        bool duplicate = false;
 
-        if (!lcd_i2c_tx_locked(&s_lcd_state.backlight, 1U))
+        for (previous_idx = 0U; previous_idx < candidate_idx; previous_idx++)
+        {
+            if (candidates[previous_idx] == candidates[candidate_idx])
+            {
+                duplicate = true;
+                break;
+            }
+        }
+        if (duplicate)
         {
             continue;
         }
 
-        app_delay_ms(5U);
+        s_lcd_state.addr_7bit = candidates[candidate_idx];
 
-        if (!lcd_write_nibble_locked(0x03U, false))
+        for (attempt = 0U; attempt < LCD_INIT_RETRY_COUNT; attempt++)
         {
-            continue;
-        }
-        app_delay_ms(5U);
+            app_delay_ms(60U);
 
-        if (!lcd_write_nibble_locked(0x03U, false))
-        {
-            continue;
-        }
-        app_delay_ms(5U);
+            if (!lcd_i2c_tx_locked(&s_lcd_state.backlight, 1U))
+            {
+                continue;
+            }
 
-        if (!lcd_write_nibble_locked(0x03U, false))
-        {
-            continue;
-        }
-        app_delay_ms(2U);
+            app_delay_ms(5U);
 
-        if (!lcd_write_nibble_locked(0x02U, false))
-        {
-            continue;
-        }
-        app_delay_ms(2U);
+            if (!lcd_write_nibble_locked(0x03U, false))
+            {
+                continue;
+            }
+            app_delay_ms(5U);
 
-        if (!lcd_send_command_locked(LCD_CMD_FUNCTION_SET))
-        {
-            continue;
-        }
+            if (!lcd_write_nibble_locked(0x03U, false))
+            {
+                continue;
+            }
+            app_delay_ms(5U);
 
-        if (!lcd_send_command_locked(LCD_CMD_FUNCTION_SET))
-        {
-            continue;
-        }
+            if (!lcd_write_nibble_locked(0x03U, false))
+            {
+                continue;
+            }
+            app_delay_ms(2U);
 
-        if (!lcd_send_command_locked(LCD_CMD_DISPLAY_OFF))
-        {
-            continue;
-        }
+            if (!lcd_write_nibble_locked(0x02U, false))
+            {
+                continue;
+            }
+            app_delay_ms(2U);
 
-        if (!lcd_send_command_locked(LCD_CMD_CLEAR))
-        {
-            continue;
-        }
+            if (!lcd_send_command_locked(LCD_CMD_FUNCTION_SET))
+            {
+                continue;
+            }
 
-        if (!lcd_send_command_locked(LCD_CMD_ENTRY_MODE))
-        {
-            continue;
-        }
+            if (!lcd_send_command_locked(LCD_CMD_FUNCTION_SET))
+            {
+                continue;
+            }
 
-        if (!lcd_send_command_locked(LCD_CMD_DISPLAY_ON))
-        {
-            continue;
-        }
+            if (!lcd_send_command_locked(LCD_CMD_DISPLAY_OFF))
+            {
+                continue;
+            }
 
-        if (!lcd_send_command_locked(LCD_CMD_HOME))
-        {
-            continue;
-        }
+            if (!lcd_send_command_locked(LCD_CMD_CLEAR))
+            {
+                continue;
+            }
 
-        s_lcd_state.initialized = true;
-        return true;
+            if (!lcd_send_command_locked(LCD_CMD_ENTRY_MODE))
+            {
+                continue;
+            }
+
+            if (!lcd_send_command_locked(LCD_CMD_DISPLAY_ON))
+            {
+                continue;
+            }
+
+            if (!lcd_send_command_locked(LCD_CMD_HOME))
+            {
+                continue;
+            }
+
+            s_lcd_state.initialized = true;
+            return true;
+        }
     }
 
     s_lcd_state.initialized = false;
@@ -364,8 +396,26 @@ void lcd_demo(void)
 
 void lcd_init(void)
 {
+    bool ok;
+
     s_lcd_state.initialized = false;
-    (void)lcd_ensure_ready();
+    ok = lcd_ensure_ready();
+    if (ok)
+    {
+        if (!s_lcd_ready_logged)
+        {
+            printf("LCD: init OK addr=0x%02X\r\n", (unsigned int)s_lcd_state.addr_7bit);
+            s_lcd_ready_logged = true;
+        }
+        s_lcd_failure_logged = false;
+    }
+    else if (!s_lcd_failure_logged)
+    {
+        printf("LCD: init failed addr=0x%02X err=0x%08lX\r\n",
+               (unsigned int)s_lcd_state.addr_7bit,
+               (unsigned long)HAL_I2C_GetError(&hi2c1));
+        s_lcd_failure_logged = true;
+    }
 }
 
 void lcd_write_string(uint8_t *str)

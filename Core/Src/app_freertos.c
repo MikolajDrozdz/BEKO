@@ -130,5 +130,14 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
   }
 }
 
+void vApplicationMallocFailedHook(void)
+{
+  printf("RTOS FATAL: malloc failed\r\n");
+  taskDISABLE_INTERRUPTS();
+  for (;;)
+  {
+  }
+}
+
 /* USER CODE END Application */
 

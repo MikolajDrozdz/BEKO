@@ -22,14 +22,26 @@ extern HASH_HandleTypeDef hhash;
 #define LAVIET_TEST_FIXED_FRAME_MAC  0U
 #define LAVIET_TEST_FIXED_FRAME_MAC_BYTE  0x01U
 
-typedef union
-{
-    uint32_t words[4];
-    uint8_t bytes[16];
-} laviet_crypto_block_t;
-
 static osMutexId_t s_crypto_mutex = NULL;
 static bool s_crypto_hw_ready = false;
+
+static const char *laviet_hal_status_text(HAL_StatusTypeDef status);
+#if defined(HAL_CRYP_MODULE_ENABLED)
+static const char *laviet_cryp_state_text(HAL_CRYP_STATETypeDef state);
+static void laviet_crypto_log_cryp_context(const char *stage);
+#endif
+#if defined(HAL_HASH_MODULE_ENABLED)
+static const char *laviet_hash_state_text(HAL_HASH_StateTypeDef state);
+static void laviet_crypto_log_hash_context(const char *stage);
+#endif
+static bool laviet_crypto_log_mismatch(const char *stage,
+                                       const uint8_t *expected,
+                                       const uint8_t *actual,
+                                       uint16_t len);
+#if defined(HAL_CRYP_MODULE_ENABLED)
+static void laviet_crypto_pack_be_words(uint32_t words[4], const uint8_t bytes[16]);
+static void laviet_crypto_unpack_be_words(uint8_t bytes[16], const uint32_t words[4]);
+#endif
 
 typedef struct
 {
@@ -99,6 +111,155 @@ static const uint8_t s_aes_rcon[11] =
 {
     0x00U, 0x01U, 0x02U, 0x04U, 0x08U, 0x10U, 0x20U, 0x40U, 0x80U, 0x1BU, 0x36U
 };
+
+static const char *laviet_hal_status_text(HAL_StatusTypeDef status)
+{
+    switch (status)
+    {
+        case HAL_OK:
+            return "OK";
+        case HAL_ERROR:
+            return "ERROR";
+        case HAL_BUSY:
+            return "BUSY";
+        case HAL_TIMEOUT:
+            return "TIMEOUT";
+        default:
+            return "?";
+    }
+}
+
+#if defined(HAL_CRYP_MODULE_ENABLED)
+static const char *laviet_cryp_state_text(HAL_CRYP_STATETypeDef state)
+{
+    switch (state)
+    {
+        case HAL_CRYP_STATE_RESET:
+            return "RESET";
+        case HAL_CRYP_STATE_READY:
+            return "READY";
+        case HAL_CRYP_STATE_BUSY:
+            return "BUSY";
+#if (USE_HAL_CRYP_SUSPEND_RESUME == 1U)
+        case HAL_CRYP_STATE_SUSPENDED:
+            return "SUSPENDED";
+#endif
+        default:
+            return "?";
+    }
+}
+
+static void laviet_crypto_log_cryp_context(const char *stage)
+{
+    printf("CRYPTO: AES %s inst=%p state=%d(%s) err=0x%08lX alg=0x%08lX dtype=0x%08lX width=%lu keysize=0x%08lX\r\n",
+           (stage != NULL) ? stage : "state",
+           (void *)hcryp.Instance,
+           (int)HAL_CRYP_GetState(&hcryp),
+           laviet_cryp_state_text(HAL_CRYP_GetState(&hcryp)),
+           (unsigned long)HAL_CRYP_GetError(&hcryp),
+           (unsigned long)hcryp.Init.Algorithm,
+           (unsigned long)hcryp.Init.DataType,
+           (unsigned long)hcryp.Init.DataWidthUnit,
+           (unsigned long)hcryp.Init.KeySize);
+}
+#endif
+
+#if defined(HAL_HASH_MODULE_ENABLED)
+static const char *laviet_hash_state_text(HAL_HASH_StateTypeDef state)
+{
+    switch (state)
+    {
+        case HAL_HASH_STATE_RESET:
+            return "RESET";
+        case HAL_HASH_STATE_READY:
+            return "READY";
+        case HAL_HASH_STATE_BUSY:
+            return "BUSY";
+        case HAL_HASH_STATE_TIMEOUT:
+            return "TIMEOUT";
+        case HAL_HASH_STATE_ERROR:
+            return "ERROR";
+        case HAL_HASH_STATE_SUSPENDED:
+            return "SUSPENDED";
+        default:
+            return "?";
+    }
+}
+
+static void laviet_crypto_log_hash_context(const char *stage)
+{
+    printf("CRYPTO: HASH %s state=%d(%s) err=0x%08lX dtype=0x%08lX key_len=%lu\r\n",
+           (stage != NULL) ? stage : "state",
+           (int)HAL_HASH_GetState(&hhash),
+           laviet_hash_state_text(HAL_HASH_GetState(&hhash)),
+           (unsigned long)HAL_HASH_GetError(&hhash),
+           (unsigned long)hhash.Init.DataType,
+           (unsigned long)hhash.Init.KeySize);
+}
+#endif
+
+static bool laviet_crypto_log_mismatch(const char *stage,
+                                       const uint8_t *expected,
+                                       const uint8_t *actual,
+                                       uint16_t len)
+{
+    uint16_t i;
+
+    if ((expected == NULL) || (actual == NULL))
+    {
+        printf("CRYPTO: self-test failed stage=%s reason=NULL_compare_buffer\r\n",
+               (stage != NULL) ? stage : "?");
+        return false;
+    }
+
+    for (i = 0U; i < len; i++)
+    {
+        if (expected[i] != actual[i])
+        {
+            printf("CRYPTO: self-test mismatch stage=%s index=%u expected=0x%02X actual=0x%02X len=%u\r\n",
+                   (stage != NULL) ? stage : "?",
+                   (unsigned int)i,
+                   (unsigned int)expected[i],
+                   (unsigned int)actual[i],
+                   (unsigned int)len);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+#if defined(HAL_CRYP_MODULE_ENABLED)
+static void laviet_crypto_pack_be_words(uint32_t words[4], const uint8_t bytes[16])
+{
+    uint8_t i;
+
+    for (i = 0U; i < 4U; i++)
+    {
+        uint8_t offset = (uint8_t)(i * 4U);
+
+        words[i] = ((uint32_t)bytes[offset] << 24) |
+                   ((uint32_t)bytes[offset + 1U] << 16) |
+                   ((uint32_t)bytes[offset + 2U] << 8) |
+                   (uint32_t)bytes[offset + 3U];
+    }
+}
+
+static void laviet_crypto_unpack_be_words(uint8_t bytes[16], const uint32_t words[4])
+{
+    uint8_t i;
+
+    for (i = 0U; i < 4U; i++)
+    {
+        uint8_t offset = (uint8_t)(i * 4U);
+
+        bytes[offset] = (uint8_t)(words[i] >> 24);
+        bytes[offset + 1U] = (uint8_t)(words[i] >> 16);
+        bytes[offset + 2U] = (uint8_t)(words[i] >> 8);
+        bytes[offset + 3U] = (uint8_t)words[i];
+    }
+}
+#endif
 
 static uint32_t laviet_rotr32(uint32_t value, uint8_t bits)
 {
@@ -484,6 +645,9 @@ static bool laviet_hmac_sha256_hw_locked(const uint8_t *key,
 {
 #if defined(HAL_HASH_MODULE_ENABLED)
     bool ok = false;
+    HAL_StatusTypeDef deinit_status;
+    HAL_StatusTypeDef init_status;
+    HAL_StatusTypeDef hmac_status;
 
     if ((key == NULL) ||
         (out == NULL) ||
@@ -492,18 +656,48 @@ static bool laviet_hmac_sha256_hw_locked(const uint8_t *key,
         return false;
     }
 
-    (void)HAL_HASH_DeInit(&hhash);
+    deinit_status = HAL_HASH_DeInit(&hhash);
+    if (deinit_status != HAL_OK)
+    {
+        printf("CRYPTO: HW HMAC HASH deinit failed st=%d(%s)\r\n",
+               (int)deinit_status,
+               laviet_hal_status_text(deinit_status));
+        laviet_crypto_log_hash_context("after_deinit_fail");
+        return false;
+    }
     hhash.Init.DataType = HASH_DATATYPE_8B;
     hhash.Init.KeySize = key_len;
     hhash.Init.pKey = (uint8_t *)key;
-    if ((HAL_HASH_Init(&hhash) == HAL_OK) &&
-        (HAL_HMACEx_SHA256_Start(&hhash,
-                                 data,
-                                 data_len,
-                                 out,
-                                 LAVIET_CRYPTO_TIMEOUT_MS) == HAL_OK))
+    init_status = HAL_HASH_Init(&hhash);
+    if (init_status != HAL_OK)
+    {
+        printf("CRYPTO: HW HMAC HASH init failed st=%d(%s) key_len=%u data_len=%u\r\n",
+               (int)init_status,
+               laviet_hal_status_text(init_status),
+               (unsigned int)key_len,
+               (unsigned int)data_len);
+        laviet_crypto_log_hash_context("after_init_fail");
+        return false;
+    }
+
+    hmac_status = HAL_HMACEx_SHA256_Start(&hhash,
+                                          data,
+                                          data_len,
+                                          out,
+                                          LAVIET_CRYPTO_TIMEOUT_MS);
+    if (hmac_status == HAL_OK)
     {
         ok = true;
+    }
+    else
+    {
+        printf("CRYPTO: HW HMAC SHA256 failed st=%d(%s) key_len=%u data_len=%u timeout=%lu\r\n",
+               (int)hmac_status,
+               laviet_hal_status_text(hmac_status),
+               (unsigned int)key_len,
+               (unsigned int)data_len,
+               (unsigned long)LAVIET_CRYPTO_TIMEOUT_MS);
+        laviet_crypto_log_hash_context("after_hmac_fail");
     }
 
     return ok;
@@ -595,10 +789,16 @@ static bool laviet_aes_ctr_crypt_hw_locked(uint8_t *data,
                                            const laviet_frame_t *frame)
 {
 #if defined(HAL_CRYP_MODULE_ENABLED)
-    laviet_crypto_block_t key_block;
-    laviet_crypto_block_t iv_block;
-    laviet_crypto_block_t input_block;
-    laviet_crypto_block_t output_block;
+    uint8_t iv_bytes[16];
+    uint8_t input_bytes[16];
+    uint8_t output_bytes[16];
+    uint32_t key_words[4];
+    uint32_t iv_words[4];
+    uint32_t input_words[4];
+    uint32_t output_words[4];
+    HAL_StatusTypeDef deinit_status;
+    HAL_StatusTypeDef init_status;
+    HAL_StatusTypeDef encrypt_status;
     bool ok = false;
 
     if (((data == NULL) && (len > 0U)) ||
@@ -612,46 +812,87 @@ static bool laviet_aes_ctr_crypt_hw_locked(uint8_t *data,
     {
         return true;
     }
-    if (len > sizeof(input_block.bytes))
+    if (len > sizeof(input_bytes))
     {
         return false;
     }
 
-    memset(&key_block, 0, sizeof(key_block));
-    memset(&iv_block, 0, sizeof(iv_block));
-    memset(&input_block, 0, sizeof(input_block));
-    memset(&output_block, 0, sizeof(output_block));
-    memcpy(key_block.bytes, key, LAVIET_AES_KEY_LEN);
-    laviet_make_counter_block(frame, 0U, iv_block.bytes);
-    memcpy(input_block.bytes, data, len);
+    memset(iv_bytes, 0, sizeof(iv_bytes));
+    memset(input_bytes, 0, sizeof(input_bytes));
+    memset(output_bytes, 0, sizeof(output_bytes));
+    memset(key_words, 0, sizeof(key_words));
+    memset(iv_words, 0, sizeof(iv_words));
+    memset(input_words, 0, sizeof(input_words));
+    memset(output_words, 0, sizeof(output_words));
+    laviet_crypto_pack_be_words(key_words, key);
+    laviet_make_counter_block(frame, 0U, iv_bytes);
+    laviet_crypto_pack_be_words(iv_words, iv_bytes);
+    memcpy(input_bytes, data, len);
+    laviet_crypto_pack_be_words(input_words, input_bytes);
 
-    (void)HAL_CRYP_DeInit(&hcryp);
+    deinit_status = HAL_CRYP_DeInit(&hcryp);
+    if (deinit_status != HAL_OK)
+    {
+        printf("CRYPTO: HW AES deinit failed st=%d(%s) payload_len=%u\r\n",
+               (int)deinit_status,
+               laviet_hal_status_text(deinit_status),
+               (unsigned int)len);
+        laviet_crypto_log_cryp_context("after_deinit_fail");
+        goto cleanup;
+    }
     hcryp.Instance = AES;
     hcryp.Init.DataType = CRYP_NO_SWAP;
     hcryp.Init.KeySize = CRYP_KEYSIZE_128B;
-    hcryp.Init.pKey = key_block.words;
-    hcryp.Init.pInitVect = iv_block.words;
+    hcryp.Init.pKey = key_words;
+    hcryp.Init.pInitVect = iv_words;
     hcryp.Init.Algorithm = CRYP_AES_CTR;
     hcryp.Init.DataWidthUnit = CRYP_DATAWIDTHUNIT_BYTE;
     hcryp.Init.HeaderWidthUnit = CRYP_HEADERWIDTHUNIT_BYTE;
     hcryp.Init.KeyIVConfigSkip = CRYP_KEYIVCONFIG_ALWAYS;
     hcryp.Init.KeyMode = CRYP_KEYMODE_NORMAL;
 
-    if ((HAL_CRYP_Init(&hcryp) == HAL_OK) &&
-        (HAL_CRYP_Encrypt(&hcryp,
-                          input_block.words,
-                          len,
-                          output_block.words,
-                          LAVIET_CRYPTO_TIMEOUT_MS) == HAL_OK))
+    init_status = HAL_CRYP_Init(&hcryp);
+    if (init_status != HAL_OK)
     {
-        memcpy(data, output_block.bytes, len);
-        ok = true;
+        printf("CRYPTO: HW AES init failed st=%d(%s) payload_len=%u block_len=%u\r\n",
+               (int)init_status,
+               laviet_hal_status_text(init_status),
+               (unsigned int)len,
+               (unsigned int)sizeof(input_bytes));
+        laviet_crypto_log_cryp_context("after_init_fail");
+        goto cleanup;
     }
 
-    laviet_secure_zero(&key_block, sizeof(key_block));
-    laviet_secure_zero(&iv_block, sizeof(iv_block));
-    laviet_secure_zero(&input_block, sizeof(input_block));
-    laviet_secure_zero(&output_block, sizeof(output_block));
+    encrypt_status = HAL_CRYP_Encrypt(&hcryp,
+                                      input_words,
+                                      sizeof(input_bytes),
+                                      output_words,
+                                      LAVIET_CRYPTO_TIMEOUT_MS);
+    if (encrypt_status == HAL_OK)
+    {
+        laviet_crypto_unpack_be_words(output_bytes, output_words);
+        memcpy(data, output_bytes, len);
+        ok = true;
+    }
+    else
+    {
+        printf("CRYPTO: HW AES CTR encrypt failed st=%d(%s) payload_len=%u block_len=%u timeout=%lu\r\n",
+               (int)encrypt_status,
+               laviet_hal_status_text(encrypt_status),
+               (unsigned int)len,
+               (unsigned int)sizeof(input_bytes),
+               (unsigned long)LAVIET_CRYPTO_TIMEOUT_MS);
+        laviet_crypto_log_cryp_context("after_encrypt_fail");
+    }
+
+cleanup:
+    laviet_secure_zero(iv_bytes, sizeof(iv_bytes));
+    laviet_secure_zero(input_bytes, sizeof(input_bytes));
+    laviet_secure_zero(output_bytes, sizeof(output_bytes));
+    laviet_secure_zero(key_words, sizeof(key_words));
+    laviet_secure_zero(iv_words, sizeof(iv_words));
+    laviet_secure_zero(input_words, sizeof(input_words));
+    laviet_secure_zero(output_words, sizeof(output_words));
     return ok;
 #else
     (void)data;
@@ -703,32 +944,73 @@ static bool laviet_crypto_self_test_locked(void)
         aes_hw_16[i] = aes_sw_16[i];
     }
 
-    if (!laviet_hmac_sha256_sw(s_test_key, sizeof(s_test_key), s_test_data, sizeof(s_test_data), hmac_sw) ||
-        !laviet_hmac_sha256_hw_locked(s_test_key, sizeof(s_test_key), s_test_data, sizeof(s_test_data), hmac_hw) ||
-        (memcmp(hmac_sw, hmac_hw, sizeof(hmac_sw)) != 0))
+    if (!laviet_hmac_sha256_sw(s_test_key, sizeof(s_test_key), s_test_data, sizeof(s_test_data), hmac_sw))
+    {
+        printf("CRYPTO: self-test failed stage=hmac_sw\r\n");
+        return false;
+    }
+    if (!laviet_hmac_sha256_hw_locked(s_test_key, sizeof(s_test_key), s_test_data, sizeof(s_test_data), hmac_hw))
+    {
+        printf("CRYPTO: self-test failed stage=hmac_hw\r\n");
+        return false;
+    }
+    if (!laviet_crypto_log_mismatch("hmac_compare", hmac_sw, hmac_hw, sizeof(hmac_sw)))
     {
         return false;
     }
-    if (!laviet_aes_ctr_crypt_sw(NULL, 0U, s_test_key, &s_test_frame) ||
-        !laviet_aes_ctr_crypt_hw_locked(NULL, 0U, s_test_key, &s_test_frame))
+
+    if (!laviet_aes_ctr_crypt_sw(NULL, 0U, s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_sw_zero_len\r\n");
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_hw_locked(NULL, 0U, s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_hw_zero_len\r\n");
+        return false;
+    }
+
+    if (!laviet_aes_ctr_crypt_sw(aes_sw_1, sizeof(aes_sw_1), s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_sw_1B_encrypt\r\n");
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_hw_locked(aes_hw_1, sizeof(aes_hw_1), s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_hw_1B_encrypt\r\n");
+        return false;
+    }
+    if (!laviet_crypto_log_mismatch("aes_1B_compare", aes_sw_1, aes_hw_1, sizeof(aes_sw_1)))
     {
         return false;
     }
-    if (!laviet_aes_ctr_crypt_sw(aes_sw_1, sizeof(aes_sw_1), s_test_key, &s_test_frame) ||
-        !laviet_aes_ctr_crypt_hw_locked(aes_hw_1, sizeof(aes_hw_1), s_test_key, &s_test_frame) ||
-        (memcmp(aes_sw_1, aes_hw_1, sizeof(aes_sw_1)) != 0))
+
+    if (!laviet_aes_ctr_crypt_sw(aes_sw_16, sizeof(aes_sw_16), s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_sw_16B_encrypt\r\n");
+        return false;
+    }
+    if (!laviet_aes_ctr_crypt_hw_locked(aes_hw_16, sizeof(aes_hw_16), s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_hw_16B_encrypt\r\n");
+        return false;
+    }
+    if (!laviet_crypto_log_mismatch("aes_16B_compare", aes_sw_16, aes_hw_16, sizeof(aes_sw_16)))
     {
         return false;
     }
-    if (!laviet_aes_ctr_crypt_sw(aes_sw_16, sizeof(aes_sw_16), s_test_key, &s_test_frame) ||
-        !laviet_aes_ctr_crypt_hw_locked(aes_hw_16, sizeof(aes_hw_16), s_test_key, &s_test_frame) ||
-        (memcmp(aes_sw_16, aes_hw_16, sizeof(aes_sw_16)) != 0))
+
+    if (!laviet_aes_ctr_crypt_hw_locked(aes_hw_16, sizeof(aes_hw_16), s_test_key, &s_test_frame))
     {
+        printf("CRYPTO: self-test failed stage=aes_hw_16B_decrypt\r\n");
         return false;
     }
-    if (!laviet_aes_ctr_crypt_hw_locked(aes_hw_16, sizeof(aes_hw_16), s_test_key, &s_test_frame) ||
-        !laviet_aes_ctr_crypt_sw(aes_sw_16, sizeof(aes_sw_16), s_test_key, &s_test_frame) ||
-        (memcmp(aes_sw_16, aes_hw_16, sizeof(aes_sw_16)) != 0))
+    if (!laviet_aes_ctr_crypt_sw(aes_sw_16, sizeof(aes_sw_16), s_test_key, &s_test_frame))
+    {
+        printf("CRYPTO: self-test failed stage=aes_sw_16B_decrypt\r\n");
+        return false;
+    }
+    if (!laviet_crypto_log_mismatch("aes_roundtrip_compare", aes_sw_16, aes_hw_16, sizeof(aes_sw_16)))
     {
         return false;
     }
@@ -761,8 +1043,13 @@ bool laviet_crypto_init(void)
         (HAL_HASH_GetState(&hhash) != HAL_HASH_STATE_READY))
     {
         printf("CRYPTO: hardware backend not ready, using software fallback\r\n");
+        laviet_crypto_log_cryp_context("init_check");
+        laviet_crypto_log_hash_context("init_check");
         return true;
     }
+
+    laviet_crypto_log_cryp_context("pre_self_test");
+    laviet_crypto_log_hash_context("pre_self_test");
 
     if (!laviet_crypto_lock())
     {
@@ -780,6 +1067,8 @@ bool laviet_crypto_init(void)
     else
     {
         printf("CRYPTO: hardware self-test failed, using software fallback\r\n");
+        laviet_crypto_log_cryp_context("post_self_test_fail");
+        laviet_crypto_log_hash_context("post_self_test_fail");
     }
 
     return true;

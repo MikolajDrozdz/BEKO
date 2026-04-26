@@ -112,6 +112,11 @@ static void button_main_task_fn(void *argument)
         st[i].stable_count = BUTTON_DEBOUNCE_SAMPLES;
     }
 
+    printf("BUTTON: task ready b1=%u b2=%u b3=%u\r\n",
+           (unsigned int)HAL_GPIO_ReadPin(DIG_B1_GPIO_Port, DIG_B1_Pin),
+           (unsigned int)HAL_GPIO_ReadPin(DIG_B2_GPIO_Port, DIG_B2_Pin),
+           (unsigned int)HAL_GPIO_ReadPin(DIG_B3_GPIO_Port, DIG_B3_Pin));
+
     for (;;)
     {
         uint32_t now_ms = HAL_GetTick();
