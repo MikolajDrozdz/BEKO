@@ -37,6 +37,8 @@
 #define RADIO_ACK_CLOSED_TTL_MS              10000UL
 #define RADIO_ACK_RETRY_LIMIT                2U
 #define RADIO_AUTO_PING_MIN_PERIOD_MS        250UL
+#define RADIO_AUTO_PING_PERIOD_DEFAULT_MS    1000UL
+#define RADIO_AUTO_PING_RAW_LEN              4U
 #define RADIO_NETWORK_PAIR_RSSI_MIN_DBM      (-20)
 #define RADIO_TRUSTED_DEVICE_SLOTS           16U
 #define RADIO_BCAST_CTRL_MAGIC               0xB7U
@@ -70,6 +72,8 @@ typedef enum
     RADIO_MAIN_CMD_SET_FH_PERIOD,
     RADIO_MAIN_CMD_SET_CODING,
     RADIO_MAIN_CMD_SET_AUTO_PING,
+    RADIO_MAIN_CMD_SET_AUTO_PING_PERIOD,
+    RADIO_MAIN_CMD_SET_AUTO_PING_MODE,
     RADIO_MAIN_CMD_RESET_MODULE,
     RADIO_MAIN_CMD_START_PAIRING,
     RADIO_MAIN_CMD_START_NETWORK_PAIRING,
@@ -145,6 +149,8 @@ typedef struct
     uint32_t fh_period_ms;
     bool coding_enabled;
     bool auto_ping_enabled;
+    uint32_t auto_ping_period_ms;
+    radio_main_auto_ping_mode_t auto_ping_mode;
     bool crypto_ready;
     uint8_t lora_preset;
     radio_main_fsk_cfg_t fsk_cfg;
@@ -182,6 +188,7 @@ typedef struct
     uint8_t pairing_outgoing_code_len;
     bool pairing_outgoing_network;
     bool tx_in_progress;
+    bool tx_silent;
     uint32_t tx_deadline_ms;
     char last_error_text[21];
     struct
@@ -237,6 +244,8 @@ static bool radio_main_validate_bitrate(uint32_t bitrate_bps);
 static bool radio_main_validate_preamble(uint32_t preamble_len);
 static bool radio_main_is_supported_bw(uint8_t bw_code);
 static bool radio_main_validate_hop_period(uint32_t period_ms);
+static bool radio_main_validate_auto_ping_period(uint32_t period_ms);
+static bool radio_main_validate_auto_ping_mode(radio_main_auto_ping_mode_t mode);
 static bool radio_main_reconfigure_radio(void);
 static bool radio_main_reset_module_internal(void);
 static bool radio_main_force_recover_radio(const char *reason);
@@ -244,9 +253,16 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
                                          uint32_t dst_id,
                                          const uint8_t *payload,
                                          uint16_t payload_len);
+static bool radio_main_send_system_frame_ex(laviet_frame_type_t type,
+                                            uint32_t dst_id,
+                                            const uint8_t *payload,
+                                            uint16_t payload_len,
+                                            bool request_ack,
+                                            bool silent);
 static bool radio_main_send_ack(const laviet_frame_t *frame);
-static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint8_t len);
+static bool radio_main_send_current_backend_with_retry_ex(const uint8_t *data, uint8_t len, bool silent);
 static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len);
+static bool radio_main_send_raw_with_retry_ex(const uint8_t *data, uint8_t len, bool silent);
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
 static void radio_main_post_rx_notification(int16_t rssi_dbm,
                                             uint16_t src_id,
@@ -330,7 +346,7 @@ static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len);
 static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char *out, uint8_t out_size);
 static uint32_t radio_main_now_ms(void);
 static uint32_t radio_main_tx_timeout_ms(uint16_t payload_len);
-static void radio_main_tx_mark_started(uint16_t payload_len);
+static void radio_main_tx_mark_started_ex(uint16_t payload_len, bool silent);
 static void radio_main_tx_clear(void);
 static bool radio_main_tx_timed_out(void);
 static void radio_main_set_last_error(const char *text);
@@ -355,6 +371,10 @@ static const char *s_template_groups[3][3] =
     { "ALR:FIRE", "ALR:INTRUSION", "ALR:LOWBATT" },
     { "STS:OK", "STS:BUSY", "STS:IDLE" },
     { "SRV:PING", "SRV:RESET", "SRV:SYNC" }
+};
+static const uint8_t s_auto_ping_raw[RADIO_AUTO_PING_RAW_LEN] =
+{
+    (uint8_t)'P', (uint8_t)'I', (uint8_t)'N', (uint8_t)'G'
 };
 
 static const osThreadAttr_t s_radio_task_attr =
@@ -544,6 +564,28 @@ bool radio_main_cmd_set_auto_ping(bool enabled)
     return radio_main_enqueue_sync(&cmd, &sync);
 }
 
+bool radio_main_cmd_set_auto_ping_period(uint32_t period_ms)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SET_AUTO_PING_PERIOD;
+    cmd.u.set_u32.value = period_ms;
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
+bool radio_main_cmd_set_auto_ping_mode(radio_main_auto_ping_mode_t mode)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SET_AUTO_PING_MODE;
+    cmd.u.set_u32.value = (uint32_t)mode;
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
 bool radio_main_cmd_reset_module(void)
 {
     radio_main_cmd_t cmd;
@@ -723,6 +765,8 @@ static void radio_main_task_fn(void *argument)
         s_ctx.fh_enabled = sec_cfg.fh_enabled;
         s_ctx.fh_period_ms = sec_cfg.fh_period_ms;
         s_ctx.auto_ping_enabled = sec_cfg.auto_ping_enabled;
+        s_ctx.auto_ping_period_ms = sec_cfg.auto_ping_period_ms;
+        s_ctx.auto_ping_mode = sec_cfg.auto_ping_mode;
         s_ctx.lora_preset = sec_cfg.lora_preset;
         if (sec_cfg.radio_profiles_persisted)
         {
@@ -737,6 +781,8 @@ static void radio_main_task_fn(void *argument)
         s_ctx.fh_period_ms = RADIO_HOP_PERIOD_DEFAULT_MS;
         s_ctx.coding_enabled = false;
         s_ctx.auto_ping_enabled = false;
+        s_ctx.auto_ping_period_ms = RADIO_AUTO_PING_PERIOD_DEFAULT_MS;
+        s_ctx.auto_ping_mode = RADIO_MAIN_AUTO_PING_FRAME;
         s_ctx.lora_preset = 2U;
     }
 
@@ -745,6 +791,14 @@ static void radio_main_task_fn(void *argument)
     if (!radio_main_validate_hop_period(s_ctx.fh_period_ms))
     {
         s_ctx.fh_period_ms = RADIO_HOP_PERIOD_DEFAULT_MS;
+    }
+    if (!radio_main_validate_auto_ping_period(s_ctx.auto_ping_period_ms))
+    {
+        s_ctx.auto_ping_period_ms = RADIO_AUTO_PING_PERIOD_DEFAULT_MS;
+    }
+    if (!radio_main_validate_auto_ping_mode(s_ctx.auto_ping_mode))
+    {
+        s_ctx.auto_ping_mode = RADIO_MAIN_AUTO_PING_FRAME;
     }
 
     if (!sec_cfg.radio_profiles_persisted)
@@ -909,6 +963,24 @@ static void radio_main_task_fn(void *argument)
                     cmd_result = true;
                     break;
 
+                case RADIO_MAIN_CMD_SET_AUTO_PING_PERIOD:
+                    if (radio_main_validate_auto_ping_period(cmd.u.set_u32.value))
+                    {
+                        s_ctx.auto_ping_period_ms = cmd.u.set_u32.value;
+                        s_ctx.last_ping_ms = radio_main_now_ms();
+                        cmd_result = true;
+                    }
+                    break;
+
+                case RADIO_MAIN_CMD_SET_AUTO_PING_MODE:
+                    if (radio_main_validate_auto_ping_mode((radio_main_auto_ping_mode_t)cmd.u.set_u32.value))
+                    {
+                        s_ctx.auto_ping_mode = (radio_main_auto_ping_mode_t)cmd.u.set_u32.value;
+                        s_ctx.last_ping_ms = radio_main_now_ms();
+                        cmd_result = true;
+                    }
+                    break;
+
                 case RADIO_MAIN_CMD_RESET_MODULE:
                     cmd_result = radio_main_reset_module_internal();
                     break;
@@ -1006,8 +1078,21 @@ static void radio_main_task_fn(void *argument)
             radio_main_notify(MENU_NOTIFICATION_PAIRING, "Pairing timeout");
         }
 
-        osDelay((s_ctx.tx_in_progress || s_ctx.ack_pending.active) ?
-                RADIO_ACK_ACTIVE_POLL_MS : RADIO_IDLE_POLL_MS);
+        {
+            uint32_t poll_ms = (s_ctx.tx_in_progress || s_ctx.ack_pending.active) ?
+                               RADIO_ACK_ACTIVE_POLL_MS : RADIO_IDLE_POLL_MS;
+            uint32_t auto_ping_period_ms = radio_main_auto_ping_period_ms();
+
+            if (s_ctx.auto_ping_enabled && (auto_ping_period_ms < poll_ms))
+            {
+                poll_ms = auto_ping_period_ms;
+            }
+            if (poll_ms == 0UL)
+            {
+                poll_ms = 1UL;
+            }
+            osDelay(poll_ms);
+        }
     }
 }
 
@@ -1102,15 +1187,17 @@ static uint32_t radio_main_tx_timeout_ms(uint16_t payload_len)
  * Marks a locally initiated TX so the application layer can recover even if the
  * backend reports HW_ERROR but keeps exposing RADIO_STATE_TX for a short time.
  */
-static void radio_main_tx_mark_started(uint16_t payload_len)
+static void radio_main_tx_mark_started_ex(uint16_t payload_len, bool silent)
 {
     s_ctx.tx_in_progress = true;
+    s_ctx.tx_silent = silent;
     s_ctx.tx_deadline_ms = radio_main_now_ms() + radio_main_tx_timeout_ms(payload_len);
 }
 
 static void radio_main_tx_clear(void)
 {
     s_ctx.tx_in_progress = false;
+    s_ctx.tx_silent = false;
     s_ctx.tx_deadline_ms = 0U;
 }
 
@@ -1520,11 +1607,18 @@ static uint32_t radio_main_auto_ping_airtime_ms(void)
     uint16_t payload_len = (uint16_t)strlen(msg);
     uint16_t raw_len;
 
-    if (payload_len > LAVIET_MAX_PAYLOAD)
+    if (s_ctx.auto_ping_mode == RADIO_MAIN_AUTO_PING_RAW)
     {
-        payload_len = LAVIET_MAX_PAYLOAD;
+        raw_len = RADIO_AUTO_PING_RAW_LEN;
     }
-    raw_len = (uint16_t)(LAVIET_FRAME_HEADER_LEN + payload_len + LAVIET_MAC_TAG_LEN);
+    else
+    {
+        if (payload_len > LAVIET_MAX_PAYLOAD)
+        {
+            payload_len = LAVIET_MAX_PAYLOAD;
+        }
+        raw_len = (uint16_t)(LAVIET_FRAME_HEADER_LEN + payload_len + LAVIET_MAC_TAG_LEN);
+    }
 
     if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
     {
@@ -1538,17 +1632,19 @@ static uint32_t radio_main_auto_ping_airtime_ms(void)
     return radio_main_estimate_lora_airtime_ms(raw_len);
 }
 
-/*
- * Converts current packet airtime and band duty-cycle limit into an automatic
- * ping period. The scheduler uses half of the legal duty cycle as a ceiling,
- * so the node stays below the maximum occupancy even after timing jitter.
- */
 static uint32_t radio_main_auto_ping_period_ms(void)
 {
-    uint16_t duty_permille = radio_main_current_duty_cycle_permille(radio_main_current_frequency_hz());
-    uint32_t airtime_ms = radio_main_auto_ping_airtime_ms();
+    uint16_t duty_permille;
+    uint32_t airtime_ms;
     uint64_t period_ms;
 
+    if (radio_main_validate_auto_ping_period(s_ctx.auto_ping_period_ms))
+    {
+        return s_ctx.auto_ping_period_ms;
+    }
+
+    duty_permille = radio_main_current_duty_cycle_permille(radio_main_current_frequency_hz());
+    airtime_ms = radio_main_auto_ping_airtime_ms();
     if (duty_permille == 0U)
     {
         return RADIO_AUTO_PING_MIN_PERIOD_MS;
@@ -1732,6 +1828,8 @@ static void radio_main_sync_snapshot(radio_main_runtime_cfg_t *cfg)
     cfg->fh_period_ms = s_ctx.fh_period_ms;
     cfg->coding_enabled = s_ctx.coding_enabled;
     cfg->auto_ping_enabled = s_ctx.auto_ping_enabled;
+    cfg->auto_ping_period_ms = radio_main_auto_ping_period_ms();
+    cfg->auto_ping_mode = s_ctx.auto_ping_mode;
 }
 
 /**
@@ -1951,6 +2049,21 @@ static bool radio_main_validate_preamble(uint32_t preamble_len)
 static bool radio_main_validate_hop_period(uint32_t period_ms)
 {
     return ((period_ms >= 250UL) && (period_ms <= 60000UL));
+}
+
+static bool radio_main_validate_auto_ping_period(uint32_t period_ms)
+{
+    return ((period_ms == 1UL) ||
+            (period_ms == 10UL) ||
+            (period_ms == 100UL) ||
+            (period_ms == 1000UL) ||
+            (period_ms == 10000UL));
+}
+
+static bool radio_main_validate_auto_ping_mode(radio_main_auto_ping_mode_t mode)
+{
+    return ((mode == RADIO_MAIN_AUTO_PING_FRAME) ||
+            (mode == RADIO_MAIN_AUTO_PING_RAW));
 }
 
 static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
@@ -2397,6 +2510,16 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
                                          const uint8_t *payload,
                                          uint16_t payload_len)
 {
+    return radio_main_send_system_frame_ex(type, dst_id, payload, payload_len, true, false);
+}
+
+static bool radio_main_send_system_frame_ex(laviet_frame_type_t type,
+                                            uint32_t dst_id,
+                                            const uint8_t *payload,
+                                            uint16_t payload_len,
+                                            bool request_ack,
+                                            bool silent)
+{
     laviet_frame_t frame;
     uint8_t raw[LAVIET_FRAME_MAX_LEN];
     uint8_t raw_len = 0U;
@@ -2450,7 +2573,8 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
         return false;
     }
 
-    if (s_ctx.ack_pending.active &&
+    if (request_ack &&
+        s_ctx.ack_pending.active &&
         (dst_id != 0xFFFFFFFFUL) &&
         ((type == LAVIET_TYPE_DATA) || (type == LAVIET_TYPE_RESP)))
     {
@@ -2491,7 +2615,8 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
     {
         frame.flags |= LAVIET_FLAG_BROADCAST;
     }
-    else if ((type == LAVIET_TYPE_DATA) || (type == LAVIET_TYPE_RESP))
+    else if (request_ack &&
+             ((type == LAVIET_TYPE_DATA) || (type == LAVIET_TYPE_RESP)))
     {
         frame.flags |= LAVIET_FLAG_ACK_REQUIRED;
     }
@@ -2570,7 +2695,7 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
         radio_main_set_last_error("HMAC failed");
         return false;
     }
-    if ((dst16 == LAVIET_GATEWAY_ID) && use_pair_link)
+    if (!silent && (dst16 == LAVIET_GATEWAY_ID) && use_pair_link)
     {
         radio_main_log_hmac_debug("RADIO TX HMAC DBG",
                                   &frame,
@@ -2588,13 +2713,13 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
         return false;
     }
 
-    if (!radio_main_send_raw_with_retry(raw, raw_len))
+    if (!radio_main_send_raw_with_retry_ex(raw, raw_len, silent))
     {
         laviet_secure_zero(enc_key, sizeof(enc_key));
         laviet_secure_zero(hmac_key, sizeof(hmac_key));
         return false;
     }
-    if (!radio_main_ack_track_start(&frame, raw, raw_len))
+    if (request_ack && !radio_main_ack_track_start(&frame, raw, raw_len))
     {
         laviet_secure_zero(enc_key, sizeof(enc_key));
         laviet_secure_zero(hmac_key, sizeof(hmac_key));
@@ -2688,7 +2813,7 @@ static bool radio_main_send_ack(const laviet_frame_t *frame)
  * Starts TX and retries once after a forced radio recovery if the backend looks
  * wedged. This protects the user-facing send path from leaving SX1276 stuck in TX.
  */
-static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint8_t len)
+static bool radio_main_send_current_backend_with_retry_ex(const uint8_t *data, uint8_t len, bool silent)
 {
     radio_status_t st;
 
@@ -2725,8 +2850,11 @@ static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint
     st = radio_send_async(data, len);
     if (st == RADIO_OK)
     {
-        radio_main_print_tx_frame(data, len, false);
-        radio_main_tx_mark_started(len);
+        if (!silent)
+        {
+            radio_main_print_tx_frame(data, len, false);
+        }
+        radio_main_tx_mark_started_ex(len, silent);
         return true;
     }
 
@@ -2750,8 +2878,11 @@ static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint
     st = radio_send_async(data, len);
     if (st == RADIO_OK)
     {
-        radio_main_print_tx_frame(data, len, true);
-        radio_main_tx_mark_started(len);
+        if (!silent)
+        {
+            radio_main_print_tx_frame(data, len, true);
+        }
+        radio_main_tx_mark_started_ex(len, silent);
         return true;
     }
 
@@ -2759,6 +2890,11 @@ static bool radio_main_send_current_backend_with_retry(const uint8_t *data, uint
 }
 
 static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
+{
+    return radio_main_send_raw_with_retry_ex(data, len, false);
+}
+
+static bool radio_main_send_raw_with_retry_ex(const uint8_t *data, uint8_t len, bool silent)
 {
     if ((data == NULL) || (len == 0U))
     {
@@ -2773,7 +2909,7 @@ static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
         return false;
     }
 
-    return radio_main_send_current_backend_with_retry(data, len);
+    return radio_main_send_current_backend_with_retry_ex(data, len, silent);
 }
 
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id)
@@ -3026,7 +3162,10 @@ static void radio_main_handle_events(void)
 
     if ((events & RADIO_EVENT_TX_DONE) != 0U)
     {
-        printf("RADIO EVT: TX_DONE\r\n");
+        if (!s_ctx.tx_silent)
+        {
+            printf("RADIO EVT: TX_DONE\r\n");
+        }
         radio_main_tx_clear();
         radio_main_ensure_rx_continuous();
     }
@@ -3351,9 +3490,13 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 }
 
                 if (s_ctx.pairing_network_mode &&
-                    (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM))
+                    (pkt->rssi_dbm < RADIO_NETWORK_PAIR_RSSI_MIN_DBM))
                 {
-                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Pair RSSI low");
+                    printf("RADIO RX network PAIR_REQ drop, gateway RSSI too low rssi=%d min=%d\r\n",
+                           (int)pkt->rssi_dbm,
+                           (int)RADIO_NETWORK_PAIR_RSSI_MIN_DBM);
+                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Gateway RSSI low");
+                    return;
                 }
 
                 s_ctx.pairing_pending = true;
@@ -3389,9 +3532,15 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
                 }
 
                 if (s_ctx.pairing_outgoing_network &&
-                    (pkt->rssi_dbm <= RADIO_NETWORK_PAIR_RSSI_MIN_DBM))
+                    (pkt->rssi_dbm < RADIO_NETWORK_PAIR_RSSI_MIN_DBM))
                 {
-                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Pair RSSI low");
+                    printf("RADIO RX network PAIR_RESP drop, gateway RSSI too low rssi=%d min=%d\r\n",
+                           (int)pkt->rssi_dbm,
+                           (int)RADIO_NETWORK_PAIR_RSSI_MIN_DBM);
+                    radio_main_notify(MENU_NOTIFICATION_WARNING, "Gateway RSSI low");
+                    s_ctx.pairing_outgoing_pending = false;
+                    s_ctx.pairing_outgoing_network = false;
+                    return;
                 }
 
                 if ((pair_code_len == s_ctx.pairing_outgoing_code_len) &&
@@ -3548,6 +3697,10 @@ static void radio_main_handle_hopping(void)
     {
         return;
     }
+    if (s_ctx.ack_pending.active)
+    {
+        return;
+    }
 
     now = radio_main_now_ms();
     if ((now - s_ctx.last_hop_ms) < s_ctx.fh_period_ms)
@@ -3592,7 +3745,20 @@ static void radio_main_handle_auto_ping(void)
 
     if (radio_get_state() != RADIO_STATE_TX)
     {
-        (void)radio_main_send_template_internal(2U, 0U, LAVIET_GATEWAY_ID);
+        if (s_ctx.auto_ping_mode == RADIO_MAIN_AUTO_PING_RAW)
+        {
+            (void)radio_main_send_raw_with_retry_ex(s_auto_ping_raw, RADIO_AUTO_PING_RAW_LEN, true);
+        }
+        else
+        {
+            const char *msg = s_template_groups[2][0];
+            (void)radio_main_send_system_frame_ex(LAVIET_TYPE_DATA,
+                                                  LAVIET_GATEWAY_ID,
+                                                  (const uint8_t *)msg,
+                                                  (uint16_t)strlen(msg),
+                                                  false,
+                                                  true);
+        }
     }
 }
 

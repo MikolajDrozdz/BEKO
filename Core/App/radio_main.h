@@ -19,6 +19,12 @@ typedef enum
     RADIO_MAIN_MODULATION_OOK = 2U   /**< Profil OOK. */
 } radio_main_modulation_t;
 
+typedef enum
+{
+    RADIO_MAIN_AUTO_PING_FRAME = 0U, /**< Auto ping jako normalny `laviet_frame`. */
+    RADIO_MAIN_AUTO_PING_RAW = 1U    /**< Auto ping jako surowy payload ASCII `PING`. */
+} radio_main_auto_ping_mode_t;
+
 /**
  * @brief Typ kształtowania sygnału dla rodziny FSK.
  */
@@ -180,6 +186,8 @@ typedef struct
     uint32_t fh_period_ms;                     /**< Okres przeskoku kanału [ms] dla FH w LoRa. */
     bool coding_enabled;                       /**< Flaga szyfrowania ruchu `OPERATOR`. */
     bool auto_ping_enabled;                    /**< Flaga automatycznego `PING`. */
+    uint32_t auto_ping_period_ms;              /**< Wybrany okres automatycznego `PING` [ms]. */
+    radio_main_auto_ping_mode_t auto_ping_mode; /**< Sposób kodowania automatycznego `PING`. */
 } radio_main_runtime_cfg_t;
 
 void radio_main_load_default_lora_preset(uint8_t preset_id, radio_lora_cfg_t *cfg);
@@ -199,6 +207,8 @@ bool radio_main_cmd_set_fh(bool enabled);
 bool radio_main_cmd_set_fh_period(uint32_t period_ms);
 bool radio_main_cmd_set_coding(bool enabled);
 bool radio_main_cmd_set_auto_ping(bool enabled);
+bool radio_main_cmd_set_auto_ping_period(uint32_t period_ms);
+bool radio_main_cmd_set_auto_ping_mode(radio_main_auto_ping_mode_t mode);
 bool radio_main_cmd_reset_module(void);
 
 bool radio_main_cmd_start_pairing(uint32_t timeout_ms);

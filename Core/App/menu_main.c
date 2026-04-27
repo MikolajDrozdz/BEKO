@@ -137,6 +137,13 @@ typedef enum
     MENU_ACTION_SEC_NOTIFY_BADGE,
     MENU_ACTION_SEC_AUTOPING_ON,
     MENU_ACTION_SEC_AUTOPING_OFF,
+    MENU_ACTION_SEC_AUTOPING_PERIOD_1,
+    MENU_ACTION_SEC_AUTOPING_PERIOD_10,
+    MENU_ACTION_SEC_AUTOPING_PERIOD_100,
+    MENU_ACTION_SEC_AUTOPING_PERIOD_1000,
+    MENU_ACTION_SEC_AUTOPING_PERIOD_10000,
+    MENU_ACTION_SEC_AUTOPING_FRAME,
+    MENU_ACTION_SEC_AUTOPING_RAW,
     MENU_ACTION_SEC_TOGGLE_CODING,
     MENU_ACTION_SEC_TOGGLE_NOTIFY_MODE,
     MENU_ACTION_SEC_TOGGLE_AUTOPING,
@@ -700,6 +707,13 @@ static const menu_item_t s_page_security_autoping_items[] =
     { "", MENU_PAGE_NONE, MENU_ACTION_NONE },
     { "Auto ping ON", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_ON },
     { "Auto ping OFF", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_OFF },
+    { "Every 1 ms", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_PERIOD_1 },
+    { "Every 10 ms", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_PERIOD_10 },
+    { "Every 100 ms", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_PERIOD_100 },
+    { "Every 1 sec", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_PERIOD_1000 },
+    { "Every 10 sec", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_PERIOD_10000 },
+    { "LAVIET frame", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_FRAME },
+    { "Raw PING", MENU_PAGE_NONE, MENU_ACTION_SEC_AUTOPING_RAW },
     { "Back", MENU_PAGE_NONE, MENU_ACTION_BACK }
 };
 
@@ -2442,11 +2456,16 @@ static void menu_build_item_label(const menu_state_t *st,
     if ((st->current_page == MENU_PAGE_SECURITY_AUTOPING) &&
         (item_idx == 0U))
     {
-        if (radio_main_get_auto_ping_period_ms(&period_ms))
+        if (radio_main_get_runtime_cfg(&radio_cfg))
         {
+            period_ms = radio_cfg.auto_ping_period_ms;
             offset = menu_line_copy(dst, offset, "Period ", 7U);
             offset = menu_line_append_u32(dst, offset, period_ms);
-            (void)menu_line_copy(dst, offset, " ms", 3U);
+            offset = menu_line_copy(dst, offset, " ms ", 4U);
+            (void)menu_line_copy(dst,
+                                 offset,
+                                 (radio_cfg.auto_ping_mode == RADIO_MAIN_AUTO_PING_RAW) ? "RAW" : "FRM",
+                                 3U);
         }
         else
         {
@@ -3828,6 +3847,43 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
         case MENU_ACTION_SEC_AUTOPING_OFF:
             ok = security_main_cmd_set_auto_ping(false) && radio_main_cmd_set_auto_ping(false);
             menu_show_ok_or_error(st, ok, "AutoPing OFF", "AutoPing failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_PERIOD_1:
+            ok = security_main_cmd_set_auto_ping_period(1UL) && radio_main_cmd_set_auto_ping_period(1UL);
+            menu_show_ok_or_error(st, ok, "Ping 1 ms", "Period failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_PERIOD_10:
+            ok = security_main_cmd_set_auto_ping_period(10UL) && radio_main_cmd_set_auto_ping_period(10UL);
+            menu_show_ok_or_error(st, ok, "Ping 10 ms", "Period failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_PERIOD_100:
+            ok = security_main_cmd_set_auto_ping_period(100UL) && radio_main_cmd_set_auto_ping_period(100UL);
+            menu_show_ok_or_error(st, ok, "Ping 100 ms", "Period failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_PERIOD_1000:
+            ok = security_main_cmd_set_auto_ping_period(1000UL) && radio_main_cmd_set_auto_ping_period(1000UL);
+            menu_show_ok_or_error(st, ok, "Ping 1 sec", "Period failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_PERIOD_10000:
+            ok = security_main_cmd_set_auto_ping_period(10000UL) && radio_main_cmd_set_auto_ping_period(10000UL);
+            menu_show_ok_or_error(st, ok, "Ping 10 sec", "Period failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_FRAME:
+            ok = security_main_cmd_set_auto_ping_mode(RADIO_MAIN_AUTO_PING_FRAME) &&
+                 radio_main_cmd_set_auto_ping_mode(RADIO_MAIN_AUTO_PING_FRAME);
+            menu_show_ok_or_error(st, ok, "Ping LAVIET", "Mode failed");
+            break;
+
+        case MENU_ACTION_SEC_AUTOPING_RAW:
+            ok = security_main_cmd_set_auto_ping_mode(RADIO_MAIN_AUTO_PING_RAW) &&
+                 radio_main_cmd_set_auto_ping_mode(RADIO_MAIN_AUTO_PING_RAW);
+            menu_show_ok_or_error(st, ok, "Ping RAW", "Mode failed");
             break;
 
         case MENU_ACTION_SEC_TOGGLE_CODING:

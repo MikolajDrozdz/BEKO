@@ -39,6 +39,8 @@ typedef struct
     bool fh_enabled;
     uint32_t fh_period_ms;
     bool auto_ping_enabled;
+    uint32_t auto_ping_period_ms;
+    radio_main_auto_ping_mode_t auto_ping_mode;
     security_notify_mode_t notify_mode;
     uint8_t lora_preset;
     radio_main_modulation_t active_modulation;
@@ -62,6 +64,8 @@ bool security_main_cmd_set_fh_period(uint32_t period_ms);
 bool security_main_cmd_set_notify_mode(security_notify_mode_t mode);
 bool security_main_cmd_set_lora_preset(uint8_t preset_id);
 bool security_main_cmd_set_auto_ping(bool enabled);
+bool security_main_cmd_set_auto_ping_period(uint32_t period_ms);
+bool security_main_cmd_set_auto_ping_mode(radio_main_auto_ping_mode_t mode);
 bool security_main_cmd_set_radio_runtime_cfg(const radio_main_runtime_cfg_t *cfg);
 bool security_main_cmd_get_runtime_cfg(security_runtime_cfg_t *cfg_out);
 

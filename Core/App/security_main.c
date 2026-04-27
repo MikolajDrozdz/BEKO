@@ -25,7 +25,14 @@
 #define SECURITY_GATEWAY_COUNTER_VERSION    1U
 #define SECURITY_GATEWAY_COUNTER_STORE_LEN  10U
 #define SECURITY_STORE_MAGIC                0xA5U
-#define SECURITY_STORE_VERSION              3U
+#define SECURITY_STORE_VERSION              4U
+#define SECURITY_STORE_FLAG_CODING          0x01U
+#define SECURITY_STORE_FLAG_FH              0x02U
+#define SECURITY_STORE_FLAG_AUTO_PING       0x04U
+#define SECURITY_STORE_AUTOPING_SHIFT       3U
+#define SECURITY_STORE_AUTOPING_MASK        0x38U
+#define SECURITY_STORE_FLAG_AUTOPING_RAW    0x40U
+#define SECURITY_AUTOPING_DEFAULT_MS        1000UL
 #define SECURITY_LEGACY_SETTINGS_SLOT       0U
 #define SECURITY_LEGACY_KEY_SEED_SLOT       1U
 #define SECURITY_SETTINGS_MAGIC             0x5345U
@@ -75,6 +82,8 @@ typedef enum
     SECURITY_CMD_SET_NOTIFY,
     SECURITY_CMD_SET_PRESET,
     SECURITY_CMD_SET_AUTO_PING,
+    SECURITY_CMD_SET_AUTO_PING_PERIOD,
+    SECURITY_CMD_SET_AUTO_PING_MODE,
     SECURITY_CMD_SET_RADIO_RUNTIME,
     SECURITY_CMD_GET_RUNTIME,
     SECURITY_CMD_LOG_MESSAGE
@@ -205,6 +214,8 @@ static security_runtime_cfg_t s_runtime_cfg =
     .fh_enabled = false,
     .fh_period_ms = 2000UL,
     .auto_ping_enabled = false,
+    .auto_ping_period_ms = SECURITY_AUTOPING_DEFAULT_MS,
+    .auto_ping_mode = RADIO_MAIN_AUTO_PING_FRAME,
     .notify_mode = SECURITY_NOTIFY_POPUP,
     .lora_preset = 2U,
     .active_modulation = RADIO_MAIN_MODULATION_LORA,
@@ -260,6 +271,10 @@ static const uint32_t s_fh_period_options_ms[] =
 {
     1000UL, 2000UL, 5000UL, 10000UL
 };
+static const uint32_t s_auto_ping_period_options_ms[] =
+{
+    1UL, 10UL, 100UL, 1000UL, 10000UL
+};
 
 static void security_main_task_fn(void *argument);
 static void security_log_stack_high_water(const char *tag);
@@ -281,6 +296,8 @@ static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg);
 static uint8_t security_pack_bits(uint8_t *buf, uint8_t bit_pos, uint32_t value, uint8_t width);
 static uint8_t security_unpack_bits(const uint8_t *buf, uint8_t bit_pos, uint8_t width, uint32_t *value_out);
 static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, uint8_t count, uint8_t fallback);
+static bool security_auto_ping_period_is_valid(uint32_t period_ms);
+static bool security_auto_ping_mode_is_valid(radio_main_auto_ping_mode_t mode);
 static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, uint8_t count, uint8_t fallback);
 static uint8_t security_index_from_i8(int8_t value, const int8_t *table, uint8_t count, uint8_t fallback);
 static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8_t count, uint8_t fallback);
@@ -529,6 +546,28 @@ bool security_main_cmd_set_auto_ping(bool enabled)
     memset(&cmd, 0, sizeof(cmd));
     cmd.id = SECURITY_CMD_SET_AUTO_PING;
     cmd.u.set_bool.enabled = enabled;
+    return security_main_enqueue_sync(&cmd, &sync);
+}
+
+bool security_main_cmd_set_auto_ping_period(uint32_t period_ms)
+{
+    security_cmd_t cmd;
+    security_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = SECURITY_CMD_SET_AUTO_PING_PERIOD;
+    cmd.u.set_u32.value = period_ms;
+    return security_main_enqueue_sync(&cmd, &sync);
+}
+
+bool security_main_cmd_set_auto_ping_mode(radio_main_auto_ping_mode_t mode)
+{
+    security_cmd_t cmd;
+    security_cmd_sync_t sync;
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = SECURITY_CMD_SET_AUTO_PING_MODE;
+    cmd.u.set_u32.value = (uint32_t)mode;
     return security_main_enqueue_sync(&cmd, &sync);
 }
 
@@ -992,11 +1031,35 @@ static void security_main_task_fn(void *argument)
                     cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
 
+                case SECURITY_CMD_SET_AUTO_PING_PERIOD:
+                    if (security_auto_ping_period_is_valid(cmd.u.set_u32.value))
+                    {
+                        s_runtime_cfg.auto_ping_period_ms = cmd.u.set_u32.value;
+                        cmd.sync->result = security_commit_runtime_cfg_soft();
+                    }
+                    break;
+
+                case SECURITY_CMD_SET_AUTO_PING_MODE:
+                    if (security_auto_ping_mode_is_valid((radio_main_auto_ping_mode_t)cmd.u.set_u32.value))
+                    {
+                        s_runtime_cfg.auto_ping_mode = (radio_main_auto_ping_mode_t)cmd.u.set_u32.value;
+                        cmd.sync->result = security_commit_runtime_cfg_soft();
+                    }
+                    break;
+
                 case SECURITY_CMD_SET_RADIO_RUNTIME:
                     s_runtime_cfg.active_modulation = cmd.u.set_radio.cfg.active_modulation;
                     s_runtime_cfg.lora = cmd.u.set_radio.cfg.lora;
                     s_runtime_cfg.fsk = cmd.u.set_radio.cfg.fsk;
                     s_runtime_cfg.ook = cmd.u.set_radio.cfg.ook;
+                    if (security_auto_ping_period_is_valid(cmd.u.set_radio.cfg.auto_ping_period_ms))
+                    {
+                        s_runtime_cfg.auto_ping_period_ms = cmd.u.set_radio.cfg.auto_ping_period_ms;
+                    }
+                    if (security_auto_ping_mode_is_valid(cmd.u.set_radio.cfg.auto_ping_mode))
+                    {
+                        s_runtime_cfg.auto_ping_mode = cmd.u.set_radio.cfg.auto_ping_mode;
+                    }
                     s_runtime_cfg.radio_profiles_persisted = false;
                     cmd.sync->result = security_commit_runtime_cfg_soft();
                     break;
@@ -1153,6 +1216,8 @@ static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
     radio_main_load_default_fsk_profile(&cfg->fsk);
     radio_main_load_default_ook_profile(&cfg->ook);
     cfg->fh_period_ms = 2000UL;
+    cfg->auto_ping_period_ms = SECURITY_AUTOPING_DEFAULT_MS;
+    cfg->auto_ping_mode = RADIO_MAIN_AUTO_PING_FRAME;
     cfg->active_modulation = RADIO_MAIN_MODULATION_LORA;
     cfg->radio_profiles_persisted = false;
 }
@@ -1219,6 +1284,21 @@ static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, ui
     }
 
     return fallback;
+}
+
+static bool security_auto_ping_period_is_valid(uint32_t period_ms)
+{
+    return security_index_from_u32(period_ms,
+                                   s_auto_ping_period_options_ms,
+                                   (uint8_t)(sizeof(s_auto_ping_period_options_ms) /
+                                             sizeof(s_auto_ping_period_options_ms[0])),
+                                   0xFFU) != 0xFFU;
+}
+
+static bool security_auto_ping_mode_is_valid(radio_main_auto_ping_mode_t mode)
+{
+    return ((mode == RADIO_MAIN_AUTO_PING_FRAME) ||
+            (mode == RADIO_MAIN_AUTO_PING_RAW));
 }
 
 static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, uint8_t count, uint8_t fallback)
@@ -1363,23 +1443,36 @@ static bool security_load_runtime_and_seed_from_store(bool *seed_loaded_out)
 
     w = s_runtime_shadow_store;
     if ((w.magic != SECURITY_STORE_MAGIC) ||
-        ((w.version != 1U) && (w.version != 2U) && (w.version != SECURITY_STORE_VERSION)))
+        (w.version < 1U) ||
+        (w.version > SECURITY_STORE_VERSION))
     {
         return false;
     }
 
-    s_runtime_cfg.coding_enabled = ((w.flags & 0x01U) != 0U);
-    s_runtime_cfg.fh_enabled = ((w.flags & 0x02U) != 0U);
-    s_runtime_cfg.auto_ping_enabled = ((w.flags & 0x04U) != 0U);
+    s_runtime_cfg.coding_enabled = ((w.flags & SECURITY_STORE_FLAG_CODING) != 0U);
+    s_runtime_cfg.fh_enabled = ((w.flags & SECURITY_STORE_FLAG_FH) != 0U);
+    s_runtime_cfg.auto_ping_enabled = ((w.flags & SECURITY_STORE_FLAG_AUTO_PING) != 0U);
+    s_runtime_cfg.auto_ping_period_ms = (w.version >= SECURITY_STORE_VERSION) ?
+                                        security_u32_from_index((uint8_t)((w.flags &
+                                                                           SECURITY_STORE_AUTOPING_MASK) >>
+                                                                          SECURITY_STORE_AUTOPING_SHIFT),
+                                                                s_auto_ping_period_options_ms,
+                                                                (uint8_t)(sizeof(s_auto_ping_period_options_ms) /
+                                                                          sizeof(s_auto_ping_period_options_ms[0])),
+                                                                SECURITY_AUTOPING_DEFAULT_MS) :
+                                        SECURITY_AUTOPING_DEFAULT_MS;
+    s_runtime_cfg.auto_ping_mode = ((w.version >= SECURITY_STORE_VERSION) &&
+                                    ((w.flags & SECURITY_STORE_FLAG_AUTOPING_RAW) != 0U)) ?
+                                   RADIO_MAIN_AUTO_PING_RAW : RADIO_MAIN_AUTO_PING_FRAME;
     s_runtime_cfg.notify_mode = (w.notify_mode == (uint8_t)SECURITY_NOTIFY_BADGE) ?
                                 SECURITY_NOTIFY_BADGE : SECURITY_NOTIFY_POPUP;
     s_runtime_cfg.lora_preset = w.lora_preset;
-    s_runtime_cfg.active_modulation = (w.version >= SECURITY_STORE_VERSION) ?
+    s_runtime_cfg.active_modulation = (w.version >= 3U) ?
                                       security_unpack_modulation(w.modulation_fh) :
                                       ((w.version >= 2U) ?
                                        (radio_main_modulation_t)w.modulation_fh :
                                        RADIO_MAIN_MODULATION_LORA);
-    s_runtime_cfg.fh_period_ms = (w.version >= SECURITY_STORE_VERSION) ?
+    s_runtime_cfg.fh_period_ms = (w.version >= 3U) ?
                                  security_u32_from_index(security_unpack_fh_period_idx(w.modulation_fh),
                                                          s_fh_period_options_ms,
                                                          (uint8_t)(sizeof(s_fh_period_options_ms) /
@@ -1414,15 +1507,25 @@ static bool security_save_runtime_and_seed_to_store(void)
     w.flags = 0U;
     if (s_runtime_cfg.coding_enabled)
     {
-        w.flags |= 0x01U;
+        w.flags |= SECURITY_STORE_FLAG_CODING;
     }
     if (s_runtime_cfg.fh_enabled)
     {
-        w.flags |= 0x02U;
+        w.flags |= SECURITY_STORE_FLAG_FH;
     }
     if (s_runtime_cfg.auto_ping_enabled)
     {
-        w.flags |= 0x04U;
+        w.flags |= SECURITY_STORE_FLAG_AUTO_PING;
+    }
+    w.flags |= (uint8_t)((security_index_from_u32(s_runtime_cfg.auto_ping_period_ms,
+                                                  s_auto_ping_period_options_ms,
+                                                  (uint8_t)(sizeof(s_auto_ping_period_options_ms) /
+                                                            sizeof(s_auto_ping_period_options_ms[0])),
+                                                  3U) << SECURITY_STORE_AUTOPING_SHIFT) &
+                         SECURITY_STORE_AUTOPING_MASK);
+    if (s_runtime_cfg.auto_ping_mode == RADIO_MAIN_AUTO_PING_RAW)
+    {
+        w.flags |= SECURITY_STORE_FLAG_AUTOPING_RAW;
     }
     w.notify_mode = (uint8_t)s_runtime_cfg.notify_mode;
     w.lora_preset = s_runtime_cfg.lora_preset;
@@ -1578,7 +1681,9 @@ static bool security_load_radio_profiles_from_store(void)
         return false;
     }
     w = s_runtime_shadow_radio;
-    if ((w.magic != SECURITY_STORE_MAGIC) || (w.version != SECURITY_STORE_VERSION))
+    if ((w.magic != SECURITY_STORE_MAGIC) ||
+        (w.version < 3U) ||
+        (w.version > SECURITY_STORE_VERSION))
     {
         return false;
     }
