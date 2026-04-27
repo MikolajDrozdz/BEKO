@@ -6,6 +6,7 @@ Dokumenty pomocnicze:
 - `SECURITY_ARCHITECTURE.md` - pełny opis architektury bezpieczeństwa: TPM, AES/HMAC, root seed, EEPROM, ramki, ACK, anti-replay, PIN i przykłady,
 - `THREAT_MODEL.md` - skrócony model zagrożeń dla bieżącej architektury,
 - `STRIDE_CIA_ANALYSIS.md` - tabela klas ataków, obecnych zabezpieczeń i dalszych mitigacji.
+- `../../../gateway_docs/SECURITY_CRYPTO_OVERVIEW.md` - przekrojowy opis kryptografii i ochrony całego systemu, w tym gatewaya.
 
 ## Aktualny model
 

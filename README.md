@@ -142,6 +142,9 @@ Pole 1-bajtowe:
 
 ## 7. Zabezpieczenia
 
+Szczegółowy opis mechanizmów kryptografii, TPM, EEPROM, pairingu, gatewaya i znanych
+ograniczeń jest w `gateway_docs/SECURITY_CRYPTO_OVERVIEW.md`.
+
 System chroni:
 
 - poufność wiadomości,
@@ -160,7 +163,9 @@ HMAC liczony jest po:
 
 `ver_type || flags || src_id || dst_id || msg_id || counter || payload_len || payload`
 
-Firmware inicjalizuje bloki **CRYP/HASH/RNG** STM32U545 i nie uruchamia ruchu secure, jeśli CRYP/HASH nie zgłoszą gotowości. `laviet_crypto` zachowuje portable ścieżkę obliczeń jako referencję zgodności formatu ramki; backend można dalej przepiąć na pełne wywołania HAL bez zmiany kontraktu `LAVIET_FRAME_V1`.
+Firmware wykonuje self-test backendu **CRYP/HASH** STM32U545. Jeżeli test przejdzie,
+używany jest backend sprzętowy; jeżeli nie, `laviet_crypto` przechodzi na programowy
+fallback, zachowując ten sam kontrakt `LAVIET_FRAME_V1`.
 
 ### Szyfrowanie wiadomości
 
