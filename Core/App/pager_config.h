@@ -9,6 +9,14 @@
 #define PAGER_CONFIG_UART_SENSITIVE_LOGS 0
 
 /*
+ * UART service console. Set to 0 to remove the whole UART command service from
+ * the firmware build while leaving normal printf diagnostics intact.
+ */
+#ifndef SERVICE_UART
+#define SERVICE_UART 1
+#endif
+
+/*
  * Current board variant has no BMP280/BME280 mounted. Keep the driver code in
  * tree for future variants, but do not start the RTOS task on this hardware.
  */

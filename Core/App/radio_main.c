@@ -63,6 +63,7 @@ typedef enum
     RADIO_MAIN_CMD_NONE = 0,
     RADIO_MAIN_CMD_SEND_TEMPLATE,
     RADIO_MAIN_CMD_SEND_USER_TEXT,
+    RADIO_MAIN_CMD_SEND_RAW,
     RADIO_MAIN_CMD_SET_PRESET,
     RADIO_MAIN_CMD_SET_MODULATION,
     RADIO_MAIN_CMD_SET_MOD_FREQ,
@@ -108,6 +109,11 @@ typedef struct
             uint8_t len;
             char text[21];
         } send_text;
+        struct
+        {
+            const uint8_t *data;
+            uint8_t len;
+        } send_raw;
         struct
         {
             uint8_t value;
@@ -455,6 +461,24 @@ bool radio_main_cmd_send_user_text(const char *text, uint32_t dst_id)
     cmd.u.send_text.len = (uint8_t)len;
     memcpy(cmd.u.send_text.text, text, len);
     cmd.u.send_text.text[len] = '\0';
+
+    return radio_main_enqueue_sync(&cmd, &sync);
+}
+
+bool radio_main_cmd_send_raw(const uint8_t *data, uint8_t len)
+{
+    radio_main_cmd_t cmd;
+    radio_main_cmd_sync_t sync;
+
+    if ((data == NULL) || (len == 0U))
+    {
+        return false;
+    }
+
+    memset(&cmd, 0, sizeof(cmd));
+    cmd.id = RADIO_MAIN_CMD_SEND_RAW;
+    cmd.u.send_raw.data = data;
+    cmd.u.send_raw.len = len;
 
     return radio_main_enqueue_sync(&cmd, &sync);
 }
@@ -857,6 +881,16 @@ static void radio_main_task_fn(void *argument)
                                                               cmd.u.send_text.dst_id,
                                                               (const uint8_t *)cmd.u.send_text.text,
                                                               cmd.u.send_text.len);
+                    break;
+
+                case RADIO_MAIN_CMD_SEND_RAW:
+                    radio_main_clear_last_error();
+                    cmd_result = radio_main_send_raw_with_retry(cmd.u.send_raw.data,
+                                                                cmd.u.send_raw.len);
+                    if (!cmd_result && (s_ctx.last_error_text[0] == '\0'))
+                    {
+                        radio_main_set_last_error("Raw TX failed");
+                    }
                     break;
 
                 case RADIO_MAIN_CMD_SET_PRESET:

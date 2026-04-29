@@ -13,16 +13,15 @@
 #include "menu_main.h"
 #include "radio_main.h"
 #include "security_main.h"
+#include "service.h"
 #include "tof_main.h"
 
 #include "app_delay.h"
 #include "cmsis_os2.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
-#include "main.h"
 
 #include <stdio.h>
-#include <string.h>
 
 #define APP_I2C_DEFAULT_TIMEOUT_MS  100U
 #define APP_I2C_RETRY_COUNT         3U
@@ -66,6 +65,7 @@ void app_freertos_init(void)
     bmp280_main_create_task();
     tof_main_create_task();
     radio_main_create_task();
+    service_uart_create_task();
     led_array_main_create_task();
 }
 
@@ -369,4 +369,3 @@ static bool app_i2c_recover_locked(I2C_HandleTypeDef *hi2c)
 
     return true;
 }
-

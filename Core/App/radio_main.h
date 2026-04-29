@@ -198,6 +198,7 @@ void radio_main_create_task(void);
 
 bool radio_main_cmd_send_template(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
 bool radio_main_cmd_send_user_text(const char *text, uint32_t dst_id);
+bool radio_main_cmd_send_raw(const uint8_t *data, uint8_t len);
 bool radio_main_cmd_set_lora_preset(uint8_t preset_id);
 bool radio_main_cmd_set_modulation(uint8_t modulation_id);
 bool radio_main_cmd_set_modulation_freq(uint32_t frequency_hz);

@@ -12,3 +12,5 @@ Debug/
 *makefile
 *.launch
 gateway_docs/
+.metadata/
+
