@@ -632,6 +632,7 @@ bool security_main_get_network_key(uint8_t key_out[16])
     return ok;
 }
 
+/** @brief Internal helper: `security_lookup_peer_code`. */
 static bool security_lookup_peer_code(uint32_t peer_node_id,
                                       uint8_t code_out[SECURITY_CODE_MAX],
                                       uint8_t *code_len_out)
@@ -694,6 +695,7 @@ bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_
     return ok;
 }
 
+/** @brief Internal helper: `security_get_frame_keys_mode_internal`. */
 static bool security_get_frame_keys_mode_internal(uint16_t local_id,
                                                   uint16_t peer_id,
                                                   security_frame_key_mode_t mode,
@@ -922,6 +924,7 @@ bool security_main_get_tpm_ready(bool *ready_out)
     return ok;
 }
 
+/** @brief Internal helper: `security_main_task_fn`. */
 static void security_main_task_fn(void *argument)
 {
     security_cmd_t cmd;
@@ -1083,6 +1086,7 @@ static void security_main_task_fn(void *argument)
     }
 }
 
+/** @brief Internal helper: `security_log_stack_high_water`. */
 static void security_log_stack_high_water(const char *tag)
 {
     UBaseType_t words;
@@ -1094,6 +1098,7 @@ static void security_log_stack_high_water(const char *tag)
            (unsigned long)(words * sizeof(StackType_t)));
 }
 
+/** @brief Internal helper: `security_main_enqueue_sync`. */
 static bool security_main_enqueue_sync(const security_cmd_t *cmd, security_cmd_sync_t *sync)
 {
     security_cmd_t local;
@@ -1115,6 +1120,7 @@ static bool security_main_enqueue_sync(const security_cmd_t *cmd, security_cmd_s
     return security_main_wait_sync(sync, SECURITY_CMD_WAIT_MS);
 }
 
+/** @brief Internal helper: `security_main_wait_sync`. */
 static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_ms)
 {
     uint32_t start;
@@ -1137,6 +1143,7 @@ static bool security_main_wait_sync(security_cmd_sync_t *sync, uint32_t timeout_
     return sync->result;
 }
 
+/** @brief Internal helper: `security_key_seed_to_key`. */
 static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16])
 {
     static const uint8_t label[] = "SEC:NET:ROOT";
@@ -1163,6 +1170,7 @@ static void security_key_seed_to_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES]
     laviet_secure_zero(digest, sizeof(digest));
 }
 
+/** @brief Internal helper: `security_key_seed_to_store_key`. */
 static void security_key_seed_to_store_key(const uint8_t seed[SECURITY_KEY_SEED_BYTES], uint8_t key_out[16])
 {
     static const uint8_t label[] = "SEC:EEPROM:KEY";
@@ -1185,6 +1193,7 @@ static void security_key_seed_to_store_key(const uint8_t seed[SECURITY_KEY_SEED_
     laviet_secure_zero(digest, sizeof(digest));
 }
 
+/** @brief Internal helper: `security_seed_has_data`. */
 static bool security_seed_has_data(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     uint8_t i;
@@ -1205,6 +1214,7 @@ static bool security_seed_has_data(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
     return false;
 }
 
+/** @brief Internal helper: `security_load_default_radio_profiles`. */
 static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
 {
     if (cfg == NULL)
@@ -1222,6 +1232,7 @@ static void security_load_default_radio_profiles(security_runtime_cfg_t *cfg)
     cfg->radio_profiles_persisted = false;
 }
 
+/** @brief Internal helper: `security_pack_bits`. */
 static uint8_t security_pack_bits(uint8_t *buf, uint8_t bit_pos, uint32_t value, uint8_t width)
 {
     uint8_t bit;
@@ -1245,6 +1256,7 @@ static uint8_t security_pack_bits(uint8_t *buf, uint8_t bit_pos, uint32_t value,
     return (uint8_t)(bit_pos + width);
 }
 
+/** @brief Internal helper: `security_unpack_bits`. */
 static uint8_t security_unpack_bits(const uint8_t *buf, uint8_t bit_pos, uint8_t width, uint32_t *value_out)
 {
     uint32_t value = 0UL;
@@ -1271,6 +1283,7 @@ static uint8_t security_unpack_bits(const uint8_t *buf, uint8_t bit_pos, uint8_t
     return (uint8_t)(bit_pos + width);
 }
 
+/** @brief Internal helper: `security_index_from_u32`. */
 static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, uint8_t count, uint8_t fallback)
 {
     uint8_t i;
@@ -1286,6 +1299,7 @@ static uint8_t security_index_from_u32(uint32_t value, const uint32_t *table, ui
     return fallback;
 }
 
+/** @brief Internal helper: `security_auto_ping_period_is_valid`. */
 static bool security_auto_ping_period_is_valid(uint32_t period_ms)
 {
     return security_index_from_u32(period_ms,
@@ -1295,12 +1309,14 @@ static bool security_auto_ping_period_is_valid(uint32_t period_ms)
                                    0xFFU) != 0xFFU;
 }
 
+/** @brief Internal helper: `security_auto_ping_mode_is_valid`. */
 static bool security_auto_ping_mode_is_valid(radio_main_auto_ping_mode_t mode)
 {
     return ((mode == RADIO_MAIN_AUTO_PING_FRAME) ||
             (mode == RADIO_MAIN_AUTO_PING_RAW));
 }
 
+/** @brief Internal helper: `security_index_from_u16`. */
 static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, uint8_t count, uint8_t fallback)
 {
     uint8_t i;
@@ -1316,6 +1332,7 @@ static uint8_t security_index_from_u16(uint16_t value, const uint16_t *table, ui
     return fallback;
 }
 
+/** @brief Internal helper: `security_index_from_i8`. */
 static uint8_t security_index_from_i8(int8_t value, const int8_t *table, uint8_t count, uint8_t fallback)
 {
     uint8_t i;
@@ -1331,6 +1348,7 @@ static uint8_t security_index_from_i8(int8_t value, const int8_t *table, uint8_t
     return fallback;
 }
 
+/** @brief Internal helper: `security_index_from_u8`. */
 static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8_t count, uint8_t fallback)
 {
     uint8_t i;
@@ -1346,12 +1364,14 @@ static uint8_t security_index_from_u8(uint8_t value, const uint8_t *table, uint8
     return fallback;
 }
 
+/** @brief Internal helper: `security_pack_modulation_fh`. */
 static uint8_t security_pack_modulation_fh(radio_main_modulation_t modulation, uint8_t fh_period_idx)
 {
     return (uint8_t)((((uint8_t)modulation) & 0x03U) |
                      ((fh_period_idx & 0x03U) << 2));
 }
 
+/** @brief Internal helper: `security_unpack_modulation`. */
 static radio_main_modulation_t security_unpack_modulation(uint8_t modulation_fh)
 {
     uint8_t modulation = (uint8_t)(modulation_fh & 0x03U);
@@ -1364,31 +1384,37 @@ static radio_main_modulation_t security_unpack_modulation(uint8_t modulation_fh)
     return (radio_main_modulation_t)modulation;
 }
 
+/** @brief Internal helper: `security_unpack_fh_period_idx`. */
 static uint8_t security_unpack_fh_period_idx(uint8_t modulation_fh)
 {
     return (uint8_t)((modulation_fh >> 2) & 0x03U);
 }
 
+/** @brief Internal helper: `security_u32_from_index`. */
 static uint32_t security_u32_from_index(uint8_t idx, const uint32_t *table, uint8_t count, uint32_t fallback)
 {
     return (idx < count) ? table[idx] : fallback;
 }
 
+/** @brief Internal helper: `security_u16_from_index`. */
 static uint16_t security_u16_from_index(uint8_t idx, const uint16_t *table, uint8_t count, uint16_t fallback)
 {
     return (idx < count) ? table[idx] : fallback;
 }
 
+/** @brief Internal helper: `security_i8_from_index`. */
 static int8_t security_i8_from_index(uint8_t idx, const int8_t *table, uint8_t count, int8_t fallback)
 {
     return (idx < count) ? table[idx] : fallback;
 }
 
+/** @brief Internal helper: `security_u8_from_index`. */
 static uint8_t security_u8_from_index(uint8_t idx, const uint8_t *table, uint8_t count, uint8_t fallback)
 {
     return (idx < count) ? table[idx] : fallback;
 }
 
+/** @brief Internal helper: `security_peer_link_key_derive`. */
 static void security_peer_link_key_derive(uint32_t local_node_id,
                                           uint32_t peer_node_id,
                                           const uint8_t *code,
@@ -1427,6 +1453,7 @@ static void security_peer_link_key_derive(uint32_t local_node_id,
     laviet_secure_zero(digest, sizeof(digest));
 }
 
+/** @brief Internal helper: `security_load_runtime_and_seed_from_store`. */
 static bool security_load_runtime_and_seed_from_store(bool *seed_loaded_out)
 {
     security_store_wire_t w;
@@ -1497,6 +1524,7 @@ static bool security_load_runtime_and_seed_from_store(bool *seed_loaded_out)
     return true;
 }
 
+/** @brief Internal helper: `security_save_runtime_and_seed_to_store`. */
 static bool security_save_runtime_and_seed_to_store(void)
 {
     security_store_wire_t w;
@@ -1550,6 +1578,7 @@ static bool security_save_runtime_and_seed_to_store(void)
     return true;
 }
 
+/** @brief Internal helper: `security_commit_runtime_cfg_soft`. */
 static bool security_commit_runtime_cfg_soft(void)
 {
     if (!security_save_runtime_and_seed_to_store())
@@ -1560,6 +1589,7 @@ static bool security_commit_runtime_cfg_soft(void)
     return true;
 }
 
+/** @brief Internal helper: `security_save_radio_profiles_to_store`. */
 static bool security_save_radio_profiles_to_store(void)
 {
     security_radio_store_wire_t w;
@@ -1670,6 +1700,7 @@ static bool security_save_radio_profiles_to_store(void)
     return true;
 }
 
+/** @brief Internal helper: `security_load_radio_profiles_from_store`. */
 static bool security_load_radio_profiles_from_store(void)
 {
     security_radio_store_wire_t w;
@@ -1758,17 +1789,20 @@ static bool security_load_radio_profiles_from_store(void)
     return true;
 }
 
+/** @brief Internal helper: `security_load_settings_legacy_from_store`. */
 static bool security_load_settings_legacy_from_store(void)
 {
     return false;
 }
 
+/** @brief Internal helper: `security_load_key_seed_legacy_from_store`. */
 static bool security_load_key_seed_legacy_from_store(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     (void)seed;
     return false;
 }
 
+/** @brief Internal helper: `security_migrate_trusted_slot_v1_to_v2`. */
 static void security_migrate_trusted_slot_v1_to_v2(void)
 {
     i2c_mem_store_trusted_device_t trusted;
@@ -1789,6 +1823,7 @@ static void security_migrate_trusted_slot_v1_to_v2(void)
     }
 }
 
+/** @brief Internal helper: `security_tpm_load_root_seed`. */
 static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     uint16_t out_len = 0U;
@@ -1847,6 +1882,7 @@ static bool security_tpm_load_root_seed(uint8_t seed[SECURITY_KEY_SEED_BYTES])
     return false;
 }
 
+/** @brief Internal helper: `security_tpm_define_root_seed`. */
 static bool security_tpm_define_root_seed(void)
 {
     uint32_t tpm_rc = 0UL;
@@ -1884,6 +1920,7 @@ static bool security_tpm_define_root_seed(void)
     return false;
 }
 
+/** @brief Internal helper: `security_tpm_store_root_seed`. */
 static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BYTES])
 {
     uint32_t tpm_rc = 0UL;
@@ -1943,6 +1980,7 @@ static bool security_tpm_store_root_seed(const uint8_t seed[SECURITY_KEY_SEED_BY
     return false;
 }
 
+/** @brief Internal helper: `security_get_entropy_bytes`. */
 static bool security_get_entropy_bytes(uint8_t *out, uint8_t len)
 {
     uint16_t out_len = 0U;
@@ -1998,6 +2036,7 @@ static bool security_get_entropy_bytes(uint8_t *out, uint8_t len)
     return true;
 }
 
+/** @brief Internal helper: `security_rotate_key_internal`. */
 static bool security_rotate_key_internal(void)
 {
     uint8_t seed[SECURITY_KEY_SEED_BYTES];
@@ -2037,6 +2076,7 @@ static bool security_rotate_key_internal(void)
     return true;
 }
 
+/** @brief Internal helper: `security_trusted_store_capacity`. */
 static uint8_t security_trusted_store_capacity(void)
 {
     uint16_t available;
@@ -2068,11 +2108,13 @@ static uint8_t security_trusted_store_capacity(void)
     return (uint8_t)available;
 }
 
+/** @brief Internal helper: `security_trusted_store_slot`. */
 static uint16_t security_trusted_store_slot(uint8_t idx)
 {
     return (uint16_t)(SECURITY_TRUSTED_SLOT_BASE + idx);
 }
 
+/** @brief Internal helper: `security_node_id_to_bytes`. */
 static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRUSTED_ID_LEN])
 {
     if (out == NULL)
@@ -2086,6 +2128,7 @@ static void security_node_id_to_bytes(uint32_t node_id, uint8_t out[SECURITY_TRU
     out[3] = (uint8_t)(node_id & 0xFFU);
 }
 
+/** @brief Internal helper: `security_node_id_from_bytes`. */
 static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID_LEN])
 {
     if (in == NULL)
@@ -2099,6 +2142,7 @@ static uint32_t security_node_id_from_bytes(const uint8_t in[SECURITY_TRUSTED_ID
            (uint32_t)in[3];
 }
 
+/** @brief Internal helper: `security_be32_write`. */
 static void security_be32_write(uint8_t *dst, uint32_t value)
 {
     if (dst == NULL)
@@ -2112,6 +2156,7 @@ static void security_be32_write(uint8_t *dst, uint32_t value)
     dst[3] = (uint8_t)value;
 }
 
+/** @brief Internal helper: `security_be32_read`. */
 static uint32_t security_be32_read(const uint8_t *src)
 {
     if (src == NULL)
@@ -2125,6 +2170,7 @@ static uint32_t security_be32_read(const uint8_t *src)
            (uint32_t)src[3];
 }
 
+/** @brief Internal helper: `security_load_gateway_counter_from_store`. */
 static bool security_load_gateway_counter_from_store(void)
 {
     uint8_t data[I2C_MEM_STORE_SECRET_PAYLOAD_MAX];
@@ -2157,6 +2203,7 @@ static bool security_load_gateway_counter_from_store(void)
     return true;
 }
 
+/** @brief Internal helper: `security_store_gateway_counter_to_store`. */
 static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_t tx_counter)
 {
     uint8_t data[SECURITY_GATEWAY_COUNTER_STORE_LEN];
@@ -2185,6 +2232,7 @@ static bool security_store_gateway_counter_to_store(uint32_t rx_counter, uint32_
     return (rc == I2C_MEM_STORE_OK);
 }
 
+/** @brief Internal helper: `security_trusted_record_matches`. */
 static bool security_trusted_record_matches(const i2c_mem_store_trusted_device_t *rec,
                                             const security_trusted_entry_t *entry)
 {
@@ -2223,6 +2271,7 @@ static bool security_trusted_record_matches(const i2c_mem_store_trusted_device_t
     return true;
 }
 
+/** @brief Internal helper: `security_write_trusted_entry_to_store`. */
 static bool security_write_trusted_entry_to_store(uint8_t idx,
                                                   const security_trusted_entry_t *entry)
 {
@@ -2303,6 +2352,7 @@ static bool security_write_trusted_entry_to_store(uint8_t idx,
     return false;
 }
 
+/** @brief Internal helper: `security_store_trusted_slot`. */
 static bool security_store_trusted_slot(uint8_t idx)
 {
     uint8_t capacity = security_trusted_store_capacity();
@@ -2328,6 +2378,7 @@ static bool security_store_trusted_slot(uint8_t idx)
     return security_write_trusted_entry_to_store(idx, &s_trusted[idx]);
 }
 
+/** @brief Internal helper: `security_erase_trusted_slot`. */
 static bool security_erase_trusted_slot(uint8_t idx)
 {
     uint8_t capacity = security_trusted_store_capacity();
@@ -2380,6 +2431,7 @@ static bool security_erase_trusted_slot(uint8_t idx)
     return false;
 }
 
+/** @brief Internal helper: `security_load_trusted_from_store`. */
 static uint8_t security_load_trusted_from_store(void)
 {
     uint8_t idx;
@@ -2433,6 +2485,7 @@ static uint8_t security_load_trusted_from_store(void)
     return loaded;
 }
 
+/** @brief Internal helper: `security_migrate_secrets_from_default_store_key`. */
 static bool security_migrate_secrets_from_default_store_key(const i2c_mem_store_cfg_t *tpm_cfg)
 {
     i2c_mem_store_cfg_t legacy_cfg;
@@ -2489,6 +2542,7 @@ static bool security_migrate_secrets_from_default_store_key(const i2c_mem_store_
     return true;
 }
 
+/** @brief Internal helper: `security_add_device_internal`. */
 static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, uint8_t len, bool gateway_slot)
 {
     uint8_t i;
@@ -2620,6 +2674,7 @@ static bool security_add_device_internal(uint32_t node_id, const uint8_t *code, 
     return true;
 }
 
+/** @brief Internal helper: `security_delete_device_internal`. */
 static bool security_delete_device_internal(uint32_t node_id)
 {
     uint8_t i;
@@ -2641,6 +2696,7 @@ static bool security_delete_device_internal(uint32_t node_id)
     return false;
 }
 
+/** @brief Internal helper: `security_get_device_internal`. */
 static bool security_get_device_internal(uint8_t idx, trusted_info_t *out)
 {
     if ((idx >= SECURITY_TRUSTED_MAX) || (out == NULL))
@@ -2666,6 +2722,7 @@ static bool security_get_device_internal(uint8_t idx, trusted_info_t *out)
     return true;
 }
 
+/** @brief Internal helper: `security_tpm_status_text`. */
 static const char *security_tpm_status_text(st33ktpm2x_status_t rc)
 {
     switch (rc)
@@ -2693,6 +2750,7 @@ static const char *security_tpm_status_text(st33ktpm2x_status_t rc)
     }
 }
 
+/** @brief Internal helper: `security_le32_read`. */
 static uint32_t security_le32_read(const uint8_t *src)
 {
     return ((uint32_t)src[3] << 24) |
@@ -2701,6 +2759,7 @@ static uint32_t security_le32_read(const uint8_t *src)
            (uint32_t)src[0];
 }
 
+/** @brief Internal helper: `security_tpm_log_i2c_state`. */
 static void security_tpm_log_i2c_state(const char *tag, I2C_HandleTypeDef *hi2c)
 {
     if (hi2c == NULL)
@@ -2718,6 +2777,7 @@ static void security_tpm_log_i2c_state(const char *tag, I2C_HandleTypeDef *hi2c)
                           (unsigned long)hi2c->Init.Timing);
 }
 
+/** @brief Internal helper: `security_tpm_log_lines`. */
 static void security_tpm_log_lines(const char *tag, const st33ktpm2x_cfg_t *cfg)
 {
     GPIO_PinState reset_state = GPIO_PIN_RESET;
@@ -2744,6 +2804,7 @@ static void security_tpm_log_lines(const char *tag, const st33ktpm2x_cfg_t *cfg)
                           (unsigned int)davint_state);
 }
 
+/** @brief Internal helper: `security_tpm_scan_i2c3`. */
 static void security_tpm_scan_i2c3(const st33ktpm2x_cfg_t *cfg)
 {
     uint8_t addr;
@@ -2771,6 +2832,7 @@ static void security_tpm_scan_i2c3(const st33ktpm2x_cfg_t *cfg)
     security_tpm_log_i2c_state("after_scan", cfg->hi2c);
 }
 
+/** @brief Internal helper: `security_tpm_dump_reg`. */
 static void security_tpm_dump_reg(const st33ktpm2x_cfg_t *cfg,
                                   const char *name,
                                   uint16_t reg,
@@ -2838,6 +2900,7 @@ static void security_tpm_dump_reg(const st33ktpm2x_cfg_t *cfg,
     SECURITY_TPM_INIT_LOG("\r\n");
 }
 
+/** @brief Internal helper: `security_tpm_dump_raw_regs`. */
 static void security_tpm_dump_raw_regs(const st33ktpm2x_cfg_t *cfg)
 {
     security_tpm_dump_reg(cfg, "LOCSEL", SECURITY_TPM_REG_LOC_SEL, I2C_MEMADD_SIZE_8BIT, 1U);
@@ -2850,6 +2913,7 @@ static void security_tpm_dump_raw_regs(const st33ktpm2x_cfg_t *cfg)
     security_tpm_dump_reg(cfg, "RID", SECURITY_TPM_REG_RID, I2C_MEMADD_SIZE_16BIT, 1U);
 }
 
+/** @brief Internal helper: `security_bootstrap_tpm`. */
 static void security_bootstrap_tpm(void)
 {
     st33ktpm2x_cfg_t cfg;
@@ -2975,6 +3039,7 @@ static void security_bootstrap_tpm(void)
     }
 }
 
+/** @brief Internal helper: `security_bootstrap_store`. */
 static void security_bootstrap_store(void)
 {
     i2c_mem_store_cfg_t mem_cfg;

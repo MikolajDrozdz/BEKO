@@ -1,3 +1,8 @@
+/**
+ * @file radio_main.h
+ * @brief Application radio task, runtime profile and command API.
+ */
+
 #ifndef APP_RADIO_MAIN_H_
 #define APP_RADIO_MAIN_H_
 
@@ -19,6 +24,9 @@ typedef enum
     RADIO_MAIN_MODULATION_OOK = 2U   /**< Profil OOK. */
 } radio_main_modulation_t;
 
+/**
+ * @brief Encoding used for the periodic automatic ping feature.
+ */
 typedef enum
 {
     RADIO_MAIN_AUTO_PING_FRAME = 0U, /**< Auto ping jako normalny `laviet_frame`. */
@@ -101,41 +109,41 @@ typedef enum
  */
 typedef enum
 {
-    RADIO_MAIN_OPTION_LORA_PRESET = 0U,
-    RADIO_MAIN_OPTION_LORA_FREQ,
-    RADIO_MAIN_OPTION_LORA_BW,
-    RADIO_MAIN_OPTION_LORA_SF,
-    RADIO_MAIN_OPTION_LORA_CR,
-    RADIO_MAIN_OPTION_LORA_TX_POWER,
-    RADIO_MAIN_OPTION_LORA_CRC,
-    RADIO_MAIN_OPTION_LORA_PREAMBLE,
-    RADIO_MAIN_OPTION_LORA_HEADER_MODE,
-    RADIO_MAIN_OPTION_LORA_IQ_INVERT,
-    RADIO_MAIN_OPTION_LORA_SYNC_WORD,
-    RADIO_MAIN_OPTION_LORA_RESET_DEFAULTS,
-    RADIO_MAIN_OPTION_FSK_SHAPING,
-    RADIO_MAIN_OPTION_FSK_FREQ,
-    RADIO_MAIN_OPTION_FSK_BITRATE,
-    RADIO_MAIN_OPTION_FSK_RX_BW,
-    RADIO_MAIN_OPTION_FSK_FILTER,
-    RADIO_MAIN_OPTION_FSK_TX_POWER,
-    RADIO_MAIN_OPTION_FSK_PREAMBLE,
-    RADIO_MAIN_OPTION_FSK_SYNC_LEN,
-    RADIO_MAIN_OPTION_FSK_SYNC_WORD,
-    RADIO_MAIN_OPTION_FSK_ADDRESS_FILTER,
-    RADIO_MAIN_OPTION_FSK_CRC,
-    RADIO_MAIN_OPTION_FSK_WHITENING,
-    RADIO_MAIN_OPTION_FSK_RESET_DEFAULTS,
-    RADIO_MAIN_OPTION_OOK_FREQ,
-    RADIO_MAIN_OPTION_OOK_BITRATE,
-    RADIO_MAIN_OPTION_OOK_TX_POWER,
-    RADIO_MAIN_OPTION_OOK_RX_BW,
-    RADIO_MAIN_OPTION_OOK_PREAMBLE,
-    RADIO_MAIN_OPTION_OOK_SYNC_LEN,
-    RADIO_MAIN_OPTION_OOK_SYNC_WORD,
-    RADIO_MAIN_OPTION_OOK_THRESHOLD_TYPE,
-    RADIO_MAIN_OPTION_OOK_THRESHOLD_VALUE,
-    RADIO_MAIN_OPTION_OOK_RESET_DEFAULTS
+    RADIO_MAIN_OPTION_LORA_PRESET = 0U, /**< Select one of the predefined LoRa presets. */
+    RADIO_MAIN_OPTION_LORA_FREQ, /**< Set LoRa carrier frequency. */
+    RADIO_MAIN_OPTION_LORA_BW, /**< Set LoRa bandwidth code. */
+    RADIO_MAIN_OPTION_LORA_SF, /**< Set LoRa spreading factor. */
+    RADIO_MAIN_OPTION_LORA_CR, /**< Set LoRa coding-rate denominator. */
+    RADIO_MAIN_OPTION_LORA_TX_POWER, /**< Set LoRa TX power. */
+    RADIO_MAIN_OPTION_LORA_CRC, /**< Enable or disable LoRa payload CRC. */
+    RADIO_MAIN_OPTION_LORA_PREAMBLE, /**< Set LoRa preamble length. */
+    RADIO_MAIN_OPTION_LORA_HEADER_MODE, /**< Select explicit or implicit LoRa header mode. */
+    RADIO_MAIN_OPTION_LORA_IQ_INVERT, /**< Enable or disable LoRa IQ inversion. */
+    RADIO_MAIN_OPTION_LORA_SYNC_WORD, /**< Set LoRa sync word. */
+    RADIO_MAIN_OPTION_LORA_RESET_DEFAULTS, /**< Restore default LoRa profile. */
+    RADIO_MAIN_OPTION_FSK_SHAPING, /**< Select FSK/GFSK/MSK/GMSK shaping. */
+    RADIO_MAIN_OPTION_FSK_FREQ, /**< Set FSK carrier frequency. */
+    RADIO_MAIN_OPTION_FSK_BITRATE, /**< Set FSK bitrate. */
+    RADIO_MAIN_OPTION_FSK_RX_BW, /**< Set FSK RX bandwidth code. */
+    RADIO_MAIN_OPTION_FSK_FILTER, /**< Select Gaussian filter BT. */
+    RADIO_MAIN_OPTION_FSK_TX_POWER, /**< Set FSK TX power. */
+    RADIO_MAIN_OPTION_FSK_PREAMBLE, /**< Set FSK preamble length. */
+    RADIO_MAIN_OPTION_FSK_SYNC_LEN, /**< Set FSK sync word length. */
+    RADIO_MAIN_OPTION_FSK_SYNC_WORD, /**< Set FSK sync word pattern. */
+    RADIO_MAIN_OPTION_FSK_ADDRESS_FILTER, /**< Set FSK address filtering mode. */
+    RADIO_MAIN_OPTION_FSK_CRC, /**< Set FSK packet CRC type. */
+    RADIO_MAIN_OPTION_FSK_WHITENING, /**< Enable or disable FSK data whitening. */
+    RADIO_MAIN_OPTION_FSK_RESET_DEFAULTS, /**< Restore default FSK profile. */
+    RADIO_MAIN_OPTION_OOK_FREQ, /**< Set OOK carrier frequency. */
+    RADIO_MAIN_OPTION_OOK_BITRATE, /**< Set OOK bitrate. */
+    RADIO_MAIN_OPTION_OOK_TX_POWER, /**< Set OOK TX power. */
+    RADIO_MAIN_OPTION_OOK_RX_BW, /**< Set OOK RX bandwidth code. */
+    RADIO_MAIN_OPTION_OOK_PREAMBLE, /**< Set OOK preamble length. */
+    RADIO_MAIN_OPTION_OOK_SYNC_LEN, /**< Set OOK sync word length. */
+    RADIO_MAIN_OPTION_OOK_SYNC_WORD, /**< Set OOK sync word pattern. */
+    RADIO_MAIN_OPTION_OOK_THRESHOLD_TYPE, /**< Select OOK threshold algorithm. */
+    RADIO_MAIN_OPTION_OOK_THRESHOLD_VALUE, /**< Set OOK raw threshold value. */
+    RADIO_MAIN_OPTION_OOK_RESET_DEFAULTS /**< Restore default OOK profile. */
 } radio_main_option_t;
 
 /**
@@ -190,38 +198,205 @@ typedef struct
     radio_main_auto_ping_mode_t auto_ping_mode; /**< Sposób kodowania automatycznego `PING`. */
 } radio_main_runtime_cfg_t;
 
+/**
+ * @brief Load one predefined LoRa preset into a profile object.
+ * @param preset_id Preset index.
+ * @param cfg [out] Destination LoRa profile.
+ */
 void radio_main_load_default_lora_preset(uint8_t preset_id, radio_lora_cfg_t *cfg);
+
+/**
+ * @brief Load the default FSK/GFSK/MSK/GMSK profile.
+ * @param cfg [out] Destination FSK profile.
+ */
 void radio_main_load_default_fsk_profile(radio_main_fsk_cfg_t *cfg);
+
+/**
+ * @brief Load the default OOK profile.
+ * @param cfg [out] Destination OOK profile.
+ */
 void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg);
 
+/**
+ * @brief Create the radio task and command queue.
+ */
 void radio_main_create_task(void);
 
+/**
+ * @brief Queue transmission of a built-in message template.
+ * @param group_id Template group identifier.
+ * @param msg_id Template message identifier.
+ * @param dst_id Destination node/device identifier.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_send_template(uint8_t group_id, uint8_t msg_id, uint32_t dst_id);
+
+/**
+ * @brief Queue transmission of user-entered text.
+ * @param text Null-terminated text payload.
+ * @param dst_id Destination node/device identifier.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_send_user_text(const char *text, uint32_t dst_id);
+
+/**
+ * @brief Queue transmission of raw payload bytes.
+ * @param data Payload bytes.
+ * @param len Payload length.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_send_raw(const uint8_t *data, uint8_t len);
+
+/**
+ * @brief Select and apply a LoRa preset.
+ * @param preset_id Preset index.
+ * @return `true` when the command was accepted and applied.
+ */
 bool radio_main_cmd_set_lora_preset(uint8_t preset_id);
+
+/**
+ * @brief Switch active modulation family.
+ * @param modulation_id One of `radio_main_modulation_t`.
+ * @return `true` when the command was accepted and applied.
+ */
 bool radio_main_cmd_set_modulation(uint8_t modulation_id);
+
+/**
+ * @brief Set carrier frequency for the active modulation profile.
+ * @param frequency_hz Frequency in Hz.
+ * @return `true` when the command was accepted and applied.
+ */
 bool radio_main_cmd_set_modulation_freq(uint32_t frequency_hz);
+
+/**
+ * @brief Set bandwidth code for the active modulation profile.
+ * @param bandwidth_code Bandwidth enum/code value.
+ * @return `true` when the command was accepted and applied.
+ */
 bool radio_main_cmd_set_modulation_bw(uint8_t bandwidth_code);
+
+/**
+ * @brief Set one runtime radio option.
+ * @param option Option identifier.
+ * @param value Raw option value.
+ * @return `true` when the command was accepted and applied.
+ */
 bool radio_main_cmd_set_option(radio_main_option_t option, uint32_t value);
+
+/**
+ * @brief Enable or disable frequency hopping.
+ * @param enabled Desired FH state.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_set_fh(bool enabled);
+
+/**
+ * @brief Set frequency-hopping period.
+ * @param period_ms Hop period in milliseconds.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_set_fh_period(uint32_t period_ms);
+
+/**
+ * @brief Enable or disable protected/coded traffic mode.
+ * @param enabled Desired coding state.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_set_coding(bool enabled);
+
+/**
+ * @brief Enable or disable automatic ping.
+ * @param enabled Desired auto-ping state.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_set_auto_ping(bool enabled);
+
+/**
+ * @brief Set automatic ping period.
+ * @param period_ms Period in milliseconds.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_set_auto_ping_period(uint32_t period_ms);
+
+/**
+ * @brief Select automatic ping encoding mode.
+ * @param mode Auto-ping encoding mode.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_set_auto_ping_mode(radio_main_auto_ping_mode_t mode);
+
+/**
+ * @brief Reset and reinitialize the radio module.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_reset_module(void);
 
+/**
+ * @brief Start local device pairing window.
+ * @param timeout_ms Pairing timeout in milliseconds.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_start_pairing(uint32_t timeout_ms);
+
+/**
+ * @brief Start gateway/network pairing window.
+ * @param timeout_ms Pairing timeout in milliseconds.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_start_network_pairing(uint32_t timeout_ms);
+
+/**
+ * @brief Accept or reject the current pairing candidate.
+ * @param accept `true` to accept, `false` to reject.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_pairing_accept(bool accept);
+
+/**
+ * @brief Send a device pair request using the current pairing code.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_send_pair_req(void);
+
+/**
+ * @brief Send a network/gateway pair request.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_send_network_pair_req(void);
+
+/**
+ * @brief Send a pairing error frame to a destination.
+ * @param dst_id Destination node/device identifier.
+ * @return `true` when the command was accepted.
+ */
 bool radio_main_cmd_send_pair_error(uint32_t dst_id);
+
+/**
+ * @brief Read a snapshot of the radio runtime configuration.
+ * @param cfg_out [out] Destination configuration snapshot.
+ * @return `true` when a snapshot was copied.
+ */
 bool radio_main_get_runtime_cfg(radio_main_runtime_cfg_t *cfg_out);
+
+/**
+ * @brief Read the effective automatic ping period.
+ * @param period_ms_out [out] Period in milliseconds.
+ * @return `true` when the value was copied.
+ */
 bool radio_main_get_auto_ping_period_ms(uint32_t *period_ms_out);
+
+/**
+ * @brief Read the last short radio error message.
+ * @param out Destination text buffer.
+ * @param out_size Destination buffer size.
+ * @return `true` when an error string was copied.
+ */
 bool radio_main_get_last_error_text(char *out, uint8_t out_size);
 
+/**
+ * @brief Return this node's application-level radio identifier.
+ * @return Node identifier.
+ */
 uint32_t radio_main_get_node_id(void);
 
 #endif /* APP_RADIO_MAIN_H_ */

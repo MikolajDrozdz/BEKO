@@ -23,6 +23,7 @@ static bool s_msg_store_ready = false;
 
 extern I2C_HandleTypeDef hi2c1;
 
+/** @brief Internal helper: `radio_test_irq_save`. */
 static uint32_t radio_test_irq_save(void)
 {
     uint32_t primask = __get_PRIMASK();
@@ -30,6 +31,7 @@ static uint32_t radio_test_irq_save(void)
     return primask;
 }
 
+/** @brief Internal helper: `radio_test_irq_restore`. */
 static void radio_test_irq_restore(uint32_t primask)
 {
     if (primask == 0U)
@@ -38,6 +40,7 @@ static void radio_test_irq_restore(uint32_t primask)
     }
 }
 
+/** @brief Internal helper: `radio_test_now_ms`. */
 static uint32_t radio_test_now_ms(void)
 {
     osKernelState_t state = osKernelGetState();
@@ -117,6 +120,7 @@ static void radio_test_print_packet_text(const radio_packet_t *pkt)
     printf("\r\n");
 }
 
+/** @brief Internal helper: `radio_test_publish_packet_to_lcd`. */
 static void radio_test_publish_packet_to_lcd(const radio_packet_t *pkt)
 {
     if ((pkt == NULL) || (pkt->length == 0U))
@@ -130,6 +134,7 @@ static void radio_test_publish_packet_to_lcd(const radio_packet_t *pkt)
     }
 }
 
+/** @brief Internal helper: `radio_test_store_packet_in_i2c_memory`. */
 static void radio_test_store_packet_in_i2c_memory(const radio_packet_t *pkt)
 {
     i2c_mem_store_status_t rc;

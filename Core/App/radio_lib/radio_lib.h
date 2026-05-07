@@ -238,7 +238,17 @@ void radio_default_hw_cfg(radio_hw_cfg_t *cfg, SPI_HandleTypeDef *hspi);
  * @param cfg [out] Struktura konfiguracji LoRa do uzupełnienia.
  */
 void radio_default_lora_cfg(radio_lora_cfg_t *cfg);
+
+/**
+ * @brief Wypełnia domyślny profil FSK/GFSK/MSK/GMSK.
+ * @param cfg [out] Struktura konfiguracji FSK do uzupełnienia.
+ */
 void radio_default_fsk_cfg(radio_fsk_cfg_t *cfg);
+
+/**
+ * @brief Wypełnia domyślny profil OOK.
+ * @param cfg [out] Struktura konfiguracji OOK do uzupełnienia.
+ */
 void radio_default_ook_cfg(radio_ook_cfg_t *cfg);
 
 /**

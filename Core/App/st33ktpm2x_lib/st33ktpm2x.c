@@ -52,16 +52,19 @@
 
 static uint8_t s_st33_i2c_tx[1U + ST33KTPM2X_CMD_MAX_BYTES];
 
+/** @brief Internal helper: `st33_min_u16`. */
 static uint16_t st33_min_u16(uint16_t a, uint16_t b)
 {
     return (a < b) ? a : b;
 }
 
+/** @brief Internal helper: `st33_be16_read`. */
 static uint16_t st33_be16_read(const uint8_t *buf)
 {
     return (uint16_t)(((uint16_t)buf[0] << 8) | buf[1]);
 }
 
+/** @brief Internal helper: `st33_be32_read`. */
 static uint32_t st33_be32_read(const uint8_t *buf)
 {
     return ((uint32_t)buf[0] << 24) |
@@ -70,6 +73,7 @@ static uint32_t st33_be32_read(const uint8_t *buf)
            (uint32_t)buf[3];
 }
 
+/** @brief Internal helper: `st33_le32_read`. */
 static uint32_t st33_le32_read(const uint8_t *buf)
 {
     return ((uint32_t)buf[3] << 24) |
@@ -78,6 +82,7 @@ static uint32_t st33_le32_read(const uint8_t *buf)
            (uint32_t)buf[0];
 }
 
+/** @brief Check whether DID_VID/RID values look like an ST33 TPM response. */
 static bool st33_identity_is_valid(uint32_t did_vid, uint8_t rid)
 {
     if ((did_vid == 0xFFFFFFFFUL) || (did_vid == 0x00000000UL))
@@ -91,6 +96,7 @@ static bool st33_identity_is_valid(uint32_t did_vid, uint8_t rid)
     return true;
 }
 
+/** @brief Internal helper: `st33_status_text`. */
 static const char *st33_status_text(st33ktpm2x_status_t rc)
 {
     switch (rc)
@@ -118,12 +124,14 @@ static const char *st33_status_text(st33ktpm2x_status_t rc)
     }
 }
 
+/** @brief Internal helper: `st33_be16_write`. */
 static void st33_be16_write(uint8_t *buf, uint16_t v)
 {
     buf[0] = (uint8_t)(v >> 8);
     buf[1] = (uint8_t)v;
 }
 
+/** @brief Internal helper: `st33_be32_write`. */
 static void st33_be32_write(uint8_t *buf, uint32_t v)
 {
     buf[0] = (uint8_t)(v >> 24);
@@ -132,6 +140,7 @@ static void st33_be32_write(uint8_t *buf, uint32_t v)
     buf[3] = (uint8_t)v;
 }
 
+/** @brief Marshal an empty-password authorization session into a TPM2 command. */
 static uint16_t st33_write_empty_password_auth(uint8_t *buf)
 {
     st33_be32_write(&buf[0], ST33_TPM_RS_PW);
@@ -141,6 +150,7 @@ static uint16_t st33_write_empty_password_auth(uint8_t *buf)
     return ST33_TPM_PW_AUTH_SIZE;
 }
 
+/** @brief Internal helper: `st33_i2c_read`. */
 static st33ktpm2x_status_t st33_i2c_read(st33ktpm2x_t *ctx,
                                          uint8_t reg,
                                          uint8_t *data,
@@ -185,6 +195,7 @@ static st33ktpm2x_status_t st33_i2c_read(st33ktpm2x_t *ctx,
     return ST33KTPM2X_EHAL;
 }
 
+/** @brief Internal helper: `st33_i2c_write`. */
 static st33ktpm2x_status_t st33_i2c_write(st33ktpm2x_t *ctx,
                                           uint8_t reg,
                                           const uint8_t *data,
@@ -227,6 +238,7 @@ static st33ktpm2x_status_t st33_i2c_write(st33ktpm2x_t *ctx,
     return ST33KTPM2X_EHAL;
 }
 
+/** @brief Internal helper: `st33_read_access`. */
 static st33ktpm2x_status_t st33_read_access(st33ktpm2x_t *ctx, uint8_t *access)
 {
     uint8_t value = 0U;
@@ -250,16 +262,19 @@ static st33ktpm2x_status_t st33_read_access(st33ktpm2x_t *ctx, uint8_t *access)
     return ST33KTPM2X_OK;
 }
 
+/** @brief Internal helper: `st33_write_access`. */
 static st33ktpm2x_status_t st33_write_access(st33ktpm2x_t *ctx, uint8_t value)
 {
     return st33_i2c_write(ctx, ST33_REG_ACCESS, &value, 1U);
 }
 
+/** @brief Internal helper: `st33_write_loc_sel`. */
 static st33ktpm2x_status_t st33_write_loc_sel(st33ktpm2x_t *ctx, uint8_t locality)
 {
     return st33_i2c_write(ctx, ST33_REG_LOC_SEL, &locality, 1U);
 }
 
+/** @brief Internal helper: `st33_read_sts`. */
 static st33ktpm2x_status_t st33_read_sts(st33ktpm2x_t *ctx, uint8_t *sts, uint16_t *burst_count)
 {
     uint8_t raw[3];
@@ -287,11 +302,13 @@ static st33ktpm2x_status_t st33_read_sts(st33ktpm2x_t *ctx, uint8_t *sts, uint16
     return ST33KTPM2X_OK;
 }
 
+/** @brief Internal helper: `st33_write_sts`. */
 static st33ktpm2x_status_t st33_write_sts(st33ktpm2x_t *ctx, uint8_t value)
 {
     return st33_i2c_write(ctx, ST33_REG_STS, &value, 1U);
 }
 
+/** @brief Poll TPM_ACCESS until required bits are set and forbidden bits are clear. */
 static st33ktpm2x_status_t st33_wait_access_bits(st33ktpm2x_t *ctx,
                                                  uint8_t mask,
                                                  uint8_t expected,
@@ -329,6 +346,7 @@ static st33ktpm2x_status_t st33_wait_access_bits(st33ktpm2x_t *ctx,
     return ST33KTPM2X_ETIMEOUT;
 }
 
+/** @brief Poll TPM_STS until required status bits are set and forbidden bits are clear. */
 static st33ktpm2x_status_t st33_wait_sts_bits(st33ktpm2x_t *ctx,
                                               uint8_t mask,
                                               uint8_t expected,
@@ -368,6 +386,7 @@ static st33ktpm2x_status_t st33_wait_sts_bits(st33ktpm2x_t *ctx,
     return ST33KTPM2X_ETIMEOUT;
 }
 
+/** @brief Wait for a non-zero TPM FIFO burst count, optionally requiring data availability. */
 static st33ktpm2x_status_t st33_wait_burst(st33ktpm2x_t *ctx, uint16_t *burst_out, uint8_t require_data_avail)
 {
     uint32_t start_ms;
@@ -414,6 +433,7 @@ static st33ktpm2x_status_t st33_wait_burst(st33ktpm2x_t *ctx, uint16_t *burst_ou
     return ST33KTPM2X_ETIMEOUT;
 }
 
+/** @brief Internal helper: `st33_trace_tis`. */
 static void st33_trace_tis(st33ktpm2x_t *ctx, const char *tag)
 {
     uint8_t access = 0U;
@@ -437,6 +457,7 @@ static void st33_trace_tis(st33ktpm2x_t *ctx, const char *tag)
                (unsigned long)HAL_I2C_GetError(ctx->cfg.hi2c));
 }
 
+/** @brief Internal helper: `st33_trace_fail`. */
 static st33ktpm2x_status_t st33_trace_fail(st33ktpm2x_t *ctx,
                                            const char *stage,
                                            st33ktpm2x_status_t rc,
@@ -454,16 +475,19 @@ static st33ktpm2x_status_t st33_trace_fail(st33ktpm2x_t *ctx,
     return rc;
 }
 
+/** @brief Internal helper: `st33_fifo_write`. */
 static st33ktpm2x_status_t st33_fifo_write(st33ktpm2x_t *ctx, const uint8_t *data, uint16_t len)
 {
     return st33_i2c_write(ctx, ST33_REG_DATA_FIFO, data, len);
 }
 
+/** @brief Internal helper: `st33_fifo_read`. */
 static st33ktpm2x_status_t st33_fifo_read(st33ktpm2x_t *ctx, uint8_t *data, uint16_t len)
 {
     return st33_i2c_read(ctx, ST33_REG_DATA_FIFO, data, len);
 }
 
+/** @brief Internal helper: `st33_read_response_stream`. */
 static st33ktpm2x_status_t st33_read_response_stream(st33ktpm2x_t *ctx, uint8_t *dst, uint16_t len)
 {
     uint16_t got = 0U;
@@ -1391,6 +1415,7 @@ st33ktpm2x_status_t st33ktpm2x_tpm2_nv_read(st33ktpm2x_t *ctx,
     return ST33KTPM2X_OK;
 }
 
+/** @brief Internal helper: `st33_tpm2_nv_write_auth`. */
 static st33ktpm2x_status_t st33_tpm2_nv_write_auth(st33ktpm2x_t *ctx,
                                                    uint32_t auth_handle,
                                                    uint32_t nv_index,

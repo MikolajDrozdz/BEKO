@@ -106,6 +106,7 @@ void service_uart_create_task(void)
     }
 }
 
+/** @brief Internal helper: `service_uart_task_fn`. */
 static void service_uart_task_fn(void *argument)
 {
     uint16_t line_len = 0U;
@@ -174,11 +175,13 @@ static void service_uart_task_fn(void *argument)
     }
 }
 
+/** @brief Internal helper: `service_uart_rx_start`. */
 static void service_uart_rx_start(void)
 {
     (void)HAL_UART_Receive_IT(&huart1, &s_service_uart_rx_byte, 1U);
 }
 
+/** @brief Internal helper: `service_uart_rx_read_byte`. */
 static bool service_uart_rx_read_byte(uint8_t *out)
 {
     uint32_t primask;
@@ -202,6 +205,7 @@ static bool service_uart_rx_read_byte(uint8_t *out)
     return ok;
 }
 
+/** @brief Internal helper: `service_uart_rx_take_overflow`. */
 static bool service_uart_rx_take_overflow(void)
 {
     uint32_t primask;
@@ -216,6 +220,7 @@ static bool service_uart_rx_take_overflow(void)
     return overflow;
 }
 
+/** @brief Internal helper: `service_uart_rx_clear`. */
 static void service_uart_rx_clear(void)
 {
     uint32_t primask;
@@ -227,6 +232,7 @@ static void service_uart_rx_clear(void)
     __set_PRIMASK(primask);
 }
 
+/** @brief Internal helper: `service_uart_rx_push_from_isr`. */
 static void service_uart_rx_push_from_isr(uint8_t ch)
 {
     uint16_t next = (uint16_t)((s_service_uart_rx_head + 1U) % SERVICE_UART_RX_RING_SIZE);
@@ -264,6 +270,7 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     }
 }
 
+/** @brief Internal helper: `service_uart_handle_line`. */
 static void service_uart_handle_line(const char *line)
 {
     const char *p;
@@ -391,6 +398,7 @@ static void service_uart_handle_line(const char *line)
     }
 }
 
+/** @brief Internal helper: `service_uart_print_locked_help`. */
 static void service_uart_print_locked_help(void)
 {
     printf("SERVICE UART locked\r\n");
@@ -398,6 +406,7 @@ static void service_uart_print_locked_help(void)
     printf("  Address may be decimal, hex, or 0x-prefixed hex\r\n");
 }
 
+/** @brief Internal helper: `service_uart_print_help`. */
 static void service_uart_print_help(void)
 {
     printf("SERVICE UART commands:\r\n");
@@ -413,6 +422,7 @@ static void service_uart_print_help(void)
     printf("  RESET | SAVE\r\n");
 }
 
+/** @brief Internal helper: `service_uart_print_cfg`. */
 static void service_uart_print_cfg(void)
 {
     radio_main_runtime_cfg_t cfg;
@@ -477,6 +487,7 @@ static void service_uart_print_cfg(void)
     }
 }
 
+/** @brief Internal helper: `service_uart_print_radio_result`. */
 static void service_uart_print_radio_result(bool ok)
 {
     char last_error[21];
@@ -497,6 +508,7 @@ static void service_uart_print_radio_result(bool ok)
     }
 }
 
+/** @brief Internal helper: `service_uart_handle_login`. */
 static void service_uart_handle_login(const char *args)
 {
     uint32_t code;
@@ -521,6 +533,7 @@ static void service_uart_handle_login(const char *args)
     }
 }
 
+/** @brief Internal helper: `service_uart_handle_send_hex`. */
 static void service_uart_handle_send_hex(const char *payload)
 {
     const char *error = NULL;
@@ -541,6 +554,7 @@ static void service_uart_handle_send_hex(const char *payload)
     service_uart_print_radio_result(false);
 }
 
+/** @brief Internal helper: `service_uart_handle_text`. */
 static void service_uart_handle_text(const char *args)
 {
     const char *text;
@@ -564,6 +578,7 @@ static void service_uart_handle_text(const char *args)
     service_uart_print_radio_result(radio_main_cmd_send_user_text(text, dst));
 }
 
+/** @brief Internal helper: `service_uart_handle_mod`. */
 static void service_uart_handle_mod(const char *args)
 {
     radio_main_modulation_t mod;
@@ -577,6 +592,7 @@ static void service_uart_handle_mod(const char *args)
     service_uart_print_radio_result(radio_main_cmd_set_modulation((uint8_t)mod));
 }
 
+/** @brief Internal helper: `service_uart_handle_preset`. */
 static void service_uart_handle_preset(const char *args)
 {
     uint32_t preset;
@@ -590,6 +606,7 @@ static void service_uart_handle_preset(const char *args)
     service_uart_print_radio_result(radio_main_cmd_set_lora_preset((uint8_t)preset));
 }
 
+/** @brief Internal helper: `service_uart_handle_freq`. */
 static void service_uart_handle_freq(const char *args)
 {
     uint32_t freq;
@@ -603,6 +620,7 @@ static void service_uart_handle_freq(const char *args)
     service_uart_print_radio_result(radio_main_cmd_set_modulation_freq(freq));
 }
 
+/** @brief Internal helper: `service_uart_handle_bw`. */
 static void service_uart_handle_bw(const char *args)
 {
     uint32_t bw;
@@ -616,6 +634,7 @@ static void service_uart_handle_bw(const char *args)
     service_uart_print_radio_result(radio_main_cmd_set_modulation_bw((uint8_t)bw));
 }
 
+/** @brief Internal helper: `service_uart_handle_option`. */
 static void service_uart_handle_option(const char *args)
 {
     uint32_t option;
@@ -634,6 +653,7 @@ static void service_uart_handle_option(const char *args)
     service_uart_print_radio_result(radio_main_cmd_set_option((radio_main_option_t)option, value));
 }
 
+/** @brief Internal helper: `service_uart_handle_bool_cmd`. */
 static void service_uart_handle_bool_cmd(const char *args, bool (*setter)(bool))
 {
     bool value;
@@ -647,6 +667,7 @@ static void service_uart_handle_bool_cmd(const char *args, bool (*setter)(bool))
     service_uart_print_radio_result(setter(value));
 }
 
+/** @brief Internal helper: `service_uart_handle_u32_cmd`. */
 static void service_uart_handle_u32_cmd(const char *args, bool (*setter)(uint32_t))
 {
     uint32_t value;
@@ -660,6 +681,7 @@ static void service_uart_handle_u32_cmd(const char *args, bool (*setter)(uint32_
     service_uart_print_radio_result(setter(value));
 }
 
+/** @brief Internal helper: `service_uart_handle_auto_ping_mode`. */
 static void service_uart_handle_auto_ping_mode(const char *args)
 {
     char token[SERVICE_UART_TOKEN_MAX];
@@ -688,6 +710,7 @@ static void service_uart_handle_auto_ping_mode(const char *args)
     service_uart_print_radio_result(radio_main_cmd_set_auto_ping_mode(mode));
 }
 
+/** @brief Internal helper: `service_uart_handle_save`. */
 static void service_uart_handle_save(void)
 {
     radio_main_runtime_cfg_t cfg;
@@ -708,6 +731,7 @@ static void service_uart_handle_save(void)
     }
 }
 
+/** @brief Internal helper: `service_uart_parse_hex_bytes`. */
 static bool service_uart_parse_hex_bytes(const char *text,
                                          uint8_t *data,
                                          uint8_t *len_out,
@@ -811,6 +835,7 @@ static bool service_uart_parse_hex_bytes(const char *text,
     return true;
 }
 
+/** @brief Internal helper: `service_uart_parse_u32_token`. */
 static bool service_uart_parse_u32_token(const char *token, uint32_t *value_out)
 {
     const char *p;
@@ -879,6 +904,7 @@ static bool service_uart_parse_u32_token(const char *token, uint32_t *value_out)
     return true;
 }
 
+/** @brief Internal helper: `service_uart_parse_u32_arg`. */
 static bool service_uart_parse_u32_arg(const char *args, uint32_t *value_out)
 {
     char token[SERVICE_UART_TOKEN_MAX];
@@ -892,6 +918,7 @@ static bool service_uart_parse_u32_arg(const char *args, uint32_t *value_out)
     return service_uart_parse_u32_token(token, value_out);
 }
 
+/** @brief Internal helper: `service_uart_parse_bool_arg`. */
 static bool service_uart_parse_bool_arg(const char *args, bool *value_out)
 {
     char token[SERVICE_UART_TOKEN_MAX];
@@ -923,6 +950,7 @@ static bool service_uart_parse_bool_arg(const char *args, bool *value_out)
     return false;
 }
 
+/** @brief Internal helper: `service_uart_parse_mod_arg`. */
 static bool service_uart_parse_mod_arg(const char *args, radio_main_modulation_t *mod_out)
 {
     char token[SERVICE_UART_TOKEN_MAX];
@@ -954,6 +982,7 @@ static bool service_uart_parse_mod_arg(const char *args, radio_main_modulation_t
     return false;
 }
 
+/** @brief Internal helper: `service_uart_next_token`. */
 static bool service_uart_next_token(const char **cursor, char *out, uint8_t out_size)
 {
     const char *p;
@@ -985,6 +1014,7 @@ static bool service_uart_next_token(const char **cursor, char *out, uint8_t out_
     return (len > 0U);
 }
 
+/** @brief Internal helper: `service_uart_skip_space`. */
 static const char *service_uart_skip_space(const char *text)
 {
     while ((text != NULL) && isspace((unsigned char)*text))
@@ -995,6 +1025,7 @@ static const char *service_uart_skip_space(const char *text)
     return text;
 }
 
+/** @brief Internal helper: `service_uart_token_equals`. */
 static bool service_uart_token_equals(const char *a, const char *b)
 {
     if ((a == NULL) || (b == NULL))
@@ -1015,6 +1046,7 @@ static bool service_uart_token_equals(const char *a, const char *b)
     return ((*a == '\0') && (*b == '\0'));
 }
 
+/** @brief Internal helper: `service_uart_match_prefix`. */
 static bool service_uart_match_prefix(const char **cursor, const char *prefix)
 {
     const char *p;
@@ -1040,6 +1072,7 @@ static bool service_uart_match_prefix(const char **cursor, const char *prefix)
     return true;
 }
 
+/** @brief Internal helper: `service_uart_hex_nibble`. */
 static int service_uart_hex_nibble(char c)
 {
     if ((c >= '0') && (c <= '9'))
@@ -1058,6 +1091,7 @@ static int service_uart_hex_nibble(char c)
     return -1;
 }
 
+/** @brief Internal helper: `service_uart_get_service_code`. */
 static uint32_t service_uart_get_service_code(void)
 {
     uint32_t node_id = radio_main_get_node_id();
@@ -1070,6 +1104,7 @@ static uint32_t service_uart_get_service_code(void)
     return node_id;
 }
 
+/** @brief Internal helper: `service_uart_mod_text`. */
 static const char *service_uart_mod_text(radio_main_modulation_t modulation)
 {
     switch (modulation)
@@ -1084,6 +1119,7 @@ static const char *service_uart_mod_text(radio_main_modulation_t modulation)
     }
 }
 
+/** @brief Internal helper: `service_uart_ap_mode_text`. */
 static const char *service_uart_ap_mode_text(radio_main_auto_ping_mode_t mode)
 {
     switch (mode)

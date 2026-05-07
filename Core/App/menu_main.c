@@ -1427,6 +1427,7 @@ bool menu_main_post_notification(const menu_notification_t *n)
     return false;
 }
 
+/** @brief Internal helper: `menu_main_task_fn`. */
 static void menu_main_task_fn(void *argument)
 {
     menu_state_t st;
@@ -1574,6 +1575,7 @@ static void menu_open_info_modal(menu_state_t *st,
     menu_render_popup(l0, l1, l2, l3);
 }
 
+/** @brief Internal helper: `menu_clear_tx_ack_state`. */
 static void menu_clear_tx_ack_state(menu_state_t *st)
 {
     if (st == NULL)
@@ -1614,6 +1616,7 @@ static void menu_close_modal(menu_state_t *st)
     }
 }
 
+/** @brief Internal helper: `menu_line_clear`. */
 static void menu_line_clear(char *dst)
 {
     uint8_t i;
@@ -1630,6 +1633,7 @@ static void menu_line_clear(char *dst)
     dst[MENU_LINE_CHARS] = '\0';
 }
 
+/** @brief Internal helper: `menu_line_copy`. */
 static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_t max_chars)
 {
     uint8_t copied = 0U;
@@ -1649,6 +1653,7 @@ static uint8_t menu_line_copy(char *dst, uint8_t offset, const char *src, uint8_
     return offset;
 }
 
+/** @brief Internal helper: `menu_line_append_u32`. */
 static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value)
 {
     char digits[10];
@@ -1673,6 +1678,7 @@ static uint8_t menu_line_append_u32(char *dst, uint8_t offset, uint32_t value)
     return offset;
 }
 
+/** @brief Internal helper: `menu_line_append_i32`. */
 static uint8_t menu_line_append_i32(char *dst, uint8_t offset, int32_t value)
 {
     uint32_t magnitude;
@@ -1695,6 +1701,7 @@ static uint8_t menu_line_append_i32(char *dst, uint8_t offset, int32_t value)
     return menu_line_append_u32(dst, offset, magnitude);
 }
 
+/** @brief Internal helper: `menu_line_append_hex32`. */
 static uint8_t menu_line_append_hex32(char *dst, uint8_t offset, uint32_t value)
 {
     static const char hex[] = "0123456789ABCDEF";
@@ -1713,6 +1720,7 @@ static uint8_t menu_line_append_hex32(char *dst, uint8_t offset, uint32_t value)
     return offset;
 }
 
+/** @brief Internal helper: `menu_line_append_freq_mhz`. */
 static uint8_t menu_line_append_freq_mhz(char *dst, uint8_t offset, uint32_t freq_hz)
 {
     uint32_t mhz;
@@ -1759,6 +1767,7 @@ static uint8_t menu_line_append_freq_mhz(char *dst, uint8_t offset, uint32_t fre
     return offset;
 }
 
+/** @brief Internal helper: `menu_line_format_u32`. */
 static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, const char *suffix)
 {
     uint8_t offset = 0U;
@@ -1769,6 +1778,7 @@ static void menu_line_format_u32(char *dst, const char *prefix, uint32_t value, 
     (void)menu_line_copy(dst, offset, suffix, MENU_LINE_CHARS);
 }
 
+/** @brief Internal helper: `menu_line_format_i32`. */
 static void menu_line_format_i32(char *dst, const char *prefix, int32_t value, const char *suffix)
 {
     uint8_t offset = 0U;
@@ -1779,6 +1789,7 @@ static void menu_line_format_i32(char *dst, const char *prefix, int32_t value, c
     (void)menu_line_copy(dst, offset, suffix, MENU_LINE_CHARS);
 }
 
+/** @brief Internal helper: `menu_line_format_hex32`. */
 static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value)
 {
     uint8_t offset = 0U;
@@ -1789,6 +1800,7 @@ static void menu_line_format_hex32(char *dst, const char *prefix, uint32_t value
     (void)menu_line_append_hex32(dst, offset, value);
 }
 
+/** @brief Internal helper: `menu_line_format_device_ref`. */
 static void menu_line_format_device_ref(char *dst, const char *prefix, uint32_t device_code)
 {
     uint8_t offset = 0U;
@@ -1810,11 +1822,13 @@ static void menu_line_format_device_ref(char *dst, const char *prefix, uint32_t 
     (void)menu_line_append_hex32(dst, offset, device_code);
 }
 
+/** @brief Internal helper: `menu_line_format_source`. */
 static void menu_line_format_source(char *dst, uint32_t device_code)
 {
     menu_line_format_device_ref(dst, "From ", device_code);
 }
 
+/** @brief Internal helper: `menu_line_format_freq`. */
 static void menu_line_format_freq(char *dst, const char *prefix, uint32_t freq_hz)
 {
     uint8_t offset = 0U;
@@ -1825,6 +1839,7 @@ static void menu_line_format_freq(char *dst, const char *prefix, uint32_t freq_h
     (void)menu_line_copy(dst, offset, " MHz", 4U);
 }
 
+/** @brief Internal helper: `menu_line_format_fixed2`. */
 static void menu_line_format_fixed2(char *dst, const char *prefix, float value, const char *suffix)
 {
     int32_t scaled;
@@ -1867,6 +1882,7 @@ static void menu_line_format_fixed2(char *dst, const char *prefix, float value, 
     (void)menu_line_copy(dst, offset, suffix, MENU_LINE_CHARS);
 }
 
+/** @brief Internal helper: `menu_line_copy_or_default`. */
 static void menu_line_copy_or_default(char *dst, const char *text, const char *fallback)
 {
     if (dst == NULL)
@@ -1888,6 +1904,7 @@ static void menu_line_copy_or_default(char *dst, const char *text, const char *f
     }
 }
 
+/** @brief Internal helper: `menu_pair_code_text`. */
 static const char *menu_pair_code_text(const char *text, uint8_t prefix_len)
 {
     if ((text != NULL) && (text[prefix_len] == ' '))
@@ -1898,6 +1915,7 @@ static const char *menu_pair_code_text(const char *text, uint8_t prefix_len)
     return "----";
 }
 
+/** @brief Internal helper: `menu_get_trusted_slot`. */
 static bool menu_get_trusted_slot(uint8_t slot, trusted_info_t *info_out)
 {
     if (info_out == NULL)
@@ -1911,6 +1929,7 @@ static bool menu_get_trusted_slot(uint8_t slot, trusted_info_t *info_out)
            info_out->in_use;
 }
 
+/** @brief Internal helper: `menu_gateway_slot_in_use`. */
 static bool menu_gateway_slot_in_use(void)
 {
     trusted_info_t info;
@@ -1919,6 +1938,7 @@ static bool menu_gateway_slot_in_use(void)
            (info.node_id == LAVIET_GATEWAY_ID);
 }
 
+/** @brief Internal helper: `menu_line_append_device_slot_name`. */
 static uint8_t menu_line_append_device_slot_name(char *dst, uint8_t offset, uint8_t slot)
 {
     if ((dst == NULL) || (offset >= MENU_LINE_CHARS))
@@ -1935,6 +1955,7 @@ static uint8_t menu_line_append_device_slot_name(char *dst, uint8_t offset, uint
     return menu_line_append_u32(dst, offset, slot);
 }
 
+/** @brief Internal helper: `menu_build_trusted_slot_label`. */
 static void menu_build_trusted_slot_label(uint8_t slot, const trusted_info_t *info, char *dst)
 {
     uint8_t offset = 0U;
@@ -1962,6 +1983,7 @@ static void menu_build_trusted_slot_label(uint8_t slot, const trusted_info_t *in
     }
 }
 
+/** @brief Internal helper: `menu_build_empty_trusted_slot_label`. */
 static void menu_build_empty_trusted_slot_label(uint8_t slot, char *dst)
 {
     uint8_t offset = 0U;
@@ -1976,6 +1998,7 @@ static void menu_build_empty_trusted_slot_label(uint8_t slot, char *dst)
     (void)menu_line_copy(dst, offset, " (empty)", 8U);
 }
 
+/** @brief Internal helper: `menu_lora_bw_text`. */
 static const char *menu_lora_bw_text(radio_lora_bw_t bw)
 {
     if (bw == RADIO_LORA_BW_7_8_KHZ)
@@ -2022,6 +2045,7 @@ static const char *menu_lora_bw_text(radio_lora_bw_t bw)
     return "?";
 }
 
+/** @brief Internal helper: `menu_lora_cr_text`. */
 static const char *menu_lora_cr_text(uint8_t denominator)
 {
     if (denominator == 5U)
@@ -2044,6 +2068,7 @@ static const char *menu_lora_cr_text(uint8_t denominator)
     return "?";
 }
 
+/** @brief Internal helper: `menu_fsk_shape_text`. */
 static const char *menu_fsk_shape_text(radio_main_fsk_shaping_t shaping)
 {
     if (shaping == RADIO_MAIN_FSK_SHAPING_GFSK)
@@ -2062,6 +2087,7 @@ static const char *menu_fsk_shape_text(radio_main_fsk_shaping_t shaping)
     return "FSK";
 }
 
+/** @brief Internal helper: `menu_filter_text`. */
 static const char *menu_filter_text(radio_main_filter_t filter)
 {
     if (filter == RADIO_MAIN_FILTER_BT_10)
@@ -2084,6 +2110,7 @@ static const char *menu_filter_text(radio_main_filter_t filter)
     return "OFF";
 }
 
+/** @brief Internal helper: `menu_crc_text`. */
 static const char *menu_crc_text(radio_main_crc_type_t crc_type)
 {
     if (crc_type == RADIO_MAIN_CRC_SX1276)
@@ -2102,6 +2129,7 @@ static const char *menu_crc_text(radio_main_crc_type_t crc_type)
     return "OFF";
 }
 
+/** @brief Internal helper: `menu_ook_threshold_text`. */
 static const char *menu_ook_threshold_text(radio_main_ook_threshold_t threshold)
 {
     if (threshold == RADIO_MAIN_OOK_THRESHOLD_PEAK)
@@ -2116,6 +2144,7 @@ static const char *menu_ook_threshold_text(radio_main_ook_threshold_t threshold)
     return "Fix";
 }
 
+/** @brief Internal helper: `menu_address_filter_text`. */
 static const char *menu_address_filter_text(radio_main_address_filter_t filter)
 {
     if (filter == RADIO_MAIN_ADDRESS_FILTER_NODE)
@@ -2130,6 +2159,7 @@ static const char *menu_address_filter_text(radio_main_address_filter_t filter)
     return "OFF";
 }
 
+/** @brief Internal helper: `menu_radio_settings_item_count`. */
 static uint8_t menu_radio_settings_item_count(const radio_main_runtime_cfg_t *cfg)
 {
     if (cfg == NULL)
@@ -2150,6 +2180,7 @@ static uint8_t menu_radio_settings_item_count(const radio_main_runtime_cfg_t *cf
     return 13U;
 }
 
+/** @brief Internal helper: `menu_build_radio_settings_item`. */
 static void menu_build_radio_settings_item(const radio_main_runtime_cfg_t *cfg,
                                            uint8_t item_idx,
                                            char *dst)
@@ -2340,6 +2371,7 @@ static void menu_build_radio_settings_item(const radio_main_runtime_cfg_t *cfg,
     }
 }
 
+/** @brief Internal helper: `menu_build_page_title`. */
 static void menu_build_page_title(const menu_state_t *st, const menu_page_t *page, char *dst)
 {
     menu_line_clear(dst);
@@ -2351,6 +2383,7 @@ static void menu_build_page_title(const menu_state_t *st, const menu_page_t *pag
     (void)menu_line_copy(dst, 0U, page->title, MENU_LINE_CHARS);
 }
 
+/** @brief Internal helper: `menu_build_item_label`. */
 static void menu_build_item_label(const menu_state_t *st,
                                   const menu_page_t *page,
                                   uint8_t item_idx,
@@ -2480,6 +2513,7 @@ static void menu_build_item_label(const menu_state_t *st,
     }
 }
 
+/** @brief Internal helper: `menu_render`. */
 static void menu_render(menu_state_t *st)
 {
     char screen[MENU_DISPLAY_ROWS][MENU_LINE_BUF_SIZE];
@@ -2532,6 +2566,7 @@ static void menu_render(menu_state_t *st)
     (void)lcd_main_show_menu(screen[0], screen[1], screen[2], screen[3]);
 }
 
+/** @brief Internal helper: `menu_render_popup`. */
 static void menu_render_popup(const char *l0, const char *l1, const char *l2, const char *l3)
 {
     char line0[MENU_LINE_BUF_SIZE];
@@ -2547,6 +2582,7 @@ static void menu_render_popup(const char *l0, const char *l1, const char *l2, co
     (void)lcd_main_show_popup(line0, line1, line2, line3);
 }
 
+/** @brief Internal helper: `menu_render_quick_reply`. */
 static void menu_render_quick_reply(menu_state_t *st)
 {
     char line1[MENU_LINE_BUF_SIZE];
@@ -2564,6 +2600,7 @@ static void menu_render_quick_reply(menu_state_t *st)
     menu_render_popup(st->quick_reply_text, line1, line2, line3);
 }
 
+/** @brief Internal helper: `menu_render_pin`. */
 static void menu_render_pin(menu_state_t *st)
 {
     char line1[MENU_LINE_BUF_SIZE];
@@ -2617,6 +2654,7 @@ static void menu_render_pin(menu_state_t *st)
     menu_render_popup(title, line1, "UP/DN digit", "OK=next HOLD=cancel");
 }
 
+/** @brief Internal helper: `menu_page_auth_level`. */
 static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id)
 {
     switch (page_id)
@@ -2688,6 +2726,7 @@ static menu_auth_level_t menu_page_auth_level(menu_page_id_t page_id)
     }
 }
 
+/** @brief Internal helper: `menu_auth_unlocked`. */
 static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_level)
 {
     uint32_t until_ms = 0UL;
@@ -2719,6 +2758,7 @@ static bool menu_auth_unlocked(const menu_state_t *st, menu_auth_level_t auth_le
     return ((int32_t)(until_ms - HAL_GetTick()) > 0);
 }
 
+/** @brief Internal helper: `menu_pin_matches`. */
 static bool menu_pin_matches(const menu_state_t *st)
 {
     const uint8_t *pin_ref = s_operator_pin;
@@ -2743,12 +2783,14 @@ static bool menu_pin_matches(const menu_state_t *st)
     return (diff == 0U);
 }
 
+/** @brief Internal helper: `menu_is_pin_change_action`. */
 static bool menu_is_pin_change_action(menu_action_t action)
 {
     return ((action == MENU_ACTION_PIN_SET_OPERATOR) ||
             (action == MENU_ACTION_PIN_SET_ADMIN));
 }
 
+/** @brief Internal helper: `menu_clear_pin_state`. */
 static void menu_clear_pin_state(menu_state_t *st)
 {
     if (st == NULL)
@@ -2762,6 +2804,7 @@ static void menu_clear_pin_state(menu_state_t *st)
     st->pending_auth_level = MENU_AUTH_NONE;
 }
 
+/** @brief Internal helper: `menu_start_pin_change`. */
 static void menu_start_pin_change(menu_state_t *st, menu_action_t action)
 {
     if ((st == NULL) || !menu_is_pin_change_action(action))
@@ -2778,6 +2821,7 @@ static void menu_start_pin_change(menu_state_t *st, menu_action_t action)
     menu_render_pin(st);
 }
 
+/** @brief Internal helper: `menu_request_pin`. */
 static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_auth_level_t auth_level)
 {
     if (st == NULL)
@@ -2793,6 +2837,7 @@ static void menu_request_pin(menu_state_t *st, menu_page_id_t target_page, menu_
     menu_render_pin(st);
 }
 
+/** @brief Internal helper: `menu_should_open_quick_reply`. */
 static bool menu_should_open_quick_reply(const char *text)
 {
     uint8_t len;
@@ -2823,6 +2868,7 @@ static bool menu_should_open_quick_reply(const char *text)
     return ((last == '.') || (last == '?') || (last == '!'));
 }
 
+/** @brief Internal helper: `menu_modal_is_preemptible`. */
 static bool menu_modal_is_preemptible(menu_modal_t modal)
 {
     if (modal == MENU_MODAL_INFO)
@@ -2838,6 +2884,7 @@ static bool menu_modal_is_preemptible(menu_modal_t modal)
     return false;
 }
 
+/** @brief Internal helper: `menu_show_action_result`. */
 static void menu_show_action_result(menu_state_t *st, menu_notification_type_t type, const char *text)
 {
     const char *title = "NOTICE";
@@ -2868,6 +2915,7 @@ static void menu_show_action_result(menu_state_t *st, menu_notification_type_t t
     menu_open_info_modal(st, title, body, "Any key=back", "");
 }
 
+/** @brief Internal helper: `menu_show_ok_or_error`. */
 static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text, const char *err_text)
 {
     char selected[MENU_LINE_BUF_SIZE];
@@ -2883,6 +2931,7 @@ static void menu_show_ok_or_error(menu_state_t *st, bool ok, const char *ok_text
     menu_show_action_result(st, MENU_NOTIFICATION_ERROR, selected);
 }
 
+/** @brief Internal helper: `menu_show_send_result`. */
 static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_text)
 {
     char line0[MENU_LINE_BUF_SIZE];
@@ -2911,6 +2960,7 @@ static void menu_show_send_result(menu_state_t *st, bool ok, const char *sent_te
     st->tx_ack_waiting = true;
 }
 
+/** @brief Internal helper: `menu_handle_notification`. */
 static void menu_handle_notification(menu_state_t *st, const menu_notification_t *n)
 {
     char code_line[MENU_LINE_BUF_SIZE];
@@ -3023,6 +3073,7 @@ static void menu_handle_notification(menu_state_t *st, const menu_notification_t
     }
 }
 
+/** @brief Internal helper: `menu_handle_pin_button`. */
 static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
 {
     menu_page_id_t target_page;
@@ -3124,6 +3175,7 @@ static void menu_handle_pin_button(menu_state_t *st, button_event_t evt)
     menu_open_page(st, target_page);
 }
 
+/** @brief Internal helper: `menu_handle_modal_button`. */
 static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
 {
     menu_action_t action;
@@ -3215,6 +3267,7 @@ static void menu_handle_modal_button(menu_state_t *st, button_event_t evt)
     }
 }
 
+/** @brief Internal helper: `menu_handle_button`. */
 static void menu_handle_button(menu_state_t *st, button_event_t evt)
 {
     const menu_page_t *page;
@@ -3427,6 +3480,7 @@ static void menu_handle_button(menu_state_t *st, button_event_t evt)
     }
 }
 
+/** @brief Internal helper: `menu_execute_action`. */
 static void menu_execute_action(menu_state_t *st, menu_action_t action)
 {
     char line0[MENU_LINE_BUF_SIZE];
@@ -4071,6 +4125,7 @@ static void menu_execute_action(menu_state_t *st, menu_action_t action)
     }
 }
 
+/** @brief Internal helper: `menu_execute_radio_action`. */
 static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action)
 {
     size_t idx;
@@ -4118,6 +4173,7 @@ static bool menu_execute_radio_action(menu_state_t *st, menu_action_t action)
     return false;
 }
 
+/** @brief Internal helper: `menu_get_page`. */
 static const menu_page_t *menu_get_page(menu_page_id_t page_id)
 {
     size_t idx;
@@ -4161,11 +4217,13 @@ static bool menu_is_send_action(menu_action_t action)
     }
 }
 
+/** @brief Internal helper: `menu_is_send_target_allowed`. */
 static bool menu_is_send_target_allowed(uint32_t node_id)
 {
     return ((node_id != 0UL) && (node_id != LAVIET_BROADCAST_ID));
 }
 
+/** @brief Internal helper: `menu_item_is_selectable`. */
 static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *page, uint8_t item_idx)
 {
     radio_main_runtime_cfg_t radio_cfg;
@@ -4226,6 +4284,7 @@ static bool menu_item_is_selectable(const menu_state_t *st, const menu_page_t *p
     return true;
 }
 
+/** @brief Internal helper: `menu_open_send_prompt`. */
 static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const char *label)
 {
     char msg[MENU_LINE_BUF_SIZE];
@@ -4250,6 +4309,7 @@ static void menu_open_send_prompt(menu_state_t *st, menu_action_t action, const 
     menu_render_popup("SEND MESSAGE?", msg, "OK=send", "Any key=back");
 }
 
+/** @brief Internal helper: `menu_open_send_target_page`. */
 static void menu_open_send_target_page(menu_state_t *st, menu_action_t action)
 {
     menu_page_id_t previous_page;
@@ -4284,6 +4344,7 @@ static void menu_open_send_target_page(menu_state_t *st, menu_action_t action)
     menu_render(st);
 }
 
+/** @brief Internal helper: `menu_open_device_delete_action`. */
 static void menu_open_device_delete_action(menu_state_t *st, uint8_t slot)
 {
     if (st == NULL)

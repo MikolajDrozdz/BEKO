@@ -13,6 +13,7 @@
 
 static uint8_t s_active_backend = RADIO_LIB_ACTIVE_MODULATION;
 
+/** @brief Internal helper: `radio_normalize_backend`. */
 static uint8_t radio_normalize_backend(uint8_t modulation)
 {
     if ((modulation == RADIO_LIB_MODULATION_LORA) ||

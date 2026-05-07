@@ -104,6 +104,7 @@ bool bmp280_main_get_last(bmp280_api_data_t *out_data)
 }
 
 #if PAGER_CONFIG_BMP280_MOUNTED
+/** @brief Internal helper: `bmp280_main_task_fn`. */
 static void bmp280_main_task_fn(void *argument)
 {
     bmp280_api_data_t sample;

@@ -223,6 +223,7 @@ bool lcd_main_monitor_scroll_down(void)
     return lcd_main_post_message(&msg);
 }
 
+/** @brief Internal helper: `lcd_main_task_fn`. */
 static void lcd_main_task_fn(void *argument)
 {
     lcd_main_msg_t msg;
@@ -377,6 +378,7 @@ static void lcd_main_task_fn(void *argument)
     }
 }
 
+/** @brief Internal helper: `lcd_main_fill_line`. */
 static void lcd_main_fill_line(char *dst, const char *src)
 {
     uint8_t i;
@@ -400,6 +402,7 @@ static void lcd_main_fill_line(char *dst, const char *src)
     dst[LCD_MAIN_COLS] = '\0';
 }
 
+/** @brief Internal helper: `lcd_main_write_source_field`. */
 static void lcd_main_write_source_field(char *dst, uint32_t source_id)
 {
     static const char hex[] = "0123456789ABCDEF";
@@ -442,6 +445,7 @@ static void lcd_main_write_source_field(char *dst, uint32_t source_id)
     dst[3] = hex[source16 & 0x0FU];
 }
 
+/** @brief Internal helper: `lcd_main_fill_line_from_payload`. */
 static void lcd_main_fill_line_from_payload(char *dst,
                                             int16_t rssi_dbm,
                                             uint32_t source_id,
@@ -480,6 +484,7 @@ static void lcd_main_fill_line_from_payload(char *dst,
     dst[LCD_MAIN_COLS] = '\0';
 }
 
+/** @brief Internal helper: `lcd_main_clear_lines`. */
 static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U])
 {
     uint8_t row;
@@ -490,6 +495,7 @@ static void lcd_main_clear_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U])
     }
 }
 
+/** @brief Internal helper: `lcd_main_monitor_history_append`. */
 static void lcd_main_monitor_history_append(const char *line)
 {
     uint8_t old_count = s_monitor_history_count;
@@ -516,6 +522,7 @@ static void lcd_main_monitor_history_append(const char *line)
     lcd_main_monitor_rebuild_lines();
 }
 
+/** @brief Internal helper: `lcd_main_monitor_rebuild_lines`. */
 static void lcd_main_monitor_rebuild_lines(void)
 {
     uint8_t oldest_idx;
@@ -563,6 +570,7 @@ static void lcd_main_monitor_rebuild_lines(void)
     }
 }
 
+/** @brief Internal helper: `lcd_main_render_mode`. */
 static void lcd_main_render_mode(void)
 {
     if (s_mode == LCD_MODE_MONITOR)
@@ -575,6 +583,7 @@ static void lcd_main_render_mode(void)
     }
 }
 
+/** @brief Internal helper: `lcd_main_render_lines`. */
 static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U])
 {
     uint8_t row;
@@ -599,11 +608,13 @@ static void lcd_main_render_lines(char lines[LCD_MAIN_ROWS][LCD_MAIN_COLS + 1U])
     s_render_cache_valid = all_ok;
 }
 
+/** @brief Internal helper: `lcd_main_invalidate_render_cache`. */
 static void lcd_main_invalidate_render_cache(void)
 {
     s_render_cache_valid = false;
 }
 
+/** @brief Internal helper: `lcd_main_is_monitor_message_type`. */
 static bool lcd_main_is_monitor_message_type(lcd_main_msg_type_t type)
 {
     return (type == LCD_MAIN_MSG_PUSH_MONITOR);
@@ -627,6 +638,7 @@ static void lcd_main_drop_pending_messages(void)
     }
 }
 
+/** @brief Internal helper: `lcd_main_post_message`. */
 static bool lcd_main_post_message(const lcd_main_msg_t *msg)
 {
     osStatus_t st;

@@ -112,6 +112,7 @@ static const uint8_t s_aes_rcon[11] =
     0x00U, 0x01U, 0x02U, 0x04U, 0x08U, 0x10U, 0x20U, 0x40U, 0x80U, 0x1BU, 0x36U
 };
 
+/** @brief Convert a HAL status code to a short diagnostic string. */
 static const char *laviet_hal_status_text(HAL_StatusTypeDef status)
 {
     switch (status)
@@ -130,6 +131,7 @@ static const char *laviet_hal_status_text(HAL_StatusTypeDef status)
 }
 
 #if defined(HAL_CRYP_MODULE_ENABLED)
+/** @brief Internal helper: `laviet_cryp_state_text`. */
 static const char *laviet_cryp_state_text(HAL_CRYP_STATETypeDef state)
 {
     switch (state)
@@ -149,6 +151,7 @@ static const char *laviet_cryp_state_text(HAL_CRYP_STATETypeDef state)
     }
 }
 
+/** @brief Internal helper: `laviet_crypto_log_cryp_context`. */
 static void laviet_crypto_log_cryp_context(const char *stage)
 {
     printf("CRYPTO: AES %s inst=%p state=%d(%s) err=0x%08lX alg=0x%08lX dtype=0x%08lX width=%lu keysize=0x%08lX\r\n",
@@ -165,6 +168,7 @@ static void laviet_crypto_log_cryp_context(const char *stage)
 #endif
 
 #if defined(HAL_HASH_MODULE_ENABLED)
+/** @brief Internal helper: `laviet_hash_state_text`. */
 static const char *laviet_hash_state_text(HAL_HASH_StateTypeDef state)
 {
     switch (state)
@@ -186,6 +190,7 @@ static const char *laviet_hash_state_text(HAL_HASH_StateTypeDef state)
     }
 }
 
+/** @brief Internal helper: `laviet_crypto_log_hash_context`. */
 static void laviet_crypto_log_hash_context(const char *stage)
 {
     printf("CRYPTO: HASH %s state=%d(%s) err=0x%08lX dtype=0x%08lX key_len=%lu\r\n",
@@ -198,6 +203,7 @@ static void laviet_crypto_log_hash_context(const char *stage)
 }
 #endif
 
+/** @brief Print the first byte mismatch found during crypto self-test comparison. */
 static bool laviet_crypto_log_mismatch(const char *stage,
                                        const uint8_t *expected,
                                        const uint8_t *actual,
@@ -230,6 +236,7 @@ static bool laviet_crypto_log_mismatch(const char *stage,
 }
 
 #if defined(HAL_CRYP_MODULE_ENABLED)
+/** @brief Internal helper: `laviet_crypto_pack_be_words`. */
 static void laviet_crypto_pack_be_words(uint32_t words[4], const uint8_t bytes[16])
 {
     uint8_t i;
@@ -245,6 +252,7 @@ static void laviet_crypto_pack_be_words(uint32_t words[4], const uint8_t bytes[1
     }
 }
 
+/** @brief Internal helper: `laviet_crypto_unpack_be_words`. */
 static void laviet_crypto_unpack_be_words(uint8_t bytes[16], const uint32_t words[4])
 {
     uint8_t i;
@@ -261,11 +269,13 @@ static void laviet_crypto_unpack_be_words(uint8_t bytes[16], const uint32_t word
 }
 #endif
 
+/** @brief Rotate a 32-bit word right for SHA-256 round functions. */
 static uint32_t laviet_rotr32(uint32_t value, uint8_t bits)
 {
     return (value >> bits) | (value << (32U - bits));
 }
 
+/** @brief Process one 512-bit SHA-256 block into the running digest state. */
 static void laviet_sha256_transform(laviet_sha256_ctx_t *ctx, const uint8_t data[64])
 {
     uint32_t m[64];
@@ -335,6 +345,7 @@ static void laviet_sha256_transform(laviet_sha256_ctx_t *ctx, const uint8_t data
     ctx->state[7] += h;
 }
 
+/** @brief Initialize the software SHA-256 context with the standard IV. */
 static void laviet_sha256_init(laviet_sha256_ctx_t *ctx)
 {
     ctx->datalen = 0U;
@@ -349,6 +360,7 @@ static void laviet_sha256_init(laviet_sha256_ctx_t *ctx)
     ctx->state[7] = 0x5BE0CD19UL;
 }
 
+/** @brief Feed bytes into the software SHA-256 streaming context. */
 static void laviet_sha256_update(laviet_sha256_ctx_t *ctx, const uint8_t *data, uint16_t len)
 {
     uint16_t i;
@@ -371,6 +383,7 @@ static void laviet_sha256_update(laviet_sha256_ctx_t *ctx, const uint8_t *data, 
     }
 }
 
+/** @brief Finalize SHA-256 padding and write the 32-byte digest. */
 static void laviet_sha256_final(laviet_sha256_ctx_t *ctx, uint8_t hash[LAVIET_SHA256_LEN])
 {
     uint32_t i = ctx->datalen;
@@ -415,11 +428,13 @@ static void laviet_sha256_final(laviet_sha256_ctx_t *ctx, uint8_t hash[LAVIET_SH
     }
 }
 
+/** @brief Internal helper: `laviet_aes_xtime`. */
 static uint8_t laviet_aes_xtime(uint8_t x)
 {
     return (uint8_t)((x << 1) ^ (((x >> 7) & 1U) * 0x1BU));
 }
 
+/** @brief Expand a 128-bit AES key into the AES-128 round-key schedule. */
 static void laviet_aes_key_expansion(const uint8_t key[16], uint8_t round_key[176])
 {
     uint8_t i;
@@ -450,6 +465,7 @@ static void laviet_aes_key_expansion(const uint8_t key[16], uint8_t round_key[17
     }
 }
 
+/** @brief Internal helper: `laviet_aes_add_round_key`. */
 static void laviet_aes_add_round_key(uint8_t state[16], const uint8_t *round_key)
 {
     uint8_t i;
@@ -460,6 +476,7 @@ static void laviet_aes_add_round_key(uint8_t state[16], const uint8_t *round_key
     }
 }
 
+/** @brief Internal helper: `laviet_aes_sub_bytes`. */
 static void laviet_aes_sub_bytes(uint8_t state[16])
 {
     uint8_t i;
@@ -470,6 +487,7 @@ static void laviet_aes_sub_bytes(uint8_t state[16])
     }
 }
 
+/** @brief Internal helper: `laviet_aes_shift_rows`. */
 static void laviet_aes_shift_rows(uint8_t state[16])
 {
     uint8_t temp;
@@ -494,6 +512,7 @@ static void laviet_aes_shift_rows(uint8_t state[16])
     state[3] = temp;
 }
 
+/** @brief Internal helper: `laviet_aes_mix_columns`. */
 static void laviet_aes_mix_columns(uint8_t state[16])
 {
     uint8_t i;
@@ -520,6 +539,7 @@ static void laviet_aes_mix_columns(uint8_t state[16])
     }
 }
 
+/** @brief Encrypt one 16-byte block with the software AES-128 implementation. */
 static void laviet_aes_encrypt_block(const uint8_t in[16],
                                      uint8_t out[16],
                                      const uint8_t round_key[176])
@@ -545,6 +565,7 @@ static void laviet_aes_encrypt_block(const uint8_t in[16],
     laviet_secure_zero(state, sizeof(state));
 }
 
+/** @brief Build the LAVIET-specific AES-CTR counter block from frame identity fields. */
 static void laviet_make_counter_block(const laviet_frame_t *frame,
                                       uint16_t block_index,
                                       uint8_t out[16])
@@ -567,6 +588,7 @@ static void laviet_make_counter_block(const laviet_frame_t *frame,
     out[15] = (uint8_t)block_index;
 }
 
+/** @brief Internal helper: `laviet_crypto_lock`. */
 static bool laviet_crypto_lock(void)
 {
     if (s_crypto_mutex == NULL)
@@ -577,6 +599,7 @@ static bool laviet_crypto_lock(void)
     return (osMutexAcquire(s_crypto_mutex, LAVIET_CRYPTO_TIMEOUT_MS) == osOK);
 }
 
+/** @brief Internal helper: `laviet_crypto_unlock`. */
 static void laviet_crypto_unlock(void)
 {
     if (s_crypto_mutex != NULL)
@@ -585,6 +608,7 @@ static void laviet_crypto_unlock(void)
     }
 }
 
+/** @brief Software HMAC-SHA256 implementation used as the portable fallback. */
 static bool laviet_hmac_sha256_sw(const uint8_t *key,
                                   uint16_t key_len,
                                   const uint8_t *data,
@@ -637,6 +661,7 @@ static bool laviet_hmac_sha256_sw(const uint8_t *key,
     return true;
 }
 
+/** @brief Hardware HASH HMAC-SHA256 path; caller must hold the crypto mutex. */
 static bool laviet_hmac_sha256_hw_locked(const uint8_t *key,
                                          uint16_t key_len,
                                          const uint8_t *data,
@@ -746,6 +771,7 @@ bool laviet_frame_hmac_sha256(const laviet_frame_t *frame,
 #endif
 }
 
+/** @brief Software AES-CTR encrypt/decrypt routine for arbitrary LAVIET payload length. */
 static bool laviet_aes_ctr_crypt_sw(uint8_t *data,
                                     uint8_t len,
                                     const uint8_t key[LAVIET_AES_KEY_LEN],
@@ -783,6 +809,7 @@ static bool laviet_aes_ctr_crypt_sw(uint8_t *data,
     return true;
 }
 
+/** @brief Hardware AES-CTR path for one LAVIET payload block; caller must hold the crypto mutex. */
 static bool laviet_aes_ctr_crypt_hw_locked(uint8_t *data,
                                            uint8_t len,
                                            const uint8_t key[LAVIET_AES_KEY_LEN],
@@ -903,6 +930,7 @@ cleanup:
 #endif
 }
 
+/** @brief Compare hardware crypto output against software reference vectors under the crypto mutex. */
 static bool laviet_crypto_self_test_locked(void)
 {
     static const uint8_t s_test_key[32] =

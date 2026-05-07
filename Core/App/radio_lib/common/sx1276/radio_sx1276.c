@@ -6,6 +6,7 @@
 #include "radio_sx1276.h"
 #include "radio_sx1276_regs.h"
 
+/** @brief Internal helper: `sx1276_select`. */
 static bool sx1276_select(const sx1276_bus_t *bus)
 {
     if ((bus == NULL) || (bus->hspi == NULL) || (bus->nss_port == NULL))
@@ -17,6 +18,7 @@ static bool sx1276_select(const sx1276_bus_t *bus)
     return true;
 }
 
+/** @brief Internal helper: `sx1276_deselect`. */
 static void sx1276_deselect(const sx1276_bus_t *bus)
 {
     HAL_GPIO_WritePin(bus->nss_port, bus->nss_pin, GPIO_PIN_SET);

@@ -1,3 +1,8 @@
+/**
+ * @file vl53l3cx_lib.h
+ * @brief Application wrapper for the VL53L3CX time-of-flight sensor.
+ */
+
 #ifndef APP_VL53L3CX_LIB_VL53L3CX_LIB_H_
 #define APP_VL53L3CX_LIB_VL53L3CX_LIB_H_
 
@@ -5,26 +10,24 @@
 #include <stdint.h>
 
 /**
- * @fn bool tof_init(void)
- * @brief
- * 		Initialize tof VL53L3CX on board
- * @return
- * 		- true: works
- * 		- flase: does not work
+ * @brief Initialize the onboard VL53L3CX sensor.
+ * @return `true` when the sensor was detected and configured.
  */
 bool tof_init(void);
 
 /**
- * @fn int32_t tof_get_distance(void)
- * @brief get distance in mm
- * @note Funkcja jest blokująca: czeka na świeżą próbkę z czujnika.
- * Czas blokowania zależy od TimingBudget (aktualnie ~30 ms + narzut magistrali).
- * @return
- * 		uint32_t distance in mm
+ * @brief Read one distance sample in millimeters.
+ *
+ * @note Funkcja jest blokujaca: czeka na swieza probke z czujnika.
+ * Czas blokowania zalezy od TimingBudget (aktualnie ~30 ms + narzut magistrali).
+ *
+ * @return Distance in millimeters, or a negative value on failure.
  */
 int32_t tof_get_distance(void);
 
-
+/**
+ * @brief Diagnostic helper that reads and prints one VL53L3CX sample.
+ */
 void VL53L3CX_TestOnce(void);
 
 #endif /* APP_VL53L3CX_LIB_VL53L3CX_LIB_H_ */

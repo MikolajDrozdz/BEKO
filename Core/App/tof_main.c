@@ -40,6 +40,7 @@ int32_t tof_main_get_last_distance(void)
     return s_tof_last_distance_mm;
 }
 
+/** @brief Internal helper: `tof_main_task_fn`. */
 static void tof_main_task_fn(void *argument)
 {
     bool init_ok;

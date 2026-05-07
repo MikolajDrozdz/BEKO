@@ -759,6 +759,7 @@ uint32_t radio_main_get_node_id(void)
     return node_id;
 }
 
+/** @brief Internal helper: `radio_main_task_fn`. */
 static void radio_main_task_fn(void *argument)
 {
     radio_main_cmd_t cmd;
@@ -1130,6 +1131,7 @@ static void radio_main_task_fn(void *argument)
     }
 }
 
+/** @brief Internal helper: `radio_main_enqueue_sync`. */
 static bool radio_main_enqueue_sync(const radio_main_cmd_t *cmd, radio_main_cmd_sync_t *sync)
 {
     radio_main_cmd_t local;
@@ -1151,6 +1153,7 @@ static bool radio_main_enqueue_sync(const radio_main_cmd_t *cmd, radio_main_cmd_
     return radio_main_wait_sync(sync, RADIO_CMD_WAIT_MS);
 }
 
+/** @brief Internal helper: `radio_main_wait_sync`. */
 static bool radio_main_wait_sync(radio_main_cmd_sync_t *sync, uint32_t timeout_ms)
 {
     uint32_t start = radio_main_now_ms();
@@ -1228,6 +1231,7 @@ static void radio_main_tx_mark_started_ex(uint16_t payload_len, bool silent)
     s_ctx.tx_deadline_ms = radio_main_now_ms() + radio_main_tx_timeout_ms(payload_len);
 }
 
+/** @brief Internal helper: `radio_main_tx_clear`. */
 static void radio_main_tx_clear(void)
 {
     s_ctx.tx_in_progress = false;
@@ -1235,12 +1239,14 @@ static void radio_main_tx_clear(void)
     s_ctx.tx_deadline_ms = 0U;
 }
 
+/** @brief Internal helper: `radio_main_tx_timed_out`. */
 static bool radio_main_tx_timed_out(void)
 {
     return (s_ctx.tx_in_progress &&
             ((int32_t)(radio_main_now_ms() - s_ctx.tx_deadline_ms) >= 0));
 }
 
+/** @brief Internal helper: `radio_main_ack_timeout_ms`. */
 static uint32_t radio_main_ack_timeout_ms(uint8_t raw_len)
 {
     uint32_t tx_airtime_ms;
@@ -1273,6 +1279,7 @@ static uint32_t radio_main_ack_timeout_ms(uint8_t raw_len)
     return wait_ms;
 }
 
+/** @brief Internal helper: `radio_main_ack_track_start`. */
 static bool radio_main_ack_track_start(const laviet_frame_t *frame, const uint8_t *raw, uint8_t raw_len)
 {
     if ((frame == NULL) || (raw == NULL) || (raw_len == 0U))
@@ -1309,6 +1316,7 @@ static bool radio_main_ack_track_start(const laviet_frame_t *frame, const uint8_
     return true;
 }
 
+/** @brief Internal helper: `radio_main_ack_track_close`. */
 static void radio_main_ack_track_close(bool timed_out)
 {
     if (!s_ctx.ack_pending.active)
@@ -1325,6 +1333,7 @@ static void radio_main_ack_track_close(bool timed_out)
     memset(&s_ctx.ack_pending, 0, sizeof(s_ctx.ack_pending));
 }
 
+/** @brief Internal helper: `radio_main_ack_recent_expire`. */
 static void radio_main_ack_recent_expire(void)
 {
     if (s_ctx.ack_recent.valid &&
@@ -1334,6 +1343,7 @@ static void radio_main_ack_recent_expire(void)
     }
 }
 
+/** @brief Internal helper: `radio_main_handle_ack_frame`. */
 static void radio_main_handle_ack_frame(uint16_t src_id, uint16_t acked_msg_id, uint32_t acked_counter)
 {
     if (s_ctx.ack_pending.active &&
@@ -1381,6 +1391,7 @@ static void radio_main_handle_ack_frame(uint16_t src_id, uint16_t acked_msg_id, 
            (unsigned long)acked_counter);
 }
 
+/** @brief Internal helper: `radio_main_handle_ack_timeout`. */
 static void radio_main_handle_ack_timeout(void)
 {
     if (!s_ctx.ack_pending.active || s_ctx.tx_in_progress)
@@ -1425,6 +1436,7 @@ static void radio_main_handle_ack_timeout(void)
     radio_main_ack_track_close(true);
 }
 
+/** @brief Internal helper: `radio_main_set_last_error`. */
 static void radio_main_set_last_error(const char *text)
 {
     if (text == NULL)
@@ -1437,11 +1449,13 @@ static void radio_main_set_last_error(const char *text)
     s_ctx.last_error_text[sizeof(s_ctx.last_error_text) - 1U] = '\0';
 }
 
+/** @brief Internal helper: `radio_main_clear_last_error`. */
 static void radio_main_clear_last_error(void)
 {
     s_ctx.last_error_text[0] = '\0';
 }
 
+/** @brief Internal helper: `radio_main_current_frequency_hz`. */
 static uint32_t radio_main_current_frequency_hz(void)
 {
     if (s_ctx.modulation_id == RADIO_MAIN_MODULATION_FSK)
@@ -1483,6 +1497,7 @@ static uint16_t radio_main_current_duty_cycle_permille(uint32_t frequency_hz)
     return 10U;
 }
 
+/** @brief Internal helper: `radio_main_lora_bw_hz`. */
 static uint32_t radio_main_lora_bw_hz(radio_lora_bw_t bw)
 {
     switch (bw)
@@ -1635,6 +1650,7 @@ static uint32_t radio_main_estimate_fsk_ook_airtime_ms(uint16_t payload_len, boo
     return (uint32_t)total_ms;
 }
 
+/** @brief Internal helper: `radio_main_auto_ping_airtime_ms`. */
 static uint32_t radio_main_auto_ping_airtime_ms(void)
 {
     const char *msg = s_template_groups[2][0];
@@ -1666,6 +1682,7 @@ static uint32_t radio_main_auto_ping_airtime_ms(void)
     return radio_main_estimate_lora_airtime_ms(raw_len);
 }
 
+/** @brief Internal helper: `radio_main_auto_ping_period_ms`. */
 static uint32_t radio_main_auto_ping_period_ms(void)
 {
     uint16_t duty_permille;
@@ -1702,6 +1719,7 @@ static uint32_t radio_main_auto_ping_period_ms(void)
     return (uint32_t)period_ms;
 }
 
+/** @brief Internal helper: `radio_main_radio_init_and_start`. */
 static bool radio_main_radio_init_and_start(void)
 {
     radio_status_t st;
@@ -1787,6 +1805,7 @@ void radio_main_load_default_lora_preset(uint8_t preset_id, radio_lora_cfg_t *cf
     }
 }
 
+/** @brief Internal helper: `radio_main_apply_preset_cfg`. */
 static void radio_main_apply_preset_cfg(uint8_t preset_id, radio_lora_cfg_t *cfg)
 {
     radio_main_load_default_lora_preset(preset_id, cfg);
@@ -1846,6 +1865,7 @@ void radio_main_load_default_ook_profile(radio_main_ook_cfg_t *cfg)
     cfg->threshold_value = 12U;
 }
 
+/** @brief Internal helper: `radio_main_sync_snapshot`. */
 static void radio_main_sync_snapshot(radio_main_runtime_cfg_t *cfg)
 {
     if (cfg == NULL)
@@ -1894,6 +1914,7 @@ static void radio_main_apply_modulation_cfg(void)
 
 }
 
+/** @brief Internal helper: `radio_main_switch_backend`. */
 static bool radio_main_switch_backend(radio_main_modulation_t modulation)
 {
     radio_main_modulation_t previous_modulation = s_ctx.backend_modulation_id;
@@ -1920,6 +1941,7 @@ static bool radio_main_switch_backend(radio_main_modulation_t modulation)
     return false;
 }
 
+/** @brief Internal helper: `radio_main_load_default_profile`. */
 static void radio_main_load_default_profile(radio_main_modulation_t modulation)
 {
     switch (modulation)
@@ -1942,6 +1964,7 @@ static void radio_main_load_default_profile(radio_main_modulation_t modulation)
 }
 
 
+/** @brief Internal helper: `radio_main_map_fsk_crc`. */
 static radio_packet_crc_t radio_main_map_fsk_crc(radio_main_crc_type_t crc_type)
 {
     switch (crc_type)
@@ -1959,6 +1982,7 @@ static radio_packet_crc_t radio_main_map_fsk_crc(radio_main_crc_type_t crc_type)
     }
 }
 
+/** @brief Internal helper: `radio_main_map_fsk_address_filter`. */
 static radio_address_filter_t radio_main_map_fsk_address_filter(radio_main_address_filter_t filter)
 {
     switch (filter)
@@ -1975,6 +1999,7 @@ static radio_address_filter_t radio_main_map_fsk_address_filter(radio_main_addre
     }
 }
 
+/** @brief Internal helper: `radio_main_map_ook_threshold`. */
 static radio_ook_threshold_t radio_main_map_ook_threshold(radio_main_ook_threshold_t threshold)
 {
     switch (threshold)
@@ -2057,34 +2082,40 @@ static bool radio_main_push_backend_cfg(void)
     return true;
 }
 
+/** @brief Internal helper: `radio_main_validate_frequency`. */
 static bool radio_main_validate_frequency(uint32_t frequency_hz)
 {
     return ((frequency_hz >= 863000000UL) &&
             (frequency_hz <= 870000000UL));
 }
 
+/** @brief Internal helper: `radio_main_validate_tx_power`. */
 static bool radio_main_validate_tx_power(int32_t tx_power_dbm)
 {
     return ((tx_power_dbm >= 2) && (tx_power_dbm <= 20));
 }
 
+/** @brief Internal helper: `radio_main_validate_bitrate`. */
 static bool radio_main_validate_bitrate(uint32_t bitrate_bps)
 {
     return ((bitrate_bps >= 600UL) &&
             (bitrate_bps <= 300000UL));
 }
 
+/** @brief Internal helper: `radio_main_validate_preamble`. */
 static bool radio_main_validate_preamble(uint32_t preamble_len)
 {
     return ((preamble_len >= 1UL) &&
             (preamble_len <= 65535UL));
 }
 
+/** @brief Internal helper: `radio_main_validate_hop_period`. */
 static bool radio_main_validate_hop_period(uint32_t period_ms)
 {
     return ((period_ms >= 250UL) && (period_ms <= 60000UL));
 }
 
+/** @brief Internal helper: `radio_main_validate_auto_ping_period`. */
 static bool radio_main_validate_auto_ping_period(uint32_t period_ms)
 {
     return ((period_ms == 1UL) ||
@@ -2094,12 +2125,14 @@ static bool radio_main_validate_auto_ping_period(uint32_t period_ms)
             (period_ms == 10000UL));
 }
 
+/** @brief Internal helper: `radio_main_validate_auto_ping_mode`. */
 static bool radio_main_validate_auto_ping_mode(radio_main_auto_ping_mode_t mode)
 {
     return ((mode == RADIO_MAIN_AUTO_PING_FRAME) ||
             (mode == RADIO_MAIN_AUTO_PING_RAW));
 }
 
+/** @brief Internal helper: `radio_main_apply_option`. */
 static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
 {
     radio_main_ctx_t saved_ctx;
@@ -2450,6 +2483,7 @@ static bool radio_main_apply_option(radio_main_option_t option, uint32_t value)
     return false;
 }
 
+/** @brief Internal helper: `radio_main_is_supported_bw`. */
 static bool radio_main_is_supported_bw(uint8_t bw_code)
 {
     return ((bw_code == (uint8_t)RADIO_LORA_BW_7_8_KHZ) ||
@@ -2464,6 +2498,7 @@ static bool radio_main_is_supported_bw(uint8_t bw_code)
             (bw_code == (uint8_t)RADIO_LORA_BW_500_KHZ));
 }
 
+/** @brief Internal helper: `radio_main_reconfigure_radio`. */
 static bool radio_main_reconfigure_radio(void)
 {
     if (!s_ctx.initialized)
@@ -2539,6 +2574,7 @@ static bool radio_main_reset_module_internal(void)
     return radio_main_force_recover_radio("manual reset");
 }
 
+/** @brief Internal helper: `radio_main_send_system_frame`. */
 static bool radio_main_send_system_frame(laviet_frame_type_t type,
                                          uint32_t dst_id,
                                          const uint8_t *payload,
@@ -2547,6 +2583,7 @@ static bool radio_main_send_system_frame(laviet_frame_type_t type,
     return radio_main_send_system_frame_ex(type, dst_id, payload, payload_len, true, false);
 }
 
+/** @brief Internal helper: `radio_main_send_system_frame_ex`. */
 static bool radio_main_send_system_frame_ex(laviet_frame_type_t type,
                                             uint32_t dst_id,
                                             const uint8_t *payload,
@@ -2768,6 +2805,7 @@ static bool radio_main_send_system_frame_ex(laviet_frame_type_t type,
     return true;
 }
 
+/** @brief Internal helper: `radio_main_send_ack`. */
 static bool radio_main_send_ack(const laviet_frame_t *frame)
 {
     uint8_t payload[LAVIET_ACK_PAYLOAD_LEN];
@@ -2923,11 +2961,13 @@ static bool radio_main_send_current_backend_with_retry_ex(const uint8_t *data, u
     return false;
 }
 
+/** @brief Internal helper: `radio_main_send_raw_with_retry`. */
 static bool radio_main_send_raw_with_retry(const uint8_t *data, uint8_t len)
 {
     return radio_main_send_raw_with_retry_ex(data, len, false);
 }
 
+/** @brief Internal helper: `radio_main_send_raw_with_retry_ex`. */
 static bool radio_main_send_raw_with_retry_ex(const uint8_t *data, uint8_t len, bool silent)
 {
     if ((data == NULL) || (len == 0U))
@@ -2946,6 +2986,7 @@ static bool radio_main_send_raw_with_retry_ex(const uint8_t *data, uint8_t len, 
     return radio_main_send_current_backend_with_retry_ex(data, len, silent);
 }
 
+/** @brief Internal helper: `radio_main_send_template_internal`. */
 static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, uint32_t dst_id)
 {
     const char *msg;
@@ -2967,6 +3008,7 @@ static bool radio_main_send_template_internal(uint8_t group_id, uint8_t msg_id, 
     return radio_main_send_system_frame(LAVIET_TYPE_DATA, dst_id, (const uint8_t *)msg, len);
 }
 
+/** @brief Internal helper: `radio_main_post_rx_notification`. */
 static void radio_main_post_rx_notification(int16_t rssi_dbm,
                                             uint16_t src_id,
                                             uint16_t dst_id,
@@ -3004,6 +3046,7 @@ static void radio_main_post_rx_notification(int16_t rssi_dbm,
     (void)menu_main_post_notification(&n);
 }
 
+/** @brief Internal helper: `radio_main_frame_type_text`. */
 static const char *radio_main_frame_type_text(laviet_frame_type_t type)
 {
     switch (type)
@@ -3031,6 +3074,7 @@ static const char *radio_main_frame_type_text(laviet_frame_type_t type)
     }
 }
 
+/** @brief Internal helper: `radio_main_key_mode_text`. */
 static const char *radio_main_key_mode_text(security_frame_key_mode_t mode)
 {
     switch (mode)
@@ -3043,6 +3087,7 @@ static const char *radio_main_key_mode_text(security_frame_key_mode_t mode)
     }
 }
 
+/** @brief Internal helper: `radio_main_laviet_verify_rx`. */
 static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
 {
     security_frame_key_mode_t candidates[2];
@@ -3181,6 +3226,7 @@ static bool radio_main_laviet_verify_rx(const laviet_frame_t *frame, uint8_t enc
     return ok;
 }
 
+/** @brief Internal helper: `radio_main_handle_events`. */
 static void radio_main_handle_events(void)
 {
     uint32_t events = radio_take_events();
@@ -3221,6 +3267,7 @@ static void radio_main_handle_events(void)
     }
 }
 
+/** @brief Internal helper: `radio_main_source_is_trusted`. */
 static bool radio_main_source_is_trusted(uint16_t src_id)
 {
     trusted_info_t info;
@@ -3245,6 +3292,7 @@ static bool radio_main_source_is_trusted(uint16_t src_id)
     return false;
 }
 
+/** @brief Internal helper: `radio_main_source_is_allowed_for_data`. */
 static bool radio_main_source_is_allowed_for_data(const laviet_frame_t *frame)
 {
     if (frame == NULL)
@@ -3261,6 +3309,7 @@ static bool radio_main_source_is_allowed_for_data(const laviet_frame_t *frame)
     return radio_main_source_is_trusted(frame->src_id);
 }
 
+/** @brief Internal helper: `radio_main_handle_rx_packet`. */
 static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
 {
     laviet_frame_t frame;
@@ -3719,6 +3768,7 @@ static void radio_main_handle_rx_packet(const radio_packet_t *pkt)
     }
 }
 
+/** @brief Internal helper: `radio_main_handle_hopping`. */
 static void radio_main_handle_hopping(void)
 {
     uint32_t now;
@@ -3755,6 +3805,7 @@ static void radio_main_handle_hopping(void)
     }
 }
 
+/** @brief Internal helper: `radio_main_handle_auto_ping`. */
 static void radio_main_handle_auto_ping(void)
 {
     uint32_t now;
@@ -3818,6 +3869,7 @@ static void radio_main_watchdog_tx(void)
     }
 }
 
+/** @brief Internal helper: `radio_main_ensure_rx_continuous`. */
 static void radio_main_ensure_rx_continuous(void)
 {
     if (!s_ctx.initialized)
@@ -3847,6 +3899,7 @@ static void radio_main_ensure_rx_continuous(void)
     }
 }
 
+/** @brief Internal helper: `radio_main_notify`. */
 static void radio_main_notify(menu_notification_type_t type, const char *text)
 {
     menu_notification_t n;
@@ -3860,6 +3913,7 @@ static void radio_main_notify(menu_notification_type_t type, const char *text)
     (void)menu_main_post_notification(&n);
 }
 
+/** @brief Internal helper: `radio_main_clear_gateway_pair_code`. */
 static void radio_main_clear_gateway_pair_code(void)
 {
     memset(s_ctx.gateway_pair_code, 0, sizeof(s_ctx.gateway_pair_code));
@@ -3867,6 +3921,7 @@ static void radio_main_clear_gateway_pair_code(void)
     s_ctx.gateway_pair_code_valid = false;
 }
 
+/** @brief Internal helper: `radio_main_set_gateway_pair_code`. */
 static void radio_main_set_gateway_pair_code(const uint8_t *code, uint8_t len)
 {
     radio_main_clear_gateway_pair_code();
@@ -3885,6 +3940,7 @@ static void radio_main_set_gateway_pair_code(const uint8_t *code, uint8_t len)
     radio_main_print_hex_bytes("RADIO: gateway pair code cache=", s_ctx.gateway_pair_code, s_ctx.gateway_pair_code_len);
 }
 
+/** @brief Internal helper: `radio_main_load_gateway_pair_code_from_security`. */
 static void radio_main_load_gateway_pair_code_from_security(void)
 {
     trusted_info_t gateway_info;
@@ -3899,6 +3955,7 @@ static void radio_main_load_gateway_pair_code_from_security(void)
     }
 }
 
+/** @brief Internal helper: `radio_main_get_gateway_cached_frame_keys`. */
 static bool radio_main_get_gateway_cached_frame_keys(security_frame_key_mode_t mode,
                                                      uint8_t enc_key_out[16],
                                                      uint8_t hmac_key_out[32])
@@ -3922,6 +3979,7 @@ static bool radio_main_get_gateway_cached_frame_keys(security_frame_key_mode_t m
                                                  hmac_key_out);
 }
 
+/** @brief Internal helper: `radio_main_clear_broadcast_group_state`. */
 static void radio_main_clear_broadcast_group_state(void)
 {
     s_ctx.broadcast_group_key_valid = false;
@@ -3934,6 +3992,7 @@ static void radio_main_clear_broadcast_group_state(void)
     laviet_secure_zero(s_ctx.broadcast_group_pending_key, sizeof(s_ctx.broadcast_group_pending_key));
 }
 
+/** @brief Internal helper: `radio_main_be32_read`. */
 static uint32_t radio_main_be32_read(const uint8_t *src)
 {
     if (src == NULL)
@@ -3947,6 +4006,7 @@ static uint32_t radio_main_be32_read(const uint8_t *src)
            (uint32_t)src[3];
 }
 
+/** @brief Internal helper: `radio_main_derive_broadcast_group_frame_keys`. */
 static bool radio_main_derive_broadcast_group_frame_keys(const uint8_t group_key[RADIO_BCAST_GROUP_KEY_LEN],
                                                          uint32_t epoch,
                                                          uint8_t enc_key_out[16],
@@ -4014,6 +4074,7 @@ static bool radio_main_derive_broadcast_group_frame_keys(const uint8_t group_key
     return ok;
 }
 
+/** @brief Internal helper: `radio_main_try_broadcast_group_rx`. */
 static bool radio_main_try_broadcast_group_rx(const laviet_frame_t *frame, uint8_t enc_key[16])
 {
     uint8_t expected[LAVIET_MAC_TAG_LEN];
@@ -4052,6 +4113,7 @@ static bool radio_main_try_broadcast_group_rx(const laviet_frame_t *frame, uint8
     return ok;
 }
 
+/** @brief Internal helper: `radio_main_handle_key_rotate_frame`. */
 static bool radio_main_handle_key_rotate_frame(const laviet_frame_t *frame)
 {
     uint32_t epoch;
@@ -4159,6 +4221,7 @@ static bool radio_main_handle_key_rotate_frame(const laviet_frame_t *frame)
     return false;
 }
 
+/** @brief Internal helper: `radio_main_format_payload_text`. */
 static uint8_t radio_main_format_payload_text(const uint8_t *payload,
                                               uint8_t payload_len,
                                               char *out,
@@ -4225,6 +4288,7 @@ static uint8_t radio_main_format_payload_text(const uint8_t *payload,
     return out_idx;
 }
 
+/** @brief Internal helper: `radio_main_push_payload_to_monitor`. */
 static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
                                                uint16_t src_id,
                                                const uint8_t *payload,
@@ -4242,6 +4306,7 @@ static bool radio_main_push_payload_to_monitor(int16_t rssi_dbm,
     return lcd_main_push_message_from(rssi_dbm, src_id, (const uint8_t *)text_buf, text_len);
 }
 
+/** @brief Internal helper: `radio_main_log_gateway_rx_frame`. */
 static void radio_main_log_gateway_rx_frame(const laviet_frame_t *raw_frame,
                                             const laviet_frame_t *decoded_frame,
                                             int16_t rssi_dbm,
@@ -4297,6 +4362,7 @@ static void radio_main_log_gateway_rx_frame(const laviet_frame_t *raw_frame,
     }
 }
 
+/** @brief Internal helper: `radio_main_print_hex_bytes`. */
 static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, uint16_t len)
 {
     uint16_t i;
@@ -4313,6 +4379,7 @@ static void radio_main_print_hex_bytes(const char *label, const uint8_t *data, u
     printf("\r\n");
 }
 
+/** @brief Internal helper: `radio_main_log_hmac_debug`. */
 static void radio_main_log_hmac_debug(const char *prefix,
                                       const laviet_frame_t *frame,
                                       security_frame_key_mode_t mode,
@@ -4359,6 +4426,7 @@ static void radio_main_log_hmac_debug(const char *prefix,
     radio_main_print_hex_bytes("  frame_mac=", frame->mac_tag, LAVIET_MAC_TAG_LEN);
 }
 
+/** @brief Internal helper: `radio_main_print_generated_pattern`. */
 static void radio_main_print_generated_pattern(const char *label, uint8_t value, uint16_t len)
 {
     uint16_t i;
@@ -4375,6 +4443,7 @@ static void radio_main_print_generated_pattern(const char *label, uint8_t value,
     printf("\r\n");
 }
 
+/** @brief Internal helper: `radio_main_print_fsk_sync_word`. */
 static void radio_main_print_fsk_sync_word(uint64_t sync_word, uint8_t sync_len, const char *label)
 {
     uint8_t bytes[8];
@@ -4394,6 +4463,7 @@ static void radio_main_print_fsk_sync_word(uint64_t sync_word, uint8_t sync_len,
     radio_main_print_hex_bytes(label, bytes, sync_len);
 }
 
+/** @brief Internal helper: `radio_main_print_ook_sync_word`. */
 static void radio_main_print_ook_sync_word(uint32_t sync_word, uint8_t sync_len, const char *label)
 {
     uint8_t bytes[4];
@@ -4413,6 +4483,7 @@ static void radio_main_print_ook_sync_word(uint32_t sync_word, uint8_t sync_len,
     radio_main_print_hex_bytes(label, bytes, sync_len);
 }
 
+/** @brief Internal helper: `radio_main_print_rx_ascii`. */
 static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len)
 {
     uint8_t i;
@@ -4426,6 +4497,7 @@ static void radio_main_print_rx_ascii(const uint8_t *data, uint8_t len)
     printf("\r\n");
 }
 
+/** @brief Internal helper: `radio_main_print_tx_ascii`. */
 static void radio_main_print_tx_ascii(const uint8_t *data, uint8_t len)
 {
     uint8_t i;
@@ -4520,6 +4592,7 @@ static void radio_main_print_tx_frame(const uint8_t *data, uint8_t len, bool ret
     radio_main_print_tx_ascii(data, len);
 }
 
+/** @brief Internal helper: `radio_main_frf_to_hz`. */
 static uint32_t radio_main_frf_to_hz(uint8_t msb, uint8_t mid, uint8_t lsb)
 {
     uint32_t frf = ((uint32_t)msb << 16) |
@@ -4529,6 +4602,7 @@ static uint32_t radio_main_frf_to_hz(uint8_t msb, uint8_t mid, uint8_t lsb)
     return (uint32_t)((((uint64_t)frf) * 32000000ULL) >> 19);
 }
 
+/** @brief Internal helper: `radio_main_log_runtime_profile`. */
 static void radio_main_log_runtime_profile(const char *reason)
 {
     const char *tag = (reason != NULL) ? reason : "state";
@@ -4591,6 +4665,7 @@ static void radio_main_log_runtime_profile(const char *reason)
            s_ctx.lora_cfg.implicit_header ? 1U : 0U);
 }
 
+/** @brief Internal helper: `radio_main_log_hw_registers`. */
 static void radio_main_log_hw_registers(const char *reason)
 {
     uint8_t op_mode = 0U;
@@ -4654,6 +4729,7 @@ static void radio_main_log_hw_registers(const char *reason)
     }
 }
 
+/** @brief Internal helper: `radio_main_finish_pairing`. */
 static bool radio_main_finish_pairing(bool accept)
 {
     bool ok;
@@ -4742,6 +4818,7 @@ static bool radio_main_finish_pairing(bool accept)
     return true;
 }
 
+/** @brief Internal helper: `radio_main_send_pair_request_internal`. */
 static bool radio_main_send_pair_request_internal(void)
 {
     char note[21];
@@ -4786,6 +4863,7 @@ static bool radio_main_send_pair_request_internal(void)
     return true;
 }
 
+/** @brief Internal helper: `radio_main_make_pair_code`. */
 static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len)
 {
     uint8_t i;
@@ -4804,6 +4882,7 @@ static void radio_main_make_pair_code(uint8_t *code_out, uint8_t len)
     }
 }
 
+/** @brief Internal helper: `radio_main_pair_code_to_text`. */
 static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char *out, uint8_t out_size)
 {
     uint8_t i;
@@ -4829,6 +4908,7 @@ static void radio_main_pair_code_to_text(const uint8_t *code, uint8_t len, char 
     out[max_copy] = '\0';
 }
 
+/** @brief Internal helper: `radio_main_pair_payload_parse`. */
 static bool radio_main_pair_payload_parse(const uint8_t *payload,
                                           uint8_t payload_len,
                                           const uint8_t **code_out,
@@ -4852,6 +4932,7 @@ static bool radio_main_pair_payload_parse(const uint8_t *payload,
     return true;
 }
 
+/** @brief Internal helper: `radio_main_pair_payload_build`. */
 static uint8_t radio_main_pair_payload_build(bool network_mode,
                                              const uint8_t *code,
                                              uint8_t code_len,
@@ -4874,6 +4955,7 @@ static uint8_t radio_main_pair_payload_build(bool network_mode,
     return code_len;
 }
 
+/** @brief Internal helper: `radio_main_now_ms`. */
 static uint32_t radio_main_now_ms(void)
 {
     osKernelState_t state = osKernelGetState();

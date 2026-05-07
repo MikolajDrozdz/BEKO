@@ -67,6 +67,7 @@ static void lcd_animation_put_char(char frame[LCD_ROWS][LCD_COLS + 1U],
                                    char ch);
 static void lcd_animation_render_frame(char frame[LCD_ROWS][LCD_COLS + 1U], uint32_t hold_ms);
 
+/** @brief Internal helper: `lcd_i2c_tx_locked`. */
 static bool lcd_i2c_tx_locked(const uint8_t *data, uint16_t length)
 {
     if ((data == NULL) || (length == 0U))
@@ -106,6 +107,7 @@ static bool lcd_write_nibble_locked(uint8_t nibble, bool rs)
     return lcd_i2c_tx_locked(frame, (uint16_t)sizeof(frame));
 }
 
+/** @brief Internal helper: `lcd_write_byte_locked`. */
 static bool lcd_write_byte_locked(uint8_t value, bool rs)
 {
     if (!lcd_write_nibble_locked((uint8_t)(value >> 4), rs))
@@ -121,6 +123,7 @@ static bool lcd_write_byte_locked(uint8_t value, bool rs)
     return true;
 }
 
+/** @brief Internal helper: `lcd_send_command_locked`. */
 static bool lcd_send_command_locked(uint8_t command)
 {
     if (!lcd_write_byte_locked(command, false))
@@ -140,6 +143,7 @@ static bool lcd_send_command_locked(uint8_t command)
     return true;
 }
 
+/** @brief Internal helper: `lcd_send_data_locked`. */
 static bool lcd_send_data_locked(uint8_t data)
 {
     if (!lcd_write_byte_locked(data, true))
@@ -151,6 +155,7 @@ static bool lcd_send_data_locked(uint8_t data)
     return true;
 }
 
+/** @brief Internal helper: `lcd_ddram_base`. */
 static uint8_t lcd_ddram_base(uint8_t row)
 {
     switch (row)
@@ -309,6 +314,7 @@ static bool lcd_ensure_ready(void)
     return ok;
 }
 
+/** @brief Internal helper: `lcd_animation_clear_frame`. */
 static void lcd_animation_clear_frame(char frame[LCD_ROWS][LCD_COLS + 1U])
 {
     uint8_t row;
@@ -324,6 +330,7 @@ static void lcd_animation_clear_frame(char frame[LCD_ROWS][LCD_COLS + 1U])
     }
 }
 
+/** @brief Internal helper: `lcd_animation_put_text`. */
 static void lcd_animation_put_text(char frame[LCD_ROWS][LCD_COLS + 1U],
                                    uint8_t row,
                                    uint8_t col,
@@ -344,6 +351,7 @@ static void lcd_animation_put_text(char frame[LCD_ROWS][LCD_COLS + 1U],
     }
 }
 
+/** @brief Internal helper: `lcd_animation_put_char`. */
 static void lcd_animation_put_char(char frame[LCD_ROWS][LCD_COLS + 1U],
                                    int8_t row,
                                    int8_t col,
@@ -362,6 +370,7 @@ static void lcd_animation_put_char(char frame[LCD_ROWS][LCD_COLS + 1U],
     frame[(uint8_t)row][(uint8_t)col] = ch;
 }
 
+/** @brief Internal helper: `lcd_animation_render_frame`. */
 static void lcd_animation_render_frame(char frame[LCD_ROWS][LCD_COLS + 1U], uint32_t hold_ms)
 {
     uint8_t row;

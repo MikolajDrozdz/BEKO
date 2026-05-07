@@ -97,6 +97,7 @@ bool button_main_get_event(button_event_t *evt, uint32_t timeout_ms)
     return (osMessageQueueGet(s_button_evt_queue, evt, NULL, timeout_ms) == osOK);
 }
 
+/** @brief Internal helper: `button_main_task_fn`. */
 static void button_main_task_fn(void *argument)
 {
     button_state_t st[BUTTON_ID_COUNT];
@@ -196,6 +197,7 @@ static void button_main_task_fn(void *argument)
     }
 }
 
+/** @brief Internal helper: `button_hw_is_pressed`. */
 static bool button_hw_is_pressed(button_id_t id)
 {
     GPIO_PinState raw;
@@ -216,6 +218,7 @@ static bool button_hw_is_pressed(button_id_t id)
     return pressed;
 }
 
+/** @brief Internal helper: `button_try_emit`. */
 static void button_try_emit(button_event_t evt)
 {
     if (s_button_evt_queue == NULL)

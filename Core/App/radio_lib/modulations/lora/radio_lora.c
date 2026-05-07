@@ -36,6 +36,7 @@ typedef struct
 
 static radio_context_t s_radio;
 
+/** @brief Internal helper: `radio_irq_save`. */
 static uint32_t radio_irq_save(void)
 {
     uint32_t primask = __get_PRIMASK();
@@ -43,6 +44,7 @@ static uint32_t radio_irq_save(void)
     return primask;
 }
 
+/** @brief Internal helper: `radio_irq_restore`. */
 static void radio_irq_restore(uint32_t primask)
 {
     if (primask == 0U)
@@ -51,6 +53,7 @@ static void radio_irq_restore(uint32_t primask)
     }
 }
 
+/** @brief Internal helper: `radio_set_event_flags`. */
 static void radio_set_event_flags(uint32_t events)
 {
     uint32_t key;
@@ -60,6 +63,7 @@ static void radio_set_event_flags(uint32_t events)
     radio_irq_restore(key);
 }
 
+/** @brief Internal helper: `radio_read_irq_flags_retry`. */
 static bool radio_read_irq_flags_retry(uint8_t *irq_flags)
 {
     if (sx1276_get_irq_flags(&s_radio.bus, irq_flags))
@@ -71,6 +75,7 @@ static bool radio_read_irq_flags_retry(uint8_t *irq_flags)
     return sx1276_get_irq_flags(&s_radio.bus, irq_flags);
 }
 
+/** @brief Internal helper: `radio_cfg_valid`. */
 static bool radio_cfg_valid(const radio_lora_cfg_t *cfg)
 {
     if ((cfg == NULL) ||
@@ -96,6 +101,7 @@ static bool radio_cfg_valid(const radio_lora_cfg_t *cfg)
     return true;
 }
 
+/** @brief Internal helper: `radio_hw_reset`. */
 static void radio_hw_reset(void)
 {
     HAL_GPIO_WritePin(s_radio.hw.nss.port, s_radio.hw.nss.pin, GPIO_PIN_SET);
@@ -105,6 +111,7 @@ static void radio_hw_reset(void)
     app_delay_ms(RADIO_RESET_HIGH_DELAY_MS);
 }
 
+/** @brief Internal helper: `radio_low_data_rate_optimize_required`. */
 static bool radio_low_data_rate_optimize_required(const radio_lora_cfg_t *cfg)
 {
     if ((cfg->bandwidth <= RADIO_LORA_BW_125_KHZ) &&
@@ -116,6 +123,7 @@ static bool radio_low_data_rate_optimize_required(const radio_lora_cfg_t *cfg)
     return false;
 }
 
+/** @brief Internal helper: `radio_apply_lora_config`. */
 static bool radio_apply_lora_config(const radio_lora_cfg_t *cfg)
 {
     bool ldo_required;
@@ -143,6 +151,7 @@ static bool radio_apply_lora_config(const radio_lora_cfg_t *cfg)
            sx1276_write_reg(&s_radio.bus, SX1276_REG_IRQ_FLAGS_MASK, 0x00U);
 }
 
+/** @brief Internal helper: `radio_config_dio_for_rx`. */
 static bool radio_config_dio_for_rx(void)
 {
     const uint8_t dio_mapping1 = (uint8_t)(SX1276_DIO0_MAP_RX_DONE |
@@ -151,6 +160,7 @@ static bool radio_config_dio_for_rx(void)
     return sx1276_map_dio(&s_radio.bus, dio_mapping1, 0x00U);
 }
 
+/** @brief Internal helper: `radio_config_dio_for_tx`. */
 static bool radio_config_dio_for_tx(void)
 {
     const uint8_t dio_mapping1 = (uint8_t)(SX1276_DIO0_MAP_TX_DONE |
@@ -159,11 +169,13 @@ static bool radio_config_dio_for_tx(void)
     return sx1276_map_dio(&s_radio.bus, dio_mapping1, 0x00U);
 }
 
+/** @brief Internal helper: `radio_set_state`. */
 static void radio_set_state(radio_state_t state)
 {
     s_radio.state = state;
 }
 
+/** @brief Internal helper: `radio_wait_for_tx_enter_or_done`. */
 static bool radio_wait_for_tx_enter_or_done(uint8_t *op_mode_snapshot)
 {
     uint8_t op_mode;
@@ -200,6 +212,7 @@ static bool radio_wait_for_tx_enter_or_done(uint8_t *op_mode_snapshot)
     return false;
 }
 
+/** @brief Internal helper: `radio_handle_exti_pin`. */
 static void radio_handle_exti_pin(uint16_t pin)
 {
     uint8_t i;
@@ -238,6 +251,7 @@ static void radio_handle_exti_pin(uint16_t pin)
     }
 }
 
+/** @brief Internal helper: `radio_read_rx_packet`. */
 static radio_status_t radio_read_rx_packet(void)
 {
     uint8_t current_addr;
@@ -280,6 +294,7 @@ static radio_status_t radio_read_rx_packet(void)
     return RADIO_OK;
 }
 
+/** @brief Internal helper: `radio_resume_after_tx`. */
 static void radio_resume_after_tx(void)
 {
     /* Po wejściu tutaj TX jest już zakończony. */

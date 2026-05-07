@@ -40,11 +40,13 @@ typedef struct
     uint16_t reserved2;
 } i2c_mem_store_meta_wire_t;
 
+/** @brief Internal helper: `i2c_mem_store_min_u16`. */
 static uint16_t i2c_mem_store_min_u16(uint16_t a, uint16_t b)
 {
     return (a < b) ? a : b;
 }
 
+/** @brief Internal helper: `i2c_mem_store_hal_to_status`. */
 static i2c_mem_store_status_t i2c_mem_store_hal_to_status(HAL_StatusTypeDef st)
 {
     if (st == HAL_OK)
@@ -58,6 +60,7 @@ static i2c_mem_store_status_t i2c_mem_store_hal_to_status(HAL_StatusTypeDef st)
     return I2C_MEM_STORE_EHAL;
 }
 
+/** @brief Calculate CRC-16/CCITT used to protect metadata and stored records. */
 static uint16_t i2c_mem_store_crc16_ccitt(const uint8_t *data, uint16_t len)
 {
     uint16_t crc = 0xFFFFU;
@@ -83,12 +86,14 @@ static uint16_t i2c_mem_store_crc16_ccitt(const uint8_t *data, uint16_t len)
     return crc;
 }
 
+/** @brief Internal helper: `i2c_mem_store_le16_write`. */
 static void i2c_mem_store_le16_write(uint8_t *dst, uint16_t value)
 {
     dst[0] = (uint8_t)(value & 0xFFU);
     dst[1] = (uint8_t)(value >> 8);
 }
 
+/** @brief Internal helper: `i2c_mem_store_le32_write`. */
 static void i2c_mem_store_le32_write(uint8_t *dst, uint32_t value)
 {
     dst[0] = (uint8_t)(value & 0xFFU);
@@ -97,11 +102,13 @@ static void i2c_mem_store_le32_write(uint8_t *dst, uint32_t value)
     dst[3] = (uint8_t)((value >> 24) & 0xFFU);
 }
 
+/** @brief Internal helper: `i2c_mem_store_le16_read`. */
 static uint16_t i2c_mem_store_le16_read(const uint8_t *src)
 {
     return (uint16_t)src[0] | ((uint16_t)src[1] << 8);
 }
 
+/** @brief Internal helper: `i2c_mem_store_le32_read`. */
 static uint32_t i2c_mem_store_le32_read(const uint8_t *src)
 {
     return ((uint32_t)src[0]) |
@@ -110,6 +117,7 @@ static uint32_t i2c_mem_store_le32_read(const uint8_t *src)
            ((uint32_t)src[3] << 24);
 }
 
+/** @brief Encrypt one 64-bit block with XTEA for the software CTR keystream. */
 static void i2c_mem_store_xtea_encrypt_block(uint32_t v[2], const uint32_t key[4])
 {
     uint32_t i;
@@ -129,6 +137,7 @@ static void i2c_mem_store_xtea_encrypt_block(uint32_t v[2], const uint32_t key[4
     v[1] = v1;
 }
 
+/** @brief Apply XTEA-CTR in place to encrypt or decrypt secret-slot payload bytes. */
 static void i2c_mem_store_xtea_ctr_crypt(uint8_t *data,
                                          uint16_t len,
                                          const uint8_t key_bytes[16],
@@ -163,26 +172,31 @@ static void i2c_mem_store_xtea_ctr_crypt(uint8_t *data,
     }
 }
 
+/** @brief Internal helper: `i2c_mem_store_log_base_addr`. */
 static uint32_t i2c_mem_store_log_base_addr(const i2c_mem_store_t *ctx)
 {
     return I2C_MEM_STORE_LOG_START_ADDR;
 }
 
+/** @brief Internal helper: `i2c_mem_store_secret_base_addr`. */
 static uint32_t i2c_mem_store_secret_base_addr(const i2c_mem_store_t *ctx)
 {
     return ctx->cfg.total_bytes - ctx->cfg.secret_area_bytes;
 }
 
+/** @brief Internal helper: `i2c_mem_store_log_slot_addr`. */
 static uint32_t i2c_mem_store_log_slot_addr(const i2c_mem_store_t *ctx, uint16_t slot)
 {
     return i2c_mem_store_log_base_addr(ctx) + ((uint32_t)slot * I2C_MEM_STORE_LOG_RECORD_SIZE);
 }
 
+/** @brief Internal helper: `i2c_mem_store_secret_slot_addr`. */
 static uint32_t i2c_mem_store_secret_slot_addr(const i2c_mem_store_t *ctx, uint16_t slot)
 {
     return i2c_mem_store_secret_base_addr(ctx) + ((uint32_t)slot * I2C_MEM_STORE_SECRET_SLOT_SIZE);
 }
 
+/** @brief Internal helper: `i2c_mem_store_read_raw`. */
 static i2c_mem_store_status_t i2c_mem_store_read_raw(i2c_mem_store_t *ctx,
                                                       uint32_t addr,
                                                       uint8_t *dst,
@@ -205,6 +219,7 @@ static i2c_mem_store_status_t i2c_mem_store_read_raw(i2c_mem_store_t *ctx,
     return i2c_mem_store_hal_to_status(st);
 }
 
+/** @brief Write raw bytes while respecting EEPROM page boundaries and write-cycle delay. */
 static i2c_mem_store_status_t i2c_mem_store_write_raw(i2c_mem_store_t *ctx,
                                                        uint32_t addr,
                                                        const uint8_t *src,
@@ -247,6 +262,7 @@ static i2c_mem_store_status_t i2c_mem_store_write_raw(i2c_mem_store_t *ctx,
     return I2C_MEM_STORE_OK;
 }
 
+/** @brief Encode runtime metadata into the fixed little-endian on-memory layout. */
 static void i2c_mem_store_meta_encode(const i2c_mem_store_t *ctx, uint8_t out[I2C_MEM_STORE_META_WIRE_SIZE])
 {
     i2c_mem_store_meta_wire_t w;
@@ -273,6 +289,7 @@ static void i2c_mem_store_meta_encode(const i2c_mem_store_t *ctx, uint8_t out[I2
     i2c_mem_store_le16_write(&out[20], w.crc16);
 }
 
+/** @brief Decode and validate persisted metadata from one metadata copy. */
 static bool i2c_mem_store_meta_decode(i2c_mem_store_t *ctx, const uint8_t in[I2C_MEM_STORE_META_WIRE_SIZE])
 {
     uint16_t crc_stored;
@@ -312,6 +329,7 @@ static bool i2c_mem_store_meta_decode(i2c_mem_store_t *ctx, const uint8_t in[I2C
     return true;
 }
 
+/** @brief Internal helper: `i2c_mem_store_meta_save`. */
 static i2c_mem_store_status_t i2c_mem_store_meta_save(i2c_mem_store_t *ctx)
 {
     uint8_t raw[I2C_MEM_STORE_META_WIRE_SIZE];
@@ -328,6 +346,7 @@ static i2c_mem_store_status_t i2c_mem_store_meta_save(i2c_mem_store_t *ctx)
     return rc;
 }
 
+/** @brief Internal helper: `i2c_mem_store_meta_load`. */
 static i2c_mem_store_status_t i2c_mem_store_meta_load(i2c_mem_store_t *ctx)
 {
     uint8_t raw[I2C_MEM_STORE_META_WIRE_SIZE];
@@ -348,6 +367,7 @@ static i2c_mem_store_status_t i2c_mem_store_meta_load(i2c_mem_store_t *ctx)
     return I2C_MEM_STORE_ENOTFOUND;
 }
 
+/** @brief Internal helper: `i2c_mem_store_layout_valid`. */
 static bool i2c_mem_store_layout_valid(const i2c_mem_store_cfg_t *cfg,
                                        uint16_t *out_slot_count,
                                        uint16_t *out_secret_slots)

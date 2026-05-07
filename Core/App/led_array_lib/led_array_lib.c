@@ -50,6 +50,7 @@ typedef struct
 
 static led_array_ctx_t s_led;
 
+/** @brief Internal helper: `led_array_now_ms`. */
 static uint32_t led_array_now_ms(void)
 {
     osKernelState_t state;
@@ -71,6 +72,7 @@ static uint32_t led_array_now_ms(void)
     return HAL_GetTick();
 }
 
+/** @brief Internal helper: `led_array_get_tim_clock`. */
 static uint32_t led_array_get_tim_clock(TIM_TypeDef *tim)
 {
     uint32_t pclk;
@@ -108,6 +110,7 @@ static uint32_t led_array_get_tim_clock(TIM_TypeDef *tim)
     return timer_clock;
 }
 
+/** @brief Internal helper: `led_array_timer_base_init`. */
 static void led_array_timer_base_init(TIM_TypeDef *tim)
 {
     uint32_t tim_clk;
@@ -134,6 +137,7 @@ static void led_array_timer_base_init(TIM_TypeDef *tim)
     tim->CR1 |= TIM_CR1_ARPE;
 }
 
+/** @brief Internal helper: `led_array_timer_pwm_ch_init`. */
 static void led_array_timer_pwm_ch_init(TIM_TypeDef *tim, uint8_t channel)
 {
     if (channel == 1U)
@@ -159,6 +163,7 @@ static void led_array_timer_pwm_ch_init(TIM_TypeDef *tim, uint8_t channel)
     }
 }
 
+/** @brief Internal helper: `led_array_hw_init`. */
 static void led_array_hw_init(void)
 {
     GPIO_InitTypeDef gpio = {0};
@@ -211,6 +216,7 @@ static void led_array_hw_init(void)
     TIM8->CR1 |= TIM_CR1_CEN;
 }
 
+/** @brief Internal helper: `led_array_set_hw_duty`. */
 static void led_array_set_hw_duty(uint8_t index, uint8_t pct)
 {
     uint32_t ccr;
@@ -232,6 +238,7 @@ static void led_array_set_hw_duty(uint8_t index, uint8_t pct)
     }
 }
 
+/** @brief Internal helper: `led_array_mask_valid`. */
 static bool led_array_mask_valid(uint8_t mask)
 {
     if ((mask == 0U) || ((mask & (uint8_t)(~LED_ARRAY_VALID_MASK)) != 0U))
@@ -241,11 +248,13 @@ static bool led_array_mask_valid(uint8_t mask)
     return true;
 }
 
+/** @brief Internal helper: `led_array_clamp_pct`. */
 static uint8_t led_array_clamp_pct(uint8_t value)
 {
     return (value > 100U) ? 100U : value;
 }
 
+/** @brief Internal helper: `led_array_write_pin`. */
 static void led_array_write_pin(uint8_t index, GPIO_PinState state)
 {
     if (state == GPIO_PIN_SET)
@@ -258,6 +267,7 @@ static void led_array_write_pin(uint8_t index, GPIO_PinState state)
     }
 }
 
+/** @brief Internal helper: `led_array_apply_outputs`. */
 static void led_array_apply_outputs(void)
 {
     uint8_t i;
@@ -270,6 +280,7 @@ static void led_array_apply_outputs(void)
     }
 }
 
+/** @brief Internal helper: `led_array_tri8`. */
 static uint8_t led_array_tri8(uint8_t phase)
 {
     if (phase < 128U)
@@ -279,11 +290,13 @@ static uint8_t led_array_tri8(uint8_t phase)
     return (uint8_t)((255U - phase) << 1);
 }
 
+/** @brief Internal helper: `led_array_effect_none`. */
 static void led_array_effect_none(void)
 {
     memcpy(s_led.active_brightness, s_led.manual_brightness, sizeof(s_led.active_brightness));
 }
 
+/** @brief Internal helper: `led_array_effect_fade_update`. */
 static void led_array_effect_fade_update(uint32_t delta_ms)
 {
     uint8_t i;
@@ -333,6 +346,7 @@ static void led_array_effect_fade_update(uint32_t delta_ms)
     }
 }
 
+/** @brief Internal helper: `led_array_effect_breath_update`. */
 static void led_array_effect_breath_update(uint32_t delta_ms)
 {
     uint8_t i;
@@ -385,6 +399,7 @@ static void led_array_effect_breath_update(uint32_t delta_ms)
     }
 }
 
+/** @brief Internal helper: `led_array_effect_rainbow_update`. */
 static void led_array_effect_rainbow_update(uint32_t delta_ms)
 {
     uint8_t i;
@@ -416,6 +431,7 @@ static void led_array_effect_rainbow_update(uint32_t delta_ms)
     }
 }
 
+/** @brief Internal helper: `led_array_tick_core`. */
 static void led_array_tick_core(uint32_t delta_ms)
 {
     switch (s_led.effect)

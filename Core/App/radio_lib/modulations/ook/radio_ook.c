@@ -39,6 +39,7 @@ static radio_ook_context_t s_radio;
 static radio_ook_cfg_t s_runtime_cfg;
 static bool s_runtime_cfg_ready = false;
 
+/** @brief Internal helper: `radio_irq_save`. */
 static uint32_t radio_irq_save(void)
 {
     uint32_t primask = __get_PRIMASK();
@@ -46,6 +47,7 @@ static uint32_t radio_irq_save(void)
     return primask;
 }
 
+/** @brief Internal helper: `radio_irq_restore`. */
 static void radio_irq_restore(uint32_t primask)
 {
     if (primask == 0U)
@@ -54,6 +56,7 @@ static void radio_irq_restore(uint32_t primask)
     }
 }
 
+/** @brief Internal helper: `radio_set_event_flags`. */
 static void radio_set_event_flags(uint32_t events)
 {
     uint32_t key = radio_irq_save();
@@ -61,6 +64,7 @@ static void radio_set_event_flags(uint32_t events)
     radio_irq_restore(key);
 }
 
+/** @brief Internal helper: `radio_cfg_valid`. */
 static bool radio_cfg_valid(const radio_ook_cfg_t *cfg)
 {
     if ((cfg == NULL) ||
@@ -78,6 +82,7 @@ static bool radio_cfg_valid(const radio_ook_cfg_t *cfg)
     return true;
 }
 
+/** @brief Internal helper: `radio_hw_reset`. */
 static void radio_hw_reset(void)
 {
     HAL_GPIO_WritePin(s_radio.hw.nss.port, s_radio.hw.nss.pin, GPIO_PIN_SET);
@@ -87,6 +92,7 @@ static void radio_hw_reset(void)
     app_delay_ms(RADIO_OOK_RESET_HIGH_DELAY_MS);
 }
 
+/** @brief Internal helper: `radio_get_rx_bw_reg_value`. */
 static uint8_t radio_get_rx_bw_reg_value(radio_lora_bw_t bw)
 {
     switch (bw)
@@ -115,6 +121,7 @@ static uint8_t radio_get_rx_bw_reg_value(radio_lora_bw_t bw)
     }
 }
 
+/** @brief Internal helper: `radio_write_sync_word`. */
 static bool radio_write_sync_word(const radio_ook_cfg_t *cfg)
 {
     uint8_t sync_bytes[4];
@@ -167,6 +174,7 @@ static bool radio_set_op_mode_ready(uint8_t op_mode)
     return false;
 }
 
+/** @brief Internal helper: `radio_apply_threshold`. */
 static bool radio_apply_threshold(const radio_ook_cfg_t *cfg)
 {
     switch (cfg->threshold)
@@ -185,6 +193,7 @@ static bool radio_apply_threshold(const radio_ook_cfg_t *cfg)
     }
 }
 
+/** @brief Internal helper: `radio_apply_ook_config`. */
 static bool radio_apply_ook_config(const radio_ook_cfg_t *cfg)
 {
     uint32_t bitrate_reg;
@@ -224,11 +233,13 @@ static bool radio_apply_ook_config(const radio_ook_cfg_t *cfg)
                                              SX1276_MODE_STDBY));
 }
 
+/** @brief Internal helper: `radio_set_state`. */
 static void radio_set_state(radio_state_t state)
 {
     s_radio.state = state;
 }
 
+/** @brief Internal helper: `radio_resume_after_tx`. */
 static void radio_resume_after_tx(void)
 {
     if (s_radio.tx_resume_state == RADIO_STATE_RX_CONT)
@@ -257,6 +268,7 @@ static void radio_resume_after_tx(void)
     }
 }
 
+/** @brief Internal helper: `radio_tx_timeout_ms`. */
 static uint32_t radio_tx_timeout_ms(uint8_t payload_len)
 {
     uint64_t timeout_ms;
@@ -286,6 +298,7 @@ static uint32_t radio_tx_timeout_ms(uint8_t payload_len)
     return (uint32_t)timeout_ms;
 }
 
+/** @brief Internal helper: `radio_rx_single_timeout_ms`. */
 static uint32_t radio_rx_single_timeout_ms(uint32_t symbol_timeout)
 {
     uint64_t timeout_ms;
@@ -310,6 +323,7 @@ static uint32_t radio_rx_single_timeout_ms(uint32_t symbol_timeout)
     return (uint32_t)timeout_ms;
 }
 
+/** @brief Internal helper: `radio_handle_exti_pin`. */
 static void radio_handle_exti_pin(uint16_t pin)
 {
     uint8_t i;
@@ -331,6 +345,7 @@ static void radio_handle_exti_pin(uint16_t pin)
     }
 }
 
+/** @brief Internal helper: `radio_read_rx_packet`. */
 static radio_status_t radio_read_rx_packet(void)
 {
     uint8_t packet_len;

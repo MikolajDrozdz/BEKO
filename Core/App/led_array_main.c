@@ -41,6 +41,7 @@ void led_array_main_create_task(void)
     }
 }
 
+/** @brief Internal helper: `led_array_main_task_fn`. */
 static void led_array_main_task_fn(void *argument)
 {
     (void)argument;

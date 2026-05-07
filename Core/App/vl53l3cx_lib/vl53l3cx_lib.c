@@ -33,32 +33,38 @@ static bool tof_reset_and_boot(void);
 static bool tof_low_level_init(void);
 static bool tof_is_non_fatal_ref_spad_status(VL53LX_Error status);
 
+/** @brief Internal helper: `tof_bus_init`. */
 static int32_t tof_bus_init(void)
 {
   /* I2C1 is configured once by CubeMX in MX_I2C1_Init(). */
   return 0;
 }
 
+/** @brief Internal helper: `tof_bus_deinit`. */
 static int32_t tof_bus_deinit(void)
 {
   return 0;
 }
 
+/** @brief Internal helper: `tof_bus_write`. */
 static int32_t tof_bus_write(uint16_t address, uint8_t *data, uint16_t length)
 {
   return (app_i2c_master_transmit(&hi2c1, address, data, length, TOF_I2C_TIMEOUT_MS) == HAL_OK) ? 0 : -1;
 }
 
+/** @brief Internal helper: `tof_bus_read`. */
 static int32_t tof_bus_read(uint16_t address, uint8_t *data, uint16_t length)
 {
   return (app_i2c_master_receive(&hi2c1, address, data, length, TOF_I2C_TIMEOUT_MS) == HAL_OK) ? 0 : -1;
 }
 
+/** @brief Internal helper: `tof_bus_get_tick`. */
 static int32_t tof_bus_get_tick(void)
 {
   return (int32_t)HAL_GetTick();
 }
 
+/** @brief Internal helper: `tof_reset_and_boot`. */
 static bool tof_reset_and_boot(void)
 {
   HAL_GPIO_WritePin(VL53L3CX_xshout_GPIO_Port, VL53L3CX_xshout_Pin, GPIO_PIN_RESET);
@@ -69,6 +75,7 @@ static bool tof_reset_and_boot(void)
   return true;
 }
 
+/** @brief Identify VL53L3CX reference-SPAD warnings that still allow ranging. */
 static bool tof_is_non_fatal_ref_spad_status(VL53LX_Error status)
 {
   return (status == VL53LX_WARNING_REF_SPAD_CHAR_NOT_ENOUGH_SPADS) ||
@@ -76,6 +83,7 @@ static bool tof_is_non_fatal_ref_spad_status(VL53LX_Error status)
          (status == VL53LX_WARNING_REF_SPAD_CHAR_RATE_TOO_LOW);
 }
 
+/** @brief Run the ST low-level boot, data-init and reference-SPAD calibration sequence. */
 static bool tof_low_level_init(void)
 {
   VL53LX_Error status;
@@ -178,6 +186,7 @@ bool tof_init(void)
   return true;
 }
 
+/** @brief Start blocking continuous ranging once and keep the sensor running afterwards. */
 static bool tof_activate(void)
 {
   if (s_tof_started == 1U)

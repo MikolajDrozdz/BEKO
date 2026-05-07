@@ -292,6 +292,7 @@ HAL_StatusTypeDef app_i2c_mem_read(I2C_HandleTypeDef *hi2c,
     return status;
 }
 
+/** @brief Internal helper: `app_i2c_ensure_mutex`. */
 static bool app_i2c_ensure_mutex(void)
 {
     osKernelState_t kernel_state;
@@ -310,6 +311,7 @@ static bool app_i2c_ensure_mutex(void)
     return (s_app_i2c_mutex != NULL);
 }
 
+/** @brief Internal helper: `app_i2c_normalize_timeout`. */
 static uint32_t app_i2c_normalize_timeout(uint32_t timeout_ms)
 {
     if (timeout_ms == 0U)
@@ -320,6 +322,7 @@ static uint32_t app_i2c_normalize_timeout(uint32_t timeout_ms)
     return timeout_ms;
 }
 
+/** @brief Internal helper: `app_i2c_should_recover`. */
 static bool app_i2c_should_recover(I2C_HandleTypeDef *hi2c, HAL_StatusTypeDef status)
 {
     uint32_t error_flags;
@@ -345,6 +348,7 @@ static bool app_i2c_should_recover(I2C_HandleTypeDef *hi2c, HAL_StatusTypeDef st
                             HAL_I2C_ERROR_DMA_PARAM)) != 0U);
 }
 
+/** @brief Internal helper: `app_i2c_recover_locked`. */
 static bool app_i2c_recover_locked(I2C_HandleTypeDef *hi2c)
 {
     if (hi2c == NULL)

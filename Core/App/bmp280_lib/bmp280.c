@@ -62,6 +62,7 @@ void bmp280_init_default_params(bmp280_params_t *params) {
 	params->standby = BMP280_STANDBY_250;
 }
 
+/** @brief Internal helper: `read_register16`. */
 static bool read_register16(BMP280_HandleTypedef *dev, uint8_t addr, uint16_t *value) {
 	uint16_t tx_buff;
 	uint8_t rx_buff[2];
@@ -76,6 +77,7 @@ static bool read_register16(BMP280_HandleTypedef *dev, uint8_t addr, uint16_t *v
 
 }
 
+/** @brief Internal helper: `read_data`. */
 static inline int read_data(BMP280_HandleTypedef *dev, uint8_t addr, uint8_t *value,
 		uint8_t len) {
 	uint16_t tx_buff;
@@ -87,6 +89,7 @@ static inline int read_data(BMP280_HandleTypedef *dev, uint8_t addr, uint8_t *va
 
 }
 
+/** @brief Internal helper: `read_calibration_data`. */
 static bool read_calibration_data(BMP280_HandleTypedef *dev) {
 
 	if (read_register16(dev, 0x88, &dev->dig_T1)
@@ -109,6 +112,7 @@ static bool read_calibration_data(BMP280_HandleTypedef *dev) {
 	return false;
 }
 
+/** @brief Internal helper: `read_hum_calibration_data`. */
 static bool read_hum_calibration_data(BMP280_HandleTypedef *dev) {
 	uint16_t h4, h5;
 
@@ -127,6 +131,7 @@ static bool read_hum_calibration_data(BMP280_HandleTypedef *dev) {
 	return false;
 }
 
+/** @brief Internal helper: `write_register8`. */
 static int write_register8(BMP280_HandleTypedef *dev, uint8_t addr, uint8_t value) {
 	uint16_t tx_buff;
 

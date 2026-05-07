@@ -18,6 +18,7 @@ static BMP280_HandleTypedef s_bmp280_dev;
 static bmp280_api_data_t s_last_data;
 static bool s_initialized = false;
 
+/** @brief Internal helper: `bmp280_api_write_reg`. */
 static bool bmp280_api_write_reg(uint8_t reg, uint8_t value)
 {
     uint16_t device_addr;
@@ -38,6 +39,7 @@ static bool bmp280_api_write_reg(uint8_t reg, uint8_t value)
                               BMP280_API_I2C_TIMEOUT_MS) == HAL_OK);
 }
 
+/** @brief Internal helper: `bmp280_api_read_reg`. */
 static bool bmp280_api_read_reg(uint8_t reg, uint8_t *value)
 {
     uint16_t device_addr;
@@ -58,6 +60,7 @@ static bool bmp280_api_read_reg(uint8_t reg, uint8_t *value)
                              BMP280_API_I2C_TIMEOUT_MS) == HAL_OK);
 }
 
+/** @brief Internal helper: `bmp280_api_wait_for_measurement_done`. */
 static bool bmp280_api_wait_for_measurement_done(uint32_t timeout_ms)
 {
     uint32_t start_tick;
@@ -94,6 +97,7 @@ static bool bmp280_api_wait_for_measurement_done(uint32_t timeout_ms)
     }
 }
 
+/** @brief Internal helper: `bmp280_api_measure_internal`. */
 static bool bmp280_api_measure_internal(float *temperature_c, float *pressure_pa, uint32_t timeout_ms)
 {
     bool success = false;

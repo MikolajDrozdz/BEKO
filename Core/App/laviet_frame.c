@@ -9,12 +9,14 @@
 
 #include <string.h>
 
+/** @brief Internal helper: `laviet_be16_write`. */
 static void laviet_be16_write(uint8_t *dst, uint16_t value)
 {
     dst[0] = (uint8_t)(value >> 8);
     dst[1] = (uint8_t)value;
 }
 
+/** @brief Internal helper: `laviet_be32_write`. */
 static void laviet_be32_write(uint8_t *dst, uint32_t value)
 {
     dst[0] = (uint8_t)(value >> 24);
@@ -23,11 +25,13 @@ static void laviet_be32_write(uint8_t *dst, uint32_t value)
     dst[3] = (uint8_t)value;
 }
 
+/** @brief Internal helper: `laviet_be16_read`. */
 static uint16_t laviet_be16_read(const uint8_t *src)
 {
     return (uint16_t)(((uint16_t)src[0] << 8) | src[1]);
 }
 
+/** @brief Internal helper: `laviet_be32_read`. */
 static uint32_t laviet_be32_read(const uint8_t *src)
 {
     return ((uint32_t)src[0] << 24) |
@@ -36,11 +40,13 @@ static uint32_t laviet_be32_read(const uint8_t *src)
            (uint32_t)src[3];
 }
 
+/** @brief Internal helper: `laviet_frame_version_from_ver_type`. */
 static uint8_t laviet_frame_version_from_ver_type(uint8_t ver_type)
 {
     return (uint8_t)((ver_type >> 4) & 0x0FU);
 }
 
+/** @brief Internal helper: `laviet_frame_type_known`. */
 static bool laviet_frame_type_known(laviet_frame_type_t type)
 {
     return (type >= LAVIET_TYPE_DATA) && (type <= LAVIET_TYPE_ERROR);
