@@ -175,11 +175,7 @@ static void radio_test_dump_tx_debug(void)
            (int)radio_get_state());
 }
 
-/**
- * @brief Sprawdza identyfikator wersji układu SX1276.
- * @param version [out] Opcjonalny bufor na wartość `RegVersion`.
- * @return `true` jeśli wersja odpowiada `SX1276_VERSION_ID`.
- */
+/* Public API documented in radio_test.h. */
 bool radio_test_probe(uint8_t *version)
 {
     uint8_t reg_version = 0U;
@@ -239,10 +235,7 @@ radio_status_t radio_test_send_ping(void)
     return radio_send_async(ping_payload, (uint8_t)sizeof(ping_payload));
 }
 
-/**
- * @brief Inicjalizuje demonstracyjną konfigurację i uruchamia RX ciągły.
- * @param hspi Uchwyt SPI używany przez moduł radiowy.
- */
+/* Public API documented in radio_test.h. */
 void radio_test_demo_init(SPI_HandleTypeDef *hspi)
 {
     radio_hw_cfg_t radio_hw;

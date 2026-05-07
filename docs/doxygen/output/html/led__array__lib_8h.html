@@ -1,0 +1,687 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/led_array_lib/led_array_lib.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('led__array__lib_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku led_array_lib.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>LED array driver for 5 LEDs (PC7, PA8, PB10, PB4, PB5).  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="led__array__lib__config_8h_source.html">led_array_lib_config.h</a>&quot;</code><br />
+<code>#include &quot;stm32u5xx_hal.h&quot;</code><br />
+<code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
+</div>
+<p><a href="led__array__lib_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Wyliczenia</h2></td></tr>
+<tr class="memitem:aaca9eead06d9885bc6af30ccedec1330" id="r_aaca9eead06d9885bc6af30ccedec1330"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> { <b>LED_ARRAY_OK</b> = 0
+, <b>LED_ARRAY_EINVAL</b> = -1
+, <b>LED_ARRAY_ESTATE</b> = -2
+ }</td></tr>
+<tr class="memdesc:aaca9eead06d9885bc6af30ccedec1330"><td class="mdescLeft">&#160;</td><td class="mdescRight">Driver status codes.  <a href="#aaca9eead06d9885bc6af30ccedec1330">Więcej...</a><br /></td></tr>
+<tr class="memitem:a0083a15c21d41352ec80c2902fa22ad0" id="r_a0083a15c21d41352ec80c2902fa22ad0"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0">led_array_led_mask_t</a> { <br />
+&#160;&#160;<a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b">LED_ARRAY_LED_1</a> = (1U &lt;&lt; 0)
+, <a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56">LED_ARRAY_LED_2</a> = (1U &lt;&lt; 1)
+, <a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311">LED_ARRAY_LED_3</a> = (1U &lt;&lt; 2)
+, <a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95">LED_ARRAY_LED_4</a> = (1U &lt;&lt; 3)
+, <br />
+&#160;&#160;<a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386">LED_ARRAY_LED_5</a> = (1U &lt;&lt; 4)
+, <b>LED_ARRAY_LED_ALL</b> = 0x1FU
+<br />
+ }</td></tr>
+<tr class="memdesc:a0083a15c21d41352ec80c2902fa22ad0"><td class="mdescLeft">&#160;</td><td class="mdescRight">LED mask bits.  <a href="#a0083a15c21d41352ec80c2902fa22ad0">Więcej...</a><br /></td></tr>
+<tr class="memitem:aac3178a392f43cf39c6fdd1095ed1060" id="r_aac3178a392f43cf39c6fdd1095ed1060"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac3178a392f43cf39c6fdd1095ed1060">led_array_effect_t</a> { <b>LED_ARRAY_EFFECT_NONE</b> = 0
+, <b>LED_ARRAY_EFFECT_FADE_OUT</b>
+, <b>LED_ARRAY_EFFECT_BREATH</b>
+, <b>LED_ARRAY_EFFECT_RAINBOW</b>
+ }</td></tr>
+<tr class="memdesc:aac3178a392f43cf39c6fdd1095ed1060"><td class="mdescLeft">&#160;</td><td class="mdescRight">Global effect mode.  <a href="#aac3178a392f43cf39c6fdd1095ed1060">Więcej...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:a7aedf48c103534fea85abba0f17f9012" id="r_a7aedf48c103534fea85abba0f17f9012"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7aedf48c103534fea85abba0f17f9012">led_array_init</a> (void)</td></tr>
+<tr class="memdesc:a7aedf48c103534fea85abba0f17f9012"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the LED array driver.  <br /></td></tr>
+<tr class="memitem:a08ff52c6cbf15a79c369af6de2d35592" id="r_a08ff52c6cbf15a79c369af6de2d35592"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a08ff52c6cbf15a79c369af6de2d35592">led_array_deinit</a> (void)</td></tr>
+<tr class="memdesc:a08ff52c6cbf15a79c369af6de2d35592"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinitialize the LED array driver and turn off all LEDs.  <br /></td></tr>
+<tr class="memitem:aff750f64fbc1cad4ee19031286289115" id="r_aff750f64fbc1cad4ee19031286289115"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff750f64fbc1cad4ee19031286289115">led_array_timer_init</a> (uint32_t tick_period_ms)</td></tr>
+<tr class="memdesc:aff750f64fbc1cad4ee19031286289115"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure internal scheduler tick period.  <br /></td></tr>
+<tr class="memitem:a547426579c247ad4d9fc522c16361ef3" id="r_a547426579c247ad4d9fc522c16361ef3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a547426579c247ad4d9fc522c16361ef3">led_array_timer_deinit</a> (void)</td></tr>
+<tr class="memdesc:a547426579c247ad4d9fc522c16361ef3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Disable the scheduler updates.  <br /></td></tr>
+<tr class="memitem:a4b6d7b6d2e6d8411ff06855ba14403f7" id="r_a4b6d7b6d2e6d8411ff06855ba14403f7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b6d7b6d2e6d8411ff06855ba14403f7">led_array_timer_tick</a> (void)</td></tr>
+<tr class="memdesc:a4b6d7b6d2e6d8411ff06855ba14403f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tick function for ISR-driven scheduling.  <br /></td></tr>
+<tr class="memitem:ac0f4c93e8d59837943f0cefd9de4b3ed" id="r_ac0f4c93e8d59837943f0cefd9de4b3ed"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0f4c93e8d59837943f0cefd9de4b3ed">led_array_process</a> (void)</td></tr>
+<tr class="memdesc:ac0f4c93e8d59837943f0cefd9de4b3ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Polling scheduler update (HAL_GetTick based).  <br /></td></tr>
+<tr class="memitem:a4711eae3b0ed715ca346726e9c718de1" id="r_a4711eae3b0ed715ca346726e9c718de1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4711eae3b0ed715ca346726e9c718de1">led_array_on</a> (uint8_t mask)</td></tr>
+<tr class="memdesc:a4711eae3b0ed715ca346726e9c718de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn LEDs on at 100% brightness.  <br /></td></tr>
+<tr class="memitem:aa09ac980785cb4b624aed6ba93a9cb83" id="r_aa09ac980785cb4b624aed6ba93a9cb83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa09ac980785cb4b624aed6ba93a9cb83">led_array_off</a> (uint8_t mask)</td></tr>
+<tr class="memdesc:aa09ac980785cb4b624aed6ba93a9cb83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn LEDs off.  <br /></td></tr>
+<tr class="memitem:a24d4a7518fb38fd16c07b7476c0de974" id="r_a24d4a7518fb38fd16c07b7476c0de974"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24d4a7518fb38fd16c07b7476c0de974">led_array_set_brightness</a> (uint8_t mask, uint8_t brightness_pct)</td></tr>
+<tr class="memdesc:a24d4a7518fb38fd16c07b7476c0de974"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set LED brightness in range 0..100%.  <br /></td></tr>
+<tr class="memitem:a42230d1ce3ff86a197a5340d8bc3cc4f" id="r_a42230d1ce3ff86a197a5340d8bc3cc4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42230d1ce3ff86a197a5340d8bc3cc4f">led_array_fire_fade_out</a> (uint8_t mask, uint16_t fade_ms)</td></tr>
+<tr class="memdesc:a42230d1ce3ff86a197a5340d8bc3cc4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trigger one-shot fade-out from 100% to 0%.  <br /></td></tr>
+<tr class="memitem:a6462145271d8ae8d9bcd1f5ccdf37ded" id="r_a6462145271d8ae8d9bcd1f5ccdf37ded"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6462145271d8ae8d9bcd1f5ccdf37ded">led_array_start_breath</a> (uint8_t mask, uint16_t period_ms, uint8_t min_pct, uint8_t max_pct)</td></tr>
+<tr class="memdesc:a6462145271d8ae8d9bcd1f5ccdf37ded"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start breathing effect on selected LEDs.  <br /></td></tr>
+<tr class="memitem:ad01bd8a290236400e39c3957ea107ca0" id="r_ad01bd8a290236400e39c3957ea107ca0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad01bd8a290236400e39c3957ea107ca0">led_array_start_rainbow</a> (uint16_t step_ms, uint8_t min_pct, uint8_t max_pct)</td></tr>
+<tr class="memdesc:ad01bd8a290236400e39c3957ea107ca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start circulating rainbow-like wave on all LEDs.  <br /></td></tr>
+<tr class="memitem:ad1d5f7b658871d0bcdc2b05bb77ba081" id="r_ad1d5f7b658871d0bcdc2b05bb77ba081"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1d5f7b658871d0bcdc2b05bb77ba081">led_array_stop_effect</a> (void)</td></tr>
+<tr class="memdesc:ad1d5f7b658871d0bcdc2b05bb77ba081"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop the active effect and keep current manual brightness values.  <br /></td></tr>
+<tr class="memitem:af738fc4dc6d91ad22d52c140604a4b58" id="r_af738fc4dc6d91ad22d52c140604a4b58"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#aac3178a392f43cf39c6fdd1095ed1060">led_array_effect_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af738fc4dc6d91ad22d52c140604a4b58">led_array_get_effect</a> (void)</td></tr>
+<tr class="memdesc:af738fc4dc6d91ad22d52c140604a4b58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read currently active global effect.  <br /></td></tr>
+<tr class="memitem:a0b3815ace1260f16636ac64ecbfc5bd0" id="r_a0b3815ace1260f16636ac64ecbfc5bd0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b3815ace1260f16636ac64ecbfc5bd0">led_array_is_initialized</a> (void)</td></tr>
+<tr class="memdesc:a0b3815ace1260f16636ac64ecbfc5bd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read initialization state.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>LED array driver for 5 LEDs (PC7, PA8, PB10, PB4, PB5). </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="led__array__lib_8h_source.html">led_array_lib.h</a>.</p>
+</div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Dokumentacja typów wyliczanych</h2>
+<a id="aac3178a392f43cf39c6fdd1095ed1060" name="aac3178a392f43cf39c6fdd1095ed1060"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac3178a392f43cf39c6fdd1095ed1060">&#9670;&#160;</a></span>led_array_effect_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#aac3178a392f43cf39c6fdd1095ed1060">led_array_effect_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Global effect mode. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8h_source.html#l00039">39</a> pliku <a class="el" href="led__array__lib_8h_source.html">led_array_lib.h</a>.</p>
+
+</div>
+</div>
+<a id="a0083a15c21d41352ec80c2902fa22ad0" name="a0083a15c21d41352ec80c2902fa22ad0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0083a15c21d41352ec80c2902fa22ad0">&#9670;&#160;</a></span>led_array_led_mask_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a0083a15c21d41352ec80c2902fa22ad0">led_array_led_mask_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>LED mask bits. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Wartości wyliczeń</th></tr><tr><td class="fieldname"><a id="a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b" name="a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b"></a>LED_ARRAY_LED_1&#160;</td><td class="fielddoc"><p>PC7. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56" name="a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56"></a>LED_ARRAY_LED_2&#160;</td><td class="fielddoc"><p>PA8. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311" name="a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311"></a>LED_ARRAY_LED_3&#160;</td><td class="fielddoc"><p>PB10. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95" name="a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95"></a>LED_ARRAY_LED_4&#160;</td><td class="fielddoc"><p>PB4. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386" name="a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386"></a>LED_ARRAY_LED_5&#160;</td><td class="fielddoc"><p>PB5. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8h_source.html#l00028">28</a> pliku <a class="el" href="led__array__lib_8h_source.html">led_array_lib.h</a>.</p>
+
+</div>
+</div>
+<a id="aaca9eead06d9885bc6af30ccedec1330" name="aaca9eead06d9885bc6af30ccedec1330"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaca9eead06d9885bc6af30ccedec1330">&#9670;&#160;</a></span>led_array_status_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Driver status codes. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8h_source.html#l00020">20</a> pliku <a class="el" href="led__array__lib_8h_source.html">led_array_lib.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a08ff52c6cbf15a79c369af6de2d35592" name="a08ff52c6cbf15a79c369af6de2d35592"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08ff52c6cbf15a79c369af6de2d35592">&#9670;&#160;</a></span>led_array_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_deinit </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Deinitialize the LED array driver and turn off all LEDs. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00471">471</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00258">led_array_write_pin()</a>.</p>
+
+</div>
+</div>
+<a id="a42230d1ce3ff86a197a5340d8bc3cc4f" name="a42230d1ce3ff86a197a5340d8bc3cc4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42230d1ce3ff86a197a5340d8bc3cc4f">&#9670;&#160;</a></span>led_array_fire_fade_out()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_fire_fade_out </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>mask</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>fade_ms</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trigger one-shot fade-out from 100% to 0%. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mask</td><td>LED mask. </td></tr>
+    <tr><td class="paramname">fade_ms</td><td>Fade duration in milliseconds. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00617">617</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00242">led_array_mask_valid()</a>.</p>
+
+</div>
+</div>
+<a id="af738fc4dc6d91ad22d52c140604a4b58" name="af738fc4dc6d91ad22d52c140604a4b58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af738fc4dc6d91ad22d52c140604a4b58">&#9670;&#160;</a></span>led_array_get_effect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aac3178a392f43cf39c6fdd1095ed1060">led_array_effect_t</a> led_array_get_effect </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read currently active global effect. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>Active effect. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00716">716</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a7aedf48c103534fea85abba0f17f9012" name="a7aedf48c103534fea85abba0f17f9012"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aedf48c103534fea85abba0f17f9012">&#9670;&#160;</a></span>led_array_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_init </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize the LED array driver. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00457">457</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00167">led_array_hw_init()</a>, <a class="el" href="led__array__lib__config_8h_source.html#l00015">LED_ARRAY_LIB_DEFAULT_TICK_MS</a> i <a class="el" href="led__array__lib_8c_source.html#l00054">led_array_now_ms()</a>.</p>
+
+</div>
+</div>
+<a id="a0b3815ace1260f16636ac64ecbfc5bd0" name="a0b3815ace1260f16636ac64ecbfc5bd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b3815ace1260f16636ac64ecbfc5bd0">&#9670;&#160;</a></span>led_array_is_initialized()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool led_array_is_initialized </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read initialization state. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>true if initialized. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00725">725</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="aa09ac980785cb4b624aed6ba93a9cb83" name="aa09ac980785cb4b624aed6ba93a9cb83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa09ac980785cb4b624aed6ba93a9cb83">&#9670;&#160;</a></span>led_array_off()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_off </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>mask</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Turn LEDs off. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mask</td><td>LED mask. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00568">568</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00242">led_array_mask_valid()</a>.</p>
+
+</div>
+</div>
+<a id="a4711eae3b0ed715ca346726e9c718de1" name="a4711eae3b0ed715ca346726e9c718de1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4711eae3b0ed715ca346726e9c718de1">&#9670;&#160;</a></span>led_array_on()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_on </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>mask</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Turn LEDs on at 100% brightness. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mask</td><td>LED mask. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00544">544</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00242">led_array_mask_valid()</a>.</p>
+
+</div>
+</div>
+<a id="ac0f4c93e8d59837943f0cefd9de4b3ed" name="ac0f4c93e8d59837943f0cefd9de4b3ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0f4c93e8d59837943f0cefd9de4b3ed">&#9670;&#160;</a></span>led_array_process()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void led_array_process </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Polling scheduler update (HAL_GetTick based). </p>
+<p>Call this from the main loop when not using ISR-driven ticks. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00527">527</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00054">led_array_now_ms()</a> i <a class="el" href="led__array__lib_8c_source.html#l00435">led_array_tick_core()</a>.</p>
+
+</div>
+</div>
+<a id="a24d4a7518fb38fd16c07b7476c0de974" name="a24d4a7518fb38fd16c07b7476c0de974"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24d4a7518fb38fd16c07b7476c0de974">&#9670;&#160;</a></span>led_array_set_brightness()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_set_brightness </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>mask</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>brightness_pct</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set LED brightness in range 0..100%. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mask</td><td>LED mask. </td></tr>
+    <tr><td class="paramname">brightness_pct</td><td>Brightness in percent. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00592">592</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00252">led_array_clamp_pct()</a> i <a class="el" href="led__array__lib_8c_source.html#l00242">led_array_mask_valid()</a>.</p>
+
+</div>
+</div>
+<a id="a6462145271d8ae8d9bcd1f5ccdf37ded" name="a6462145271d8ae8d9bcd1f5ccdf37ded"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6462145271d8ae8d9bcd1f5ccdf37ded">&#9670;&#160;</a></span>led_array_start_breath()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_start_breath </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>mask</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>period_ms</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>min_pct</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>max_pct</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start breathing effect on selected LEDs. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mask</td><td>LED mask. </td></tr>
+    <tr><td class="paramname">period_ms</td><td>Full breath period (up + down) in milliseconds. </td></tr>
+    <tr><td class="paramname">min_pct</td><td>Minimum brightness (0..100). </td></tr>
+    <tr><td class="paramname">max_pct</td><td>Maximum brightness (0..100, must be &gt;= min_pct). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00646">646</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00252">led_array_clamp_pct()</a> i <a class="el" href="led__array__lib_8c_source.html#l00242">led_array_mask_valid()</a>.</p>
+
+</div>
+</div>
+<a id="ad01bd8a290236400e39c3957ea107ca0" name="ad01bd8a290236400e39c3957ea107ca0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad01bd8a290236400e39c3957ea107ca0">&#9670;&#160;</a></span>led_array_start_rainbow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_start_rainbow </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>step_ms</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>min_pct</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>max_pct</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start circulating rainbow-like wave on all LEDs. </p>
+<p>For a monochrome LED strip this effect is implemented as a moving brightness wave across LED1..LED5.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">step_ms</td><td>Phase step period in milliseconds. </td></tr>
+    <tr><td class="paramname">min_pct</td><td>Minimum brightness (0..100). </td></tr>
+    <tr><td class="paramname">max_pct</td><td>Maximum brightness (0..100, must be &gt;= min_pct). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00676">676</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00252">led_array_clamp_pct()</a>.</p>
+
+</div>
+</div>
+<a id="ad1d5f7b658871d0bcdc2b05bb77ba081" name="ad1d5f7b658871d0bcdc2b05bb77ba081"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1d5f7b658871d0bcdc2b05bb77ba081">&#9670;&#160;</a></span>led_array_stop_effect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_stop_effect </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stop the active effect and keep current manual brightness values. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00705">705</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a547426579c247ad4d9fc522c16361ef3" name="a547426579c247ad4d9fc522c16361ef3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a547426579c247ad4d9fc522c16361ef3">&#9670;&#160;</a></span>led_array_timer_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_timer_deinit </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Disable the scheduler updates. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00506">506</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="aff750f64fbc1cad4ee19031286289115" name="aff750f64fbc1cad4ee19031286289115"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff750f64fbc1cad4ee19031286289115">&#9670;&#160;</a></span>led_array_timer_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#aaca9eead06d9885bc6af30ccedec1330">led_array_status_t</a> led_array_timer_init </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>tick_period_ms</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Configure internal scheduler tick period. </p>
+<p>This controls effect update and brightness modulation step.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tick_period_ms</td><td>Tick period in milliseconds (&gt;= 1). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Driver status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00489">489</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00054">led_array_now_ms()</a>.</p>
+
+</div>
+</div>
+<a id="a4b6d7b6d2e6d8411ff06855ba14403f7" name="a4b6d7b6d2e6d8411ff06855ba14403f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b6d7b6d2e6d8411ff06855ba14403f7">&#9670;&#160;</a></span>led_array_timer_tick()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void led_array_timer_tick </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tick function for ISR-driven scheduling. </p>
+<p>Call this from SysTick or a hardware timer ISR if you want deterministic timing independent of the main loop. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00517">517</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="led__array__lib_8c_source.html#l00435">led_array_tick_core()</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_45024123d6afdc05bb9645902c1ec7cc.html">led_array_lib</a></li><li class="navelem"><a href="led__array__lib_8h.html">led_array_lib.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

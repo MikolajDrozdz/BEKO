@@ -1,0 +1,107 @@
+\doxysection{Dokumentacja katalogu Core/\+App/led\+\_\+array\+\_\+lib}
+\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc}{}\label{dir_45024123d6afdc05bb9645902c1ec7cc}\index{Dokumentacja katalogu Core/App/led\_array\_lib@{Dokumentacja katalogu Core/App/led\_array\_lib}}
+\doxysubsubsection*{Pliki}
+\begin{DoxyCompactItemize}
+\item 
+plik \mbox{\hyperlink{led__array__lib_8c}{led\+\_\+array\+\_\+lib.\+c}}
+\begin{DoxyCompactList}\small\item\em LED array driver implementation. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{led__array__lib_8h}{led\+\_\+array\+\_\+lib.\+h}}
+\begin{DoxyCompactList}\small\item\em LED array driver for 5 LEDs (PC7, PA8, PB10, PB4, PB5). \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{led__array__lib__config_8h}{led\+\_\+array\+\_\+lib\+\_\+config.\+h}}
+\begin{DoxyCompactList}\small\item\em Compile-\/time configuration for led\+\_\+array\+\_\+lib. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md48}{}\doxysubsection{\texorpdfstring{led\+\_\+array\+\_\+lib}{led\+\_\+array\+\_\+lib}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md48}
+Driver for 5 LEDs connected to\+:
+
+
+\begin{DoxyEnumerate}
+\item {\ttfamily PC7}
+\item {\ttfamily PA8}
+\item {\ttfamily PB10}
+\item {\ttfamily PB4}
+\item {\ttfamily PB5}
+\end{DoxyEnumerate}
+
+The library provides\+:
+
+
+\begin{DoxyItemize}
+\item init/deinit,
+\item ON/\+OFF control,
+\item brightness {\ttfamily 0..100\%},
+\item one-\/shot fade-\/out ("{}fire and dim"{}),
+\item breath effect,
+\item circulating rainbow-\/like wave across all LEDs.
+\end{DoxyItemize}\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md49}{}\doxysubsection{\texorpdfstring{Files}{Files}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md49}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{led__array__lib_8h}{led\+\_\+array\+\_\+lib.\+h}} -\/ public API.
+\item {\ttfamily \doxylink{led__array__lib_8c}{led\+\_\+array\+\_\+lib.\+c}} -\/ implementation.
+\item {\ttfamily \doxylink{led__array__lib__config_8h}{led\+\_\+array\+\_\+lib\+\_\+config.\+h}} -\/ compile-\/time options.
+\end{DoxyItemize}\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md50}{}\doxysubsection{\texorpdfstring{Design}{Design}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md50}
+
+\begin{DoxyItemize}
+\item Uses hardware PWM with high carrier frequency (\texorpdfstring{$\sim$}{\string~}20 k\+Hz).
+\item Timers used\+:
+\item {\ttfamily TIM8\+\_\+\+CH2} -\/\texorpdfstring{$>$}{>} {\ttfamily PC7}
+\item {\ttfamily TIM1\+\_\+\+CH1} -\/\texorpdfstring{$>$}{>} {\ttfamily PA8}
+\item {\ttfamily TIM2\+\_\+\+CH3} -\/\texorpdfstring{$>$}{>} {\ttfamily PB10}
+\item {\ttfamily TIM3\+\_\+\+CH1} -\/\texorpdfstring{$>$}{>} {\ttfamily PB4}
+\item {\ttfamily TIM3\+\_\+\+CH2} -\/\texorpdfstring{$>$}{>} {\ttfamily PB5}
+\item Effect timing (breath/rainbow/fade progression) is still updated by library tick.
+\end{DoxyItemize}\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md51}{}\doxysubsection{\texorpdfstring{API Overview}{API Overview}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md51}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{led__array__lib_8c_a7aedf48c103534fea85abba0f17f9012}{led\+\_\+array\+\_\+init()}}, {\ttfamily \doxylink{led__array__lib_8c_a08ff52c6cbf15a79c369af6de2d35592}{led\+\_\+array\+\_\+deinit()}}
+\item {\ttfamily led\+\_\+array\+\_\+timer\+\_\+init(tick\+\_\+ms)}, {\ttfamily \doxylink{led__array__lib_8c_a547426579c247ad4d9fc522c16361ef3}{led\+\_\+array\+\_\+timer\+\_\+deinit()}}
+\item {\ttfamily \doxylink{led__array__lib_8c_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\+\_\+array\+\_\+timer\+\_\+tick()}} (for ISR scheduling)
+\item {\ttfamily \doxylink{led__array__lib_8c_ac0f4c93e8d59837943f0cefd9de4b3ed}{led\+\_\+array\+\_\+process()}} (polling scheduling via {\ttfamily HAL\+\_\+\+Get\+Tick})
+\item {\ttfamily led\+\_\+array\+\_\+on(mask)}, {\ttfamily led\+\_\+array\+\_\+off(mask)}
+\item {\ttfamily led\+\_\+array\+\_\+set\+\_\+brightness(mask, pct)}
+\item {\ttfamily led\+\_\+array\+\_\+fire\+\_\+fade\+\_\+out(mask, fade\+\_\+ms)}
+\item {\ttfamily led\+\_\+array\+\_\+start\+\_\+breath(mask, period\+\_\+ms, min\+\_\+pct, max\+\_\+pct)}
+\item {\ttfamily led\+\_\+array\+\_\+start\+\_\+rainbow(step\+\_\+ms, min\+\_\+pct, max\+\_\+pct)}
+\item {\ttfamily \doxylink{led__array__lib_8c_ad1d5f7b658871d0bcdc2b05bb77ba081}{led\+\_\+array\+\_\+stop\+\_\+effect()}}
+\end{DoxyItemize}\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md52}{}\doxysubsection{\texorpdfstring{LED Masks}{LED Masks}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md52}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+1}} ... {\ttfamily \doxylink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+5}}
+\item {\ttfamily LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+\+ALL}
+\end{DoxyItemize}
+
+Masks can be OR-\/ed, for example\+:
+
+{\ttfamily \doxylink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+1} \texorpdfstring{$\vert$}{|} \doxylink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+3}}\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md53}{}\doxysubsection{\texorpdfstring{Usage (polling mode)}{Usage (polling mode)}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md53}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{led__array__lib_8h}{led\_array\_lib/led\_array\_lib.h}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{app_8h_add3190cf715f513666f4be42874d91e2}{app\_init}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a7aedf48c103534fea85abba0f17f9012}{led\_array\_init}}();}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{led__array__lib_8c_aff750f64fbc1cad4ee19031286289115}{led\_array\_timer\_init}}(1);\ \textcolor{comment}{/*\ 1\ ms\ tick\ */}}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ad01bd8a290236400e39c3957ea107ca0}{led\_array\_start\_rainbow}}(20,\ 5,\ 100);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}\ \mbox{\hyperlink{app_8h_a630544a7f0a2cc40d8a7fefab7e2fe70}{app\_main}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ac0f4c93e8d59837943f0cefd9de4b3ed}{led\_array\_process}}();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md54}{}\doxysubsection{\texorpdfstring{Usage (ISR mode)}{Usage (ISR mode)}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md54}
+Call {\ttfamily \doxylink{led__array__lib_8c_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\+\_\+array\+\_\+timer\+\_\+tick()}} from Sys\+Tick or a hardware timer ISR.
+
+If you want the library to own {\ttfamily HAL\+\_\+\+SYSTICK\+\_\+\+Callback}, set\+:
+
+{\ttfamily \doxylink{led__array__lib__config_8h_a16818cf6ca502e60dece4cb34fc80bd9}{LED\+\_\+\+ARRAY\+\_\+\+LIB\+\_\+\+OWNS\+\_\+\+HAL\+\_\+\+SYSTICK\+\_\+\+CALLBACK} = 1}
+
+in {\ttfamily \doxylink{led__array__lib__config_8h}{led\+\_\+array\+\_\+lib\+\_\+config.\+h}} (or compiler defines).\hypertarget{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md55}{}\doxysubsection{\texorpdfstring{Notes}{Notes}}\label{dir_45024123d6afdc05bb9645902c1ec7cc_autotoc_md55}
+
+\begin{DoxyItemize}
+\item For smooth dimming, use {\ttfamily tick\+\_\+ms = 1}.
+\item Effects are global (one active effect at a time).
+\item Manual brightness APIs ({\ttfamily on/off/set\+\_\+brightness}) stop active effect. 
+\end{DoxyItemize}

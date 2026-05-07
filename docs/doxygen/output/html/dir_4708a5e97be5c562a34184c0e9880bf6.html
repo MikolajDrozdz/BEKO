@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja katalogu Core/App/st33ktpm2x_lib</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('dir_4708a5e97be5c562a34184c0e9880bf6.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja katalogu st33ktpm2x_lib</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-files" class="groupheader"><a id="files" name="files"></a>
+Pliki</h2></td></tr>
+<tr class="memitem:st33ktpm2x_2Ec" id="r_st33ktpm2x_2Ec"><td class="memItemLeft" align="right" valign="top"><a href="st33ktpm2x_8c_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st33ktpm2x_8c.html">st33ktpm2x.c</a></td></tr>
+<tr class="memdesc:st33ktpm2x_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">ST33KTPM2X driver implementation (TIS over I2C). <br /></td></tr>
+<tr class="memitem:st33ktpm2x_2Eh" id="r_st33ktpm2x_2Eh"><td class="memItemLeft" align="right" valign="top"><a href="st33ktpm2x_8h_source.html"><span class="icondoc"><div class="doc-icon"></div></span></a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="st33ktpm2x_8h.html">st33ktpm2x.h</a></td></tr>
+<tr class="memdesc:st33ktpm2x_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">High-level and transport-level driver for ST33KTPM2X over I2C (TIS/FIFO). <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md156"></a>
+st33ktpm2x_lib</h1>
+<p>Biblioteka dla ST33KTPM2X (TPM 2.0) po I2C (TIS/FIFO) pod STM32 HAL.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md157"></a>
+Założenia</h1>
+<ul>
+<li>Interfejs TPM: <span class="tt">I2C3</span> (<span class="tt">hi2c3</span>, <span class="tt">PC0</span> = SCL, <span class="tt">PC1</span> = SDA).</li>
+<li>Pin reset TPM: <span class="tt">PB0</span> (<span class="tt">TPM_RESET__Pin</span>/<span class="tt">TPM_RESET__GPIO_Port</span> z <span class="tt">main.h</span>), aktywny niskim stanem.</li>
+<li>Pin <span class="tt">TPM_DAVINT#</span> / <span class="tt">PIRQ</span>: <span class="tt">PH0</span> (<span class="tt">TPM_DAVINT__Pin</span>/<span class="tt">TPM_DAVINT__GPIO_Port</span>), wejście <span class="tt">EXTI0</span>, aktywne niskim stanem.</li>
+<li>Jeśli PP jest wyprowadzony do STM32 GPIO, może być konfigurowany w <span class="tt"><a class="el" href="structst33ktpm2x__cfg__t.html" title="Runtime configuration for ST33KTPM2X instance.">st33ktpm2x_cfg_t</a></span>.</li>
+<li>W aktualnym hardware BEKO PP jest podłączony do samego TPM: pin <span class="tt">7</span>, aktywny stanem <span class="tt">VDD</span>. Tego pinu nie czyta STM32 jako zwykłego przycisku; jest używany przez TPM przy komendach wymagających fizycznej obecności.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md158"></a>
+Co zawiera</h1>
+<ul>
+<li>transport TPM TIS over I2C:<ul>
+<li>lokalność <span class="tt">locality 0</span>,</li>
+<li>FIFO TX/RX,</li>
+<li>parsowanie nagłówka TPM2 i <span class="tt">TPM_RC</span>.</li>
+</ul>
+</li>
+<li>funkcje bazowe TPM2:<ul>
+<li><span class="tt">TPM2_Startup</span>,</li>
+<li><span class="tt">TPM2_SelfTest</span>,</li>
+<li><span class="tt">TPM2_GetRandom</span>,</li>
+<li><span class="tt">TPM2_GetCapability</span>,</li>
+<li><span class="tt">TPM2_PCR_Read</span> (SHA-256, pojedynczy PCR).</li>
+</ul>
+</li>
+<li>funkcje NV:<ul>
+<li><span class="tt">TPM2_NV_DefineSpace</span>,</li>
+<li><span class="tt">TPM2_NV_Read</span>,</li>
+<li><span class="tt">TPM2_NV_Write</span> z owner authorization,</li>
+<li><span class="tt">TPM2_NV_Write</span> z platform authorization dla PP-protected NV.</li>
+</ul>
+</li>
+<li>wsparcie dla PP jako GPIO, gdy hardware tak je podłączy:<ul>
+<li>odczyt stanu przycisku,</li>
+<li>czekanie na naciśnięcie.</li>
+</ul>
+</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md159"></a>
+Użycie w BEKO</h1>
+<p><span class="tt">security_main</span> używa biblioteki TPM do:</p>
+<ul>
+<li>inicjalizacji TPM przed EEPROM,</li>
+<li>pobierania losowości z <span class="tt">TPM2_GetRandom</span>,</li>
+<li>przechowywania root seeda w NV indexie <span class="tt">0x01C10101</span>,</li>
+<li>migracyjnego odczytu starego NV indexu <span class="tt">0x01C10100</span>,</li>
+<li>wymuszenia aktywnego PP przy zapisie root seeda przez <span class="tt">NV_Write</span> z <span class="tt">TPM_RH_PLATFORM</span>.</li>
+</ul>
+<p>Root seed nie powinien być już zapisywany jawnie do EEPROM, gdy TPM jest gotowy. EEPROM przechowuje wpisy trusted/countery zaszyfrowane kluczem wyprowadzonym z TPM-backed root seeda. </p>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_4708a5e97be5c562a34184c0e9880bf6.html">st33ktpm2x_lib</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

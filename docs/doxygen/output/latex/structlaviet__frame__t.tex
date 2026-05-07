@@ -1,0 +1,211 @@
+\doxysection{Dokumentacja struktury laviet\+\_\+frame\+\_\+t}
+\hypertarget{structlaviet__frame__t}{}\label{structlaviet__frame__t}\index{laviet\_frame\_t@{laviet\_frame\_t}}
+
+
+Parsed LAVIET frame representation.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/laviet\+\_\+frame.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_a5f2e5456d7a8afad23ccc25ccf7e8814}{ver\+\_\+type}}
+\begin{DoxyCompactList}\small\item\em Version/type byte\+: high nibble version, low nibble type. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_aa8b634d74fde261ea09d0840fcd71c4b}{flags}}
+\begin{DoxyCompactList}\small\item\em Bitmask of {\ttfamily LAVIET\+\_\+\+FLAG\+\_\+\texorpdfstring{$\ast$}{*}} values. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_a29e271372638b97bd14de7e10a6c23bf}{src\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Source node identifier. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_a70f5f2f4a3d82240fc11f6904f2cfdc8}{dst\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Destination node identifier. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_a0a374341e2508761490a6e35c14a6a74}{msg\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Message identifier used by ACK tracking. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_a603f30cb3c798f7a28c199780cc7ee19}{counter}}
+\begin{DoxyCompactList}\small\item\em Monotonic frame counter. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_a9aaa6bb1f5a70b79e6249b1318d1bb98}{payload\+\_\+len}}
+\begin{DoxyCompactList}\small\item\em Number of valid bytes in {\ttfamily \doxylink{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887}{payload}}. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887}{payload}} \mbox{[}\mbox{\hyperlink{laviet__frame_8h_a6bf6d0643f24e5398518a15871a57ae0}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Frame payload buffer. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structlaviet__frame__t_ac421f101d139175775284d97630a68b1}{mac\+\_\+tag}} \mbox{[}\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Authentication tag stored on the wire. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Parsed LAVIET frame representation. 
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00095}{95}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structlaviet__frame__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structlaviet__frame__t_a603f30cb3c798f7a28c199780cc7ee19}\index{laviet\_frame\_t@{laviet\_frame\_t}!counter@{counter}}
+\index{counter@{counter}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{counter}{counter}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_a603f30cb3c798f7a28c199780cc7ee19} 
+uint32\+\_\+t laviet\+\_\+frame\+\_\+t\+::counter}
+
+
+
+Monotonic frame counter. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00102}{102}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{laviet\+\_\+make\+\_\+counter\+\_\+block()}}.
+
+\Hypertarget{structlaviet__frame__t_a70f5f2f4a3d82240fc11f6904f2cfdc8}\index{laviet\_frame\_t@{laviet\_frame\_t}!dst\_id@{dst\_id}}
+\index{dst\_id@{dst\_id}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{dst\_id}{dst\_id}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_a70f5f2f4a3d82240fc11f6904f2cfdc8} 
+uint16\+\_\+t laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}
+
+
+
+Destination node identifier. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00100}{100}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00070}{laviet\+\_\+frame\+\_\+is\+\_\+broadcast()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{laviet\+\_\+make\+\_\+counter\+\_\+block()}}.
+
+\Hypertarget{structlaviet__frame__t_aa8b634d74fde261ea09d0840fcd71c4b}\index{laviet\_frame\_t@{laviet\_frame\_t}!flags@{flags}}
+\index{flags@{flags}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{flags}{flags}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_aa8b634d74fde261ea09d0840fcd71c4b} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+t\+::flags}
+
+
+
+Bitmask of {\ttfamily LAVIET\+\_\+\+FLAG\+\_\+\texorpdfstring{$\ast$}{*}} values. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00098}{98}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}.
+
+\Hypertarget{structlaviet__frame__t_ac421f101d139175775284d97630a68b1}\index{laviet\_frame\_t@{laviet\_frame\_t}!mac\_tag@{mac\_tag}}
+\index{mac\_tag@{mac\_tag}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{mac\_tag}{mac\_tag}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_ac421f101d139175775284d97630a68b1} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+t\+::mac\+\_\+tag\mbox{[}\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}\mbox{]}}
+
+
+
+Authentication tag stored on the wire. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00105}{105}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}.
+
+\Hypertarget{structlaviet__frame__t_a0a374341e2508761490a6e35c14a6a74}\index{laviet\_frame\_t@{laviet\_frame\_t}!msg\_id@{msg\_id}}
+\index{msg\_id@{msg\_id}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{msg\_id}{msg\_id}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_a0a374341e2508761490a6e35c14a6a74} 
+uint16\+\_\+t laviet\+\_\+frame\+\_\+t\+::msg\+\_\+id}
+
+
+
+Message identifier used by ACK tracking. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00101}{101}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{laviet\+\_\+make\+\_\+counter\+\_\+block()}}.
+
+\Hypertarget{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887}\index{laviet\_frame\_t@{laviet\_frame\_t}!payload@{payload}}
+\index{payload@{payload}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{payload}{payload}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+t\+::payload\mbox{[}\mbox{\hyperlink{laviet__frame_8h_a6bf6d0643f24e5398518a15871a57ae0}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}}\mbox{]}}
+
+
+
+Frame payload buffer. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00104}{104}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}.
+
+\Hypertarget{structlaviet__frame__t_a9aaa6bb1f5a70b79e6249b1318d1bb98}\index{laviet\_frame\_t@{laviet\_frame\_t}!payload\_len@{payload\_len}}
+\index{payload\_len@{payload\_len}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{payload\_len}{payload\_len}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_a9aaa6bb1f5a70b79e6249b1318d1bb98} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+t\+::payload\+\_\+len}
+
+
+
+Number of valid bytes in {\ttfamily \doxylink{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887}{payload}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00103}{103}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}.
+
+\Hypertarget{structlaviet__frame__t_a29e271372638b97bd14de7e10a6c23bf}\index{laviet\_frame\_t@{laviet\_frame\_t}!src\_id@{src\_id}}
+\index{src\_id@{src\_id}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{src\_id}{src\_id}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_a29e271372638b97bd14de7e10a6c23bf} 
+uint16\+\_\+t laviet\+\_\+frame\+\_\+t\+::src\+\_\+id}
+
+
+
+Source node identifier. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00099}{99}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{laviet\+\_\+make\+\_\+counter\+\_\+block()}}.
+
+\Hypertarget{structlaviet__frame__t_a5f2e5456d7a8afad23ccc25ccf7e8814}\index{laviet\_frame\_t@{laviet\_frame\_t}!ver\_type@{ver\_type}}
+\index{ver\_type@{ver\_type}!laviet\_frame\_t@{laviet\_frame\_t}}
+\doxysubsubsection{\texorpdfstring{ver\_type}{ver\_type}}
+{\footnotesize\ttfamily \label{structlaviet__frame__t_a5f2e5456d7a8afad23ccc25ccf7e8814} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+t\+::ver\+\_\+type}
+
+
+
+Version/type byte\+: high nibble version, low nibble type. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8h_source_l00097}{97}} pliku \mbox{\hyperlink{laviet__frame_8h_source}{laviet\+\_\+frame.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00060}{laviet\+\_\+frame\+\_\+type()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/\mbox{\hyperlink{laviet__frame_8h}{laviet\+\_\+frame.\+h}}\end{DoxyCompactItemize}

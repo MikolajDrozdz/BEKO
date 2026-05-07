@@ -1,0 +1,63 @@
+\doxysection{Dokumentacja katalogu Core/\+App/st33ktpm2x\+\_\+lib}
+\hypertarget{dir_4708a5e97be5c562a34184c0e9880bf6}{}\label{dir_4708a5e97be5c562a34184c0e9880bf6}\index{Dokumentacja katalogu Core/App/st33ktpm2x\_lib@{Dokumentacja katalogu Core/App/st33ktpm2x\_lib}}
+\doxysubsubsection*{Pliki}
+\begin{DoxyCompactItemize}
+\item 
+plik \mbox{\hyperlink{st33ktpm2x_8c}{st33ktpm2x.\+c}}
+\begin{DoxyCompactList}\small\item\em ST33\+KTPM2X driver implementation (TIS over I2C). \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{st33ktpm2x_8h}{st33ktpm2x.\+h}}
+\begin{DoxyCompactList}\small\item\em High-\/level and transport-\/level driver for ST33\+KTPM2X over I2C (TIS/\+FIFO). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+\hypertarget{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md156}{}\doxysubsection{\texorpdfstring{st33ktpm2x\+\_\+lib}{st33ktpm2x\+\_\+lib}}\label{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md156}
+Biblioteka dla ST33\+KTPM2X (TPM 2.\+0) po I2C (TIS/\+FIFO) pod STM32 HAL.\hypertarget{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md157}{}\doxysubsection{\texorpdfstring{Założenia}{Założenia}}\label{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md157}
+
+\begin{DoxyItemize}
+\item Interfejs TPM\+: {\ttfamily I2\+C3} ({\ttfamily hi2c3}, {\ttfamily PC0} = SCL, {\ttfamily PC1} = SDA).
+\item Pin reset TPM\+: {\ttfamily PB0} ({\ttfamily TPM\+\_\+\+RESET\+\_\+\+\_\+\+Pin}/{\ttfamily TPM\+\_\+\+RESET\+\_\+\+\_\+\+GPIO\+\_\+\+Port} z {\ttfamily main.\+h}), aktywny niskim stanem.
+\item Pin {\ttfamily TPM\+\_\+\+DAVINT\#} / {\ttfamily PIRQ}\+: {\ttfamily PH0} ({\ttfamily TPM\+\_\+\+DAVINT\+\_\+\+\_\+\+Pin}/{\ttfamily TPM\+\_\+\+DAVINT\+\_\+\+\_\+\+GPIO\+\_\+\+Port}), wejście {\ttfamily EXTI0}, aktywne niskim stanem.
+\item Jeśli PP jest wyprowadzony do STM32 GPIO, może być konfigurowany w {\ttfamily \doxylink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}}.
+\item W aktualnym hardware BEKO PP jest podłączony do samego TPM\+: pin {\ttfamily 7}, aktywny stanem {\ttfamily VDD}. Tego pinu nie czyta STM32 jako zwykłego przycisku; jest używany przez TPM przy komendach wymagających fizycznej obecności.
+\end{DoxyItemize}\hypertarget{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md158}{}\doxysubsection{\texorpdfstring{Co zawiera}{Co zawiera}}\label{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md158}
+
+\begin{DoxyItemize}
+\item transport TPM TIS over I2C\+:
+\begin{DoxyItemize}
+\item lokalność {\ttfamily locality 0},
+\item FIFO TX/\+RX,
+\item parsowanie nagłówka TPM2 i {\ttfamily TPM\+\_\+\+RC}.
+\end{DoxyItemize}
+\item funkcje bazowe TPM2\+:
+\begin{DoxyItemize}
+\item {\ttfamily TPM2\+\_\+\+Startup},
+\item {\ttfamily TPM2\+\_\+\+Self\+Test},
+\item {\ttfamily TPM2\+\_\+\+Get\+Random},
+\item {\ttfamily TPM2\+\_\+\+Get\+Capability},
+\item {\ttfamily TPM2\+\_\+\+PCR\+\_\+\+Read} (SHA-\/256, pojedynczy PCR).
+\end{DoxyItemize}
+\item funkcje NV\+:
+\begin{DoxyItemize}
+\item {\ttfamily TPM2\+\_\+\+NV\+\_\+\+Define\+Space},
+\item {\ttfamily TPM2\+\_\+\+NV\+\_\+\+Read},
+\item {\ttfamily TPM2\+\_\+\+NV\+\_\+\+Write} z owner authorization,
+\item {\ttfamily TPM2\+\_\+\+NV\+\_\+\+Write} z platform authorization dla PP-\/protected NV.
+\end{DoxyItemize}
+\item wsparcie dla PP jako GPIO, gdy hardware tak je podłączy\+:
+\begin{DoxyItemize}
+\item odczyt stanu przycisku,
+\item czekanie na naciśnięcie.
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md159}{}\doxysubsection{\texorpdfstring{Użycie w BEKO}{Użycie w BEKO}}\label{dir_4708a5e97be5c562a34184c0e9880bf6_autotoc_md159}
+{\ttfamily security\+\_\+main} używa biblioteki TPM do\+:
+
+
+\begin{DoxyItemize}
+\item inicjalizacji TPM przed EEPROM,
+\item pobierania losowości z {\ttfamily TPM2\+\_\+\+Get\+Random},
+\item przechowywania root seeda w NV indexie {\ttfamily 0x01\+C10101},
+\item migracyjnego odczytu starego NV indexu {\ttfamily 0x01\+C10100},
+\item wymuszenia aktywnego PP przy zapisie root seeda przez {\ttfamily NV\+\_\+\+Write} z {\ttfamily TPM\+\_\+\+RH\+\_\+\+PLATFORM}.
+\end{DoxyItemize}
+
+Root seed nie powinien być już zapisywany jawnie do EEPROM, gdy TPM jest gotowy. EEPROM przechowuje wpisy trusted/countery zaszyfrowane kluczem wyprowadzonym z TPM-\/backed root seeda. 

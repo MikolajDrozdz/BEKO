@@ -1,0 +1,372 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury radio_lora_cfg_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structradio__lora__cfg__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury radio_lora_cfg_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Konfiguracja profilu LoRa.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="radio__lib_8h_source.html">Core/App/radio_lib/radio_lib.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a236743b550328d327f192949f48581eb" id="r_a236743b550328d327f192949f48581eb"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a236743b550328d327f192949f48581eb">frequency_hz</a></td></tr>
+<tr class="memdesc:a236743b550328d327f192949f48581eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Częstotliwość RF [Hz].  <br /></td></tr>
+<tr class="memitem:a300ec2a46e684c012f0ee12b5679f988" id="r_a300ec2a46e684c012f0ee12b5679f988"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#a227ddbfeda5a2c2c4cbe5ab3bde9b6cd">radio_lora_bw_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a300ec2a46e684c012f0ee12b5679f988">bandwidth</a></td></tr>
+<tr class="memdesc:a300ec2a46e684c012f0ee12b5679f988"><td class="mdescLeft">&#160;</td><td class="mdescRight">Szerokość pasma.  <br /></td></tr>
+<tr class="memitem:a2700bd692fbae8c52754804205d30553" id="r_a2700bd692fbae8c52754804205d30553"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2700bd692fbae8c52754804205d30553">spreading_factor</a></td></tr>
+<tr class="memdesc:a2700bd692fbae8c52754804205d30553"><td class="mdescLeft">&#160;</td><td class="mdescRight">SF6..SF12.  <br /></td></tr>
+<tr class="memitem:a47ad70fdf79b88a8225739cad8ca1ce0" id="r_a47ad70fdf79b88a8225739cad8ca1ce0"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47ad70fdf79b88a8225739cad8ca1ce0">coding_rate</a></td></tr>
+<tr class="memdesc:a47ad70fdf79b88a8225739cad8ca1ce0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mianownik CR: 4/x, x=5..8.  <br /></td></tr>
+<tr class="memitem:a7b19ae88b893b564bd0e9a6ab3c8e498" id="r_a7b19ae88b893b564bd0e9a6ab3c8e498"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7b19ae88b893b564bd0e9a6ab3c8e498">preamble_len</a></td></tr>
+<tr class="memdesc:a7b19ae88b893b564bd0e9a6ab3c8e498"><td class="mdescLeft">&#160;</td><td class="mdescRight">Długość preambuły w symbolach.  <br /></td></tr>
+<tr class="memitem:a970a51b95fd38c9143cb4f78cfa630ab" id="r_a970a51b95fd38c9143cb4f78cfa630ab"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a970a51b95fd38c9143cb4f78cfa630ab">sync_word</a></td></tr>
+<tr class="memdesc:a970a51b95fd38c9143cb4f78cfa630ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sync word LoRa.  <br /></td></tr>
+<tr class="memitem:a76436ba006f22d9657e1ed345854a892" id="r_a76436ba006f22d9657e1ed345854a892"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76436ba006f22d9657e1ed345854a892">crc_on</a></td></tr>
+<tr class="memdesc:a76436ba006f22d9657e1ed345854a892"><td class="mdescLeft">&#160;</td><td class="mdescRight">Włączenie CRC payloadu.  <br /></td></tr>
+<tr class="memitem:aa6fba08b43dcf5b0985ce0c492b74783" id="r_aa6fba08b43dcf5b0985ce0c492b74783"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6fba08b43dcf5b0985ce0c492b74783">invert_iq</a></td></tr>
+<tr class="memdesc:aa6fba08b43dcf5b0985ce0c492b74783"><td class="mdescLeft">&#160;</td><td class="mdescRight">Włączenie inwersji IQ.  <br /></td></tr>
+<tr class="memitem:a9f879a727b2e50b9ed424d3ec7f23ba5" id="r_a9f879a727b2e50b9ed424d3ec7f23ba5"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f879a727b2e50b9ed424d3ec7f23ba5">tx_power_dbm</a></td></tr>
+<tr class="memdesc:a9f879a727b2e50b9ed424d3ec7f23ba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moc TX [dBm].  <br /></td></tr>
+<tr class="memitem:a12734a038b4af79bba8156b7ac7c1ca2" id="r_a12734a038b4af79bba8156b7ac7c1ca2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12734a038b4af79bba8156b7ac7c1ca2">implicit_header</a></td></tr>
+<tr class="memdesc:a12734a038b4af79bba8156b7ac7c1ca2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tryb nagłówka niejawnego.  <br /></td></tr>
+<tr class="memitem:aa788c5dc5f90ac4287b24fca55b42861" id="r_aa788c5dc5f90ac4287b24fca55b42861"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa788c5dc5f90ac4287b24fca55b42861">payload_len</a></td></tr>
+<tr class="memdesc:aa788c5dc5f90ac4287b24fca55b42861"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stała długość payloadu (implicit header).  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Konfiguracja profilu LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00106">106</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a300ec2a46e684c012f0ee12b5679f988" name="a300ec2a46e684c012f0ee12b5679f988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a300ec2a46e684c012f0ee12b5679f988">&#9670;&#160;</a></span>bandwidth</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#a227ddbfeda5a2c2c4cbe5ab3bde9b6cd">radio_lora_bw_t</a> radio_lora_cfg_t::bandwidth</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Szerokość pasma. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00109">109</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a>, <a class="el" href="radio__lora_8c_source.html#l00115">radio_low_data_rate_optimize_required()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a47ad70fdf79b88a8225739cad8ca1ce0" name="a47ad70fdf79b88a8225739cad8ca1ce0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47ad70fdf79b88a8225739cad8ca1ce0">&#9670;&#160;</a></span>coding_rate</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_lora_cfg_t::coding_rate</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mianownik CR: 4/x, x=5..8. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00111">111</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a76436ba006f22d9657e1ed345854a892" name="a76436ba006f22d9657e1ed345854a892"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76436ba006f22d9657e1ed345854a892">&#9670;&#160;</a></span>crc_on</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_lora_cfg_t::crc_on</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Włączenie CRC payloadu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00114">114</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a236743b550328d327f192949f48581eb" name="a236743b550328d327f192949f48581eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a236743b550328d327f192949f48581eb">&#9670;&#160;</a></span>frequency_hz</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_lora_cfg_t::frequency_hz</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Częstotliwość RF [Hz]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00108">108</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a12734a038b4af79bba8156b7ac7c1ca2" name="a12734a038b4af79bba8156b7ac7c1ca2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12734a038b4af79bba8156b7ac7c1ca2">&#9670;&#160;</a></span>implicit_header</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_lora_cfg_t::implicit_header</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tryb nagłówka niejawnego. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00117">117</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="aa6fba08b43dcf5b0985ce0c492b74783" name="aa6fba08b43dcf5b0985ce0c492b74783"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6fba08b43dcf5b0985ce0c492b74783">&#9670;&#160;</a></span>invert_iq</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_lora_cfg_t::invert_iq</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Włączenie inwersji IQ. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00115">115</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="aa788c5dc5f90ac4287b24fca55b42861" name="aa788c5dc5f90ac4287b24fca55b42861"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa788c5dc5f90ac4287b24fca55b42861">&#9670;&#160;</a></span>payload_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_lora_cfg_t::payload_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stała długość payloadu (implicit header). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00118">118</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a7b19ae88b893b564bd0e9a6ab3c8e498" name="a7b19ae88b893b564bd0e9a6ab3c8e498"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7b19ae88b893b564bd0e9a6ab3c8e498">&#9670;&#160;</a></span>preamble_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t radio_lora_cfg_t::preamble_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Długość preambuły w symbolach. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00112">112</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a2700bd692fbae8c52754804205d30553" name="a2700bd692fbae8c52754804205d30553"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2700bd692fbae8c52754804205d30553">&#9670;&#160;</a></span>spreading_factor</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_lora_cfg_t::spreading_factor</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SF6..SF12. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00110">110</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00079">radio_cfg_valid()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a>, <a class="el" href="radio__lora_8c_source.html#l00115">radio_low_data_rate_optimize_required()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a970a51b95fd38c9143cb4f78cfa630ab" name="a970a51b95fd38c9143cb4f78cfa630ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a970a51b95fd38c9143cb4f78cfa630ab">&#9670;&#160;</a></span>sync_word</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_lora_cfg_t::sync_word</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sync word LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00113">113</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<a id="a9f879a727b2e50b9ed424d3ec7f23ba5" name="a9f879a727b2e50b9ed424d3ec7f23ba5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f879a727b2e50b9ed424d3ec7f23ba5">&#9670;&#160;</a></span>tx_power_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int8_t radio_lora_cfg_t::tx_power_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Moc TX [dBm]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00116">116</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a> i <a class="el" href="radio__main_8c_source.html#l01752">radio_main_load_default_lora_preset()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/radio_lib/<a class="el" href="radio__lib_8h_source.html">radio_lib.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

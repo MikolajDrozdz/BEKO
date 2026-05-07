@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury sx1276_bus_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structsx1276__bus__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury sx1276_bus_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Kontekst magistrali SPI dla układu SX1276.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="radio__sx1276_8h_source.html">Core/App/radio_lib/common/sx1276/radio_sx1276.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:acbe1a6fb4b51a0ba12fbd1172950a8a6" id="r_acbe1a6fb4b51a0ba12fbd1172950a8a6"><td class="memItemLeft" align="right" valign="top">SPI_HandleTypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbe1a6fb4b51a0ba12fbd1172950a8a6">hspi</a></td></tr>
+<tr class="memdesc:acbe1a6fb4b51a0ba12fbd1172950a8a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uchwyt SPI.  <br /></td></tr>
+<tr class="memitem:a3f789cfb46120b989f9f04898002a031" id="r_a3f789cfb46120b989f9f04898002a031"><td class="memItemLeft" align="right" valign="top">GPIO_TypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f789cfb46120b989f9f04898002a031">nss_port</a></td></tr>
+<tr class="memdesc:a3f789cfb46120b989f9f04898002a031"><td class="mdescLeft">&#160;</td><td class="mdescRight">Port pinu NSS/CS.  <br /></td></tr>
+<tr class="memitem:abbe8af22e6d3af0dc3c40ea428bdd987" id="r_abbe8af22e6d3af0dc3c40ea428bdd987"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abbe8af22e6d3af0dc3c40ea428bdd987">nss_pin</a></td></tr>
+<tr class="memdesc:abbe8af22e6d3af0dc3c40ea428bdd987"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin NSS/CS.  <br /></td></tr>
+<tr class="memitem:a9e332f32ea65d23614fe44ead6ed4234" id="r_a9e332f32ea65d23614fe44ead6ed4234"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9e332f32ea65d23614fe44ead6ed4234">spi_timeout_ms</a></td></tr>
+<tr class="memdesc:a9e332f32ea65d23614fe44ead6ed4234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout transferu SPI.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Kontekst magistrali SPI dla układu SX1276. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8h_source.html#l00017">17</a> pliku <a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="acbe1a6fb4b51a0ba12fbd1172950a8a6" name="acbe1a6fb4b51a0ba12fbd1172950a8a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbe1a6fb4b51a0ba12fbd1172950a8a6">&#9670;&#160;</a></span>hspi</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SPI_HandleTypeDef* sx1276_bus_t::hspi</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Uchwyt SPI. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8h_source.html#l00019">19</a> pliku <a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__sx1276_8c_source.html#l00073">sx1276_read_burst()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+</div>
+</div>
+<a id="abbe8af22e6d3af0dc3c40ea428bdd987" name="abbe8af22e6d3af0dc3c40ea428bdd987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abbe8af22e6d3af0dc3c40ea428bdd987">&#9670;&#160;</a></span>nss_pin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t sx1276_bus_t::nss_pin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pin NSS/CS. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8h_source.html#l00021">21</a> pliku <a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__sx1276_8c_source.html#l00022">sx1276_deselect()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>.</p>
+
+</div>
+</div>
+<a id="a3f789cfb46120b989f9f04898002a031" name="a3f789cfb46120b989f9f04898002a031"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f789cfb46120b989f9f04898002a031">&#9670;&#160;</a></span>nss_port</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GPIO_TypeDef* sx1276_bus_t::nss_port</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Port pinu NSS/CS. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8h_source.html#l00020">20</a> pliku <a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__sx1276_8c_source.html#l00022">sx1276_deselect()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>.</p>
+
+</div>
+</div>
+<a id="a9e332f32ea65d23614fe44ead6ed4234" name="a9e332f32ea65d23614fe44ead6ed4234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e332f32ea65d23614fe44ead6ed4234">&#9670;&#160;</a></span>spi_timeout_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t sx1276_bus_t::spi_timeout_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout transferu SPI. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8h_source.html#l00022">22</a> pliku <a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__sx1276_8c_source.html#l00073">sx1276_read_burst()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/radio_lib/common/sx1276/<a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structsx1276__bus__t.html">sx1276_bus_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

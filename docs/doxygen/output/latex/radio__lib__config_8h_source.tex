@@ -1,0 +1,58 @@
+\doxysection{radio\+\_\+lib\+\_\+config.\+h}
+\hypertarget{radio__lib__config_8h_source}{}\label{radio__lib__config_8h_source}\index{Core/App/radio\_lib/radio\_lib\_config.h@{Core/App/radio\_lib/radio\_lib\_config.h}}
+\mbox{\hyperlink{radio__lib__config_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00006}00006\ \textcolor{preprocessor}{\#ifndef\ APP\_RADIO\_LIB\_RADIO\_LIB\_CONFIG\_H\_}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00007}00007\ \textcolor{preprocessor}{\#define\ APP\_RADIO\_LIB\_RADIO\_LIB\_CONFIG\_H\_}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00016}\mbox{\hyperlink{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16}{00016}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_MODULATION\_LORA\ 0U\ }\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00017}\mbox{\hyperlink{radio__lib__config_8h_a346540f304c86be520a75b05d59ff4d3}{00017}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_MODULATION\_FSK\ \ 1U\ }\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00018}\mbox{\hyperlink{radio__lib__config_8h_a1af1af53fe6cd06bcf407c9d77549981}{00018}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_MODULATION\_OOK\ \ 2U\ }\textcolor{preprocessor}{}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00026}00026\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_ACTIVE\_MODULATION}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00027}\mbox{\hyperlink{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}{00027}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_ACTIVE\_MODULATION\ RADIO\_LIB\_MODULATION\_LORA}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00028}00028\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00036}00036\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00037}\mbox{\hyperlink{radio__lib__config_8h_a7bc9a0e610bda2ee7e172437c3d7805b}{00037}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK\ 1}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00038}00038\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00043}00043\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_SPI\_TIMEOUT\_MS}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00044}\mbox{\hyperlink{radio__lib__config_8h_a9cd07b89bb78518454369f72c9acd313}{00044}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_SPI\_TIMEOUT\_MS\ 100U}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00045}00045\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00050}00050\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_MAX\_PAYLOAD}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00051}\mbox{\hyperlink{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}{00051}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_MAX\_PAYLOAD\ 255U}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00052}00052\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00057}00057\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_DEFAULT\_FREQ\_HZ}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00058}\mbox{\hyperlink{radio__lib__config_8h_aeb31168bab90b0a04839cbcad56235b9}{00058}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_DEFAULT\_FREQ\_HZ\ 868500000UL}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00059}00059\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00064}00064\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_DEFAULT\_SYNC\_WORD}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00065}\mbox{\hyperlink{radio__lib__config_8h_ad84c65139cc4451b3125a7cebf8654c8}{00065}}\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_DEFAULT\_SYNC\_WORD\ 0x34U}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00066}00066\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00067}00067\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00073}00073\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_ENABLE\_DIO2\_EXTI}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00074}00074\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_ENABLE\_DIO2\_EXTI\ 0}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00075}00075\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00077}00077\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_ENABLE\_DIO3\_EXTI}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00078}00078\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_ENABLE\_DIO3\_EXTI\ 0}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00079}00079\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00080}00080\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00081}00081\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_ENABLE\_DIO4\_EXTI}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00082}00082\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_ENABLE\_DIO4\_EXTI\ 0}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00083}00083\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00085}00085\ \textcolor{preprocessor}{\#ifndef\ RADIO\_LIB\_ENABLE\_DIO5\_EXTI}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00086}00086\ \textcolor{preprocessor}{\#define\ RADIO\_LIB\_ENABLE\_DIO5\_EXTI\ 0}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00087}00087\ \textcolor{preprocessor}{\#endif}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{radio__lib__config_8h_source_l00090}00090\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_RADIO\_LIB\_RADIO\_LIB\_CONFIG\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

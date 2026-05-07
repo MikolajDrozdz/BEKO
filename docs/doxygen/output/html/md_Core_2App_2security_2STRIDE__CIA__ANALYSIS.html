@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: STRIDE / CIA Analysis</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('md_Core_2App_2security_2STRIDE__CIA__ANALYSIS.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">STRIDE / CIA Analysis </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="autotoc_md142"></a></p>
+<p>Ten dokument porządkuje źródła ataku na system BEKO według dwóch perspektyw:</p><ul>
+<li><span class="tt">STRIDE</span>: klasy ataków na tożsamość, integralność, dostępność i kontrolę systemu,</li>
+<li><span class="tt">CIA</span>: wpływ na poufność, integralność i dostępność.</li>
+</ul>
+<p>Tabela ma trzy cele:</p><ul>
+<li>pokazać, jakie klasy ataków są już częściowo adresowane,</li>
+<li>zaznaczyć, czego jeszcze brakuje w obecnym kodzie,</li>
+<li>dać listę praktycznych kierunków wdrożenia.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md143"></a>
+STRIDE</h1>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Typ ataku  </th><th class="markdownTableHeadNone">Wdrożone rozwiązanie  </th><th class="markdownTableHeadNone">Możliwy sposób rozwiązania / dalsze utwardzenie  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">S</span> Spoofing: podszycie się pod inny węzeł przez fałszywy <span class="tt">src_id</span>  </td><td class="markdownTableBodyNone">HMAC-SHA256 dla <span class="tt">LAVIET_FRAME_V1</span>, lokalny <span class="tt">node_id</span>, pairing/trust lista, root seed w TPM NV  </td><td class="markdownTableBodyNone">Dodać policy dla operacji administracyjnych i pełny flow admin/service  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">S</span> Spoofing: podszycie się pod zaufane urządzenie podczas pairingu  </td><td class="markdownTableBodyNone"><span class="tt">PAIR_REQ / PAIR_RESP</span>, zapis trusted devices, lokalna zgoda użytkownika  </td><td class="markdownTableBodyNone">Uwierzytelnić pairing challenge-response, generować pair code z TPM RNG, dodać policy TPM dla zgody fizycznej  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">T</span> Tampering: modyfikacja payloadu w locie  </td><td class="markdownTableBodyNone">HMAC-SHA256 dla każdej ramki i AES-CTR dla payloadu szyfrowanego  </td><td class="markdownTableBodyNone">Podmienić portable crypto backend na sprzętowy HAL CRYP/HASH/RNG  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">T</span> Tampering: zmiana pól adresacji (<span class="tt">dst_id</span>, <span class="tt">msg_id</span>, <span class="tt">counter</span>)  </td><td class="markdownTableBodyNone">Pola nagłówka są w HMAC, a parser waliduje typy/flagi/długości  </td><td class="markdownTableBodyNone">Dodać pełną trwałość counterów i diagnostykę przyczyn odrzucenia  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">T</span> Tampering: manipulacja stanem EEPROM / listą trusted  </td><td class="markdownTableBodyNone">Częściowe formaty z CRC i wersjonowaniem danych, klucz EEPROM wyprowadzany z TPM-backed root seeda  </td><td class="markdownTableBodyNone">Dodać integralność rekordów security, licznik wersji i odporność na rollback  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">R</span> Repudiation: brak możliwości wykazania, kto wysłał wiadomość  </td><td class="markdownTableBodyNone"><span class="tt">src_id</span>, <span class="tt">msg_id</span>, log RX do store, logi terminala  </td><td class="markdownTableBodyNone">Dodać trwalszy audit log security, powód odrzucenia, liczniki replay/bad-auth, znaczniki czasu lub monotoniczne liczniki  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">R</span> Repudiation: brak dowodu akceptacji pairingu lub rotacji klucza  </td><td class="markdownTableBodyNone">Logi runtime i menu popup  </td><td class="markdownTableBodyNone">Zapisywać zdarzenia security w trwałym logu z typem operacji, <span class="tt">src_id</span>, wynikiem i przyczyną  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Information Disclosure: podsłuch payloadu <span class="tt">OPERATOR</span>  </td><td class="markdownTableBodyNone"><span class="tt">coding</span> dla secure frames  </td><td class="markdownTableBodyNone">Domyślnie wymusić secure mode dla ruchu operatora, rotować klucz sieciowy, użyć mocniejszej prymitywy niż obecny software cipher  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Information Disclosure: wyciek klucza z EEPROM/firmware  </td><td class="markdownTableBodyNone">Root seed jest trzymany w TPM NV <span class="tt">0x01C10101</span>, zapis wymaga TPM PP, EEPROM key jest wyprowadzany z root seeda  </td><td class="markdownTableBodyNone">Ograniczyć obecność klucza w RAM, wyczyścić bufory po użyciu, rozważyć sealing/policy sessions  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Information Disclosure: podgląd pair code lub danych trusted  </td><td class="markdownTableBodyNone">Trusted store i menu urządzenia  </td><td class="markdownTableBodyNone">Ukryć lub skrócić ekspozycję pair code na UI, nie logować pełnych sekretów na UART, ograniczyć odczyt danych trusted do trybu serwisowego  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">D</span> Denial of Service: replay powodujący lokalne akcje  </td><td class="markdownTableBodyNone">Drop ramek gateway-&gt;node ze starym <span class="tt">counter</span>  </td><td class="markdownTableBodyNone">Dodać abuse score per source, cooldown, agregację alertów security i liczniki replay drop  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">D</span> Denial of Service: flood <span class="tt">DATA</span> i broadcastów  </td><td class="markdownTableBodyNone">Broadcast tylko od gatewaya, brak ACK dla broadcastu, duty-cycle dla auto ping  </td><td class="markdownTableBodyNone">Per-source rate limiting, globalny budżet TX i limity dla ruchu control  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">D</span> Denial of Service: flood ruchem control / pairing  </td><td class="markdownTableBodyNone">Pairing jest rozdzielony typami ramek  </td><td class="markdownTableBodyNone">Dodać osobny rate limiting dla <span class="tt">PAIR_*</span>, krótkie okno serwisowe, lokalną zgodę TPM/PP dla akceptacji  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">D</span> Denial of Service: zapchanie UI i kolejek komunikatami security  </td><td class="markdownTableBodyNone">Częściowa ochrona kolejek UI/LCD, ograniczenie popupów w menu  </td><td class="markdownTableBodyNone">Osobna kolejka security, agregowanie zdarzeń flood, nie generować popupu dla każdego błędu/replay  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">D</span> Denial of Service: zawieszanie backendu radiowego przez nietypowe TX/FSK  </td><td class="markdownTableBodyNone">Watchdog TX, recovery ścieżki radiowej, limity payload dla FSK/OOK  </td><td class="markdownTableBodyNone">Dodać licznik recoveries, auto-disable wadliwego trybu po serii błędów, twarde ograniczenia konfiguracji backendu  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">E</span> Elevation of Privilege: zdalne wykonanie operacji administracyjnej  </td><td class="markdownTableBodyNone">Część operacji wymaga wejścia do odpowiedniego menu/flow; lokalna rotacja root seeda wymaga TPM PP  </td><td class="markdownTableBodyNone">Rozdzielić role: operator/admin/service, chronić więcej operacji security przez TPM policy/local presence i osobne komendy admin  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">E</span> Elevation of Privilege: przejęcie pairingu bez fizycznej obecności  </td><td class="markdownTableBodyNone">Pairing nadal wymaga lokalnego flow UI, ale TPM PP chroni obecnie tylko zapis root seeda  </td><td class="markdownTableBodyNone">Wdrożyć TPM <span class="tt">PolicyPhysicalPresence</span>, policy session i ograniczenie pairingu do lokalnie autoryzowanego okna  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">E</span> Elevation of Privilege: użycie starych ramek sterujących do wymuszenia stanu  </td><td class="markdownTableBodyNone">Replay protection na <span class="tt">counter</span>  </td><td class="markdownTableBodyNone">Dodać pełną trwałość counterów oraz oddzielne polityki dla <span class="tt">CFG</span>, <span class="tt">COUNTER_SYNC</span> i <span class="tt">KEY_ROTATE</span>  </td></tr>
+</table>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md144"></a>
+CIA</h1>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Obszar CIA  </th><th class="markdownTableHeadNone">Źródło ataku  </th><th class="markdownTableHeadNone">Wdrożone rozwiązanie  </th><th class="markdownTableHeadNone">Możliwy sposób rozwiązania / dalsze utwardzenie  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">C</span> Confidentiality  </td><td class="markdownTableBodyNone">Podsłuch radiowy <span class="tt">OPERATOR</span>  </td><td class="markdownTableBodyNone"><span class="tt">coding</span> dla secure ramek  </td><td class="markdownTableBodyNone">Wymusić secure-by-default, mocniejsza kryptografia, regularna rotacja klucza sieciowego  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">C</span> Confidentiality  </td><td class="markdownTableBodyNone">Odczyt sekretów z pamięci trwałej  </td><td class="markdownTableBodyNone">Root seed w TPM NV, EEPROM key z TPM-backed root seeda, migracja legacy EEPROM key  </td><td class="markdownTableBodyNone">Sealed storage z TPM, policy sessions, ograniczenie debug/logów sekretów  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">C</span> Confidentiality  </td><td class="markdownTableBodyNone">Wyciek przez UART/logi  </td><td class="markdownTableBodyNone">Terminal pokazuje szczegóły TX/RX  </td><td class="markdownTableBodyNone">Dodać tryb produkcyjny bez pełnych dumpów, maskować wrażliwe dane i pair code  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Integrity  </td><td class="markdownTableBodyNone">Modyfikacja ramek w locie  </td><td class="markdownTableBodyNone">HMAC-SHA256 dla <span class="tt">LAVIET_FRAME_V1</span>  </td><td class="markdownTableBodyNone">Sprzętowy HASH i dokładniejsza telemetryka bad-auth  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Integrity  </td><td class="markdownTableBodyNone">Replay starych ramek  </td><td class="markdownTableBodyNone">Monotoniczny <span class="tt">counter</span> gateway-node  </td><td class="markdownTableBodyNone">Trwały zapis odporny na rollback i telemetryka security  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Integrity  </td><td class="markdownTableBodyNone">Fałszywe trusted device / nieautoryzowane parowanie  </td><td class="markdownTableBodyNone">Pairing flow i trusted list  </td><td class="markdownTableBodyNone">Pairing challenge-response, TPM RNG, lokalna zgoda fizyczna przez TPM policy  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">I</span> Integrity  </td><td class="markdownTableBodyNone">Fałszywa konfiguracja security po restarcie  </td><td class="markdownTableBodyNone">Store versioning i częściowe CRC  </td><td class="markdownTableBodyNone">Ochrona integralności rekordów security, monotoniczny counter, binding do TPM  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">A</span> Availability  </td><td class="markdownTableBodyNone">Flood radiowy  </td><td class="markdownTableBodyNone">Brak mesh relay, replay drop, broadcast bez ACK  </td><td class="markdownTableBodyNone">Token bucket per source, globalny budżet TX, adaptive backoff  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">A</span> Availability  </td><td class="markdownTableBodyNone">Zużycie duty-cycle / baterii  </td><td class="markdownTableBodyNone">Auto ping respektuje duty-cycle  </td><td class="markdownTableBodyNone">Budżet TX dla control traffic i automatyczne obniżanie priorytetu flood sources  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">A</span> Availability  </td><td class="markdownTableBodyNone">Zawieszenie toru radiowego lub backendu  </td><td class="markdownTableBodyNone">Recovery watchdog i reset ścieżki radiowej  </td><td class="markdownTableBodyNone">Eskalacja recovery, licznik awarii per modulacja, bezpieczny fallback do LoRa preset  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">A</span> Availability  </td><td class="markdownTableBodyNone">Zablokowanie UI/obsługi operatora przez spam zdarzeń  </td><td class="markdownTableBodyNone">Częściowe utwardzenie UI i kolejek  </td><td class="markdownTableBodyNone">Osobna ścieżka alertów security, status zbiorczy zamiast popup spam  </td></tr>
+</table>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md145"></a>
+Najważniejsze priorytety</h1>
+<ol type="1">
+<li>Przenieść crypto backend na sprzętowy HAL CRYP/HASH/RNG.</li>
+<li>Dodać per-source rate limiting i globalny budżet TX.</li>
+<li>Rozszerzyć ochronę TPM PP/policy z root seeda na pairing i operacje administracyjne.</li>
+<li>Dalej ograniczać ekspozycję sekretów w RAM i logach UART.</li>
+<li>Dodać trwałą telemetrykę security: <span class="tt">replay_drop</span>, <span class="tt">bad_auth</span>, <span class="tt">duplicate_drop</span>, <span class="tt">recovery_count</span>. </li>
+</ol>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,465 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+lib/modulations/fsk/radio\+\_\+fsk.h}
+\hypertarget{radio__fsk_8h}{}\label{radio__fsk_8h}\index{Core/App/radio\_lib/modulations/fsk/radio\_fsk.h@{Core/App/radio\_lib/modulations/fsk/radio\_fsk.h}}
+
+
+Interfejs backendu modulacji FSK dla SX1276.  
+
+
+{\ttfamily \#include "{}../../radio\+\_\+lib.\+h"{}}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{radio__fsk_8h_a7da352a7eca2bba1fe3ce2e45eea11dc}{radio\+\_\+fsk\+\_\+default\+\_\+hw\+\_\+cfg}} (\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hspi)
+\begin{DoxyCompactList}\small\item\em Domyślna konfiguracja sprzętowa backendu FSK. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8h_a3f3cb604d11db7401202502ba194bfec}{radio\+\_\+fsk\+\_\+default\+\_\+lora\+\_\+cfg}} (\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Domyślna konfiguracja parametrów backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_a6bfd270c417c165cde47462e2f8f6dcf}{radio\+\_\+fsk\+\_\+set\+\_\+runtime\+\_\+cfg}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Ustawia runtime konfigurację właściwą dla backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_a3bce426af9377a35ba779fecb93709a2}{radio\+\_\+fsk\+\_\+init}} (const \mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}hw, const \mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, \mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}} cb, void \texorpdfstring{$\ast$}{*}user\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Inicjalizacja backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_acc9f82d37eb1ba8baf32225b17176162}{radio\+\_\+fsk\+\_\+deinit}} (void)
+\begin{DoxyCompactList}\small\item\em Deinicjalizacja backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_abc10767656c9437cf21d543d4efb3c8e}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous}} (void)
+\begin{DoxyCompactList}\small\item\em Uruchomienie odbioru ciągłego FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_afe2df52f73954a7c04849f4dea812963}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single}} (uint16\+\_\+t symbol\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Uruchomienie odbioru pojedynczego FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_aac6513309bccd4c723b7f37d2d1d3ebe}{radio\+\_\+fsk\+\_\+send\+\_\+async}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Uruchomienie nadawania asynchronicznego FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_aac044a17df998a6ee3ae094da0e527e4}{radio\+\_\+fsk\+\_\+standby}} (void)
+\begin{DoxyCompactList}\small\item\em Przejście do standby backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_a69436e5dd1977f344be2fe5bb8396a73}{radio\+\_\+fsk\+\_\+sleep}} (void)
+\begin{DoxyCompactList}\small\item\em Przejście do sleep backendu FSK. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8h_abde60aa61bf2de0b9dc28ad082b8efac}{radio\+\_\+fsk\+\_\+process}} (void)
+\begin{DoxyCompactList}\small\item\em Przetwarzanie logiki odroczonej backendu FSK. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{radio__fsk_8h_a90e4c1995da4a6e628a39044c3c4e483}{radio\+\_\+fsk\+\_\+take\+\_\+events}} (void)
+\begin{DoxyCompactList}\small\item\em Zwrócenie i wyczyszczenie flag zdarzeń backendu FSK. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__fsk_8h_aab1a413e95e54815c8503d06e58ed218}{radio\+\_\+fsk\+\_\+get\+\_\+last\+\_\+packet}} (\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}pkt)
+\begin{DoxyCompactList}\small\item\em Odczyt ostatniego pakietu backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_a2a475006526b0718271056aed1dd1048}{radio\+\_\+fsk\+\_\+get\+\_\+state}} (void)
+\begin{DoxyCompactList}\small\item\em Odczyt stanu backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_ac4b311b82336b9a5ce281b234794913b}{radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+reg}} (uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}value)
+\begin{DoxyCompactList}\small\item\em Odczyt pojedynczego rejestru (backend FSK). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_aeb6c131eec73349617a81fe300a74ec4}{radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+reg}} (uint8\+\_\+t reg, uint8\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Zapis pojedynczego rejestru (backend FSK). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_a474cfecfe04aa8f8bd19ffde5fa6b0e8}{radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+burst}} (uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Odczyt sekwencji rejestrów (backend FSK). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8h_a6ad38dae6ac92137637ad301698500d9}{radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+burst}} (uint8\+\_\+t reg, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Zapis sekwencji rejestrów (backend FSK). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8h_ac0060268606f59533013b637e1459a4d}{radio\+\_\+fsk\+\_\+on\+\_\+exti}} (uint16\+\_\+t gpio\+\_\+pin)
+\begin{DoxyCompactList}\small\item\em Przekazanie pinu EXTI do backendu FSK. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Interfejs backendu modulacji FSK dla SX1276. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__fsk_8h_source}{radio\+\_\+fsk.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{radio__fsk_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{radio__fsk_8h_a7da352a7eca2bba1fe3ce2e45eea11dc}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_default\_hw\_cfg@{radio\_fsk\_default\_hw\_cfg}}
+\index{radio\_fsk\_default\_hw\_cfg@{radio\_fsk\_default\_hw\_cfg}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_default\_hw\_cfg()}{radio\_fsk\_default\_hw\_cfg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a7da352a7eca2bba1fe3ce2e45eea11dc} 
+void radio\+\_\+fsk\+\_\+default\+\_\+hw\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hspi}{}\end{DoxyParamCaption})}
+
+
+
+Domyślna konfiguracja sprzętowa backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00467}{467}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}.
+
+\Hypertarget{radio__fsk_8h_a3f3cb604d11db7401202502ba194bfec}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_default\_lora\_cfg@{radio\_fsk\_default\_lora\_cfg}}
+\index{radio\_fsk\_default\_lora\_cfg@{radio\_fsk\_default\_lora\_cfg}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_default\_lora\_cfg()}{radio\_fsk\_default\_lora\_cfg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a3f3cb604d11db7401202502ba194bfec} 
+void radio\+\_\+fsk\+\_\+default\+\_\+lora\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Domyślna konfiguracja parametrów backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00472}{472}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lora_8c_source_l00347}{radio\+\_\+lora\+\_\+default\+\_\+lora\+\_\+cfg()}}.
+
+\Hypertarget{radio__fsk_8h_acc9f82d37eb1ba8baf32225b17176162}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_deinit@{radio\_fsk\_deinit}}
+\index{radio\_fsk\_deinit@{radio\_fsk\_deinit}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_deinit()}{radio\_fsk\_deinit()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_acc9f82d37eb1ba8baf32225b17176162} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+deinit (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Deinicjalizacja backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00550}{550}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00687}{radio\+\_\+fsk\+\_\+sleep()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__lib_8h_source_l00042}{RADIO\+\_\+\+STATE\+\_\+\+UNINIT}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00119}{radio\+\_\+deinit()}}.
+
+\Hypertarget{radio__fsk_8h_aab1a413e95e54815c8503d06e58ed218}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_get\_last\_packet@{radio\_fsk\_get\_last\_packet}}
+\index{radio\_fsk\_get\_last\_packet@{radio\_fsk\_get\_last\_packet}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_get\_last\_packet()}{radio\_fsk\_get\_last\_packet()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_aab1a413e95e54815c8503d06e58ed218} 
+bool radio\+\_\+fsk\+\_\+get\+\_\+last\+\_\+packet (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{pkt}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt ostatniego pakietu backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00834}{834}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00250}{radio\+\_\+get\+\_\+last\+\_\+packet()}}.
+
+\Hypertarget{radio__fsk_8h_a2a475006526b0718271056aed1dd1048}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_get\_state@{radio\_fsk\_get\_state}}
+\index{radio\_fsk\_get\_state@{radio\_fsk\_get\_state}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_get\_state()}{radio\_fsk\_get\_state()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a2a475006526b0718271056aed1dd1048} 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} radio\+\_\+fsk\+\_\+get\+\_\+state (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt stanu backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00845}{845}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}.
+
+\Hypertarget{radio__fsk_8h_a3bce426af9377a35ba779fecb93709a2}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_init@{radio\_fsk\_init}}
+\index{radio\_fsk\_init@{radio\_fsk\_init}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_init()}{radio\_fsk\_init()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a3bce426af9377a35ba779fecb93709a2} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+init (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{hw}{, }\item[{const \mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{\mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}}}]{cb}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{user\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Inicjalizacja backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00489}{489}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00096}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::hspi}}, \mbox{\hyperlink{radio__lib_8h_source_l00097}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::nss}}, \mbox{\hyperlink{radio__lib_8h_source_l00088}{radio\+\_\+gpio\+\_\+t\+::pin}}, \mbox{\hyperlink{radio__lib_8h_source_l00087}{radio\+\_\+gpio\+\_\+t\+::port}}, \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__fsk_8c_source_l00092}{radio\+\_\+hw\+\_\+reset()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}}, \mbox{\hyperlink{radio__lib_8h_source_l00042}{RADIO\+\_\+\+STATE\+\_\+\+UNINIT}}, \mbox{\hyperlink{radio__lib_8h_source_l00098}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::reset}}, \mbox{\hyperlink{radio__lib_8h_source_l00100}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00125}{sx1276\+\_\+get\+\_\+version()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00100}{radio\+\_\+init()}}.
+
+\Hypertarget{radio__fsk_8h_ac0060268606f59533013b637e1459a4d}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_on\_exti@{radio\_fsk\_on\_exti}}
+\index{radio\_fsk\_on\_exti@{radio\_fsk\_on\_exti}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_on\_exti()}{radio\_fsk\_on\_exti()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_ac0060268606f59533013b637e1459a4d} 
+void radio\+\_\+fsk\+\_\+on\+\_\+exti (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{gpio\+\_\+pin}{}\end{DoxyParamCaption})}
+
+
+
+Przekazanie pinu EXTI do backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00900}{900}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00410}{radio\+\_\+handle\+\_\+exti\+\_\+pin()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00346}{radio\+\_\+on\+\_\+exti()}}.
+
+\Hypertarget{radio__fsk_8h_abde60aa61bf2de0b9dc28ad082b8efac}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_process@{radio\_fsk\_process}}
+\index{radio\_fsk\_process@{radio\_fsk\_process}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_process()}{radio\_fsk\_process()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_abde60aa61bf2de0b9dc28ad082b8efac} 
+void radio\+\_\+fsk\+\_\+process (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Przetwarzanie logiki odroczonej backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00705}{705}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00058}{RADIO\+\_\+\+EVENT\+\_\+\+CRC\+\_\+\+ERR}}, \mbox{\hyperlink{radio__lib_8h_source_l00061}{RADIO\+\_\+\+EVENT\+\_\+\+FIFO\+\_\+\+OVERRUN}}, \mbox{\hyperlink{radio__lib_8h_source_l00062}{RADIO\+\_\+\+EVENT\+\_\+\+HW\+\_\+\+ERROR}}, \mbox{\hyperlink{radio__lib_8h_source_l00054}{RADIO\+\_\+\+EVENT\+\_\+\+NONE}}, \mbox{\hyperlink{radio__lib_8h_source_l00056}{RADIO\+\_\+\+EVENT\+\_\+\+RX\+\_\+\+DONE}}, \mbox{\hyperlink{radio__lib_8h_source_l00057}{RADIO\+\_\+\+EVENT\+\_\+\+RX\+\_\+\+TIMEOUT}}, \mbox{\hyperlink{radio__lib_8h_source_l00055}{RADIO\+\_\+\+EVENT\+\_\+\+TX\+\_\+\+DONE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00669}{radio\+\_\+fsk\+\_\+standby()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00432}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00324}{radio\+\_\+resume\+\_\+after\+\_\+tx()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00063}{radio\+\_\+set\+\_\+event\+\_\+flags()}}, \mbox{\hyperlink{radio__lib_8h_source_l00045}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+SINGLE}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00215}{radio\+\_\+process()}}.
+
+\Hypertarget{radio__fsk_8h_a474cfecfe04aa8f8bd19ffde5fa6b0e8}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_raw\_read\_burst@{radio\_fsk\_raw\_read\_burst}}
+\index{radio\_fsk\_raw\_read\_burst@{radio\_fsk\_raw\_read\_burst}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_read\_burst()}{radio\_fsk\_raw\_read\_burst()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a474cfecfe04aa8f8bd19ffde5fa6b0e8} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+burst (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt sekwencji rejestrów (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00870}{870}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{sx1276\+\_\+read\+\_\+burst()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00314}{radio\+\_\+raw\+\_\+read\+\_\+burst()}}.
+
+\Hypertarget{radio__fsk_8h_ac4b311b82336b9a5ce281b234794913b}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_raw\_read\_reg@{radio\_fsk\_raw\_read\_reg}}
+\index{radio\_fsk\_raw\_read\_reg@{radio\_fsk\_raw\_read\_reg}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_read\_reg()}{radio\_fsk\_raw\_read\_reg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_ac4b311b82336b9a5ce281b234794913b} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+reg (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt pojedynczego rejestru (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00850}{850}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}.
+
+\Hypertarget{radio__fsk_8h_a6ad38dae6ac92137637ad301698500d9}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_raw\_write\_burst@{radio\_fsk\_raw\_write\_burst}}
+\index{radio\_fsk\_raw\_write\_burst@{radio\_fsk\_raw\_write\_burst}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_write\_burst()}{radio\_fsk\_raw\_write\_burst()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a6ad38dae6ac92137637ad301698500d9} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+burst (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Zapis sekwencji rejestrów (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00885}{885}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00330}{radio\+\_\+raw\+\_\+write\+\_\+burst()}}.
+
+\Hypertarget{radio__fsk_8h_aeb6c131eec73349617a81fe300a74ec4}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_raw\_write\_reg@{radio\_fsk\_raw\_write\_reg}}
+\index{radio\_fsk\_raw\_write\_reg@{radio\_fsk\_raw\_write\_reg}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_write\_reg()}{radio\_fsk\_raw\_write\_reg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_aeb6c131eec73349617a81fe300a74ec4} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+reg (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Zapis pojedynczego rejestru (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00860}{860}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00298}{radio\+\_\+raw\+\_\+write\+\_\+reg()}}.
+
+\Hypertarget{radio__fsk_8h_aac6513309bccd4c723b7f37d2d1d3ebe}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_send\_async@{radio\_fsk\_send\_async}}
+\index{radio\_fsk\_send\_async@{radio\_fsk\_send\_async}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_send\_async()}{radio\_fsk\_send\_async()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_aac6513309bccd4c723b7f37d2d1d3ebe} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+send\+\_\+async (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Uruchomienie nadawania asynchronicznego FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00618}{618}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}, \mbox{\hyperlink{radio__lib__config_8h_source_l00051}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__fsk_8c_source_l00353}{radio\+\_\+tx\+\_\+timeout\+\_\+ms()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00167}{radio\+\_\+send\+\_\+async()}}.
+
+\Hypertarget{radio__fsk_8h_a6bfd270c417c165cde47462e2f8f6dcf}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_set\_runtime\_cfg@{radio\_fsk\_set\_runtime\_cfg}}
+\index{radio\_fsk\_set\_runtime\_cfg@{radio\_fsk\_set\_runtime\_cfg}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_set\_runtime\_cfg()}{radio\_fsk\_set\_runtime\_cfg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a6bfd270c417c165cde47462e2f8f6dcf} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+set\+\_\+runtime\+\_\+cfg (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia runtime konfigurację właściwą dla backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00477}{477}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}} i \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00090}{radio\+\_\+set\+\_\+fsk\+\_\+cfg()}}.
+
+\Hypertarget{radio__fsk_8h_a69436e5dd1977f344be2fe5bb8396a73}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_sleep@{radio\_fsk\_sleep}}
+\index{radio\_fsk\_sleep@{radio\_fsk\_sleep}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_sleep()}{radio\_fsk\_sleep()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a69436e5dd1977f344be2fe5bb8396a73} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+sleep (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Przejście do sleep backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00687}{687}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}} i \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00550}{radio\+\_\+fsk\+\_\+deinit()}} i \mbox{\hyperlink{radio__lib_8c_source_l00199}{radio\+\_\+sleep()}}.
+
+\Hypertarget{radio__fsk_8h_aac044a17df998a6ee3ae094da0e527e4}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_standby@{radio\_fsk\_standby}}
+\index{radio\_fsk\_standby@{radio\_fsk\_standby}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_standby()}{radio\_fsk\_standby()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_aac044a17df998a6ee3ae094da0e527e4} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+standby (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Przejście do standby backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00669}{669}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}} i \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}} i \mbox{\hyperlink{radio__lib_8c_source_l00183}{radio\+\_\+standby()}}.
+
+\Hypertarget{radio__fsk_8h_abc10767656c9437cf21d543d4efb3c8e}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_start\_rx\_continuous@{radio\_fsk\_start\_rx\_continuous}}
+\index{radio\_fsk\_start\_rx\_continuous@{radio\_fsk\_start\_rx\_continuous}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_start\_rx\_continuous()}{radio\_fsk\_start\_rx\_continuous()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_abc10767656c9437cf21d543d4efb3c8e} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Uruchomienie odbioru ciągłego FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00563}{563}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00044}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+CONT}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}.
+
+\Hypertarget{radio__fsk_8h_afe2df52f73954a7c04849f4dea812963}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_start\_rx\_single@{radio\_fsk\_start\_rx\_single}}
+\index{radio\_fsk\_start\_rx\_single@{radio\_fsk\_start\_rx\_single}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_start\_rx\_single()}{radio\_fsk\_start\_rx\_single()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_afe2df52f73954a7c04849f4dea812963} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{symbol\+\_\+timeout}{}\end{DoxyParamCaption})}
+
+
+
+Uruchomienie odbioru pojedynczego FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00588}{588}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00385}{radio\+\_\+rx\+\_\+single\+\_\+timeout\+\_\+ms()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00045}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+SINGLE}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00151}{radio\+\_\+start\+\_\+rx\+\_\+single()}}.
+
+\Hypertarget{radio__fsk_8h_a90e4c1995da4a6e628a39044c3c4e483}\index{radio\_fsk.h@{radio\_fsk.h}!radio\_fsk\_take\_events@{radio\_fsk\_take\_events}}
+\index{radio\_fsk\_take\_events@{radio\_fsk\_take\_events}!radio\_fsk.h@{radio\_fsk.h}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_take\_events()}{radio\_fsk\_take\_events()}}
+{\footnotesize\ttfamily \label{radio__fsk_8h_a90e4c1995da4a6e628a39044c3c4e483} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+take\+\_\+events (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Zwrócenie i wyczyszczenie flag zdarzeń backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00823}{823}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00234}{radio\+\_\+take\+\_\+events()}}.
+

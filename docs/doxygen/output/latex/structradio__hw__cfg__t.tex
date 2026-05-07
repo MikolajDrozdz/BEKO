@@ -1,0 +1,131 @@
+\doxysection{Dokumentacja struktury radio\+\_\+hw\+\_\+cfg\+\_\+t}
+\hypertarget{structradio__hw__cfg__t}{}\label{structradio__hw__cfg__t}\index{radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}}
+
+
+Konfiguracja sprzętowa modułu radiowego.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/radio\+\_\+lib/radio\+\_\+lib.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structradio__hw__cfg__t_a8b24490acb6b0e9cac725031384ecf6b}{hspi}}
+\begin{DoxyCompactList}\small\item\em Uchwyt SPI używany przez transceiver. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__gpio__t}{radio\+\_\+gpio\+\_\+t}} \mbox{\hyperlink{structradio__hw__cfg__t_a2d0b1e40fa307d9dcfac95667feaebd5}{nss}}
+\begin{DoxyCompactList}\small\item\em Pin NSS/\+CS. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__gpio__t}{radio\+\_\+gpio\+\_\+t}} \mbox{\hyperlink{structradio__hw__cfg__t_af0f810096603044a05d1d80fe1b6f9db}{reset}}
+\begin{DoxyCompactList}\small\item\em Pin RESET transceivera. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__gpio__t}{radio\+\_\+gpio\+\_\+t}} \mbox{\hyperlink{structradio__hw__cfg__t_af5bb732f22389146a887ea3cefa4ab80}{dio}} \mbox{[}6\mbox{]}
+\begin{DoxyCompactList}\small\item\em Piny DIO0..DIO5 (IRQ/status). \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__hw__cfg__t_a29c26647871986724b649e55533d2f07}{spi\+\_\+timeout\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Timeout blokujących transferów SPI. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Konfiguracja sprzętowa modułu radiowego. 
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00094}{94}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__hw__cfg__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__hw__cfg__t_af5bb732f22389146a887ea3cefa4ab80}\index{radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}!dio@{dio}}
+\index{dio@{dio}!radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{dio}{dio}}
+{\footnotesize\ttfamily \label{structradio__hw__cfg__t_af5bb732f22389146a887ea3cefa4ab80} 
+\mbox{\hyperlink{structradio__gpio__t}{radio\+\_\+gpio\+\_\+t}} radio\+\_\+hw\+\_\+cfg\+\_\+t\+::dio\mbox{[}6\mbox{]}}
+
+
+
+Piny DIO0..DIO5 (IRQ/status). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00099}{99}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}.
+
+\Hypertarget{structradio__hw__cfg__t_a8b24490acb6b0e9cac725031384ecf6b}\index{radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}!hspi@{hspi}}
+\index{hspi@{hspi}!radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{hspi}{hspi}}
+{\footnotesize\ttfamily \label{structradio__hw__cfg__t_a8b24490acb6b0e9cac725031384ecf6b} 
+SPI\+\_\+\+Handle\+Type\+Def\texorpdfstring{$\ast$}{*} radio\+\_\+hw\+\_\+cfg\+\_\+t\+::hspi}
+
+
+
+Uchwyt SPI używany przez transceiver. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00096}{96}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}, \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}} i \mbox{\hyperlink{radio__ook_8c_source_l00406}{radio\+\_\+ook\+\_\+init()}}.
+
+\Hypertarget{structradio__hw__cfg__t_a2d0b1e40fa307d9dcfac95667feaebd5}\index{radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}!nss@{nss}}
+\index{nss@{nss}!radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{nss}{nss}}
+{\footnotesize\ttfamily \label{structradio__hw__cfg__t_a2d0b1e40fa307d9dcfac95667feaebd5} 
+\mbox{\hyperlink{structradio__gpio__t}{radio\+\_\+gpio\+\_\+t}} radio\+\_\+hw\+\_\+cfg\+\_\+t\+::nss}
+
+
+
+Pin NSS/\+CS. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00097}{97}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}, \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}} i \mbox{\hyperlink{radio__ook_8c_source_l00406}{radio\+\_\+ook\+\_\+init()}}.
+
+\Hypertarget{structradio__hw__cfg__t_af0f810096603044a05d1d80fe1b6f9db}\index{radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}!reset@{reset}}
+\index{reset@{reset}!radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{reset}{reset}}
+{\footnotesize\ttfamily \label{structradio__hw__cfg__t_af0f810096603044a05d1d80fe1b6f9db} 
+\mbox{\hyperlink{structradio__gpio__t}{radio\+\_\+gpio\+\_\+t}} radio\+\_\+hw\+\_\+cfg\+\_\+t\+::reset}
+
+
+
+Pin RESET transceivera. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00098}{98}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}, \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}} i \mbox{\hyperlink{radio__ook_8c_source_l00406}{radio\+\_\+ook\+\_\+init()}}.
+
+\Hypertarget{structradio__hw__cfg__t_a29c26647871986724b649e55533d2f07}\index{radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}!spi\_timeout\_ms@{spi\_timeout\_ms}}
+\index{spi\_timeout\_ms@{spi\_timeout\_ms}!radio\_hw\_cfg\_t@{radio\_hw\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{spi\_timeout\_ms}{spi\_timeout\_ms}}
+{\footnotesize\ttfamily \label{structradio__hw__cfg__t_a29c26647871986724b649e55533d2f07} 
+uint32\+\_\+t radio\+\_\+hw\+\_\+cfg\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}
+
+
+
+Timeout blokujących transferów SPI. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00100}{100}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}, \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}} i \mbox{\hyperlink{radio__ook_8c_source_l00406}{radio\+\_\+ook\+\_\+init()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+lib/\mbox{\hyperlink{radio__lib_8h}{radio\+\_\+lib.\+h}}\end{DoxyCompactItemize}

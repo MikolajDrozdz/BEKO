@@ -1,0 +1,36 @@
+\chapter{Threat Model }
+\hypertarget{md_Core_2App_2security_2THREAT__MODEL}{}\label{md_Core_2App_2security_2THREAT__MODEL}\index{Threat Model@{Threat Model}}
+\label{md_Core_2App_2security_2THREAT__MODEL_autotoc_md146}%
+\Hypertarget{md_Core_2App_2security_2THREAT__MODEL_autotoc_md146}%
+\hypertarget{md_Core_2App_2security_2THREAT__MODEL_autotoc_md147}{}\doxysection{\texorpdfstring{Assets}{Assets}}\label{md_Core_2App_2security_2THREAT__MODEL_autotoc_md147}
+
+\begin{DoxyItemize}
+\item Klucz sieciowy i klucze peer.
+\item Integralność ramek {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}.
+\item Dostępność kanału radiowego i budżetu duty-\/cycle.
+\item Lista urządzeń zaufanych.
+\item EEPROM z konfiguracją security.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2THREAT__MODEL_autotoc_md148}{}\doxysection{\texorpdfstring{Attacker goals}{Attacker goals}}\label{md_Core_2App_2security_2THREAT__MODEL_autotoc_md148}
+
+\begin{DoxyItemize}
+\item Replay starych ramek, aby wywołać ponowną lokalną akcję lub fałszywy {\ttfamily ACK}.
+\item Flood broadcastami, żeby zużyć duty-\/cycle i baterię.
+\item Spam pairing/control traffic, żeby blokować UI i task radiowy.
+\item Wstrzykiwanie śmieciowych ramek o poprawnej strukturze, ale bez sensu logicznego.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2THREAT__MODEL_autotoc_md149}{}\doxysection{\texorpdfstring{Current mitigations}{Current mitigations}}\label{md_Core_2App_2security_2THREAT__MODEL_autotoc_md149}
+
+\begin{DoxyItemize}
+\item HMAC-\/\+SHA256 dla każdej ramki {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}.
+\item AES-\/\+CTR dla payloadu z flagą {\ttfamily ENCRYPTED}.
+\item Monotoniczny {\ttfamily counter} gateway-\/node.
+\item Brak relay mesh/\+TTL w bieżącej topologii gwiazdy.
+\item Broadcast tylko od gatewaya i bez {\ttfamily ACK\+\_\+\+REQUIRED}.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2THREAT__MODEL_autotoc_md150}{}\doxysection{\texorpdfstring{Remaining gaps}{Remaining gaps}}\label{md_Core_2App_2security_2THREAT__MODEL_autotoc_md150}
+
+\begin{DoxyItemize}
+\item Brak per-\/source token bucket.
+\item Brak pełnego trwałego modelu counterów dla wielu relacji.
+\item Brak reputacji źródeł i czasowego banowania.
+\item Brak agregacji alertów security przy floodzie.
+\item Brak rozdziału priorytetów dla ruchu lokalnego i administracyjnego. 
+\end{DoxyItemize}

@@ -1,0 +1,191 @@
+\doxysection{Dokumentacja struktury radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}
+\hypertarget{structradio__main__runtime__cfg__t}{}\label{structradio__main__runtime__cfg__t}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+
+
+Snapshot pełnej konfiguracji radiowej widzianej przez aplikację.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/radio\+\_\+main.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} \mbox{\hyperlink{structradio__main__runtime__cfg__t_a3aa95b5698f03b6fdec6727acc62306d}{active\+\_\+modulation}}
+\begin{DoxyCompactList}\small\item\em Aktualnie wybrana rodzina modulacji. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}
+\begin{DoxyCompactList}\small\item\em Profil Lo\+Ra. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}
+\begin{DoxyCompactList}\small\item\em Profil FSK/\+GFSK/\+MSK/\+GMSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}
+\begin{DoxyCompactList}\small\item\em Profil OOK. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structradio__main__runtime__cfg__t_a871702e26b4bbe94a8be9457daf49930}{fh\+\_\+enabled}}
+\begin{DoxyCompactList}\small\item\em Flaga frequency hopping. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__runtime__cfg__t_aefbe806948be3af51ad5515d87a01824}{fh\+\_\+period\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Okres przeskoku kanału \mbox{[}ms\mbox{]} dla FH w Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structradio__main__runtime__cfg__t_ab2ea0bddf78233ff02e4814e5f463ddc}{coding\+\_\+enabled}}
+\begin{DoxyCompactList}\small\item\em Flaga szyfrowania ruchu {\ttfamily OPERATOR}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structradio__main__runtime__cfg__t_ae7d142da278727d229869a47900b7935}{auto\+\_\+ping\+\_\+enabled}}
+\begin{DoxyCompactList}\small\item\em Flaga automatycznego {\ttfamily PING}. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__runtime__cfg__t_a86ed33383dae08e08419c1c9462f1e0f}{auto\+\_\+ping\+\_\+period\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Wybrany okres automatycznego {\ttfamily PING} \mbox{[}ms\mbox{]}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} \mbox{\hyperlink{structradio__main__runtime__cfg__t_a96d13a5d87f5c5eba1c37f6f50b8f494}{auto\+\_\+ping\+\_\+mode}}
+\begin{DoxyCompactList}\small\item\em Sposób kodowania automatycznego {\ttfamily PING}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Snapshot pełnej konfiguracji radiowej widzianej przez aplikację. 
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00187}{187}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__main__runtime__cfg__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__main__runtime__cfg__t_a3aa95b5698f03b6fdec6727acc62306d}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!active\_modulation@{active\_modulation}}
+\index{active\_modulation@{active\_modulation}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{active\_modulation}{active\_modulation}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_a3aa95b5698f03b6fdec6727acc62306d} 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::active\+\_\+modulation}
+
+
+
+Aktualnie wybrana rodzina modulacji. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00189}{189}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_ae7d142da278727d229869a47900b7935}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!auto\_ping\_enabled@{auto\_ping\_enabled}}
+\index{auto\_ping\_enabled@{auto\_ping\_enabled}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_enabled}{auto\_ping\_enabled}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_ae7d142da278727d229869a47900b7935} 
+bool radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::auto\+\_\+ping\+\_\+enabled}
+
+
+
+Flaga automatycznego {\ttfamily PING}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00196}{196}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_a96d13a5d87f5c5eba1c37f6f50b8f494}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!auto\_ping\_mode@{auto\_ping\_mode}}
+\index{auto\_ping\_mode@{auto\_ping\_mode}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_mode}{auto\_ping\_mode}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_a96d13a5d87f5c5eba1c37f6f50b8f494} 
+\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::auto\+\_\+ping\+\_\+mode}
+
+
+
+Sposób kodowania automatycznego {\ttfamily PING}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00198}{198}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_a86ed33383dae08e08419c1c9462f1e0f}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!auto\_ping\_period\_ms@{auto\_ping\_period\_ms}}
+\index{auto\_ping\_period\_ms@{auto\_ping\_period\_ms}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_period\_ms}{auto\_ping\_period\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_a86ed33383dae08e08419c1c9462f1e0f} 
+uint32\+\_\+t radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::auto\+\_\+ping\+\_\+period\+\_\+ms}
+
+
+
+Wybrany okres automatycznego {\ttfamily PING} \mbox{[}ms\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00197}{197}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_ab2ea0bddf78233ff02e4814e5f463ddc}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!coding\_enabled@{coding\_enabled}}
+\index{coding\_enabled@{coding\_enabled}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{coding\_enabled}{coding\_enabled}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_ab2ea0bddf78233ff02e4814e5f463ddc} 
+bool radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::coding\+\_\+enabled}
+
+
+
+Flaga szyfrowania ruchu {\ttfamily OPERATOR}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00195}{195}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_a871702e26b4bbe94a8be9457daf49930}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!fh\_enabled@{fh\_enabled}}
+\index{fh\_enabled@{fh\_enabled}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{fh\_enabled}{fh\_enabled}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_a871702e26b4bbe94a8be9457daf49930} 
+bool radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::fh\+\_\+enabled}
+
+
+
+Flaga frequency hopping. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00193}{193}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_aefbe806948be3af51ad5515d87a01824}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!fh\_period\_ms@{fh\_period\_ms}}
+\index{fh\_period\_ms@{fh\_period\_ms}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{fh\_period\_ms}{fh\_period\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_aefbe806948be3af51ad5515d87a01824} 
+uint32\+\_\+t radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::fh\+\_\+period\+\_\+ms}
+
+
+
+Okres przeskoku kanału \mbox{[}ms\mbox{]} dla FH w Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00194}{194}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!fsk@{fsk}}
+\index{fsk@{fsk}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{fsk}{fsk}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b} 
+\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::fsk}
+
+
+
+Profil FSK/\+GFSK/\+MSK/\+GMSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00191}{191}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!lora@{lora}}
+\index{lora@{lora}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{lora}{lora}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92} 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::lora}
+
+
+
+Profil Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00190}{190}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}\index{radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}!ook@{ook}}
+\index{ook@{ook}!radio\_main\_runtime\_cfg\_t@{radio\_main\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{ook}{ook}}
+{\footnotesize\ttfamily \label{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc} 
+\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t\+::ook}
+
+
+
+Profil OOK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00192}{192}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/\mbox{\hyperlink{radio__main_8h}{radio\+\_\+main.\+h}}\end{DoxyCompactItemize}

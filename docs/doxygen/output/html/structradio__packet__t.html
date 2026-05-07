@@ -1,0 +1,258 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury radio_packet_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structradio__packet__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury radio_packet_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Bufor ostatnio odebranej ramki.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="radio__lib_8h_source.html">Core/App/radio_lib/radio_lib.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:acfbf131a3f82687b4855338496e2a3e3" id="r_acfbf131a3f82687b4855338496e2a3e3"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfbf131a3f82687b4855338496e2a3e3">data</a> [<a class="el" href="radio__lib__config_8h.html#ade00f2ee6e56b6b5fb58c235c4c27641">RADIO_LIB_MAX_PAYLOAD</a>]</td></tr>
+<tr class="memdesc:acfbf131a3f82687b4855338496e2a3e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Payload ramki.  <br /></td></tr>
+<tr class="memitem:a4a3540f8c1fec6702e5615a36d7c8f7e" id="r_a4a3540f8c1fec6702e5615a36d7c8f7e"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a3540f8c1fec6702e5615a36d7c8f7e">length</a></td></tr>
+<tr class="memdesc:a4a3540f8c1fec6702e5615a36d7c8f7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Długość payloadu.  <br /></td></tr>
+<tr class="memitem:a6bf8985619e83f6b6f8fd02065a36a6c" id="r_a6bf8985619e83f6b6f8fd02065a36a6c"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bf8985619e83f6b6f8fd02065a36a6c">rssi_dbm</a></td></tr>
+<tr class="memdesc:a6bf8985619e83f6b6f8fd02065a36a6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">RSSI pakietu [dBm].  <br /></td></tr>
+<tr class="memitem:acab0b755530b605b24c592961626cded" id="r_acab0b755530b605b24c592961626cded"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acab0b755530b605b24c592961626cded">snr_db</a></td></tr>
+<tr class="memdesc:acab0b755530b605b24c592961626cded"><td class="mdescLeft">&#160;</td><td class="mdescRight">SNR pakietu [dB].  <br /></td></tr>
+<tr class="memitem:ab2b61197ed2f23da7b4257c4729b06e2" id="r_ab2b61197ed2f23da7b4257c4729b06e2"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab2b61197ed2f23da7b4257c4729b06e2">timestamp_ms</a></td></tr>
+<tr class="memdesc:ab2b61197ed2f23da7b4257c4729b06e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Znacznik czasu (<span class="tt">HAL_GetTick</span>).  <br /></td></tr>
+<tr class="memitem:a99311068f676a7c97904e177a3390fca" id="r_a99311068f676a7c97904e177a3390fca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99311068f676a7c97904e177a3390fca">valid</a></td></tr>
+<tr class="memdesc:a99311068f676a7c97904e177a3390fca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flaga poprawności danych bufora.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Bufor ostatnio odebranej ramki. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00212">212</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="acfbf131a3f82687b4855338496e2a3e3" name="acfbf131a3f82687b4855338496e2a3e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfbf131a3f82687b4855338496e2a3e3">&#9670;&#160;</a></span>data</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_packet_t::data[<a class="el" href="radio__lib__config_8h.html#ade00f2ee6e56b6b5fb58c235c4c27641">RADIO_LIB_MAX_PAYLOAD</a>]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Payload ramki. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00214">214</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00084">radio_test_print_packet()</a>, <a class="el" href="radio__test_8c_source.html#l00110">radio_test_print_packet_text()</a>, <a class="el" href="radio__test_8c_source.html#l00124">radio_test_publish_packet_to_lcd()</a> i <a class="el" href="radio__test_8c_source.html#l00138">radio_test_store_packet_in_i2c_memory()</a>.</p>
+
+</div>
+</div>
+<a id="a4a3540f8c1fec6702e5615a36d7c8f7e" name="a4a3540f8c1fec6702e5615a36d7c8f7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a3540f8c1fec6702e5615a36d7c8f7e">&#9670;&#160;</a></span>length</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_packet_t::length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Długość payloadu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00215">215</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00084">radio_test_print_packet()</a>, <a class="el" href="radio__test_8c_source.html#l00110">radio_test_print_packet_text()</a>, <a class="el" href="radio__test_8c_source.html#l00124">radio_test_publish_packet_to_lcd()</a> i <a class="el" href="radio__test_8c_source.html#l00138">radio_test_store_packet_in_i2c_memory()</a>.</p>
+
+</div>
+</div>
+<a id="a6bf8985619e83f6b6f8fd02065a36a6c" name="a6bf8985619e83f6b6f8fd02065a36a6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bf8985619e83f6b6f8fd02065a36a6c">&#9670;&#160;</a></span>rssi_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t radio_packet_t::rssi_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>RSSI pakietu [dBm]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00216">216</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00084">radio_test_print_packet()</a>, <a class="el" href="radio__test_8c_source.html#l00124">radio_test_publish_packet_to_lcd()</a> i <a class="el" href="radio__test_8c_source.html#l00138">radio_test_store_packet_in_i2c_memory()</a>.</p>
+
+</div>
+</div>
+<a id="acab0b755530b605b24c592961626cded" name="acab0b755530b605b24c592961626cded"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acab0b755530b605b24c592961626cded">&#9670;&#160;</a></span>snr_db</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int8_t radio_packet_t::snr_db</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>SNR pakietu [dB]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00217">217</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00084">radio_test_print_packet()</a>.</p>
+
+</div>
+</div>
+<a id="ab2b61197ed2f23da7b4257c4729b06e2" name="ab2b61197ed2f23da7b4257c4729b06e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2b61197ed2f23da7b4257c4729b06e2">&#9670;&#160;</a></span>timestamp_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_packet_t::timestamp_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Znacznik czasu (<span class="tt">HAL_GetTick</span>). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00218">218</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+</div>
+</div>
+<a id="a99311068f676a7c97904e177a3390fca" name="a99311068f676a7c97904e177a3390fca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99311068f676a7c97904e177a3390fca">&#9670;&#160;</a></span>valid</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_packet_t::valid</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flaga poprawności danych bufora. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00219">219</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/radio_lib/<a class="el" href="radio__lib_8h_source.html">radio_lib.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structradio__packet__t.html">radio_packet_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Plik źródłowy Core/App/lcd_library/lcd.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('lcd_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">lcd.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="lcd_8h.html">Idź do dokumentacji tego pliku.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#ifndef INC_LCD_H_</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define INC_LCD_H_</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#a7a76246e6467f84129b940452a38cc44">lcd_demo</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#a6842775ba83d166f02b8fef8bb63b1e6">lcd_init</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#a3065c19bc5997d2a4ce5936a5846250c">lcd_write_string</a>(uint8_t *str);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#a4f7e474c3b149be3e1d53c2dd05e3d54">lcd_set_cursor</a>(uint8_t row, uint8_t column);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#ad235a86241458b1e7b8771688bfdaf9a">lcd_clear</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#a67353712eec5fd274dd2602bcd555c8f">lcd_backlight</a>(uint8_t state);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd_8h.html#abfaa2a9fb9e0c6528928a61dc215fafd">lcd_write_line</a>(uint8_t row, <span class="keyword">const</span> <span class="keywordtype">char</span> *text, uint8_t width);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd_8h.html#adf2c24884c5ec37daffeb9b76590183d">lcd_animation_hello_beko</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">#endif </span><span class="comment">/* INC_LCD_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="alcd_8h_html_a3065c19bc5997d2a4ce5936a5846250c"><div class="ttname"><a href="lcd_8h.html#a3065c19bc5997d2a4ce5936a5846250c">lcd_write_string</a></div><div class="ttdeci">void lcd_write_string(uint8_t *str)</div><div class="ttdoc">Write a null-terminated string at the current cursor position.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00430">lcd.c:430</a></div></div>
+<div class="ttc" id="alcd_8h_html_a4f7e474c3b149be3e1d53c2dd05e3d54"><div class="ttname"><a href="lcd_8h.html#a4f7e474c3b149be3e1d53c2dd05e3d54">lcd_set_cursor</a></div><div class="ttdeci">void lcd_set_cursor(uint8_t row, uint8_t column)</div><div class="ttdoc">Move the LCD cursor.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00456">lcd.c:456</a></div></div>
+<div class="ttc" id="alcd_8h_html_a67353712eec5fd274dd2602bcd555c8f"><div class="ttname"><a href="lcd_8h.html#a67353712eec5fd274dd2602bcd555c8f">lcd_backlight</a></div><div class="ttdeci">void lcd_backlight(uint8_t state)</div><div class="ttdoc">Enable or disable LCD backlight.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00501">lcd.c:501</a></div></div>
+<div class="ttc" id="alcd_8h_html_a6842775ba83d166f02b8fef8bb63b1e6"><div class="ttname"><a href="lcd_8h.html#a6842775ba83d166f02b8fef8bb63b1e6">lcd_init</a></div><div class="ttdeci">void lcd_init(void)</div><div class="ttdoc">Initialize the LCD driver and display controller.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00406">lcd.c:406</a></div></div>
+<div class="ttc" id="alcd_8h_html_a7a76246e6467f84129b940452a38cc44"><div class="ttname"><a href="lcd_8h.html#a7a76246e6467f84129b940452a38cc44">lcd_demo</a></div><div class="ttdeci">void lcd_demo(void)</div><div class="ttdoc">Run the original LCD demo routine.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00386">lcd.c:386</a></div></div>
+<div class="ttc" id="alcd_8h_html_abfaa2a9fb9e0c6528928a61dc215fafd"><div class="ttname"><a href="lcd_8h.html#abfaa2a9fb9e0c6528928a61dc215fafd">lcd_write_line</a></div><div class="ttdeci">bool lcd_write_line(uint8_t row, const char *text, uint8_t width)</div><div class="ttdoc">Write one padded/truncated text line.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00524">lcd.c:524</a></div></div>
+<div class="ttc" id="alcd_8h_html_ad235a86241458b1e7b8771688bfdaf9a"><div class="ttname"><a href="lcd_8h.html#ad235a86241458b1e7b8771688bfdaf9a">lcd_clear</a></div><div class="ttdeci">void lcd_clear(void)</div><div class="ttdoc">Clear the LCD display.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00480">lcd.c:480</a></div></div>
+<div class="ttc" id="alcd_8h_html_adf2c24884c5ec37daffeb9b76590183d"><div class="ttname"><a href="lcd_8h.html#adf2c24884c5ec37daffeb9b76590183d">lcd_animation_hello_beko</a></div><div class="ttdeci">void lcd_animation_hello_beko(void)</div><div class="ttdoc">Play the boot &quot;HELLO BEKO&quot; LCD animation.</div><div class="ttdef"><b>Definicja</b> <a href="lcd_8c_source.html#l00572">lcd.c:572</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><b>lcd_library</b></li><li class="navelem"><a href="lcd_8h.html">lcd.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

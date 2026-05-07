@@ -316,7 +316,7 @@ graph TD
 
     DEV --> GW
     DEV --> N2
-````
+```
 
 ---
 
@@ -399,3 +399,35 @@ sequenceDiagram
     N->>GW: ACK
     GW->>A: Wynik operacji
 ```
+
+---
+
+## 14. Dokumentacja Doxygen
+
+Projekt zawiera konfigurację Doxygen w pliku `Doxyfile`.
+
+Generowanie dokumentacji:
+
+```bash
+doxygen Doxyfile
+```
+
+Wynik HTML:
+
+```text
+docs/doxygen/output/html/index.html
+```
+
+Wynik PDF:
+
+```bash
+make -C docs/doxygen/output/latex
+```
+
+```text
+docs/doxygen/output/latex/refman.pdf
+```
+
+Zakres dokumentacji obejmuje `README.md`, `Core/App` oraz strony opisowe w
+`docs/doxygen`. Katalogi wygenerowane i zewnętrzne (`Debug`, `Drivers`,
+`Middlewares`) są celowo wykluczone.

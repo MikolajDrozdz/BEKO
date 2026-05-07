@@ -1,0 +1,44 @@
+\doxysection{lcd\+\_\+main.\+h}
+\hypertarget{lcd__main_8h_source}{}\label{lcd__main_8h_source}\index{Core/App/lcd\_main.h@{Core/App/lcd\_main.h}}
+\mbox{\hyperlink{lcd__main_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00006}00006\ \textcolor{preprocessor}{\#ifndef\ APP\_LCD\_MAIN\_H\_}}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00007}00007\ \textcolor{preprocessor}{\#define\ APP\_LCD\_MAIN\_H\_}}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00015}\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{00015}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00016}00016\ \{}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00017}\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62}{00017}}\ \ \ \ \ \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62}{LCD\_MODE\_MONITOR}}\ =\ 0,\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00018}\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd}{00018}}\ \ \ \ \ \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd}{LCD\_MODE\_MENU}},\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00019}\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c}{00019}}\ \ \ \ \ \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c}{LCD\_MODE\_POPUP}}\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00020}00020\ \}\ \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{lcd\_main\_mode\_t}};}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00025}00025\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{lcd__main_8h_abb7810060d5cef86f0e368eb7970855b}{lcd\_main\_create\_task}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00033}00033\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a716b30672e73417a3307edaf50798e1e}{lcd\_main\_set\_line}}(uint8\_t\ line\_index,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00041}00041\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a58a60fe2a211490124107dd751cd2afa}{lcd\_main\_set\_lines}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line0,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line1);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00051}00051\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a7a3d779c06b5c3bb826a0b76f0a65eaf}{lcd\_main\_show\_menu}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l0,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l3);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00060}00060\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_ad082e838bff867c86118dd1f6666415c}{lcd\_main\_push\_message}}(int16\_t\ rssi\_dbm,\ \textcolor{keyword}{const}\ uint8\_t\ *data,\ uint32\_t\ length);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00061}00061\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00070}00070\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a365bccf7acced9705993a3ab3b8d26fb}{lcd\_main\_push\_message\_from}}(int16\_t\ rssi\_dbm,\ uint32\_t\ source\_id,\ \textcolor{keyword}{const}\ uint8\_t\ *data,\ uint32\_t\ length);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00071}00071\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00077}00077\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_abfaf6e6665c4f9be69b0ff8727263475}{lcd\_main\_set\_mode}}(\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{lcd\_main\_mode\_t}}\ mode);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00078}00078\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00087}00087\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a3721122bf75b9d6bb01ab6e20390f535}{lcd\_main\_show\_popup}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l0,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l1,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l2,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *l3);}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00093}00093\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a5257397a3cc1538d8b18c73f2fe97d89}{lcd\_main\_show\_boot\_hello}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00094}00094\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00099}00099\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a38cf36f376608d63b1e1b78e75a671ab}{lcd\_main\_monitor\_scroll\_up}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00100}00100\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00105}00105\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{lcd__main_8h_a531fe799b033e4f82b83525e3c336f0f}{lcd\_main\_monitor\_scroll\_down}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00106}00106\ }
+\DoxyCodeLine{\Hypertarget{lcd__main_8h_source_l00107}00107\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_LCD\_MAIN\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

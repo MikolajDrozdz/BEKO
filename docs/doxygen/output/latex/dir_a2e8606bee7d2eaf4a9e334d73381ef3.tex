@@ -1,0 +1,98 @@
+\doxysection{Dokumentacja katalogu Core/\+App/radio\+\_\+lib}
+\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3}{}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3}\index{Dokumentacja katalogu Core/App/radio\_lib@{Dokumentacja katalogu Core/App/radio\_lib}}
+\doxysubsubsection*{Katalogi}
+\begin{DoxyCompactItemize}
+\item 
+katalog \mbox{\hyperlink{dir_ff1fa36fb9327334b2ef16a9b795a190}{test}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Pliki}
+\begin{DoxyCompactItemize}
+\item 
+plik \mbox{\hyperlink{radio__lib_8c}{radio\+\_\+lib.\+c}}
+\begin{DoxyCompactList}\small\item\em Fasada biblioteki radia delegująca wywołania do backendu wybranego w runtime. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{radio__lib_8h}{radio\+\_\+lib.\+h}}
+\begin{DoxyCompactList}\small\item\em Główne API biblioteki radiowej. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{radio__lib__config_8h}{radio\+\_\+lib\+\_\+config.\+h}}
+\begin{DoxyCompactList}\small\item\em Konfiguracja kompilacyjna biblioteki {\ttfamily radio\+\_\+lib}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md56}{}\doxysubsection{\texorpdfstring{radio\+\_\+lib}{radio\+\_\+lib}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md56}
+Modułowa biblioteka radiowa dla układów SX1276/\+RFM95 (np. RFM95\+W-\/862\+S2) dla STM32. Warstwa aplikacyjna korzysta z jednego API ({\ttfamily \doxylink{radio__lib_8h}{radio\+\_\+lib.\+h}}), a backend może być wybierany zarówno kompilacyjnie, jak i przełączany w runtime.\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md57}{}\doxysubsection{\texorpdfstring{Cele projektu}{Cele projektu}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md57}
+
+\begin{DoxyItemize}
+\item Stabilne API do inicjalizacji, TX/\+RX i obsługi zdarzeń IRQ.
+\item Rozdzielenie warstwy sprzętowej (rejestry SX1276) od logiki modulacji.
+\item Możliwość rozbudowy o kolejne backendy bez zmian w aplikacji.
+\item Utrzymanie zgodności z kodem generowanym przez Cube\+MX.
+\end{DoxyItemize}\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md58}{}\doxysubsection{\texorpdfstring{Struktura katalogu}{Struktura katalogu}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md58}
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Ścieżka  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Rola  \\
+{\ttfamily \doxylink{radio__lib_8h}{radio\+\_\+lib.\+h}}  &Publiczne API biblioteki (statusy, stany, konfiguracje, funkcje).  \\
+{\ttfamily \doxylink{radio__lib_8c}{radio\+\_\+lib.\+c}}  &Fasada/dispatcher delegująca wywołania do aktywnego backendu modulacji.  \\
+{\ttfamily \doxylink{radio__lib__config_8h}{radio\+\_\+lib\+\_\+config.\+h}}  &Konfiguracja kompilacyjna\+: wybór modulacji, timeouty, limity, EXTI.  \\
+{\ttfamily \doxylink{radio__sx1276__regs_8h}{common/sx1276/radio\+\_\+sx1276\+\_\+regs.\+h}}  &Definicje rejestrów SX1276 i masek bitowych.  \\
+{\ttfamily \doxylink{radio__sx1276_8h}{common/sx1276/radio\+\_\+sx1276.\+h}}  &Publiczny interfejs niskopoziomowy (SPI/rejestry/\+FIFO/\+IRQ).  \\
+{\ttfamily \doxylink{radio__sx1276_8c}{common/sx1276/radio\+\_\+sx1276.\+c}}  &Implementacja dostępu do rejestrów SX1276.  \\
+{\ttfamily \doxylink{radio__lora_8h}{modulations/lora/radio\+\_\+lora.\+h}}  &Kontrakt backendu Lo\+Ra.  \\
+{\ttfamily \doxylink{radio__lora_8c}{modulations/lora/radio\+\_\+lora.\+c}}  &Implementacja Lo\+Ra\+: init, TX/\+RX, zdarzenia, DIO/\+IRQ, recovery.  \\
+{\ttfamily \doxylink{radio__fsk_8h}{modulations/fsk/radio\+\_\+fsk.\+h}}  &Kontrakt backendu FSK.  \\
+{\ttfamily \doxylink{radio__fsk_8c}{modulations/fsk/radio\+\_\+fsk.\+c}}  &Implementacja backendu FSK/\+GFSK/\+MSK/\+GMSK w packet-\/mode SX1276.  \\
+{\ttfamily \doxylink{radio__ook_8h}{modulations/ook/radio\+\_\+ook.\+h}}  &Kontrakt backendu OOK.  \\
+{\ttfamily \doxylink{radio__ook_8c}{modulations/ook/radio\+\_\+ook.\+c}}  &Implementacja backendu OOK w packet-\/mode SX1276.  \\
+{\ttfamily \doxylink{radio__test_8h}{test/radio\+\_\+test.\+h}}  &Publiczne narzędzia testowe i diagnostyczne.  \\
+{\ttfamily \doxylink{radio__test_8c}{test/radio\+\_\+test.\+c}}  &Scenariusz demo\+: probe, dump rejestrów, okresowy {\ttfamily PING}, logowanie zdarzeń.  \\
+\end{DoxyTable}
+\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md59}{}\doxysubsection{\texorpdfstring{Wybór aktywnej modulacji}{Wybór aktywnej modulacji}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md59}
+W pliku {\ttfamily \doxylink{radio__lib__config_8h}{radio\+\_\+lib\+\_\+config.\+h}} ustaw makro\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}{RADIO\+\_\+\+LIB\+\_\+\+ACTIVE\+\_\+\+MODULATION} = \doxylink{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+LORA}} (domyślnie),
+\item {\ttfamily \doxylink{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}{RADIO\+\_\+\+LIB\+\_\+\+ACTIVE\+\_\+\+MODULATION} = \doxylink{radio__lib__config_8h_a346540f304c86be520a75b05d59ff4d3}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+FSK}},
+\item {\ttfamily \doxylink{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}{RADIO\+\_\+\+LIB\+\_\+\+ACTIVE\+\_\+\+MODULATION} = \doxylink{radio__lib__config_8h_a1af1af53fe6cd06bcf407c9d77549981}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+OOK}}.
+\end{DoxyItemize}
+
+Aplikacja zawsze używa {\ttfamily \doxylink{radio__lib_8h}{radio\+\_\+lib.\+h}}; backend można też przełączyć w runtime przez {\ttfamily radio\+\_\+select\+\_\+backend(...)} i przekazać profil przez {\ttfamily radio\+\_\+set\+\_\+fsk\+\_\+cfg(...)} lub {\ttfamily radio\+\_\+set\+\_\+ook\+\_\+cfg(...)}.\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md60}{}\doxysubsection{\texorpdfstring{Model obsługi przerwań (IRQ/\+EXTI)}{Model obsługi przerwań (IRQ/\+EXTI)}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md60}
+
+\begin{DoxyItemize}
+\item EXTI pozostaje po stronie kodu Cube\+MX ({\ttfamily HAL\+\_\+\+GPIO\+\_\+\+EXTI\+\_\+\+IRQHandler(...)}).
+\item {\ttfamily HAL\+\_\+\+GPIO\+\_\+\+EXTI\+\_\+\+Callback} może być implementowany przez bibliotekę ({\ttfamily \doxylink{radio__lib__config_8h_a7bc9a0e610bda2ee7e172437c3d7805b}{RADIO\+\_\+\+LIB\+\_\+\+OWNS\+\_\+\+HAL\+\_\+\+EXTI\+\_\+\+CALLBACK} = 1}) albo przez aplikację ({\ttfamily = 0}) z przekazaniem pinu do {\ttfamily radio\+\_\+on\+\_\+exti(...)}.
+\item ISR ustawia tylko lekkie flagi; operacje SPI i logika pakietów są wykonywane w {\ttfamily \doxylink{radio__lib_8c_a6ac7a9b0c7acdc55d259f51e32c4c892}{radio\+\_\+process()}}.
+\end{DoxyItemize}\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md61}{}\doxysubsection{\texorpdfstring{Integracja w aplikacji}{Integracja w aplikacji}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md61}
+Minimalny przepływ\+:
+
+
+\begin{DoxyEnumerate}
+\item {\ttfamily radio\+\_\+default\+\_\+hw\+\_\+cfg(...)} i {\ttfamily radio\+\_\+default\+\_\+lora\+\_\+cfg(...)}.
+\item {\ttfamily radio\+\_\+init(...)}.
+\item {\ttfamily \doxylink{radio__lib_8c_a1a5388061f0de890fbb5610a368c4c6d}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}} lub {\ttfamily radio\+\_\+start\+\_\+rx\+\_\+single(...)}.
+\item W pętli głównej\+: {\ttfamily \doxylink{radio__lib_8c_a6ac7a9b0c7acdc55d259f51e32c4c892}{radio\+\_\+process()}} oraz {\ttfamily \doxylink{radio__lib_8c_a816498247d5d0366054d6007c2a0868b}{radio\+\_\+take\+\_\+events()}}.
+\end{DoxyEnumerate}
+
+Do szybkiego uruchomienia można użyć {\ttfamily \doxylink{radio__test_8c}{test/radio\+\_\+test.\+c}}\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{radio__test_8c_acb8e3ae7eb6734c7a8edd90d66e761d2}{radio\+\_\+test\+\_\+demo\+\_\+init}(\&hspi1)},
+\item {\ttfamily \doxylink{radio__test_8c_ae5c770ddc69674cafeab76e370772ae1}{radio\+\_\+test\+\_\+demo\+\_\+process()}} cyklicznie w pętli głównej.
+\end{DoxyItemize}
+
+W tym projekcie warstwa aplikacyjna używa obecnie {\ttfamily radio\+\_\+main} (task RTOS), a {\ttfamily \doxylink{radio__test_8c}{radio\+\_\+test.\+c}} jest traktowany jako moduł diagnostyczny.\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md62}{}\doxysubsection{\texorpdfstring{Status backendów}{Status backendów}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md62}
+
+\begin{DoxyItemize}
+\item Lo\+Ra\+: implementacja produkcyjna (SX1276/\+RFM95).
+\item FSK\+: działający backend SX1276 z TX/\+RX, FIFO, IRQ i packet engine.
+\item OOK\+: działający backend SX1276 z TX/\+RX, FIFO, IRQ i packet engine.
+\end{DoxyItemize}\hypertarget{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md63}{}\doxysubsection{\texorpdfstring{Dokumentacja Doxygen}{Dokumentacja Doxygen}}\label{dir_a2e8606bee7d2eaf4a9e334d73381ef3_autotoc_md63}
+Pliki {\ttfamily .h} zawierają pełną dokumentację publicznego API w stylu Doxygen. Pliki {\ttfamily .c} zawierają dokumentację modułów oraz sekcji implementacyjnych.
+
+Przykładowe znaczniki użyte w projekcie\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily @file}, {\ttfamily @brief},
+\item {\ttfamily @param}, {\ttfamily @return},
+\item {\ttfamily @name} i {\ttfamily @\{ ... @\}} dla grupowania API. 
+\end{DoxyItemize}

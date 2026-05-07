@@ -1,0 +1,398 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/radio_lib/radio_lib_config.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('radio__lib__config_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku radio_lib_config.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Konfiguracja kompilacyjna biblioteki <span class="tt">radio_lib</span>.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+</div>
+<p><a href="radio__lib__config_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Definicje</h2></td></tr>
+<tr class="memitem:af5836e897b242bbe2a19e96d3832882f" id="r_af5836e897b242bbe2a19e96d3832882f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5836e897b242bbe2a19e96d3832882f">RADIO_LIB_ACTIVE_MODULATION</a>&#160;&#160;&#160;<a class="el" href="#ab5567fde7ba671d7b3c02f3770dd9e16">RADIO_LIB_MODULATION_LORA</a></td></tr>
+<tr class="memdesc:af5836e897b242bbe2a19e96d3832882f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Aktywny backend modulacji wybierany na etapie kompilacji.  <br /></td></tr>
+<tr class="memitem:a7bc9a0e610bda2ee7e172437c3d7805b" id="r_a7bc9a0e610bda2ee7e172437c3d7805b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7bc9a0e610bda2ee7e172437c3d7805b">RADIO_LIB_OWNS_HAL_EXTI_CALLBACK</a>&#160;&#160;&#160;1</td></tr>
+<tr class="memdesc:a7bc9a0e610bda2ee7e172437c3d7805b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Własność callbacku EXTI.  <br /></td></tr>
+<tr class="memitem:a9cd07b89bb78518454369f72c9acd313" id="r_a9cd07b89bb78518454369f72c9acd313"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9cd07b89bb78518454369f72c9acd313">RADIO_LIB_SPI_TIMEOUT_MS</a>&#160;&#160;&#160;100U</td></tr>
+<tr class="memdesc:a9cd07b89bb78518454369f72c9acd313"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout blokujących transferów SPI (ms).  <br /></td></tr>
+<tr class="memitem:ade00f2ee6e56b6b5fb58c235c4c27641" id="r_ade00f2ee6e56b6b5fb58c235c4c27641"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade00f2ee6e56b6b5fb58c235c4c27641">RADIO_LIB_MAX_PAYLOAD</a>&#160;&#160;&#160;255U</td></tr>
+<tr class="memdesc:ade00f2ee6e56b6b5fb58c235c4c27641"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maksymalna długość payloadu bufora pakietu.  <br /></td></tr>
+<tr class="memitem:aeb31168bab90b0a04839cbcad56235b9" id="r_aeb31168bab90b0a04839cbcad56235b9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb31168bab90b0a04839cbcad56235b9">RADIO_LIB_DEFAULT_FREQ_HZ</a>&#160;&#160;&#160;868500000UL</td></tr>
+<tr class="memdesc:aeb31168bab90b0a04839cbcad56235b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domyślna częstotliwość LoRa (Hz).  <br /></td></tr>
+<tr class="memitem:ad84c65139cc4451b3125a7cebf8654c8" id="r_ad84c65139cc4451b3125a7cebf8654c8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad84c65139cc4451b3125a7cebf8654c8">RADIO_LIB_DEFAULT_SYNC_WORD</a>&#160;&#160;&#160;0x34U</td></tr>
+<tr class="memdesc:ad84c65139cc4451b3125a7cebf8654c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domyślny sync word LoRa.  <br /></td></tr>
+<tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Identyfikatory backendów modulacji</div></td></tr>
+<tr><td colspan="2" class="ititle"><div class="groupText"><p>Stałe używane przez <span class="tt"><a class="el" href="#af5836e897b242bbe2a19e96d3832882f" title="Aktywny backend modulacji wybierany na etapie kompilacji.">RADIO_LIB_ACTIVE_MODULATION</a></span>. </p>
+</div></td></tr>
+<tr class="memitem:ab5567fde7ba671d7b3c02f3770dd9e16" id="r_ab5567fde7ba671d7b3c02f3770dd9e16"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5567fde7ba671d7b3c02f3770dd9e16">RADIO_LIB_MODULATION_LORA</a>&#160;&#160;&#160;0U</td></tr>
+<tr class="memdesc:ab5567fde7ba671d7b3c02f3770dd9e16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backend LoRa.  <br /></td></tr>
+<tr class="memitem:a346540f304c86be520a75b05d59ff4d3" id="r_a346540f304c86be520a75b05d59ff4d3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a346540f304c86be520a75b05d59ff4d3">RADIO_LIB_MODULATION_FSK</a>&#160;&#160;&#160;1U</td></tr>
+<tr class="memdesc:a346540f304c86be520a75b05d59ff4d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backend FSK.  <br /></td></tr>
+<tr class="memitem:a1af1af53fe6cd06bcf407c9d77549981" id="r_a1af1af53fe6cd06bcf407c9d77549981"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1af1af53fe6cd06bcf407c9d77549981">RADIO_LIB_MODULATION_OOK</a>&#160;&#160;&#160;2U</td></tr>
+<tr class="memdesc:a1af1af53fe6cd06bcf407c9d77549981"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backend OOK.  <br /></td></tr>
+<tr id="define-members-1" class="groupHeader"><td colspan="2"><div class="groupHeader">Filtry EXTI DIO (LoRa)</div></td></tr>
+<tr><td colspan="2" class="ititle"><div class="groupText"><p>Pozwala wyłączyć obsługę mniej używanych linii DIO. </p>
+</div></td></tr>
+<tr class="memitem:af4a1d20b2acdd64f095cb527283893d6" id="r_af4a1d20b2acdd64f095cb527283893d6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4a1d20b2acdd64f095cb527283893d6">RADIO_LIB_ENABLE_DIO2_EXTI</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memitem:ae8c8069c07a45202c00e47bd4b1b6642" id="r_ae8c8069c07a45202c00e47bd4b1b6642"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8c8069c07a45202c00e47bd4b1b6642">RADIO_LIB_ENABLE_DIO3_EXTI</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memitem:a6fa3ab0fda814b98de02f56e93ae880e" id="r_a6fa3ab0fda814b98de02f56e93ae880e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fa3ab0fda814b98de02f56e93ae880e">RADIO_LIB_ENABLE_DIO4_EXTI</a>&#160;&#160;&#160;0</td></tr>
+<tr class="memitem:a6eacfcc8566f096107b4005d30102a72" id="r_a6eacfcc8566f096107b4005d30102a72"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6eacfcc8566f096107b4005d30102a72">RADIO_LIB_ENABLE_DIO5_EXTI</a>&#160;&#160;&#160;0</td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Konfiguracja kompilacyjna biblioteki <span class="tt">radio_lib</span>. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Dokumentacja definicji</h2>
+<a id="af5836e897b242bbe2a19e96d3832882f" name="af5836e897b242bbe2a19e96d3832882f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5836e897b242bbe2a19e96d3832882f">&#9670;&#160;</a></span>RADIO_LIB_ACTIVE_MODULATION</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_ACTIVE_MODULATION&#160;&#160;&#160;<a class="el" href="#ab5567fde7ba671d7b3c02f3770dd9e16">RADIO_LIB_MODULATION_LORA</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Aktywny backend modulacji wybierany na etapie kompilacji. </p>
+<p>Domyślnie aktywny jest backend LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00027">27</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+</div>
+</div>
+<a id="aeb31168bab90b0a04839cbcad56235b9" name="aeb31168bab90b0a04839cbcad56235b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb31168bab90b0a04839cbcad56235b9">&#9670;&#160;</a></span>RADIO_LIB_DEFAULT_FREQ_HZ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_DEFAULT_FREQ_HZ&#160;&#160;&#160;868500000UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Domyślna częstotliwość LoRa (Hz). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00058">58</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="ad84c65139cc4451b3125a7cebf8654c8" name="ad84c65139cc4451b3125a7cebf8654c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad84c65139cc4451b3125a7cebf8654c8">&#9670;&#160;</a></span>RADIO_LIB_DEFAULT_SYNC_WORD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_DEFAULT_SYNC_WORD&#160;&#160;&#160;0x34U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Domyślny sync word LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00065">65</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="af4a1d20b2acdd64f095cb527283893d6" name="af4a1d20b2acdd64f095cb527283893d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4a1d20b2acdd64f095cb527283893d6">&#9670;&#160;</a></span>RADIO_LIB_ENABLE_DIO2_EXTI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_ENABLE_DIO2_EXTI&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00074">74</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+</div>
+</div>
+<a id="ae8c8069c07a45202c00e47bd4b1b6642" name="ae8c8069c07a45202c00e47bd4b1b6642"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8c8069c07a45202c00e47bd4b1b6642">&#9670;&#160;</a></span>RADIO_LIB_ENABLE_DIO3_EXTI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_ENABLE_DIO3_EXTI&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00078">78</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+</div>
+</div>
+<a id="a6fa3ab0fda814b98de02f56e93ae880e" name="a6fa3ab0fda814b98de02f56e93ae880e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fa3ab0fda814b98de02f56e93ae880e">&#9670;&#160;</a></span>RADIO_LIB_ENABLE_DIO4_EXTI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_ENABLE_DIO4_EXTI&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00082">82</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+</div>
+</div>
+<a id="a6eacfcc8566f096107b4005d30102a72" name="a6eacfcc8566f096107b4005d30102a72"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6eacfcc8566f096107b4005d30102a72">&#9670;&#160;</a></span>RADIO_LIB_ENABLE_DIO5_EXTI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_ENABLE_DIO5_EXTI&#160;&#160;&#160;0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00086">86</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+</div>
+</div>
+<a id="ade00f2ee6e56b6b5fb58c235c4c27641" name="ade00f2ee6e56b6b5fb58c235c4c27641"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade00f2ee6e56b6b5fb58c235c4c27641">&#9670;&#160;</a></span>RADIO_LIB_MAX_PAYLOAD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_MAX_PAYLOAD&#160;&#160;&#160;255U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maksymalna długość payloadu bufora pakietu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00051">51</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>, <a class="el" href="radio__fsk_8c_source.html#l00618">radio_fsk_send_async()</a>, <a class="el" href="radio__lora_8c_source.html#l00507">radio_lora_send_async()</a>, <a class="el" href="radio__ook_8c_source.html#l00535">radio_ook_send_async()</a>, <a class="el" href="radio__fsk_8c_source.html#l00432">radio_read_rx_packet()</a>, <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a> i <a class="el" href="radio__ook_8c_source.html#l00349">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a346540f304c86be520a75b05d59ff4d3" name="a346540f304c86be520a75b05d59ff4d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a346540f304c86be520a75b05d59ff4d3">&#9670;&#160;</a></span>RADIO_LIB_MODULATION_FSK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_MODULATION_FSK&#160;&#160;&#160;1U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Backend FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00017">17</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00119">radio_deinit()</a>, <a class="el" href="radio__lib_8c_source.html#l00250">radio_get_last_packet()</a>, <a class="el" href="radio__lib_8c_source.html#l00266">radio_get_state()</a>, <a class="el" href="radio__lib_8c_source.html#l00100">radio_init()</a>, <a class="el" href="radio__lib_8c_source.html#l00017">radio_normalize_backend()</a>, <a class="el" href="radio__lib_8c_source.html#l00346">radio_on_exti()</a>, <a class="el" href="radio__lib_8c_source.html#l00215">radio_process()</a>, <a class="el" href="radio__lib_8c_source.html#l00314">radio_raw_read_burst()</a>, <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>, <a class="el" href="radio__lib_8c_source.html#l00330">radio_raw_write_burst()</a>, <a class="el" href="radio__lib_8c_source.html#l00298">radio_raw_write_reg()</a>, <a class="el" href="radio__lib_8c_source.html#l00167">radio_send_async()</a>, <a class="el" href="radio__lib_8c_source.html#l00199">radio_sleep()</a>, <a class="el" href="radio__lib_8c_source.html#l00183">radio_standby()</a>, <a class="el" href="radio__lib_8c_source.html#l00135">radio_start_rx_continuous()</a>, <a class="el" href="radio__lib_8c_source.html#l00151">radio_start_rx_single()</a> i <a class="el" href="radio__lib_8c_source.html#l00234">radio_take_events()</a>.</p>
+
+</div>
+</div>
+<a id="ab5567fde7ba671d7b3c02f3770dd9e16" name="ab5567fde7ba671d7b3c02f3770dd9e16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5567fde7ba671d7b3c02f3770dd9e16">&#9670;&#160;</a></span>RADIO_LIB_MODULATION_LORA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_MODULATION_LORA&#160;&#160;&#160;0U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Backend LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00016">16</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00119">radio_deinit()</a>, <a class="el" href="radio__lib_8c_source.html#l00250">radio_get_last_packet()</a>, <a class="el" href="radio__lib_8c_source.html#l00266">radio_get_state()</a>, <a class="el" href="radio__lib_8c_source.html#l00100">radio_init()</a>, <a class="el" href="radio__lib_8c_source.html#l00017">radio_normalize_backend()</a>, <a class="el" href="radio__lib_8c_source.html#l00346">radio_on_exti()</a>, <a class="el" href="radio__lib_8c_source.html#l00215">radio_process()</a>, <a class="el" href="radio__lib_8c_source.html#l00314">radio_raw_read_burst()</a>, <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>, <a class="el" href="radio__lib_8c_source.html#l00330">radio_raw_write_burst()</a>, <a class="el" href="radio__lib_8c_source.html#l00298">radio_raw_write_reg()</a>, <a class="el" href="radio__lib_8c_source.html#l00167">radio_send_async()</a>, <a class="el" href="radio__lib_8c_source.html#l00199">radio_sleep()</a>, <a class="el" href="radio__lib_8c_source.html#l00183">radio_standby()</a>, <a class="el" href="radio__lib_8c_source.html#l00135">radio_start_rx_continuous()</a>, <a class="el" href="radio__lib_8c_source.html#l00151">radio_start_rx_single()</a> i <a class="el" href="radio__lib_8c_source.html#l00234">radio_take_events()</a>.</p>
+
+</div>
+</div>
+<a id="a1af1af53fe6cd06bcf407c9d77549981" name="a1af1af53fe6cd06bcf407c9d77549981"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1af1af53fe6cd06bcf407c9d77549981">&#9670;&#160;</a></span>RADIO_LIB_MODULATION_OOK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_MODULATION_OOK&#160;&#160;&#160;2U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Backend OOK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00018">18</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00119">radio_deinit()</a>, <a class="el" href="radio__lib_8c_source.html#l00250">radio_get_last_packet()</a>, <a class="el" href="radio__lib_8c_source.html#l00266">radio_get_state()</a>, <a class="el" href="radio__lib_8c_source.html#l00100">radio_init()</a>, <a class="el" href="radio__lib_8c_source.html#l00017">radio_normalize_backend()</a>, <a class="el" href="radio__lib_8c_source.html#l00346">radio_on_exti()</a>, <a class="el" href="radio__lib_8c_source.html#l00215">radio_process()</a>, <a class="el" href="radio__lib_8c_source.html#l00314">radio_raw_read_burst()</a>, <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>, <a class="el" href="radio__lib_8c_source.html#l00330">radio_raw_write_burst()</a>, <a class="el" href="radio__lib_8c_source.html#l00298">radio_raw_write_reg()</a>, <a class="el" href="radio__lib_8c_source.html#l00167">radio_send_async()</a>, <a class="el" href="radio__lib_8c_source.html#l00199">radio_sleep()</a>, <a class="el" href="radio__lib_8c_source.html#l00183">radio_standby()</a>, <a class="el" href="radio__lib_8c_source.html#l00135">radio_start_rx_continuous()</a>, <a class="el" href="radio__lib_8c_source.html#l00151">radio_start_rx_single()</a> i <a class="el" href="radio__lib_8c_source.html#l00234">radio_take_events()</a>.</p>
+
+</div>
+</div>
+<a id="a7bc9a0e610bda2ee7e172437c3d7805b" name="a7bc9a0e610bda2ee7e172437c3d7805b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7bc9a0e610bda2ee7e172437c3d7805b">&#9670;&#160;</a></span>RADIO_LIB_OWNS_HAL_EXTI_CALLBACK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_OWNS_HAL_EXTI_CALLBACK&#160;&#160;&#160;1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Własność callbacku EXTI. </p>
+<p>Gdy ustawione na <span class="tt">1</span>, biblioteka dostarcza <span class="tt">HAL_GPIO_EXTI_Callback</span>. Gdy ustawione na <span class="tt">0</span>, użytkownik musi sam przekazać pin do <span class="tt"><a class="el" href="radio__lib_8c.html#a63916cd84e3fdac9ef1580a469798fe6" title="Przekazuje numer pinu EXTI do backendu radiowego.">radio_on_exti</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00037">37</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+</div>
+</div>
+<a id="a9cd07b89bb78518454369f72c9acd313" name="a9cd07b89bb78518454369f72c9acd313"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9cd07b89bb78518454369f72c9acd313">&#9670;&#160;</a></span>RADIO_LIB_SPI_TIMEOUT_MS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define RADIO_LIB_SPI_TIMEOUT_MS&#160;&#160;&#160;100U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout blokujących transferów SPI (ms). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib__config_8h_source.html#l00044">44</a> pliku <a class="el" href="radio__lib__config_8h_source.html">radio_lib_config.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_a2e8606bee7d2eaf4a9e334d73381ef3.html">radio_lib</a></li><li class="navelem"><a href="radio__lib__config_8h.html">radio_lib_config.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

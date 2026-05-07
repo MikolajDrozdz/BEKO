@@ -1,0 +1,42 @@
+\doxysection{Dokumentacja katalogu Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib}
+\hypertarget{dir_b491a55cf3c9ae3ce781f510095cd424}{}\label{dir_b491a55cf3c9ae3ce781f510095cd424}\index{Dokumentacja katalogu Core/App/i2c\_mem\_store\_lib@{Dokumentacja katalogu Core/App/i2c\_mem\_store\_lib}}
+\doxysubsubsection*{Pliki}
+\begin{DoxyCompactItemize}
+\item 
+plik \mbox{\hyperlink{i2c__mem__store_8c}{i2c\+\_\+mem\+\_\+store.\+c}}
+\begin{DoxyCompactList}\small\item\em Implementation of external I2C memory storage helper. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{i2c__mem__store_8h}{i2c\+\_\+mem\+\_\+store.\+h}}
+\begin{DoxyCompactList}\small\item\em I2C NVM storage library for received messages and encrypted service codes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+\hypertarget{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md44}{}\doxysubsection{\texorpdfstring{i2c\+\_\+mem\+\_\+store\+\_\+lib}{i2c\+\_\+mem\+\_\+store\+\_\+lib}}\label{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md44}
+Biblioteka pamięci zewnętrznej na I2\+C1 do\+:
+
+
+\begin{DoxyItemize}
+\item trwałego logowania odebranych wiadomości,
+\item przechowywania zaszyfrowanych kodów/rekordów dla bezpieczeństwa.
+\end{DoxyItemize}\hypertarget{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md45}{}\doxysubsection{\texorpdfstring{Założenia sprzętowe}{Założenia sprzętowe}}\label{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md45}
+
+\begin{DoxyItemize}
+\item pamięć na {\ttfamily I2\+C1} ({\ttfamily hi2c1}),
+\item typ\+: EEPROM/\+FRAM z adresowaniem 16-\/bit ({\ttfamily I2\+C\+\_\+\+MEMADD\+\_\+\+SIZE\+\_\+16\+BIT} domyślnie),
+\item domyślny adres I2C\+: {\ttfamily 0x50} (7-\/bit).
+\end{DoxyItemize}\hypertarget{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md46}{}\doxysubsection{\texorpdfstring{Układ danych w pamięci}{Układ danych w pamięci}}\label{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md46}
+
+\begin{DoxyItemize}
+\item {\ttfamily 0x0000} metadata (primary + mirror),
+\item od {\ttfamily 0x0100} ring log wiadomości (sloty 128 B),
+\item końcowa część pamięci\+: partycja {\ttfamily secret} (domyślnie 4096 B, sloty 96 B).
+\end{DoxyItemize}\hypertarget{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md47}{}\doxysubsection{\texorpdfstring{Bezpieczeństwo}{Bezpieczeństwo}}\label{dir_b491a55cf3c9ae3ce781f510095cd424_autotoc_md47}
+W partycji {\ttfamily secret} dane są szyfrowane software\textquotesingle{}owo (XTEA-\/\+CTR, klucz 128-\/bit z konfiguracji).
+
+Dla produkcji\+:
+
+
+\begin{DoxyItemize}
+\item nie trzymaj klucza na stałe w firmware,
+\item klucz ładuj/derywuj z TPM (np. NV + policy, albo sealed material),
+\item rotuj klucze i wersjonuj format rekordu. 
+\end{DoxyItemize}

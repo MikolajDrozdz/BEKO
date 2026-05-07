@@ -1,0 +1,497 @@
+\doxysection{Dokumentacja pliku Core/\+App/led\+\_\+array\+\_\+lib/led\+\_\+array\+\_\+lib.h}
+\hypertarget{led__array__lib_8h}{}\label{led__array__lib_8h}\index{Core/App/led\_array\_lib/led\_array\_lib.h@{Core/App/led\_array\_lib/led\_array\_lib.h}}
+
+
+LED array driver for 5 LEDs (PC7, PA8, PB10, PB4, PB5).  
+
+
+{\ttfamily \#include "{}led\+\_\+array\+\_\+lib\+\_\+config.\+h"{}}\newline
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \{ {\bfseries LED\+\_\+\+ARRAY\+\_\+\+OK} = 0
+, {\bfseries LED\+\_\+\+ARRAY\+\_\+\+EINVAL} = -\/1
+, {\bfseries LED\+\_\+\+ARRAY\+\_\+\+ESTATE} = -\/2
+ \}
+\begin{DoxyCompactList}\small\item\em Driver status codes. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0}{led\+\_\+array\+\_\+led\+\_\+mask\+\_\+t}} \{ \newline
+\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+1}} = (1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 0)
+, \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+2}} = (1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 1)
+, \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+3}} = (1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 2)
+, \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+4}} = (1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 3)
+, \newline
+\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386}{LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+5}} = (1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 4)
+, {\bfseries LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+\+ALL} = 0x1\+FU
+ \}
+\begin{DoxyCompactList}\small\item\em LED mask bits. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\+\_\+array\+\_\+effect\+\_\+t}} \{ {\bfseries LED\+\_\+\+ARRAY\+\_\+\+EFFECT\+\_\+\+NONE} = 0
+, {\bfseries LED\+\_\+\+ARRAY\+\_\+\+EFFECT\+\_\+\+FADE\+\_\+\+OUT}
+, {\bfseries LED\+\_\+\+ARRAY\+\_\+\+EFFECT\+\_\+\+BREATH}
+, {\bfseries LED\+\_\+\+ARRAY\+\_\+\+EFFECT\+\_\+\+RAINBOW}
+ \}
+\begin{DoxyCompactList}\small\item\em Global effect mode. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a7aedf48c103534fea85abba0f17f9012}{led\+\_\+array\+\_\+init}} (void)
+\begin{DoxyCompactList}\small\item\em Initialize the LED array driver. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a08ff52c6cbf15a79c369af6de2d35592}{led\+\_\+array\+\_\+deinit}} (void)
+\begin{DoxyCompactList}\small\item\em Deinitialize the LED array driver and turn off all LEDs. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_aff750f64fbc1cad4ee19031286289115}{led\+\_\+array\+\_\+timer\+\_\+init}} (uint32\+\_\+t tick\+\_\+period\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Configure internal scheduler tick period. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a547426579c247ad4d9fc522c16361ef3}{led\+\_\+array\+\_\+timer\+\_\+deinit}} (void)
+\begin{DoxyCompactList}\small\item\em Disable the scheduler updates. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{led__array__lib_8h_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\+\_\+array\+\_\+timer\+\_\+tick}} (void)
+\begin{DoxyCompactList}\small\item\em Tick function for ISR-\/driven scheduling. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{led__array__lib_8h_ac0f4c93e8d59837943f0cefd9de4b3ed}{led\+\_\+array\+\_\+process}} (void)
+\begin{DoxyCompactList}\small\item\em Polling scheduler update (HAL\+\_\+\+Get\+Tick based). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a4711eae3b0ed715ca346726e9c718de1}{led\+\_\+array\+\_\+on}} (uint8\+\_\+t mask)
+\begin{DoxyCompactList}\small\item\em Turn LEDs on at 100\% brightness. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_aa09ac980785cb4b624aed6ba93a9cb83}{led\+\_\+array\+\_\+off}} (uint8\+\_\+t mask)
+\begin{DoxyCompactList}\small\item\em Turn LEDs off. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a24d4a7518fb38fd16c07b7476c0de974}{led\+\_\+array\+\_\+set\+\_\+brightness}} (uint8\+\_\+t mask, uint8\+\_\+t brightness\+\_\+pct)
+\begin{DoxyCompactList}\small\item\em Set LED brightness in range 0..100\%. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a42230d1ce3ff86a197a5340d8bc3cc4f}{led\+\_\+array\+\_\+fire\+\_\+fade\+\_\+out}} (uint8\+\_\+t mask, uint16\+\_\+t fade\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Trigger one-\/shot fade-\/out from 100\% to 0\%. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_a6462145271d8ae8d9bcd1f5ccdf37ded}{led\+\_\+array\+\_\+start\+\_\+breath}} (uint8\+\_\+t mask, uint16\+\_\+t period\+\_\+ms, uint8\+\_\+t min\+\_\+pct, uint8\+\_\+t max\+\_\+pct)
+\begin{DoxyCompactList}\small\item\em Start breathing effect on selected LEDs. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_ad01bd8a290236400e39c3957ea107ca0}{led\+\_\+array\+\_\+start\+\_\+rainbow}} (uint16\+\_\+t step\+\_\+ms, uint8\+\_\+t min\+\_\+pct, uint8\+\_\+t max\+\_\+pct)
+\begin{DoxyCompactList}\small\item\em Start circulating rainbow-\/like wave on all LEDs. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_ad1d5f7b658871d0bcdc2b05bb77ba081}{led\+\_\+array\+\_\+stop\+\_\+effect}} (void)
+\begin{DoxyCompactList}\small\item\em Stop the active effect and keep current manual brightness values. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\+\_\+array\+\_\+effect\+\_\+t}} \mbox{\hyperlink{led__array__lib_8h_af738fc4dc6d91ad22d52c140604a4b58}{led\+\_\+array\+\_\+get\+\_\+effect}} (void)
+\begin{DoxyCompactList}\small\item\em Read currently active global effect. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{led__array__lib_8h_a0b3815ace1260f16636ac64ecbfc5bd0}{led\+\_\+array\+\_\+is\+\_\+initialized}} (void)
+\begin{DoxyCompactList}\small\item\em Read initialization state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+LED array driver for 5 LEDs (PC7, PA8, PB10, PB4, PB5). 
+
+
+
+Definicja w pliku \mbox{\hyperlink{led__array__lib_8h_source}{led\+\_\+array\+\_\+lib.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{led__array__lib_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_effect\_t@{led\_array\_effect\_t}}
+\index{led\_array\_effect\_t@{led\_array\_effect\_t}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_effect\_t}{led\_array\_effect\_t}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060} 
+enum \mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\+\_\+array\+\_\+effect\+\_\+t}}}
+
+
+
+Global effect mode. 
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8h_source_l00039}{39}} pliku \mbox{\hyperlink{led__array__lib_8h_source}{led\+\_\+array\+\_\+lib.\+h}}.
+
+\Hypertarget{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_led\_mask\_t@{led\_array\_led\_mask\_t}}
+\index{led\_array\_led\_mask\_t@{led\_array\_led\_mask\_t}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_led\_mask\_t}{led\_array\_led\_mask\_t}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0} 
+enum \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0}{led\+\_\+array\+\_\+led\+\_\+mask\+\_\+t}}}
+
+
+
+LED mask bits. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LED\_ARRAY\_LED\_1@{LED\_ARRAY\_LED\_1}!led\_array\_lib.h@{led\_array\_lib.h}}\index{led\_array\_lib.h@{led\_array\_lib.h}!LED\_ARRAY\_LED\_1@{LED\_ARRAY\_LED\_1}}}\Hypertarget{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b}\label{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b} 
+LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+1&PC7. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LED\_ARRAY\_LED\_2@{LED\_ARRAY\_LED\_2}!led\_array\_lib.h@{led\_array\_lib.h}}\index{led\_array\_lib.h@{led\_array\_lib.h}!LED\_ARRAY\_LED\_2@{LED\_ARRAY\_LED\_2}}}\Hypertarget{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56}\label{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56} 
+LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+2&PA8. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LED\_ARRAY\_LED\_3@{LED\_ARRAY\_LED\_3}!led\_array\_lib.h@{led\_array\_lib.h}}\index{led\_array\_lib.h@{led\_array\_lib.h}!LED\_ARRAY\_LED\_3@{LED\_ARRAY\_LED\_3}}}\Hypertarget{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311}\label{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311} 
+LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+3&PB10. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LED\_ARRAY\_LED\_4@{LED\_ARRAY\_LED\_4}!led\_array\_lib.h@{led\_array\_lib.h}}\index{led\_array\_lib.h@{led\_array\_lib.h}!LED\_ARRAY\_LED\_4@{LED\_ARRAY\_LED\_4}}}\Hypertarget{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95}\label{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95} 
+LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+4&PB4. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LED\_ARRAY\_LED\_5@{LED\_ARRAY\_LED\_5}!led\_array\_lib.h@{led\_array\_lib.h}}\index{led\_array\_lib.h@{led\_array\_lib.h}!LED\_ARRAY\_LED\_5@{LED\_ARRAY\_LED\_5}}}\Hypertarget{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386}\label{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386} 
+LED\+\_\+\+ARRAY\+\_\+\+LED\+\_\+5&PB5. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8h_source_l00028}{28}} pliku \mbox{\hyperlink{led__array__lib_8h_source}{led\+\_\+array\+\_\+lib.\+h}}.
+
+\Hypertarget{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_status\_t@{led\_array\_status\_t}}
+\index{led\_array\_status\_t@{led\_array\_status\_t}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_status\_t}{led\_array\_status\_t}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330} 
+enum \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}}}
+
+
+
+Driver status codes. 
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8h_source_l00020}{20}} pliku \mbox{\hyperlink{led__array__lib_8h_source}{led\+\_\+array\+\_\+lib.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{led__array__lib_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{led__array__lib_8h_a08ff52c6cbf15a79c369af6de2d35592}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_deinit@{led\_array\_deinit}}
+\index{led\_array\_deinit@{led\_array\_deinit}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_deinit()}{led\_array\_deinit()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a08ff52c6cbf15a79c369af6de2d35592} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+deinit (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Deinitialize the LED array driver and turn off all LEDs. 
+
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00471}{471}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00258}{led\+\_\+array\+\_\+write\+\_\+pin()}}.
+
+\Hypertarget{led__array__lib_8h_a42230d1ce3ff86a197a5340d8bc3cc4f}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_fire\_fade\_out@{led\_array\_fire\_fade\_out}}
+\index{led\_array\_fire\_fade\_out@{led\_array\_fire\_fade\_out}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_fire\_fade\_out()}{led\_array\_fire\_fade\_out()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a42230d1ce3ff86a197a5340d8bc3cc4f} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+fire\+\_\+fade\+\_\+out (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{mask}{, }\item[{uint16\+\_\+t}]{fade\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Trigger one-\/shot fade-\/out from 100\% to 0\%. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mask} & LED mask. \\
+\hline
+{\em fade\+\_\+ms} & Fade duration in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00617}{617}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00242}{led\+\_\+array\+\_\+mask\+\_\+valid()}}.
+
+\Hypertarget{led__array__lib_8h_af738fc4dc6d91ad22d52c140604a4b58}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_get\_effect@{led\_array\_get\_effect}}
+\index{led\_array\_get\_effect@{led\_array\_get\_effect}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_get\_effect()}{led\_array\_get\_effect()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_af738fc4dc6d91ad22d52c140604a4b58} 
+\mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\+\_\+array\+\_\+effect\+\_\+t}} led\+\_\+array\+\_\+get\+\_\+effect (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Read currently active global effect. 
+
+\begin{DoxyReturn}{Zwraca}
+Active effect. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00716}{716}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{led__array__lib_8h_a7aedf48c103534fea85abba0f17f9012}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_init@{led\_array\_init}}
+\index{led\_array\_init@{led\_array\_init}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_init()}{led\_array\_init()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a7aedf48c103534fea85abba0f17f9012} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Initialize the LED array driver. 
+
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00457}{457}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00167}{led\+\_\+array\+\_\+hw\+\_\+init()}}, \mbox{\hyperlink{led__array__lib__config_8h_source_l00015}{LED\+\_\+\+ARRAY\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+TICK\+\_\+\+MS}} i \mbox{\hyperlink{led__array__lib_8c_source_l00054}{led\+\_\+array\+\_\+now\+\_\+ms()}}.
+
+\Hypertarget{led__array__lib_8h_a0b3815ace1260f16636ac64ecbfc5bd0}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_is\_initialized@{led\_array\_is\_initialized}}
+\index{led\_array\_is\_initialized@{led\_array\_is\_initialized}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_is\_initialized()}{led\_array\_is\_initialized()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a0b3815ace1260f16636ac64ecbfc5bd0} 
+bool led\+\_\+array\+\_\+is\+\_\+initialized (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Read initialization state. 
+
+\begin{DoxyReturn}{Zwraca}
+true if initialized. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00725}{725}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{led__array__lib_8h_aa09ac980785cb4b624aed6ba93a9cb83}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_off@{led\_array\_off}}
+\index{led\_array\_off@{led\_array\_off}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_off()}{led\_array\_off()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_aa09ac980785cb4b624aed6ba93a9cb83} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+off (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{mask}{}\end{DoxyParamCaption})}
+
+
+
+Turn LEDs off. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mask} & LED mask. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00568}{568}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00242}{led\+\_\+array\+\_\+mask\+\_\+valid()}}.
+
+\Hypertarget{led__array__lib_8h_a4711eae3b0ed715ca346726e9c718de1}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_on@{led\_array\_on}}
+\index{led\_array\_on@{led\_array\_on}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_on()}{led\_array\_on()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a4711eae3b0ed715ca346726e9c718de1} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+on (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{mask}{}\end{DoxyParamCaption})}
+
+
+
+Turn LEDs on at 100\% brightness. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mask} & LED mask. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00544}{544}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00242}{led\+\_\+array\+\_\+mask\+\_\+valid()}}.
+
+\Hypertarget{led__array__lib_8h_ac0f4c93e8d59837943f0cefd9de4b3ed}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_process@{led\_array\_process}}
+\index{led\_array\_process@{led\_array\_process}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_process()}{led\_array\_process()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_ac0f4c93e8d59837943f0cefd9de4b3ed} 
+void led\+\_\+array\+\_\+process (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Polling scheduler update (HAL\+\_\+\+Get\+Tick based). 
+
+Call this from the main loop when not using ISR-\/driven ticks. 
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00527}{527}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00054}{led\+\_\+array\+\_\+now\+\_\+ms()}} i \mbox{\hyperlink{led__array__lib_8c_source_l00435}{led\+\_\+array\+\_\+tick\+\_\+core()}}.
+
+\Hypertarget{led__array__lib_8h_a24d4a7518fb38fd16c07b7476c0de974}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_set\_brightness@{led\_array\_set\_brightness}}
+\index{led\_array\_set\_brightness@{led\_array\_set\_brightness}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_set\_brightness()}{led\_array\_set\_brightness()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a24d4a7518fb38fd16c07b7476c0de974} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+set\+\_\+brightness (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{mask}{, }\item[{uint8\+\_\+t}]{brightness\+\_\+pct}{}\end{DoxyParamCaption})}
+
+
+
+Set LED brightness in range 0..100\%. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mask} & LED mask. \\
+\hline
+{\em brightness\+\_\+pct} & Brightness in percent. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00592}{592}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00252}{led\+\_\+array\+\_\+clamp\+\_\+pct()}} i \mbox{\hyperlink{led__array__lib_8c_source_l00242}{led\+\_\+array\+\_\+mask\+\_\+valid()}}.
+
+\Hypertarget{led__array__lib_8h_a6462145271d8ae8d9bcd1f5ccdf37ded}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_start\_breath@{led\_array\_start\_breath}}
+\index{led\_array\_start\_breath@{led\_array\_start\_breath}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_start\_breath()}{led\_array\_start\_breath()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a6462145271d8ae8d9bcd1f5ccdf37ded} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+start\+\_\+breath (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{mask}{, }\item[{uint16\+\_\+t}]{period\+\_\+ms}{, }\item[{uint8\+\_\+t}]{min\+\_\+pct}{, }\item[{uint8\+\_\+t}]{max\+\_\+pct}{}\end{DoxyParamCaption})}
+
+
+
+Start breathing effect on selected LEDs. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mask} & LED mask. \\
+\hline
+{\em period\+\_\+ms} & Full breath period (up + down) in milliseconds. \\
+\hline
+{\em min\+\_\+pct} & Minimum brightness (0..100). \\
+\hline
+{\em max\+\_\+pct} & Maximum brightness (0..100, must be \texorpdfstring{$>$}{>}= min\+\_\+pct). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00646}{646}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00252}{led\+\_\+array\+\_\+clamp\+\_\+pct()}} i \mbox{\hyperlink{led__array__lib_8c_source_l00242}{led\+\_\+array\+\_\+mask\+\_\+valid()}}.
+
+\Hypertarget{led__array__lib_8h_ad01bd8a290236400e39c3957ea107ca0}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_start\_rainbow@{led\_array\_start\_rainbow}}
+\index{led\_array\_start\_rainbow@{led\_array\_start\_rainbow}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_start\_rainbow()}{led\_array\_start\_rainbow()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_ad01bd8a290236400e39c3957ea107ca0} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+start\+\_\+rainbow (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{step\+\_\+ms}{, }\item[{uint8\+\_\+t}]{min\+\_\+pct}{, }\item[{uint8\+\_\+t}]{max\+\_\+pct}{}\end{DoxyParamCaption})}
+
+
+
+Start circulating rainbow-\/like wave on all LEDs. 
+
+For a monochrome LED strip this effect is implemented as a moving brightness wave across LED1..LED5.
+
+
+\begin{DoxyParams}{Parametry}
+{\em step\+\_\+ms} & Phase step period in milliseconds. \\
+\hline
+{\em min\+\_\+pct} & Minimum brightness (0..100). \\
+\hline
+{\em max\+\_\+pct} & Maximum brightness (0..100, must be \texorpdfstring{$>$}{>}= min\+\_\+pct). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00676}{676}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00252}{led\+\_\+array\+\_\+clamp\+\_\+pct()}}.
+
+\Hypertarget{led__array__lib_8h_ad1d5f7b658871d0bcdc2b05bb77ba081}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_stop\_effect@{led\_array\_stop\_effect}}
+\index{led\_array\_stop\_effect@{led\_array\_stop\_effect}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_stop\_effect()}{led\_array\_stop\_effect()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_ad1d5f7b658871d0bcdc2b05bb77ba081} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+stop\+\_\+effect (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Stop the active effect and keep current manual brightness values. 
+
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00705}{705}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{led__array__lib_8h_a547426579c247ad4d9fc522c16361ef3}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_timer\_deinit@{led\_array\_timer\_deinit}}
+\index{led\_array\_timer\_deinit@{led\_array\_timer\_deinit}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_timer\_deinit()}{led\_array\_timer\_deinit()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a547426579c247ad4d9fc522c16361ef3} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+timer\+\_\+deinit (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Disable the scheduler updates. 
+
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00506}{506}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{led__array__lib_8h_aff750f64fbc1cad4ee19031286289115}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_timer\_init@{led\_array\_timer\_init}}
+\index{led\_array\_timer\_init@{led\_array\_timer\_init}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_timer\_init()}{led\_array\_timer\_init()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_aff750f64fbc1cad4ee19031286289115} 
+\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\+\_\+array\+\_\+status\+\_\+t}} led\+\_\+array\+\_\+timer\+\_\+init (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{tick\+\_\+period\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Configure internal scheduler tick period. 
+
+This controls effect update and brightness modulation step.
+
+
+\begin{DoxyParams}{Parametry}
+{\em tick\+\_\+period\+\_\+ms} & Tick period in milliseconds (\texorpdfstring{$>$}{>}= 1). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Driver status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00489}{489}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00054}{led\+\_\+array\+\_\+now\+\_\+ms()}}.
+
+\Hypertarget{led__array__lib_8h_a4b6d7b6d2e6d8411ff06855ba14403f7}\index{led\_array\_lib.h@{led\_array\_lib.h}!led\_array\_timer\_tick@{led\_array\_timer\_tick}}
+\index{led\_array\_timer\_tick@{led\_array\_timer\_tick}!led\_array\_lib.h@{led\_array\_lib.h}}
+\doxysubsubsection{\texorpdfstring{led\_array\_timer\_tick()}{led\_array\_timer\_tick()}}
+{\footnotesize\ttfamily \label{led__array__lib_8h_a4b6d7b6d2e6d8411ff06855ba14403f7} 
+void led\+\_\+array\+\_\+timer\+\_\+tick (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Tick function for ISR-\/driven scheduling. 
+
+Call this from Sys\+Tick or a hardware timer ISR if you want deterministic timing independent of the main loop. 
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00517}{517}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{led__array__lib_8c_source_l00435}{led\+\_\+array\+\_\+tick\+\_\+core()}}.
+

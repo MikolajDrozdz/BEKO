@@ -1,0 +1,362 @@
+\doxysection{radio\+\_\+sx1276.\+c}
+\hypertarget{radio__sx1276_8c_source}{}\label{radio__sx1276_8c_source}\index{Core/App/radio\_lib/common/sx1276/radio\_sx1276.c@{Core/App/radio\_lib/common/sx1276/radio\_sx1276.c}}
+\mbox{\hyperlink{radio__sx1276_8c}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__sx1276_8h}{radio\_sx1276.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__sx1276__regs_8h}{radio\_sx1276\_regs.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00010}\mbox{\hyperlink{radio__sx1276_8c_a4ccf5a83fddc14fce931ac8b4a2ac49e}{00010}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a4ccf5a83fddc14fce931ac8b4a2ac49e}{sx1276\_select}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00011}00011\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00012}00012\ \ \ \ \ \textcolor{keywordflow}{if}\ ((bus\ ==\ NULL)\ ||\ (bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}}\ ==\ NULL)\ ||\ (bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a3f789cfb46120b989f9f04898002a031}{nss\_port}}\ ==\ NULL))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00013}00013\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00014}00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00015}00015\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00017}00017\ \ \ \ \ HAL\_GPIO\_WritePin(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a3f789cfb46120b989f9f04898002a031}{nss\_port}},\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_abbe8af22e6d3af0dc3c40ea428bdd987}{nss\_pin}},\ GPIO\_PIN\_RESET);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00018}00018\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00019}00019\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00022}\mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{00022}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00023}00023\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00024}00024\ \ \ \ \ HAL\_GPIO\_WritePin(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a3f789cfb46120b989f9f04898002a031}{nss\_port}},\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_abbe8af22e6d3af0dc3c40ea428bdd987}{nss\_pin}},\ GPIO\_PIN\_SET);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00025}00025\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00027}\mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{00027}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ reg,\ uint8\_t\ *value)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00028}00028\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00029}00029\ \ \ \ \ uint8\_t\ tx\_buf[2];}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00030}00030\ \ \ \ \ uint8\_t\ rx\_buf[2];}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00032}00032\ \ \ \ \ \textcolor{keywordflow}{if}\ ((value\ ==\ NULL)\ ||\ !\mbox{\hyperlink{radio__sx1276_8c_a4ccf5a83fddc14fce931ac8b4a2ac49e}{sx1276\_select}}(bus))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00033}00033\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00034}00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00035}00035\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00037}00037\ \ \ \ \ tx\_buf[0]\ =\ (uint8\_t)(reg\ \&\ SX1276\_SPI\_READ\_MASK);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00038}00038\ \ \ \ \ tx\_buf[1]\ =\ 0x00U;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00040}00040\ \ \ \ \ \textcolor{keywordflow}{if}\ (HAL\_SPI\_TransmitReceive(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}},\ tx\_buf,\ rx\_buf,\ 2U,\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\_timeout\_ms}})\ !=\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00041}00041\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00042}00042\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00043}00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00044}00044\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00046}00046\ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00047}00047\ \ \ \ \ *value\ =\ rx\_buf[1];}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00048}00048\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00049}00049\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00051}\mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{00051}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ reg,\ uint8\_t\ value)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00052}00052\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00053}00053\ \ \ \ \ uint8\_t\ tx\_buf[2];}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00055}00055\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{radio__sx1276_8c_a4ccf5a83fddc14fce931ac8b4a2ac49e}{sx1276\_select}}(bus))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00056}00056\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00057}00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00058}00058\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00060}00060\ \ \ \ \ tx\_buf[0]\ =\ (uint8\_t)(reg\ |\ SX1276\_SPI\_WRITE\_MASK);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00061}00061\ \ \ \ \ tx\_buf[1]\ =\ value;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00062}00062\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00063}00063\ \ \ \ \ \textcolor{keywordflow}{if}\ (HAL\_SPI\_Transmit(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}},\ tx\_buf,\ 2U,\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\_timeout\_ms}})\ !=\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00064}00064\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00065}00065\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00066}00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00067}00067\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00069}00069\ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00070}00070\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00071}00071\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00073}\mbox{\hyperlink{radio__sx1276_8c_adc74dc514898113c4e43bc5fbc8b280b}{00073}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_adc74dc514898113c4e43bc5fbc8b280b}{sx1276\_read\_burst}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ reg,\ uint8\_t\ *data,\ uint8\_t\ len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00074}00074\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00075}00075\ \ \ \ \ uint8\_t\ addr;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00077}00077\ \ \ \ \ \textcolor{keywordflow}{if}\ ((data\ ==\ NULL)\ ||\ (len\ ==\ 0U)\ ||\ !\mbox{\hyperlink{radio__sx1276_8c_a4ccf5a83fddc14fce931ac8b4a2ac49e}{sx1276\_select}}(bus))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00078}00078\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00079}00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00080}00080\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00082}00082\ \ \ \ \ addr\ =\ (uint8\_t)(reg\ \&\ SX1276\_SPI\_READ\_MASK);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00083}00083\ \ \ \ \ \textcolor{keywordflow}{if}\ (HAL\_SPI\_Transmit(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}},\ \&addr,\ 1U,\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\_timeout\_ms}})\ !=\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00084}00084\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00085}00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00087}00087\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00088}00088\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00089}00089\ \ \ \ \ \textcolor{keywordflow}{if}\ (HAL\_SPI\_Receive(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}},\ data,\ len,\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\_timeout\_ms}})\ !=\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00090}00090\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00091}00091\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00093}00093\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00094}00094\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00095}00095\ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00096}00096\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00097}00097\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00099}\mbox{\hyperlink{radio__sx1276_8c_a3a3c532ff762f574aac721fe906acd85}{00099}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a3a3c532ff762f574aac721fe906acd85}{sx1276\_write\_burst}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ reg,\ \textcolor{keyword}{const}\ uint8\_t\ *data,\ uint8\_t\ len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00100}00100\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00101}00101\ \ \ \ \ uint8\_t\ addr;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00102}00102\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00103}00103\ \ \ \ \ \textcolor{keywordflow}{if}\ ((data\ ==\ NULL)\ ||\ (len\ ==\ 0U)\ ||\ !\mbox{\hyperlink{radio__sx1276_8c_a4ccf5a83fddc14fce931ac8b4a2ac49e}{sx1276\_select}}(bus))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00104}00104\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00105}00105\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00106}00106\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00107}00107\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00108}00108\ \ \ \ \ addr\ =\ (uint8\_t)(reg\ |\ SX1276\_SPI\_WRITE\_MASK);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00109}00109\ \ \ \ \ \textcolor{keywordflow}{if}\ (HAL\_SPI\_Transmit(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}},\ \&addr,\ 1U,\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\_timeout\_ms}})\ !=\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00110}00110\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00111}00111\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00112}00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00113}00113\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00115}00115\ \ \ \ \ \textcolor{keywordflow}{if}\ (HAL\_SPI\_Transmit(bus-\/>\mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}},\ (uint8\_t\ *)data,\ len,\ bus-\/>\mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\_timeout\_ms}})\ !=\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00116}00116\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00117}00117\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00118}00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00119}00119\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00120}00120\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00121}00121\ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_aed1991f0585fe20a964b799ebc3c811a}{sx1276\_deselect}}(bus);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00122}00122\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00123}00123\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00125}\mbox{\hyperlink{radio__sx1276_8c_ae308f754e1ef59472e61b1cba0b26d6d}{00125}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_ae308f754e1ef59472e61b1cba0b26d6d}{sx1276\_get\_version}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ *version)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00126}00126\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00127}00127\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_VERSION,\ version);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00128}00128\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00129}00129\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00130}\mbox{\hyperlink{radio__sx1276_8c_a2d735690e49eb3453479d5c70f9cdd20}{00130}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a2d735690e49eb3453479d5c70f9cdd20}{sx1276\_set\_op\_mode}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ op\_mode)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00131}00131\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00132}00132\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_OP\_MODE,\ op\_mode);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00133}00133\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00134}00134\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00135}\mbox{\hyperlink{radio__sx1276_8c_a7726c49e402b455d667895cc37ac8ec8}{00135}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a7726c49e402b455d667895cc37ac8ec8}{sx1276\_set\_frequency}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint32\_t\ frequency\_hz)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00136}00136\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00137}00137\ \ \ \ \ uint64\_t\ frf;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00138}00138\ \ \ \ \ uint8\_t\ frf\_msb;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00139}00139\ \ \ \ \ uint8\_t\ frf\_mid;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00140}00140\ \ \ \ \ uint8\_t\ frf\_lsb;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00141}00141\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00142}00142\ \ \ \ \ frf\ =\ (((uint64\_t)frequency\_hz)\ <<\ 19)\ /\ 32000000ULL;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00143}00143\ \ \ \ \ frf\_msb\ =\ (uint8\_t)((frf\ >>\ 16)\ \&\ 0xFFU);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00144}00144\ \ \ \ \ frf\_mid\ =\ (uint8\_t)((frf\ >>\ 8)\ \&\ 0xFFU);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00145}00145\ \ \ \ \ frf\_lsb\ =\ (uint8\_t)(frf\ \&\ 0xFFU);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00146}00146\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00147}00147\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_FRF\_MSB,\ frf\_msb)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_FRF\_MID,\ frf\_mid)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_FRF\_LSB,\ frf\_lsb);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00150}00150\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00151}00151\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00152}\mbox{\hyperlink{radio__sx1276_8c_a7f6da27f88d9e1ee14012e7fc01a06c5}{00152}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a7f6da27f88d9e1ee14012e7fc01a06c5}{sx1276\_set\_pa\_output\_power}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ int8\_t\ tx\_power\_dbm)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00153}00153\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00154}00154\ \ \ \ \ uint8\_t\ pa\_config;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00155}00155\ \ \ \ \ uint8\_t\ pa\_dac;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00156}00156\ \ \ \ \ int8\_t\ out\_power;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00157}00157\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00158}00158\ \ \ \ \ \textcolor{keywordflow}{if}\ (tx\_power\_dbm\ <\ 2)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00159}00159\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00160}00160\ \ \ \ \ \ \ \ \ tx\_power\_dbm\ =\ 2;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00161}00161\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00162}00162\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (tx\_power\_dbm\ >\ 20)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00163}00163\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00164}00164\ \ \ \ \ \ \ \ \ tx\_power\_dbm\ =\ 20;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00165}00165\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00166}00166\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00167}00167\ \ \ \ \ \textcolor{keywordflow}{if}\ (tx\_power\_dbm\ >\ 17)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00168}00168\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00169}00169\ \ \ \ \ \ \ \ \ pa\_dac\ =\ SX1276\_PA\_DAC\_ENABLE\_20DBM;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00170}00170\ \ \ \ \ \ \ \ \ out\_power\ =\ (int8\_t)(tx\_power\_dbm\ -\/\ 5);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00171}00171\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00172}00172\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00173}00173\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00174}00174\ \ \ \ \ \ \ \ \ pa\_dac\ =\ SX1276\_PA\_DAC\_DISABLE\_17DBM;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00175}00175\ \ \ \ \ \ \ \ \ out\_power\ =\ (int8\_t)(tx\_power\_dbm\ -\/\ 2);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00176}00176\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00177}00177\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00178}00178\ \ \ \ \ pa\_config\ =\ (uint8\_t)(0x80U\ |\ ((uint8\_t)out\_power\ \&\ 0x0FU));}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00179}00179\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00180}00180\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_PA\_DAC,\ pa\_dac)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00181}00181\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_PA\_CONFIG,\ pa\_config);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00182}00182\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00183}00183\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00184}\mbox{\hyperlink{radio__sx1276_8c_a114bd1113c90a7d2f7875d1776f2ec8e}{00184}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a114bd1113c90a7d2f7875d1776f2ec8e}{sx1276\_set\_lora\_modem}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ bandwidth\_code,}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00186}00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ spreading\_factor,}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ coding\_rate\_denominator,}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00188}00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ implicit\_header,}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00189}00189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ crc\_on,}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00190}00190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ low\_datarate\_optimize)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00191}00191\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00192}00192\ \ \ \ \ uint8\_t\ modem\_config\_1;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00193}00193\ \ \ \ \ uint8\_t\ modem\_config\_2;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00194}00194\ \ \ \ \ uint8\_t\ modem\_config\_3;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00195}00195\ \ \ \ \ uint8\_t\ coding\_rate\_field;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00196}00196\ \ \ \ \ uint8\_t\ detect\_optimize;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00197}00197\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00198}00198\ \ \ \ \ \textcolor{keywordflow}{if}\ ((bandwidth\_code\ >\ 9U)\ ||}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00199}00199\ \ \ \ \ \ \ \ \ (spreading\_factor\ <\ 6U)\ ||\ (spreading\_factor\ >\ 12U)\ ||}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00200}00200\ \ \ \ \ \ \ \ \ (coding\_rate\_denominator\ <\ 5U)\ ||\ (coding\_rate\_denominator\ >\ 8U))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00201}00201\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00202}00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00203}00203\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00204}00204\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00205}00205\ \ \ \ \ coding\_rate\_field\ =\ (uint8\_t)(coding\_rate\_denominator\ -\/\ 4U);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00206}00206\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00207}00207\ \ \ \ \ modem\_config\_1\ =\ (uint8\_t)((bandwidth\_code\ <<\ 4)\ |}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00208}00208\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (coding\_rate\_field\ <<\ 1)\ |}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00209}00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (implicit\_header\ ?\ 1U\ :\ 0U));}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00210}00210\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00211}00211\ \ \ \ \ modem\_config\_2\ =\ (uint8\_t)((spreading\_factor\ <<\ 4)\ |}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00212}00212\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (crc\_on\ ?\ 0x04U\ :\ 0x00U));}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00213}00213\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00214}00214\ \ \ \ \ modem\_config\_3\ =\ (uint8\_t)((low\_datarate\_optimize\ ?\ 0x08U\ :\ 0x00U)\ |\ 0x04U);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00215}00215\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00216}00216\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_MODEM\_CONFIG\_1,\ modem\_config\_1)\ ||}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00217}00217\ \ \ \ \ \ \ \ \ !\mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_MODEM\_CONFIG\_2,\ modem\_config\_2)\ ||}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00218}00218\ \ \ \ \ \ \ \ \ !\mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_MODEM\_CONFIG\_3,\ modem\_config\_3))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00219}00219\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00220}00220\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00221}00221\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00222}00222\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00223}00223\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_DETECTION\_OPTIMIZE,\ \&detect\_optimize))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00224}00224\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00225}00225\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00226}00226\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00227}00227\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00228}00228\ \ \ \ \ detect\_optimize\ =\ (uint8\_t)(detect\_optimize\ \&\ 0xF8U);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00229}00229\ \ \ \ \ \textcolor{keywordflow}{if}\ (spreading\_factor\ ==\ 6U)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00230}00230\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00231}00231\ \ \ \ \ \ \ \ \ detect\_optimize\ |=\ 0x05U;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00232}00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_DETECTION\_OPTIMIZE,\ detect\_optimize)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00233}00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_DETECTION\_THRESHOLD,\ 0x0CU);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00234}00234\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00235}00235\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00236}00236\ \ \ \ \ detect\_optimize\ |=\ 0x03U;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00237}00237\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_DETECTION\_OPTIMIZE,\ detect\_optimize)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00238}00238\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_DETECTION\_THRESHOLD,\ 0x0AU);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00239}00239\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00240}00240\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00241}\mbox{\hyperlink{radio__sx1276_8c_a6487ef0d55e681a5e50e3d7354886753}{00241}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a6487ef0d55e681a5e50e3d7354886753}{sx1276\_set\_symbol\_timeout}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint16\_t\ symbol\_timeout)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00242}00242\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00243}00243\ \ \ \ \ uint8\_t\ modem\_config\_2;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00244}00244\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00245}00245\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_MODEM\_CONFIG\_2,\ \&modem\_config\_2))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00246}00246\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00247}00247\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00248}00248\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00249}00249\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00250}00250\ \ \ \ \ modem\_config\_2\ \&=\ (uint8\_t)\string~0x03U;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00251}00251\ \ \ \ \ modem\_config\_2\ |=\ (uint8\_t)((symbol\_timeout\ >>\ 8)\ \&\ 0x03U);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00252}00252\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00253}00253\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_MODEM\_CONFIG\_2,\ modem\_config\_2)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00254}00254\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_SYMB\_TIMEOUT\_LSB,\ (uint8\_t)(symbol\_timeout\ \&\ 0xFFU));}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00255}00255\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00256}00256\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00257}\mbox{\hyperlink{radio__sx1276_8c_a2bb5199c2391aa24e194d8a4d4ac2157}{00257}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a2bb5199c2391aa24e194d8a4d4ac2157}{sx1276\_set\_preamble}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint16\_t\ preamble\_len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00258}00258\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00259}00259\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_PREAMBLE\_MSB,\ (uint8\_t)((preamble\_len\ >>\ 8)\ \&\ 0xFFU))\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00260}00260\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_PREAMBLE\_LSB,\ (uint8\_t)(preamble\_len\ \&\ 0xFFU));}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00261}00261\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00262}00262\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00263}\mbox{\hyperlink{radio__sx1276_8c_a74e72da97dcdd90a7e071af8504a4f04}{00263}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a74e72da97dcdd90a7e071af8504a4f04}{sx1276\_set\_sync\_word}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ sync\_word)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00264}00264\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00265}00265\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_SYNC\_WORD,\ sync\_word);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00266}00266\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00267}00267\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00268}\mbox{\hyperlink{radio__sx1276_8c_af8c0cb076e901b4aa2d4ff6959dc71a3}{00268}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_af8c0cb076e901b4aa2d4ff6959dc71a3}{sx1276\_set\_invert\_iq}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ \textcolor{keywordtype}{bool}\ invert\_iq)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00269}00269\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00270}00270\ \ \ \ \ uint8\_t\ invert\_iq\_reg;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00271}00271\ \ \ \ \ uint8\_t\ invert\_iq2\_reg;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00272}00272\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00273}00273\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_INVERT\_IQ,\ \&invert\_iq\_reg))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00274}00274\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00275}00275\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00276}00276\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00277}00277\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00278}00278\ \ \ \ \ invert\_iq\_reg\ \&=\ (uint8\_t)\string~0x40U;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00279}00279\ \ \ \ \ \textcolor{keywordflow}{if}\ (invert\_iq)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00280}00280\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00281}00281\ \ \ \ \ \ \ \ \ invert\_iq\_reg\ =\ (uint8\_t)(invert\_iq\_reg\ |\ 0x40U);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00282}00282\ \ \ \ \ \ \ \ \ invert\_iq2\_reg\ =\ 0x19U;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00283}00283\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00284}00284\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00285}00285\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00286}00286\ \ \ \ \ \ \ \ \ invert\_iq2\_reg\ =\ 0x1DU;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00287}00287\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00288}00288\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00289}00289\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_INVERT\_IQ,\ invert\_iq\_reg)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00290}00290\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_INVERT\_IQ2,\ invert\_iq2\_reg);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00291}00291\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00292}00292\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00293}\mbox{\hyperlink{radio__sx1276_8c_a2c71c2e3d5c9a8404ccd9388fd3276d3}{00293}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a2c71c2e3d5c9a8404ccd9388fd3276d3}{sx1276\_set\_fifo\_base\_addrs}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ tx\_base,\ uint8\_t\ rx\_base)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00294}00294\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00295}00295\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_FIFO\_TX\_BASE\_ADDR,\ tx\_base)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00296}00296\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_FIFO\_RX\_BASE\_ADDR,\ rx\_base);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00297}00297\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00298}00298\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00299}\mbox{\hyperlink{radio__sx1276_8c_ac768a620c5104a7cc1e932e0fd41e5bb}{00299}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_ac768a620c5104a7cc1e932e0fd41e5bb}{sx1276\_set\_fifo\_addr\_ptr}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ addr)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00300}00300\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00301}00301\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_FIFO\_ADDR\_PTR,\ addr);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00302}00302\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00303}00303\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00304}\mbox{\hyperlink{radio__sx1276_8c_aeb0a3f646a276aed07c4e23dfabff75c}{00304}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_aeb0a3f646a276aed07c4e23dfabff75c}{sx1276\_write\_fifo}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ \textcolor{keyword}{const}\ uint8\_t\ *data,\ uint8\_t\ len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00305}00305\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00306}00306\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_a3a3c532ff762f574aac721fe906acd85}{sx1276\_write\_burst}}(bus,\ SX1276\_REG\_FIFO,\ data,\ len);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00307}00307\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00308}00308\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00309}\mbox{\hyperlink{radio__sx1276_8c_ab173599c491a7a6b761c9e4c685843af}{00309}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_ab173599c491a7a6b761c9e4c685843af}{sx1276\_read\_fifo}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ *data,\ uint8\_t\ len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00310}00310\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00311}00311\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_adc74dc514898113c4e43bc5fbc8b280b}{sx1276\_read\_burst}}(bus,\ SX1276\_REG\_FIFO,\ data,\ len);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00312}00312\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00313}00313\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00314}\mbox{\hyperlink{radio__sx1276_8c_a62348eb179378aacf27663c00ea490c1}{00314}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a62348eb179378aacf27663c00ea490c1}{sx1276\_set\_payload\_length}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00315}00315\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00316}00316\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_PAYLOAD\_LENGTH,\ len);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00317}00317\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00318}00318\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00319}\mbox{\hyperlink{radio__sx1276_8c_a3c52ec2e93ac86e40f504021db364208}{00319}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a3c52ec2e93ac86e40f504021db364208}{sx1276\_get\_rx\_current\_addr}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ *addr)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00320}00320\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00321}00321\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR,\ addr);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00322}00322\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00323}00323\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00324}\mbox{\hyperlink{radio__sx1276_8c_a3675f7d7f297d0c053ede0812830844e}{00324}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a3675f7d7f297d0c053ede0812830844e}{sx1276\_get\_rx\_nb\_bytes}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ *len)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00325}00325\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00326}00326\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_RX\_NB\_BYTES,\ len);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00327}00327\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00328}00328\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00329}\mbox{\hyperlink{radio__sx1276_8c_a5ef2d8fcef425e0f53703b2181b66930}{00329}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a5ef2d8fcef425e0f53703b2181b66930}{sx1276\_get\_packet\_snr\_raw}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ int8\_t\ *snr\_raw)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00330}00330\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00331}00331\ \ \ \ \ uint8\_t\ value;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00332}00332\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00333}00333\ \ \ \ \ \textcolor{keywordflow}{if}\ ((snr\_raw\ ==\ NULL)\ ||\ !\mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_PKT\_SNR\_VALUE,\ \&value))}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00334}00334\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00335}00335\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00336}00336\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00337}00337\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00338}00338\ \ \ \ \ *snr\_raw\ =\ (int8\_t)value;}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00339}00339\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00340}00340\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00341}00341\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00342}\mbox{\hyperlink{radio__sx1276_8c_a4623abcf4ecce80c86b787491dd35bd2}{00342}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a4623abcf4ecce80c86b787491dd35bd2}{sx1276\_get\_packet\_rssi\_raw}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ *rssi\_raw)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00343}00343\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00344}00344\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_PKT\_RSSI\_VALUE,\ rssi\_raw);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00345}00345\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00346}00346\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00347}\mbox{\hyperlink{radio__sx1276_8c_a038d9ebac1fb9c451ebb19d717d72959}{00347}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a038d9ebac1fb9c451ebb19d717d72959}{sx1276\_get\_irq\_flags}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ *flags)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00348}00348\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00349}00349\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_a0be3807ba48f424c293c3e6312e4b004}{sx1276\_read\_reg}}(bus,\ SX1276\_REG\_IRQ\_FLAGS,\ flags);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00350}00350\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00351}00351\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00352}\mbox{\hyperlink{radio__sx1276_8c_a8b3de4da7603cdd8c1de0b1519a0a96f}{00352}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a8b3de4da7603cdd8c1de0b1519a0a96f}{sx1276\_clear\_irq\_flags}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ flags\_to\_clear)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00353}00353\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00354}00354\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_IRQ\_FLAGS,\ flags\_to\_clear);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00355}00355\ \}}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00356}00356\ }
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00357}\mbox{\hyperlink{radio__sx1276_8c_a71f3f213995c99ce1cf7ef22ddefed79}{00357}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__sx1276_8c_a71f3f213995c99ce1cf7ef22ddefed79}{sx1276\_map\_dio}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structsx1276__bus__t}{sx1276\_bus\_t}}\ *bus,\ uint8\_t\ dio\_mapping1,\ uint8\_t\ dio\_mapping2)}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00358}00358\ \{}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00359}00359\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_DIO\_MAPPING\_1,\ dio\_mapping1)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00360}00360\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__sx1276_8c_af20d56d667bf340216eff31602a31c85}{sx1276\_write\_reg}}(bus,\ SX1276\_REG\_DIO\_MAPPING\_2,\ dio\_mapping2);}
+\DoxyCodeLine{\Hypertarget{radio__sx1276_8c_source_l00361}00361\ \}}
+
+\end{DoxyCode}

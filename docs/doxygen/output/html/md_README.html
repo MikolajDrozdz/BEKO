@@ -1,0 +1,471 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: BEKO Pager Network (&lt;tt&gt;pager-rtos&lt;/tt&gt;)</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('md_README.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">BEKO Pager Network (<span class="tt">pager-rtos</span>) </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="autotoc_md0"></a></p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md1"></a>
+1. Opis systemu</h1>
+<p>BEKO to bezprzewodowy system pagerowy pracujący w topologii <b>gwiazdy</b>. <br  />
+ W systemie występuje:</p>
+<ul>
+<li>jeden węzeł centralny: <b>Raspberry Pi Gateway</b>,</li>
+<li>adresy node’ów STM32 w zakresie <span class="tt">0x0002..0xFFFE</span>,</li>
+<li>komunikacja radiowa przez obecny backend <b>SX1276/RFM95</b>.</li>
+</ul>
+<p>Firmware noda przechowuje obecnie do <b>15 zaufanych urządzeń</b> w lokalnych slotach trusted storage. Nie jest to limit adresacji radiowej.</p>
+<p>Gateway wysyła wiadomości do wybranego node’a albo do całej sieci. <br  />
+ Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez node ramką <span class="tt">ACK</span>.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md3"></a>
+2. Adresacja</h1>
+<p>Adresacja w ramce <span class="tt">LAVIET_FRAME_V1</span> jest 16-bitowa:</p>
+<ul>
+<li><span class="tt">0x0000</span> – wartość nieważna,</li>
+<li><span class="tt">0x0001</span> – Raspberry Pi Gateway,</li>
+<li><span class="tt">0x0002..0xFFFE</span> – adresy node’ów,</li>
+<li><span class="tt">0xFFFF</span> – broadcast.</li>
+</ul>
+<p>W systemie może działać:</p>
+<ul>
+<li><b>1 gateway</b>,</li>
+<li>wiele urządzeń końcowych w zakresie adresów <span class="tt">0x0002..0xFFFE</span>,</li>
+<li>aktualnie do <b>15 sparowanych wpisów trusted</b> na jednym nodzie.</li>
+</ul>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+3. Role użytkowników</h1>
+<p>W systemie przewidziane są cztery role:</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+Administrator</h2>
+<p>Ma pełny dostęp do systemu. <br  />
+ Może zmieniać konfigurację gatewaya i node’ów, zarządzać parowaniem, licznikami bezpieczeństwa, kluczami i ustawieniami krytycznymi. <br  />
+ Dostęp wymaga podania odpowiedniego PIN-u administratora.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+Operator</h2>
+<p>Ma ograniczony dostęp administracyjny. <br  />
+ Może wykonywać działania, które nie naruszają integralności całego systemu, np. wysyłać wiadomości, zmieniać wybrane ustawienia użytkowe i obsługiwać system operacyjnie.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+Użytkownik</h2>
+<p>Ma dostęp tylko do podstawowych funkcji node’a. <br  />
+ Może odczytać wiadomość, wysłać odpowiedź przyciskami i korzystać z urządzenia w normalnym trybie pracy.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+Serwisant</h2>
+<p>Ma fizyczny dostęp do urządzenia. <br  />
+ Może podłączyć się do node’a lub gatewaya w celu diagnostyki, odczytu logów, testów i czynności serwisowych. <br  />
+ Dostęp serwisowy powinien być kontrolowany i logowany.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
+4. Ochrona ustawień lokalnych</h1>
+<p>Każdy node posiada lokalny tryb konfiguracji. <br  />
+ Dostęp do ustawień wymaga podania <b>4-cyfrowego PIN-u</b>.</p>
+<p>PIN:</p>
+<ul>
+<li>chroni lokalną konfigurację,</li>
+<li>może zostać zmieniony,</li>
+<li>nie może być przechowywany w postaci jawnej.</li>
+</ul>
+<p>Powinien być przechowywany w postaci zabezpieczonej, np. jako wartość chroniona z użyciem HMAC lub materiału powiązanego z TPM.</p>
+<p>PIN służy do kontroli dostępu, a nie jako główny sekret kryptograficzny systemu.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md13"></a>
+5. Ramka <span class="tt">LAVIET_FRAME_V1</span></h1>
+<p>System wykorzystuje zwartą ramkę aplikacyjną <span class="tt">LAVIET_FRAME_V1</span>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
+Struktura ramki</h2>
+<ul>
+<li><span class="tt">ver_type</span> – 1 B</li>
+<li><span class="tt">flags</span> – 1 B</li>
+<li><span class="tt">src_id</span> – 2 B</li>
+<li><span class="tt">dst_id</span> – 2 B</li>
+<li><span class="tt">msg_id</span> – 2 B</li>
+<li><span class="tt">counter</span> – 4 B</li>
+<li><span class="tt">payload_len</span> – 1 B</li>
+<li><span class="tt">payload</span> – 0–16 B</li>
+<li><span class="tt">mac_tag</span> – 32 B</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
+Rozmiar ramki</h2>
+<p>Część stała zajmuje:</p>
+<ul>
+<li>1 + 1 + 2 + 2 + 2 + 4 + 1 + 32 = <b>45 B</b></li>
+</ul>
+<p>Całkowity rozmiar ramki:</p>
+<ul>
+<li>minimum: <b>45 B</b></li>
+<li>maksimum: <b>61 B</b></li>
+</ul>
+<p>Ramka mieści się w limicie 64 B i zostawia <b>3 B rezerwy</b>.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
+6. Znaczenie pól <span class="tt">ver_type</span> i <span class="tt">flags</span></h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
+<span class="tt">ver_type</span></h2>
+<p>Pole 1-bajtowe:</p>
+<ul>
+<li>starsze 4 bity – wersja protokołu,</li>
+<li>młodsze 4 bity – typ wiadomości.</li>
+</ul>
+<p>Przykładowe typy:</p>
+<ul>
+<li><span class="tt">0x1</span> – <span class="tt">DATA</span></li>
+<li><span class="tt">0x2</span> – <span class="tt">ACK</span></li>
+<li><span class="tt">0x3</span> – <span class="tt">RESP</span></li>
+<li><span class="tt">0x4</span> – <span class="tt">PAIR_REQ</span></li>
+<li><span class="tt">0x5</span> – <span class="tt">PAIR_RESP</span></li>
+<li><span class="tt">0x6</span> – <span class="tt">CFG</span></li>
+<li><span class="tt">0x7</span> – <span class="tt">COUNTER_SYNC</span></li>
+<li><span class="tt">0x8</span> – <span class="tt">KEY_ROTATE</span></li>
+<li><span class="tt">0x9</span> – <span class="tt">ERROR</span></li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
+<span class="tt">flags</span></h2>
+<p>Pole 1-bajtowe:</p>
+<ul>
+<li>bit 0 – <span class="tt">ENCRYPTED</span></li>
+<li>bit 1 – <span class="tt">ACK_REQUIRED</span></li>
+<li>bit 2 – <span class="tt">IS_ACK</span></li>
+<li>bit 3 – <span class="tt">PAIRING</span></li>
+<li>bit 4 – <span class="tt">CONFIG_ACCESS</span></li>
+<li>bit 5 – <span class="tt">BROADCAST</span></li>
+<li>bit 6 – <span class="tt">COUNTER_OVERRIDE</span></li>
+<li>bit 7 – <span class="tt">KEY_UPDATE</span></li>
+</ul>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
+7. Zabezpieczenia</h1>
+<p>Szczegółowy opis mechanizmów kryptografii, TPM, EEPROM, pairingu, gatewaya i znanych ograniczeń jest w <span class="tt">gateway_docs/SECURITY_CRYPTO_OVERVIEW.md</span>.</p>
+<p>System chroni:</p>
+<ul>
+<li>poufność wiadomości,</li>
+<li>integralność ramek,</li>
+<li>autentyczność nadawcy,</li>
+<li>licznik anti-replay,</li>
+<li>konfigurację urządzenia,</li>
+<li>klucze kryptograficzne.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
+HMAC-SHA256</h2>
+<p>Każda ramka zawiera <span class="tt">mac_tag</span> o długości <b>32 B</b>. <br  />
+ Do uwierzytelniania i kontroli integralności używany jest <b>HMAC-SHA256</b>.</p>
+<p>HMAC liczony jest po:</p>
+<p><span class="tt">ver_type || flags || src_id || dst_id || msg_id || counter || payload_len || payload</span></p>
+<p>Firmware wykonuje self-test backendu <b>CRYP/HASH</b> STM32U545. Jeżeli test przejdzie, używany jest backend sprzętowy; jeżeli nie, <span class="tt">laviet_crypto</span> przechodzi na programowy fallback, zachowując ten sam kontrakt <span class="tt">LAVIET_FRAME_V1</span>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
+Szyfrowanie wiadomości</h2>
+<p>Payload wiadomości szyfrowany jest w trybie:</p><ul>
+<li><b>AES-CTR</b></li>
+</ul>
+<p>Zalety:</p>
+<ul>
+<li>brak paddingu,</li>
+<li>ciphertext ma taką samą długość jak plaintext,</li>
+<li>dobrze pasuje do krótkiego payloadu 0–16 B.</li>
+</ul>
+<p>Jeżeli flaga <span class="tt">ENCRYPTED</span> jest ustawiona, odbiornik musi:</p>
+<ol type="1">
+<li>zweryfikować HMAC,</li>
+<li>sprawdzić licznik <span class="tt">counter</span>,</li>
+<li>dopiero wtedy odszyfrować payload.</li>
+</ol>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+8. TPM i klucze</h1>
+<p>TPM jest głównym punktem zaufania w systemie.</p>
+<p>Wszystkie operacje bezpieczeństwa, które mogą być wykonane w TPM i które są wspierane w przyjętej architekturze, powinny być wykonywane właśnie tam.</p>
+<p>TPM jest używany do:</p>
+<ul>
+<li>przechowywania sekretu głównego urządzenia,</li>
+<li>ochrony kluczy,</li>
+<li>generowania danych losowych,</li>
+<li>ochrony sekretów EEPROM,</li>
+<li>wsparcia lokalnej rotacji root seeda.</li>
+</ul>
+<p>Aktualny lifecycle sekretu:</p>
+<ol type="1">
+<li>Przy starcie firmware inicjalizuje TPM przed storage.</li>
+<li>Root seed jest odczytywany z TPM NV.</li>
+<li>Główny, PP-protected index to <span class="tt">0x01C10101</span>.</li>
+<li>Starszy index <span class="tt">0x01C10100</span> jest odczytywany tylko jako ścieżka migracyjna.</li>
+<li>Jeśli seed musi zostać utworzony albo nadpisany, zapis do TPM NV wymaga aktywnego pinu <b>TPM PP</b>.</li>
+<li>Pin PP jest podłączony do samego TPM, pin <span class="tt">7</span>, aktywny stanem <span class="tt">VDD</span>; nie jest odczytywany jako GPIO STM32.</li>
+<li>Klucz szyfrowania sekretów EEPROM jest wyprowadzany z TPM-backed root seeda.</li>
+</ol>
+<p>Index <span class="tt">0x01C10101</span> jest definiowany z <span class="tt">PPWRITE</span>, <span class="tt">OWNERREAD</span> i <span class="tt">NO_DA</span>. W praktyce rotacja klucza z menu <span class="tt">Security -&gt; Keys</span> wymaga trzymania przycisku TPM PP; bez tego UI pokaże <span class="tt">Hold TPM PP button</span>.</p>
+<p>Klucze nie mogą być przechowywane w firmware w postaci jawnej. <br  />
+ Są wyprowadzane lub ładowane bezpiecznie przy starcie, a następnie używane tylko tymczasowo.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
+9. Anti-replay i synchronizacja licznika</h1>
+<p>Każda ramka zawiera pole <span class="tt">counter</span> o długości 4 B.</p>
+<p>Licznik:</p>
+<ul>
+<li>rośnie monotonicznie,</li>
+<li>służy do ochrony przed replay,</li>
+<li>jest sprawdzany po stronie odbiorcy.</li>
+</ul>
+<p>Gateway może wysłać specjalną wiadomość <span class="tt">COUNTER_SYNC</span>, aby nadpisać licznik node’a. <br  />
+ Do tego celu używana jest flaga <span class="tt">COUNTER_OVERRIDE</span>.</p>
+<p>Taka operacja:</p>
+<ul>
+<li>jest dostępna tylko dla gatewaya,</li>
+<li>musi być zabezpieczona HMAC,</li>
+<li>powinna być logowana.</li>
+</ul>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+10. Parowanie i rotacja kluczy</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md30"></a>
+Parowanie</h2>
+<p>Parowanie odbywa się wyłącznie z gatewayem. Próg RSSI <span class="tt">-20 dBm</span> jest traktowany jako ostrzeżenie diagnostyczne do walidacji praktycznej, a nie jako twarda blokada w pierwszym wdrożeniu.</p>
+<p>Przebieg:</p>
+<ol type="1">
+<li>Gateway wysyła <span class="tt">PAIR_REQ</span>.</li>
+<li>Node przechodzi w tryb parowania.</li>
+<li>Użytkownik lokalnie potwierdza operację.</li>
+<li>TPM wspiera ustanowienie materiału kryptograficznego.</li>
+<li>Zapisywana jest relacja zaufania.</li>
+<li>Wyprowadzane są klucze robocze.</li>
+</ol>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md31"></a>
+Rotacja kluczy</h2>
+<p>System powinien wspierać rotację kluczy z użyciem <b>Diffie–Hellman</b>.</p>
+<p>Rotacja może być uruchamiana:</p>
+<ul>
+<li>okresowo,</li>
+<li>po określonej liczbie wiadomości,</li>
+<li>na żądanie administratora,</li>
+<li>po incydencie bezpieczeństwa.</li>
+</ul>
+<p>Lokalna rotacja root seeda na nodzie jest już zabezpieczona TPM PP. Radiowy protokół <span class="tt">KEY_ROTATE</span> i docelowa wymiana DH/ECDH nadal wymagają dokończenia jako osobny przepływ.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
+11. Logi UART i kontrola startu</h1>
+<p>Podczas uruchamiania urządzenia przez UART powinny być wypisywane informacje o inicjalizacji:</p>
+<ul>
+<li>MCU,</li>
+<li>TPM,</li>
+<li>SX1276/RFM95,</li>
+<li>wyświetlacza,</li>
+<li>przycisków,</li>
+<li>LED,</li>
+<li>EEPROM,</li>
+<li>materiału kluczowego,</li>
+<li>konfiguracji bezpieczeństwa,</li>
+<li>zgodności firmware.</li>
+</ul>
+<p>Dodatkowo czasy inicjalizacji ważnych modułów powinny być mierzone. <br  />
+ Jeżeli któryś element uruchamia się poza oczekiwanym zakresem czasowym, system powinien zgłosić anomalię na UART.</p>
+<hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
+12. Główny graf systemu</h1>
+<div class="fragment"><div class="line">graph TD</div>
+<div class="line">    A[&quot;Administrator&quot;] --&gt; WEB[&quot;Panel / interfejs systemu&quot;]</div>
+<div class="line">    O[&quot;Operator&quot;] --&gt; WEB</div>
+<div class="line">    U[&quot;Użytkownik&quot;] --&gt; NODE[&quot;Node STM32&quot;]</div>
+<div class="line">    A --&gt; NODE</div>
+<div class="line">    S[&quot;Serwisant&quot;] --&gt; DEV[&quot;Dostęp fizyczny / UART / serwis&quot;]</div>
+<div class="line"> </div>
+<div class="line">    WEB --&gt; GW[&quot;Raspberry Pi Gateway&quot;]</div>
+<div class="line"> </div>
+<div class="line">    GW --&gt; N1[&quot;Node STM32 #1&quot;]</div>
+<div class="line">    GW --&gt; N2[&quot;Node STM32 #X&quot;]</div>
+<div class="line">    GW --&gt; N3[&quot;Node STM32 #15 trusted&quot;]</div>
+<div class="line"> </div>
+<div class="line">    N1 --&gt; UI1[&quot;Wyświetlacz&quot;]</div>
+<div class="line"> </div>
+<div class="line">    N2 --&gt; UI2[&quot;Wyświetlacz&quot;]</div>
+<div class="line"> </div>
+<div class="line">    N3 --&gt; UI3[&quot;Wyświetlacz&quot;]</div>
+<div class="line"> </div>
+<div class="line">    DEV --&gt; GW</div>
+<div class="line">    DEV --&gt; N2</div>
+</div><!-- fragment --><hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md37"></a>
+13. Główne przepływy komunikacji</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md38"></a>
+Zwykła wiadomość z ACK</h2>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    participant O as Operator / Administrator</div>
+<div class="line">    participant GW as Raspberry Pi Gateway</div>
+<div class="line">    participant N as Node STM32</div>
+<div class="line">    participant U as Użytkownik</div>
+<div class="line"> </div>
+<div class="line">    O-&gt;&gt;GW: Wysłanie wiadomości</div>
+<div class="line">    GW-&gt;&gt;GW: Budowa ramki</div>
+<div class="line">    GW-&gt;&gt;GW: AES-CTR payload</div>
+<div class="line">    GW-&gt;&gt;GW: HMAC-SHA256</div>
+<div class="line">    GW-&gt;&gt;N: DATA</div>
+<div class="line">    N-&gt;&gt;N: Weryfikacja HMAC i counter</div>
+<div class="line">    N-&gt;&gt;N: Odszyfrowanie payloadu</div>
+<div class="line">    N-&gt;&gt;U: Wyświetlenie wiadomości</div>
+<div class="line">    N-&gt;&gt;GW: ACK</div>
+<div class="line">    GW-&gt;&gt;O: Wynik operacji</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md39"></a>
+Parowanie</h2>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    participant A as Administrator</div>
+<div class="line">    participant GW as Raspberry Pi Gateway</div>
+<div class="line">    participant N as Node STM32</div>
+<div class="line">    participant TPM as TPM</div>
+<div class="line">    participant U as Użytkownik</div>
+<div class="line"> </div>
+<div class="line">    A-&gt;&gt;GW: Uruchomienie parowania</div>
+<div class="line">    GW-&gt;&gt;N: PAIR_REQ</div>
+<div class="line">    N-&gt;&gt;U: Prośba o potwierdzenie</div>
+<div class="line">    U-&gt;&gt;N: Potwierdzenie lokalne</div>
+<div class="line">    GW-&gt;&gt;TPM: Operacje bezpieczeństwa</div>
+<div class="line">    N-&gt;&gt;TPM: Operacje bezpieczeństwa</div>
+<div class="line">    GW-&gt;&gt;N: Wymiana danych parowania</div>
+<div class="line">    N-&gt;&gt;GW: PAIR_RESP</div>
+<div class="line">    GW-&gt;&gt;A: Wynik operacji</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md40"></a>
+Synchronizacja licznika</h2>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    participant A as Administrator</div>
+<div class="line">    participant GW as Raspberry Pi Gateway</div>
+<div class="line">    participant N as Node STM32</div>
+<div class="line"> </div>
+<div class="line">    A-&gt;&gt;GW: Żądanie synchronizacji licznika</div>
+<div class="line">    GW-&gt;&gt;N: COUNTER_SYNC</div>
+<div class="line">    N-&gt;&gt;N: Weryfikacja HMAC</div>
+<div class="line">    N-&gt;&gt;N: Aktualizacja counter</div>
+<div class="line">    N-&gt;&gt;GW: ACK</div>
+<div class="line">    GW-&gt;&gt;A: Wynik operacji</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md41"></a>
+Rotacja kluczy</h2>
+<div class="fragment"><div class="line">sequenceDiagram</div>
+<div class="line">    participant A as Administrator</div>
+<div class="line">    participant GW as Raspberry Pi Gateway</div>
+<div class="line">    participant N as Node STM32</div>
+<div class="line">    participant TPM as TPM</div>
+<div class="line"> </div>
+<div class="line">    A-&gt;&gt;GW: Uruchomienie rotacji kluczy</div>
+<div class="line">    GW-&gt;&gt;N: KEY_ROTATE</div>
+<div class="line">    N-&gt;&gt;TPM: Wymagana aktywna linia PP dla zapisu root seeda</div>
+<div class="line">    GW-&gt;&gt;TPM: Operacje DH / materiał kluczowy</div>
+<div class="line">    N-&gt;&gt;TPM: Operacje DH / materiał kluczowy</div>
+<div class="line">    GW-&gt;&gt;N: Wymiana danych</div>
+<div class="line">    N-&gt;&gt;GW: Odpowiedź</div>
+<div class="line">    N-&gt;&gt;GW: ACK</div>
+<div class="line">    GW-&gt;&gt;A: Wynik operacji</div>
+</div><!-- fragment --><hr  />
+<h1 class="doxsection"><a class="anchor" id="autotoc_md43"></a>
+14. Dokumentacja Doxygen</h1>
+<p>Projekt zawiera konfigurację Doxygen w pliku <span class="tt">Doxyfile</span>.</p>
+<p>Generowanie dokumentacji:</p>
+<div class="fragment"><div class="line">doxygen Doxyfile</div>
+</div><!-- fragment --><p>Wynik HTML:</p>
+<div class="fragment"><div class="line">docs/doxygen/output/html/index.html</div>
+</div><!-- fragment --><p>Wynik PDF:</p>
+<div class="fragment"><div class="line">make -C docs/doxygen/output/latex</div>
+</div><!-- fragment --><div class="fragment"><div class="line">docs/doxygen/output/latex/refman.pdf</div>
+</div><!-- fragment --><p>Zakres dokumentacji obejmuje <span class="tt">README.md</span>, <span class="tt">Core/App</span> oraz strony opisowe w <span class="tt">docs/doxygen</span>. Katalogi wygenerowane i zewnętrzne (<span class="tt">Debug</span>, <span class="tt">Drivers</span>, <span class="tt">Middlewares</span>) są celowo wykluczone. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

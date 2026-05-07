@@ -1,0 +1,118 @@
+\doxysection{laviet\+\_\+frame.\+h}
+\hypertarget{laviet__frame_8h_source}{}\label{laviet__frame_8h_source}\index{Core/App/laviet\_frame.h@{Core/App/laviet\_frame.h}}
+\mbox{\hyperlink{laviet__frame_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00006}00006\ \textcolor{preprocessor}{\#ifndef\ APP\_LAVIET\_FRAME\_H\_}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00007}00007\ \textcolor{preprocessor}{\#define\ APP\_LAVIET\_FRAME\_H\_}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00012}00012\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00013}00013\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00014}00014\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00017}\mbox{\hyperlink{laviet__frame_8h_a3368b6bf0d03fd777b5e092fbfb4e208}{00017}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FRAME\_VERSION\ \ \ \ \ \ \ \ \ \ \ \ 1U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00019}\mbox{\hyperlink{laviet__frame_8h_a6bf6d0643f24e5398518a15871a57ae0}{00019}}\ \textcolor{preprocessor}{\#define\ LAVIET\_MAX\_PAYLOAD\ \ \ \ \ \ \ \ \ \ \ \ \ \ 16U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00021}\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{00021}}\ \textcolor{preprocessor}{\#define\ LAVIET\_MAC\_TAG\_LEN\ \ \ \ \ \ \ \ \ \ \ \ \ \ 32U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00023}\mbox{\hyperlink{laviet__frame_8h_abba2c58850cf4e57de78accae9f16b69}{00023}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FRAME\_HEADER\_LEN\ \ \ \ \ \ \ \ \ 13U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00025}\mbox{\hyperlink{laviet__frame_8h_aecc762b53b7324776b55aa2e0ce94e1a}{00025}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FRAME\_MIN\_LEN\ \ \ \ \ \ \ \ \ \ \ \ (LAVIET\_FRAME\_HEADER\_LEN\ +\ LAVIET\_MAC\_TAG\_LEN)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00027}\mbox{\hyperlink{laviet__frame_8h_a03e7f14bedcd8ac8b5f3e4366d0a8d39}{00027}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FRAME\_MAX\_LEN\ \ \ \ \ \ \ \ \ \ \ \ (LAVIET\_FRAME\_HEADER\_LEN\ +\ LAVIET\_MAX\_PAYLOAD\ +\ LAVIET\_MAC\_TAG\_LEN)}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00030}\mbox{\hyperlink{laviet__frame_8h_a3b0b0723fb3e6750e0359ccb3dc0ecf4}{00030}}\ \textcolor{preprocessor}{\#define\ LAVIET\_GATEWAY\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 0x0001U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00032}\mbox{\hyperlink{laviet__frame_8h_a340f56ba04216b9995f4ef4da36b68b4}{00032}}\ \textcolor{preprocessor}{\#define\ LAVIET\_BROADCAST\_ID\ \ \ \ \ \ \ \ \ \ \ \ \ 0xFFFFU}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00035}\mbox{\hyperlink{laviet__frame_8h_aa9bc9965d96968efadad6239e59ea1ff}{00035}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_ENCRYPTED\ \ \ \ \ \ \ \ \ \ \ (1U\ <<\ 0)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00037}\mbox{\hyperlink{laviet__frame_8h_ac51e9cda67f88a956f8d2b9673ffffc2}{00037}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_ACK\_REQUIRED\ \ \ \ \ \ \ \ (1U\ <<\ 1)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00039}\mbox{\hyperlink{laviet__frame_8h_ade0fe486e6aa4c795b62189ab0f69e0b}{00039}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_IS\_ACK\ \ \ \ \ \ \ \ \ \ \ \ \ \ (1U\ <<\ 2)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00041}\mbox{\hyperlink{laviet__frame_8h_a4a32a93e604cd44ec3934be167a56093}{00041}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_PAIRING\ \ \ \ \ \ \ \ \ \ \ \ \ (1U\ <<\ 3)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00043}\mbox{\hyperlink{laviet__frame_8h_ab795f548f456f3aa088c9ffc7a2a9cc9}{00043}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_CONFIG\_ACCESS\ \ \ \ \ \ \ (1U\ <<\ 4)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00045}\mbox{\hyperlink{laviet__frame_8h_acfa727632c301e5a1d78e52049fdba16}{00045}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_BROADCAST\ \ \ \ \ \ \ \ \ \ \ (1U\ <<\ 5)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00047}\mbox{\hyperlink{laviet__frame_8h_a2c0cda29cfc3623806478e00b60f6ac5}{00047}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_COUNTER\_OVERRIDE\ \ \ \ (1U\ <<\ 6)}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00049}\mbox{\hyperlink{laviet__frame_8h_ac6dd84b784e26d598a7599de31d5fda2}{00049}}\ \textcolor{preprocessor}{\#define\ LAVIET\_FLAG\_KEY\_UPDATE\ \ \ \ \ \ \ \ \ \ (1U\ <<\ 7)}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00052}\mbox{\hyperlink{laviet__frame_8h_ac33212e0985b84b77829050bb15409d7}{00052}}\ \textcolor{preprocessor}{\#define\ LAVIET\_PAIR\_PAYLOAD\_LEN\ \ \ \ \ \ \ \ \ 8U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00054}\mbox{\hyperlink{laviet__frame_8h_afad0b33d1c1fe2b9810ba02be7f7c498}{00054}}\ \textcolor{preprocessor}{\#define\ LAVIET\_ACK\_PAYLOAD\_LEN\ \ \ \ \ \ \ \ \ \ 6U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00056}\mbox{\hyperlink{laviet__frame_8h_add7af305cf11b92fbdf8c3df4c461d28}{00056}}\ \textcolor{preprocessor}{\#define\ LAVIET\_COUNTER\_SYNC\_PAYLOAD\_LEN\ 4U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00058}\mbox{\hyperlink{laviet__frame_8h_afb90f3a12fd3366bc31f130238a15d56}{00058}}\ \textcolor{preprocessor}{\#define\ LAVIET\_ERROR\_PAYLOAD\_LEN\ \ \ \ \ \ \ \ 8U}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00063}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{00063}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00064}00064\ \{}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00065}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e}{00065}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e}{LAVIET\_TYPE\_NONE}}\ =\ 0x00U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00066}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4}{00066}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4}{LAVIET\_TYPE\_DATA}}\ =\ 0x01U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00067}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7}{00067}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7}{LAVIET\_TYPE\_ACK}}\ =\ 0x02U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00068}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da4902bee85a1c5e34566f4d662df3fbe1}{00068}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da4902bee85a1c5e34566f4d662df3fbe1}{LAVIET\_TYPE\_RESP}}\ =\ 0x03U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00069}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da97a644d5c60102721a44a844bd1769e8}{00069}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da97a644d5c60102721a44a844bd1769e8}{LAVIET\_TYPE\_PAIR\_REQ}}\ =\ 0x04U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00070}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da08e4f1cd190044f20c071e71840d6e7d}{00070}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da08e4f1cd190044f20c071e71840d6e7d}{LAVIET\_TYPE\_PAIR\_RESP}}\ =\ 0x05U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00071}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da039e38e63a2e70c0833f0829f57ec5e1}{00071}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da039e38e63a2e70c0833f0829f57ec5e1}{LAVIET\_TYPE\_CFG}}\ =\ 0x06U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00072}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da32dac1cacf10dd8f227167dfb99706c2}{00072}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da32dac1cacf10dd8f227167dfb99706c2}{LAVIET\_TYPE\_COUNTER\_SYNC}}\ =\ 0x07U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00073}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da9fbeccf148693b02adf381be43728482}{00073}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da9fbeccf148693b02adf381be43728482}{LAVIET\_TYPE\_KEY\_ROTATE}}\ =\ 0x08U,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00074}\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da85b0e219269d1d11ffddb4126f89e23c}{00074}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165da85b0e219269d1d11ffddb4126f89e23c}{LAVIET\_TYPE\_ERROR}}\ =\ 0x09U\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00075}00075\ \}\ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\_frame\_type\_t}};}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00080}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{00080}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00081}00081\ \{}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00082}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd}{00082}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd}{LAVIET\_STATUS\_OK}}\ =\ 0,\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00083}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f}{00083}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f}{LAVIET\_STATUS\_NULL}},\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00084}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6}{00084}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6}{LAVIET\_STATUS\_LENGTH}},\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00085}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7af3e22eb39b7693432972bd337a31a699}{00085}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7af3e22eb39b7693432972bd337a31a699}{LAVIET\_STATUS\_VERSION}},\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00086}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7aedb14e8308df25c8ec30e664f4a27c02}{00086}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7aedb14e8308df25c8ec30e664f4a27c02}{LAVIET\_STATUS\_TYPE}},\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00087}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7a1593d57b3a7ede05e55d152d2db441cd}{00087}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7a1593d57b3a7ede05e55d152d2db441cd}{LAVIET\_STATUS\_ID}},\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00088}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b}{00088}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b}{LAVIET\_STATUS\_FLAGS}},\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00089}\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448}{00089}}\ \ \ \ \ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448}{LAVIET\_STATUS\_PAYLOAD}}\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00090}00090\ \}\ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\_frame\_status\_t}};}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00091}00091\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00095}\mbox{\hyperlink{structlaviet__frame__t}{00095}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00096}00096\ \{}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00097}\mbox{\hyperlink{structlaviet__frame__t_a5f2e5456d7a8afad23ccc25ccf7e8814}{00097}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structlaviet__frame__t_a5f2e5456d7a8afad23ccc25ccf7e8814}{ver\_type}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00098}\mbox{\hyperlink{structlaviet__frame__t_aa8b634d74fde261ea09d0840fcd71c4b}{00098}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structlaviet__frame__t_aa8b634d74fde261ea09d0840fcd71c4b}{flags}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00099}\mbox{\hyperlink{structlaviet__frame__t_a29e271372638b97bd14de7e10a6c23bf}{00099}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structlaviet__frame__t_a29e271372638b97bd14de7e10a6c23bf}{src\_id}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00100}\mbox{\hyperlink{structlaviet__frame__t_a70f5f2f4a3d82240fc11f6904f2cfdc8}{00100}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structlaviet__frame__t_a70f5f2f4a3d82240fc11f6904f2cfdc8}{dst\_id}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00101}\mbox{\hyperlink{structlaviet__frame__t_a0a374341e2508761490a6e35c14a6a74}{00101}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structlaviet__frame__t_a0a374341e2508761490a6e35c14a6a74}{msg\_id}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00102}\mbox{\hyperlink{structlaviet__frame__t_a603f30cb3c798f7a28c199780cc7ee19}{00102}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structlaviet__frame__t_a603f30cb3c798f7a28c199780cc7ee19}{counter}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00103}\mbox{\hyperlink{structlaviet__frame__t_a9aaa6bb1f5a70b79e6249b1318d1bb98}{00103}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structlaviet__frame__t_a9aaa6bb1f5a70b79e6249b1318d1bb98}{payload\_len}};\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00104}\mbox{\hyperlink{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887}{00104}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structlaviet__frame__t_adb820f1f644d1070706f3834ec31b887}{payload}}[\mbox{\hyperlink{laviet__frame_8h_a6bf6d0643f24e5398518a15871a57ae0}{LAVIET\_MAX\_PAYLOAD}}];\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00105}\mbox{\hyperlink{structlaviet__frame__t_ac421f101d139175775284d97630a68b1}{00105}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structlaviet__frame__t_ac421f101d139175775284d97630a68b1}{mac\_tag}}[\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{LAVIET\_MAC\_TAG\_LEN}}];\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00106}00106\ \}\ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}};}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00107}00107\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00113}00113\ uint8\_t\ \mbox{\hyperlink{laviet__frame_8h_ac3ba36c6c1790bf1a5e8a3624be46201}{laviet\_frame\_ver\_type}}(\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\_frame\_type\_t}}\ type);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00120}00120\ \mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\_frame\_type\_t}}\ \mbox{\hyperlink{laviet__frame_8h_a0c4799d9ab27acb8e329da925fa382bd}{laviet\_frame\_type}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}}\ *frame);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00121}00121\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00127}00127\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{laviet__frame_8h_a48545bbdd416df64d1880430fe61498e}{laviet\_frame\_is\_broadcast}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}}\ *frame);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00128}00128\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00133}00133\ uint16\_t\ \mbox{\hyperlink{laviet__frame_8h_a58d0b229430a6d71b5f09e953192db3d}{laviet\_local\_node\_id}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00134}00134\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00140}00140\ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\_frame\_status\_t}}\ \mbox{\hyperlink{laviet__frame_8h_a9df225dfc1501016db4186285f38f71e}{laviet\_frame\_validate\_plain}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}}\ *frame);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00141}00141\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00150}00150\ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\_frame\_status\_t}}\ \mbox{\hyperlink{laviet__frame_8h_adbb7c581bf1ab54461d5a7ba3595a9b6}{laviet\_frame\_encode}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}}\ *frame,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00151}00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *out,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00152}00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ out\_capacity,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00153}00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *out\_len);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00154}00154\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00162}00162\ \mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\_frame\_status\_t}}\ \mbox{\hyperlink{laviet__frame_8h_a0cbbd31fc9d8057a33552174c8ca7b07}{laviet\_frame\_decode}}(\textcolor{keyword}{const}\ uint8\_t\ *in,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00163}00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ in\_len,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00164}00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}}\ *frame\_out);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00165}00165\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00174}00174\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{laviet__frame_8h_af39d27eb077be2b724a9b89e172ea79c}{laviet\_frame\_build\_mac\_input}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structlaviet__frame__t}{laviet\_frame\_t}}\ *frame,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00175}00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *out,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00176}00176\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ out\_capacity,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00177}00177\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *out\_len);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00178}00178\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00186}00186\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{laviet__frame_8h_a24b2cd573fc3274f8a92b86b3433b3b0}{laviet\_frame\_write\_ack\_payload}}(uint16\_t\ acked\_msg\_id,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ acked\_counter,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00188}00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ out[\mbox{\hyperlink{laviet__frame_8h_afad0b33d1c1fe2b9810ba02be7f7c498}{LAVIET\_ACK\_PAYLOAD\_LEN}}]);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00189}00189\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00197}00197\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{laviet__frame_8h_a2870d34c9f2c9274fd637a115a977b64}{laviet\_frame\_read\_ack\_payload}}(\textcolor{keyword}{const}\ uint8\_t\ payload[\mbox{\hyperlink{laviet__frame_8h_afad0b33d1c1fe2b9810ba02be7f7c498}{LAVIET\_ACK\_PAYLOAD\_LEN}}],}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00198}00198\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ *acked\_msg\_id,}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ *acked\_counter);}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00200}00200\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00201}00201\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00202}00202\ \}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00203}00203\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00204}00204\ }
+\DoxyCodeLine{\Hypertarget{laviet__frame_8h_source_l00205}00205\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_LAVIET\_FRAME\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

@@ -1,0 +1,310 @@
+\doxysection{Dokumentacja struktury menu\+\_\+state\+\_\+t}
+\hypertarget{structmenu__state__t}{}\label{structmenu__state__t}\index{menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+menu\+\_\+page\+\_\+id\+\_\+t \mbox{\hyperlink{structmenu__state__t_a191996e1c21694aff233dc1d9d655455}{current\+\_\+page}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structmenu__state__t_ab3dff52fa4866e11e4749c1eb85a5ee9}{selected\+\_\+idx}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structmenu__state__t_adb98a4d8d31f51c5d6d535cce5f090f5}{led\+\_\+mode}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structmenu__state__t_a39d825036aae30dc9a1a3fc360f11790}{selected\+\_\+device\+\_\+slot}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_a5f67b1170b4c5c58f7211fc3ba06c8ba}{pending\+\_\+target\+\_\+node\+\_\+id}}
+\item 
+menu\+\_\+action\+\_\+t \mbox{\hyperlink{structmenu__state__t_aca2c30ec27efce5355bbc5c77947a526}{send\+\_\+target\+\_\+action}}
+\item 
+menu\+\_\+page\+\_\+id\+\_\+t \mbox{\hyperlink{structmenu__state__t_a85f60cf1a7384d3a53253505370bf224}{transient\+\_\+parent\+\_\+page}}
+\item 
+bool \mbox{\hyperlink{structmenu__state__t_a7ee053da2f629917cbb1a91dbaff9558}{pairing\+\_\+network\+\_\+mode}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_acf1bcd1abe81e8c69c21c72c91d705ec}{quick\+\_\+reply\+\_\+src\+\_\+id}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_aa815b5e01b6a123daa64fd510abdf960}{quick\+\_\+reply\+\_\+deadline\+\_\+ms}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_ac636545f480283f3f0a4fff5639b3298}{quick\+\_\+reply\+\_\+last\+\_\+seconds}}
+\item 
+char \mbox{\hyperlink{structmenu__state__t_a4cc51ff1b791029ac253f4710ef30831}{quick\+\_\+reply\+\_\+text}} \mbox{[}MENU\+\_\+\+LINE\+\_\+\+BUF\+\_\+\+SIZE\mbox{]}
+\item 
+bool \mbox{\hyperlink{structmenu__state__t_af096d16ffb20f95b3f73876b6af39ba9}{tx\+\_\+ack\+\_\+waiting}}
+\item 
+char \mbox{\hyperlink{structmenu__state__t_aeda75b733d854a666596e16b0350422d}{tx\+\_\+sent\+\_\+text}} \mbox{[}MENU\+\_\+\+LINE\+\_\+\+BUF\+\_\+\+SIZE\mbox{]}
+\item 
+menu\+\_\+page\+\_\+id\+\_\+t \mbox{\hyperlink{structmenu__state__t_a7a0932fe039d4fdade76b1b1b697a55e}{pending\+\_\+auth\+\_\+page}}
+\item 
+menu\+\_\+auth\+\_\+level\+\_\+t \mbox{\hyperlink{structmenu__state__t_ae74cffa7bda01ad7480a2ca622e38c2e}{pending\+\_\+auth\+\_\+level}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structmenu__state__t_a5e8b6ac50138f10f963a05bc20d14a58}{pin\+\_\+digits}} \mbox{[}MENU\+\_\+\+SETTINGS\+\_\+\+PIN\+\_\+\+LEN\mbox{]}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structmenu__state__t_a9afb6021affc2a853022fab7262e26c1}{pin\+\_\+index}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_a6e8a3e83af3fa5e095358a405a0e758f}{operator\+\_\+unlock\+\_\+until\+\_\+ms}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_a76b1d17a3da5e19eb2f17c9a4217d416}{admin\+\_\+unlock\+\_\+until\+\_\+ms}}
+\item 
+bool \mbox{\hyperlink{structmenu__state__t_a01c3155ef125eb9e4c0d81aca2f093b9}{popup\+\_\+enabled}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__state__t_a512698495fbf8f0226fee6c084b43776}{last\+\_\+input\+\_\+ms}}
+\item 
+menu\+\_\+modal\+\_\+t \mbox{\hyperlink{structmenu__state__t_a2b1b073508cfb2f145b466adb059bf5f}{modal}}
+\item 
+menu\+\_\+action\+\_\+t \mbox{\hyperlink{structmenu__state__t_a5b87e536dd863f415f7a68c77730733a}{pending\+\_\+action}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00370}{370}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structmenu__state__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structmenu__state__t_a76b1d17a3da5e19eb2f17c9a4217d416}\index{menu\_state\_t@{menu\_state\_t}!admin\_unlock\_until\_ms@{admin\_unlock\_until\_ms}}
+\index{admin\_unlock\_until\_ms@{admin\_unlock\_until\_ms}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{admin\_unlock\_until\_ms}{admin\_unlock\_until\_ms}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a76b1d17a3da5e19eb2f17c9a4217d416} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::admin\+\_\+unlock\+\_\+until\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00391}{391}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a191996e1c21694aff233dc1d9d655455}\index{menu\_state\_t@{menu\_state\_t}!current\_page@{current\_page}}
+\index{current\_page@{current\_page}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{current\_page}{current\_page}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a191996e1c21694aff233dc1d9d655455} 
+menu\+\_\+page\+\_\+id\+\_\+t menu\+\_\+state\+\_\+t\+::current\+\_\+page}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00372}{372}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a512698495fbf8f0226fee6c084b43776}\index{menu\_state\_t@{menu\_state\_t}!last\_input\_ms@{last\_input\_ms}}
+\index{last\_input\_ms@{last\_input\_ms}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{last\_input\_ms}{last\_input\_ms}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a512698495fbf8f0226fee6c084b43776} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::last\+\_\+input\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00393}{393}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_adb98a4d8d31f51c5d6d535cce5f090f5}\index{menu\_state\_t@{menu\_state\_t}!led\_mode@{led\_mode}}
+\index{led\_mode@{led\_mode}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{led\_mode}{led\_mode}}
+{\footnotesize\ttfamily \label{structmenu__state__t_adb98a4d8d31f51c5d6d535cce5f090f5} 
+uint8\+\_\+t menu\+\_\+state\+\_\+t\+::led\+\_\+mode}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00374}{374}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a2b1b073508cfb2f145b466adb059bf5f}\index{menu\_state\_t@{menu\_state\_t}!modal@{modal}}
+\index{modal@{modal}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{modal}{modal}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a2b1b073508cfb2f145b466adb059bf5f} 
+menu\+\_\+modal\+\_\+t menu\+\_\+state\+\_\+t\+::modal}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00394}{394}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a6e8a3e83af3fa5e095358a405a0e758f}\index{menu\_state\_t@{menu\_state\_t}!operator\_unlock\_until\_ms@{operator\_unlock\_until\_ms}}
+\index{operator\_unlock\_until\_ms@{operator\_unlock\_until\_ms}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{operator\_unlock\_until\_ms}{operator\_unlock\_until\_ms}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a6e8a3e83af3fa5e095358a405a0e758f} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::operator\+\_\+unlock\+\_\+until\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00390}{390}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a7ee053da2f629917cbb1a91dbaff9558}\index{menu\_state\_t@{menu\_state\_t}!pairing\_network\_mode@{pairing\_network\_mode}}
+\index{pairing\_network\_mode@{pairing\_network\_mode}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_network\_mode}{pairing\_network\_mode}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a7ee053da2f629917cbb1a91dbaff9558} 
+bool menu\+\_\+state\+\_\+t\+::pairing\+\_\+network\+\_\+mode}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00379}{379}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a5b87e536dd863f415f7a68c77730733a}\index{menu\_state\_t@{menu\_state\_t}!pending\_action@{pending\_action}}
+\index{pending\_action@{pending\_action}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pending\_action}{pending\_action}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a5b87e536dd863f415f7a68c77730733a} 
+menu\+\_\+action\+\_\+t menu\+\_\+state\+\_\+t\+::pending\+\_\+action}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00395}{395}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_ae74cffa7bda01ad7480a2ca622e38c2e}\index{menu\_state\_t@{menu\_state\_t}!pending\_auth\_level@{pending\_auth\_level}}
+\index{pending\_auth\_level@{pending\_auth\_level}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pending\_auth\_level}{pending\_auth\_level}}
+{\footnotesize\ttfamily \label{structmenu__state__t_ae74cffa7bda01ad7480a2ca622e38c2e} 
+menu\+\_\+auth\+\_\+level\+\_\+t menu\+\_\+state\+\_\+t\+::pending\+\_\+auth\+\_\+level}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00387}{387}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a7a0932fe039d4fdade76b1b1b697a55e}\index{menu\_state\_t@{menu\_state\_t}!pending\_auth\_page@{pending\_auth\_page}}
+\index{pending\_auth\_page@{pending\_auth\_page}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pending\_auth\_page}{pending\_auth\_page}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a7a0932fe039d4fdade76b1b1b697a55e} 
+menu\+\_\+page\+\_\+id\+\_\+t menu\+\_\+state\+\_\+t\+::pending\+\_\+auth\+\_\+page}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00386}{386}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a5f67b1170b4c5c58f7211fc3ba06c8ba}\index{menu\_state\_t@{menu\_state\_t}!pending\_target\_node\_id@{pending\_target\_node\_id}}
+\index{pending\_target\_node\_id@{pending\_target\_node\_id}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pending\_target\_node\_id}{pending\_target\_node\_id}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a5f67b1170b4c5c58f7211fc3ba06c8ba} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::pending\+\_\+target\+\_\+node\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00376}{376}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a5e8b6ac50138f10f963a05bc20d14a58}\index{menu\_state\_t@{menu\_state\_t}!pin\_digits@{pin\_digits}}
+\index{pin\_digits@{pin\_digits}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pin\_digits}{pin\_digits}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a5e8b6ac50138f10f963a05bc20d14a58} 
+uint8\+\_\+t menu\+\_\+state\+\_\+t\+::pin\+\_\+digits\mbox{[}MENU\+\_\+\+SETTINGS\+\_\+\+PIN\+\_\+\+LEN\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00388}{388}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a9afb6021affc2a853022fab7262e26c1}\index{menu\_state\_t@{menu\_state\_t}!pin\_index@{pin\_index}}
+\index{pin\_index@{pin\_index}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{pin\_index}{pin\_index}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a9afb6021affc2a853022fab7262e26c1} 
+uint8\+\_\+t menu\+\_\+state\+\_\+t\+::pin\+\_\+index}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00389}{389}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a01c3155ef125eb9e4c0d81aca2f093b9}\index{menu\_state\_t@{menu\_state\_t}!popup\_enabled@{popup\_enabled}}
+\index{popup\_enabled@{popup\_enabled}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{popup\_enabled}{popup\_enabled}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a01c3155ef125eb9e4c0d81aca2f093b9} 
+bool menu\+\_\+state\+\_\+t\+::popup\+\_\+enabled}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00392}{392}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_aa815b5e01b6a123daa64fd510abdf960}\index{menu\_state\_t@{menu\_state\_t}!quick\_reply\_deadline\_ms@{quick\_reply\_deadline\_ms}}
+\index{quick\_reply\_deadline\_ms@{quick\_reply\_deadline\_ms}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{quick\_reply\_deadline\_ms}{quick\_reply\_deadline\_ms}}
+{\footnotesize\ttfamily \label{structmenu__state__t_aa815b5e01b6a123daa64fd510abdf960} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::quick\+\_\+reply\+\_\+deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00381}{381}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_ac636545f480283f3f0a4fff5639b3298}\index{menu\_state\_t@{menu\_state\_t}!quick\_reply\_last\_seconds@{quick\_reply\_last\_seconds}}
+\index{quick\_reply\_last\_seconds@{quick\_reply\_last\_seconds}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{quick\_reply\_last\_seconds}{quick\_reply\_last\_seconds}}
+{\footnotesize\ttfamily \label{structmenu__state__t_ac636545f480283f3f0a4fff5639b3298} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::quick\+\_\+reply\+\_\+last\+\_\+seconds}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00382}{382}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_acf1bcd1abe81e8c69c21c72c91d705ec}\index{menu\_state\_t@{menu\_state\_t}!quick\_reply\_src\_id@{quick\_reply\_src\_id}}
+\index{quick\_reply\_src\_id@{quick\_reply\_src\_id}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{quick\_reply\_src\_id}{quick\_reply\_src\_id}}
+{\footnotesize\ttfamily \label{structmenu__state__t_acf1bcd1abe81e8c69c21c72c91d705ec} 
+uint32\+\_\+t menu\+\_\+state\+\_\+t\+::quick\+\_\+reply\+\_\+src\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00380}{380}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a4cc51ff1b791029ac253f4710ef30831}\index{menu\_state\_t@{menu\_state\_t}!quick\_reply\_text@{quick\_reply\_text}}
+\index{quick\_reply\_text@{quick\_reply\_text}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{quick\_reply\_text}{quick\_reply\_text}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a4cc51ff1b791029ac253f4710ef30831} 
+char menu\+\_\+state\+\_\+t\+::quick\+\_\+reply\+\_\+text\mbox{[}MENU\+\_\+\+LINE\+\_\+\+BUF\+\_\+\+SIZE\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00383}{383}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a39d825036aae30dc9a1a3fc360f11790}\index{menu\_state\_t@{menu\_state\_t}!selected\_device\_slot@{selected\_device\_slot}}
+\index{selected\_device\_slot@{selected\_device\_slot}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{selected\_device\_slot}{selected\_device\_slot}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a39d825036aae30dc9a1a3fc360f11790} 
+uint8\+\_\+t menu\+\_\+state\+\_\+t\+::selected\+\_\+device\+\_\+slot}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00375}{375}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_ab3dff52fa4866e11e4749c1eb85a5ee9}\index{menu\_state\_t@{menu\_state\_t}!selected\_idx@{selected\_idx}}
+\index{selected\_idx@{selected\_idx}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{selected\_idx}{selected\_idx}}
+{\footnotesize\ttfamily \label{structmenu__state__t_ab3dff52fa4866e11e4749c1eb85a5ee9} 
+uint8\+\_\+t menu\+\_\+state\+\_\+t\+::selected\+\_\+idx}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00373}{373}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_aca2c30ec27efce5355bbc5c77947a526}\index{menu\_state\_t@{menu\_state\_t}!send\_target\_action@{send\_target\_action}}
+\index{send\_target\_action@{send\_target\_action}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{send\_target\_action}{send\_target\_action}}
+{\footnotesize\ttfamily \label{structmenu__state__t_aca2c30ec27efce5355bbc5c77947a526} 
+menu\+\_\+action\+\_\+t menu\+\_\+state\+\_\+t\+::send\+\_\+target\+\_\+action}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00377}{377}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_a85f60cf1a7384d3a53253505370bf224}\index{menu\_state\_t@{menu\_state\_t}!transient\_parent\_page@{transient\_parent\_page}}
+\index{transient\_parent\_page@{transient\_parent\_page}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{transient\_parent\_page}{transient\_parent\_page}}
+{\footnotesize\ttfamily \label{structmenu__state__t_a85f60cf1a7384d3a53253505370bf224} 
+menu\+\_\+page\+\_\+id\+\_\+t menu\+\_\+state\+\_\+t\+::transient\+\_\+parent\+\_\+page}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00378}{378}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_af096d16ffb20f95b3f73876b6af39ba9}\index{menu\_state\_t@{menu\_state\_t}!tx\_ack\_waiting@{tx\_ack\_waiting}}
+\index{tx\_ack\_waiting@{tx\_ack\_waiting}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_ack\_waiting}{tx\_ack\_waiting}}
+{\footnotesize\ttfamily \label{structmenu__state__t_af096d16ffb20f95b3f73876b6af39ba9} 
+bool menu\+\_\+state\+\_\+t\+::tx\+\_\+ack\+\_\+waiting}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00384}{384}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+\Hypertarget{structmenu__state__t_aeda75b733d854a666596e16b0350422d}\index{menu\_state\_t@{menu\_state\_t}!tx\_sent\_text@{tx\_sent\_text}}
+\index{tx\_sent\_text@{tx\_sent\_text}!menu\_state\_t@{menu\_state\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_sent\_text}{tx\_sent\_text}}
+{\footnotesize\ttfamily \label{structmenu__state__t_aeda75b733d854a666596e16b0350422d} 
+char menu\+\_\+state\+\_\+t\+::tx\+\_\+sent\+\_\+text\mbox{[}MENU\+\_\+\+LINE\+\_\+\+BUF\+\_\+\+SIZE\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l00385}{385}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/menu\+\_\+main.\+c\end{DoxyCompactItemize}

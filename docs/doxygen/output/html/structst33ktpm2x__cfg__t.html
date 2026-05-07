@@ -1,0 +1,460 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury st33ktpm2x_cfg_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structst33ktpm2x__cfg__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury st33ktpm2x_cfg_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Runtime configuration for ST33KTPM2X instance.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="st33ktpm2x_8h_source.html">Core/App/st33ktpm2x_lib/st33ktpm2x.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a5581d1eb24d540f816f7fb2e11a4f0a2" id="r_a5581d1eb24d540f816f7fb2e11a4f0a2"><td class="memItemLeft" align="right" valign="top">I2C_HandleTypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5581d1eb24d540f816f7fb2e11a4f0a2">hi2c</a></td></tr>
+<tr class="memdesc:a5581d1eb24d540f816f7fb2e11a4f0a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">I2C handle (use I2C3 in this project).  <br /></td></tr>
+<tr class="memitem:acf5c96b4c39be6128ba53ca0b36c059f" id="r_acf5c96b4c39be6128ba53ca0b36c059f"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf5c96b4c39be6128ba53ca0b36c059f">i2c_addr_7bit</a></td></tr>
+<tr class="memdesc:acf5c96b4c39be6128ba53ca0b36c059f"><td class="mdescLeft">&#160;</td><td class="mdescRight">7-bit I2C address of TPM.  <br /></td></tr>
+<tr class="memitem:a05ca32ecc70df950ffede987065808e8" id="r_a05ca32ecc70df950ffede987065808e8"><td class="memItemLeft" align="right" valign="top">GPIO_TypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05ca32ecc70df950ffede987065808e8">reset_port</a></td></tr>
+<tr class="memdesc:a05ca32ecc70df950ffede987065808e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset GPIO port (PB0 in your setup).  <br /></td></tr>
+<tr class="memitem:aed3eda53ce8a8e9bc6402e2312998d45" id="r_aed3eda53ce8a8e9bc6402e2312998d45"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed3eda53ce8a8e9bc6402e2312998d45">reset_pin</a></td></tr>
+<tr class="memdesc:aed3eda53ce8a8e9bc6402e2312998d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset GPIO pin.  <br /></td></tr>
+<tr class="memitem:ae1442745f4560354f87204c73ec12083" id="r_ae1442745f4560354f87204c73ec12083"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae1442745f4560354f87204c73ec12083">reset_pulse_ms</a></td></tr>
+<tr class="memdesc:ae1442745f4560354f87204c73ec12083"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset low pulse width.  <br /></td></tr>
+<tr class="memitem:ad9bae73c932dc35cb72077578a3c69c9" id="r_ad9bae73c932dc35cb72077578a3c69c9"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad9bae73c932dc35cb72077578a3c69c9">reset_recovery_ms</a></td></tr>
+<tr class="memdesc:ad9bae73c932dc35cb72077578a3c69c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delay after reset release.  <br /></td></tr>
+<tr class="memitem:a412f791ea50816105ef19b134751b77d" id="r_a412f791ea50816105ef19b134751b77d"><td class="memItemLeft" align="right" valign="top">GPIO_TypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a412f791ea50816105ef19b134751b77d">davint_port</a></td></tr>
+<tr class="memdesc:a412f791ea50816105ef19b134751b77d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional TPM_DAVINT# / PIRQ port.  <br /></td></tr>
+<tr class="memitem:ab33e66f8530c64155baec5d3699040ad" id="r_ab33e66f8530c64155baec5d3699040ad"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab33e66f8530c64155baec5d3699040ad">davint_pin</a></td></tr>
+<tr class="memdesc:ab33e66f8530c64155baec5d3699040ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional TPM_DAVINT# / PIRQ pin.  <br /></td></tr>
+<tr class="memitem:a2a5df8c1e0010406513378fbe9b4c0f9" id="r_a2a5df8c1e0010406513378fbe9b4c0f9"><td class="memItemLeft" align="right" valign="top">GPIO_PinState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a5df8c1e0010406513378fbe9b4c0f9">davint_active_state</a></td></tr>
+<tr class="memdesc:a2a5df8c1e0010406513378fbe9b4c0f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical active level for DAVINT# (normally low).  <br /></td></tr>
+<tr class="memitem:a1e6ad17855125cbc0bee74e28b55c518" id="r_a1e6ad17855125cbc0bee74e28b55c518"><td class="memItemLeft" align="right" valign="top">GPIO_TypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1e6ad17855125cbc0bee74e28b55c518">pp_port</a></td></tr>
+<tr class="memdesc:a1e6ad17855125cbc0bee74e28b55c518"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional Physical Presence button port.  <br /></td></tr>
+<tr class="memitem:a3548c5014d3fad21120d400170a67e1b" id="r_a3548c5014d3fad21120d400170a67e1b"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3548c5014d3fad21120d400170a67e1b">pp_pin</a></td></tr>
+<tr class="memdesc:a3548c5014d3fad21120d400170a67e1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Optional Physical Presence button pin.  <br /></td></tr>
+<tr class="memitem:a646118757e1c1cde8697cad591546870" id="r_a646118757e1c1cde8697cad591546870"><td class="memItemLeft" align="right" valign="top">GPIO_PinState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a646118757e1c1cde8697cad591546870">pp_active_state</a></td></tr>
+<tr class="memdesc:a646118757e1c1cde8697cad591546870"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical active level for PP button.  <br /></td></tr>
+<tr class="memitem:a2cfddf1d71235781e4ae3828b2e8c118" id="r_a2cfddf1d71235781e4ae3828b2e8c118"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cfddf1d71235781e4ae3828b2e8c118">io_timeout_ms</a></td></tr>
+<tr class="memdesc:a2cfddf1d71235781e4ae3828b2e8c118"><td class="mdescLeft">&#160;</td><td class="mdescRight">I2C transfer timeout.  <br /></td></tr>
+<tr class="memitem:a848246b32bac62d50d8a2a66e3f397d3" id="r_a848246b32bac62d50d8a2a66e3f397d3"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a848246b32bac62d50d8a2a66e3f397d3">locality_timeout_ms</a></td></tr>
+<tr class="memdesc:a848246b32bac62d50d8a2a66e3f397d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout for locality acquisition.  <br /></td></tr>
+<tr class="memitem:a3f0a421d756e84a5ab532407f7f1a74e" id="r_a3f0a421d756e84a5ab532407f7f1a74e"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f0a421d756e84a5ab532407f7f1a74e">burst_timeout_ms</a></td></tr>
+<tr class="memdesc:a3f0a421d756e84a5ab532407f7f1a74e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout for burst/data availability.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Runtime configuration for ST33KTPM2X instance. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00083">83</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a3f0a421d756e84a5ab532407f7f1a74e" name="a3f0a421d756e84a5ab532407f7f1a74e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f0a421d756e84a5ab532407f7f1a74e">&#9670;&#160;</a></span>burst_timeout_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t st33ktpm2x_cfg_t::burst_timeout_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout for burst/data availability. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00103">103</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00390">st33_wait_burst()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a2a5df8c1e0010406513378fbe9b4c0f9" name="a2a5df8c1e0010406513378fbe9b4c0f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a5df8c1e0010406513378fbe9b4c0f9">&#9670;&#160;</a></span>davint_active_state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GPIO_PinState st33ktpm2x_cfg_t::davint_active_state</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Logical active level for DAVINT# (normally low). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00095">95</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00605">st33ktpm2x_davint_is_asserted()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="ab33e66f8530c64155baec5d3699040ad" name="ab33e66f8530c64155baec5d3699040ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab33e66f8530c64155baec5d3699040ad">&#9670;&#160;</a></span>davint_pin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t st33ktpm2x_cfg_t::davint_pin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional TPM_DAVINT# / PIRQ pin. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00094">94</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00605">st33ktpm2x_davint_is_asserted()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a412f791ea50816105ef19b134751b77d" name="a412f791ea50816105ef19b134751b77d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a412f791ea50816105ef19b134751b77d">&#9670;&#160;</a></span>davint_port</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GPIO_TypeDef* st33ktpm2x_cfg_t::davint_port</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional TPM_DAVINT# / PIRQ port. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00093">93</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00605">st33ktpm2x_davint_is_asserted()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a5581d1eb24d540f816f7fb2e11a4f0a2" name="a5581d1eb24d540f816f7fb2e11a4f0a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5581d1eb24d540f816f7fb2e11a4f0a2">&#9670;&#160;</a></span>hi2c</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">I2C_HandleTypeDef* st33ktpm2x_cfg_t::hi2c</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>I2C handle (use I2C3 in this project). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00085">85</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00154">st33_i2c_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00199">st33_i2c_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00437">st33_trace_tis()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00547">st33ktpm2x_init()</a>.</p>
+
+</div>
+</div>
+<a id="acf5c96b4c39be6128ba53ca0b36c059f" name="acf5c96b4c39be6128ba53ca0b36c059f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf5c96b4c39be6128ba53ca0b36c059f">&#9670;&#160;</a></span>i2c_addr_7bit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t st33ktpm2x_cfg_t::i2c_addr_7bit</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>7-bit I2C address of TPM. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00086">86</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00154">st33_i2c_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00199">st33_i2c_write()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a2cfddf1d71235781e4ae3828b2e8c118" name="a2cfddf1d71235781e4ae3828b2e8c118"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cfddf1d71235781e4ae3828b2e8c118">&#9670;&#160;</a></span>io_timeout_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t st33ktpm2x_cfg_t::io_timeout_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>I2C transfer timeout. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00101">101</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00154">st33_i2c_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00199">st33_i2c_write()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a848246b32bac62d50d8a2a66e3f397d3" name="a848246b32bac62d50d8a2a66e3f397d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a848246b32bac62d50d8a2a66e3f397d3">&#9670;&#160;</a></span>locality_timeout_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t st33ktpm2x_cfg_t::locality_timeout_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout for locality acquisition. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00102">102</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00672">st33ktpm2x_request_locality0()</a>.</p>
+
+</div>
+</div>
+<a id="a646118757e1c1cde8697cad591546870" name="a646118757e1c1cde8697cad591546870"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a646118757e1c1cde8697cad591546870">&#9670;&#160;</a></span>pp_active_state</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GPIO_PinState st33ktpm2x_cfg_t::pp_active_state</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Logical active level for PP button. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00099">99</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00624">st33ktpm2x_pp_is_pressed()</a>.</p>
+
+</div>
+</div>
+<a id="a3548c5014d3fad21120d400170a67e1b" name="a3548c5014d3fad21120d400170a67e1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3548c5014d3fad21120d400170a67e1b">&#9670;&#160;</a></span>pp_pin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t st33ktpm2x_cfg_t::pp_pin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional Physical Presence button pin. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00098">98</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00624">st33ktpm2x_pp_is_pressed()</a>.</p>
+
+</div>
+</div>
+<a id="a1e6ad17855125cbc0bee74e28b55c518" name="a1e6ad17855125cbc0bee74e28b55c518"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e6ad17855125cbc0bee74e28b55c518">&#9670;&#160;</a></span>pp_port</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GPIO_TypeDef* st33ktpm2x_cfg_t::pp_port</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Optional Physical Presence button port. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00097">97</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00624">st33ktpm2x_pp_is_pressed()</a>.</p>
+
+</div>
+</div>
+<a id="aed3eda53ce8a8e9bc6402e2312998d45" name="aed3eda53ce8a8e9bc6402e2312998d45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed3eda53ce8a8e9bc6402e2312998d45">&#9670;&#160;</a></span>reset_pin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t st33ktpm2x_cfg_t::reset_pin</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset GPIO pin. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00089">89</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00547">st33ktpm2x_init()</a>.</p>
+
+</div>
+</div>
+<a id="a05ca32ecc70df950ffede987065808e8" name="a05ca32ecc70df950ffede987065808e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05ca32ecc70df950ffede987065808e8">&#9670;&#160;</a></span>reset_port</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">GPIO_TypeDef* st33ktpm2x_cfg_t::reset_port</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset GPIO port (PB0 in your setup). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00088">88</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00547">st33ktpm2x_init()</a>.</p>
+
+</div>
+</div>
+<a id="ae1442745f4560354f87204c73ec12083" name="ae1442745f4560354f87204c73ec12083"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1442745f4560354f87204c73ec12083">&#9670;&#160;</a></span>reset_pulse_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t st33ktpm2x_cfg_t::reset_pulse_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reset low pulse width. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00090">90</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a>.</p>
+
+</div>
+</div>
+<a id="ad9bae73c932dc35cb72077578a3c69c9" name="ad9bae73c932dc35cb72077578a3c69c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9bae73c932dc35cb72077578a3c69c9">&#9670;&#160;</a></span>reset_recovery_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t st33ktpm2x_cfg_t::reset_recovery_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Delay after reset release. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00091">91</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/st33ktpm2x_lib/<a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

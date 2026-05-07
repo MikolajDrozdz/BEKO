@@ -1,0 +1,388 @@
+\doxysection{radio\+\_\+test.\+c}
+\hypertarget{radio__test_8c_source}{}\label{radio__test_8c_source}\index{Core/App/radio\_lib/test/radio\_test.c@{Core/App/radio\_lib/test/radio\_test.c}}
+\mbox{\hyperlink{radio__test_8c}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__test_8h}{radio\_test.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__sx1276__regs_8h}{../common/sx1276/radio\_sx1276\_regs.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{lcd__main_8h}{../../lcd\_main.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00010}00010\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{i2c__mem__store_8h}{../../i2c\_mem\_store\_lib/i2c\_mem\_store.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}cmsis\_os2.h"{}}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <ctype.h>}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00017}00017\ \textcolor{keyword}{static}\ \textcolor{keyword}{volatile}\ uint32\_t\ s\_radio\_cb\_events\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00018}00018\ \textcolor{keyword}{static}\ uint32\_t\ s\_radio\_last\_ping\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00019}00019\ \textcolor{keyword}{static}\ uint32\_t\ s\_radio\_last\_tx\_start\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00020}00020\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_demo\_initialized\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00021}00021\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ s\_msg\_store;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00022}00022\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_msg\_store\_ready\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00024}00024\ \textcolor{keyword}{extern}\ I2C\_HandleTypeDef\ hi2c1;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00027}\mbox{\hyperlink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{00027}}\ \textcolor{keyword}{static}\ uint32\_t\ \mbox{\hyperlink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{radio\_test\_irq\_save}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00028}00028\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00029}00029\ \ \ \ \ uint32\_t\ primask\ =\ \_\_get\_PRIMASK();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00030}00030\ \ \ \ \ \_\_disable\_irq();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00031}00031\ \ \ \ \ \textcolor{keywordflow}{return}\ primask;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00032}00032\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00033}00033\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00035}\mbox{\hyperlink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{00035}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{radio\_test\_irq\_restore}}(uint32\_t\ primask)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00036}00036\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00037}00037\ \ \ \ \ \textcolor{keywordflow}{if}\ (primask\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00038}00038\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00039}00039\ \ \ \ \ \ \ \ \ \_\_enable\_irq();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00040}00040\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00041}00041\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00044}\mbox{\hyperlink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{00044}}\ \textcolor{keyword}{static}\ uint32\_t\ \mbox{\hyperlink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{radio\_test\_now\_ms}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00045}00045\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00046}00046\ \ \ \ \ osKernelState\_t\ state\ =\ osKernelGetState();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00047}00047\ \ \ \ \ uint32\_t\ tick\_hz;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00048}00048\ \ \ \ \ uint32\_t\ tick\_count;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00049}00049\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00050}00050\ \ \ \ \ \textcolor{keywordflow}{if}\ ((state\ ==\ osKernelRunning)\ ||\ (state\ ==\ osKernelLocked))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00051}00051\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00052}00052\ \ \ \ \ \ \ \ \ tick\_hz\ =\ osKernelGetTickFreq();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00053}00053\ \ \ \ \ \ \ \ \ tick\_count\ =\ osKernelGetTickCount();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tick\_hz\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00055}00055\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00056}00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tick\_count;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00057}00057\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00058}00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint32\_t)(((uint64\_t)tick\_count\ *\ 1000ULL)\ /\ (uint64\_t)tick\_hz);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00059}00059\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00061}00061\ \ \ \ \ \textcolor{keywordflow}{return}\ HAL\_GetTick();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00062}00062\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00063}00063\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00069}\mbox{\hyperlink{radio__test_8c_a73f24be84380df580976d9cddc725512}{00069}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_a73f24be84380df580976d9cddc725512}{radio\_test\_event\_cb}}(uint32\_t\ events,\ \textcolor{keywordtype}{void}\ *user\_ctx)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00070}00070\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00071}00071\ \ \ \ \ uint32\_t\ key;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00073}00073\ \ \ \ \ (void)user\_ctx;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00075}00075\ \ \ \ \ key\ =\ \mbox{\hyperlink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{radio\_test\_irq\_save}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00076}00076\ \ \ \ \ s\_radio\_cb\_events\ |=\ events;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00077}00077\ \ \ \ \ \mbox{\hyperlink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{radio\_test\_irq\_restore}}(key);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00078}00078\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00084}\mbox{\hyperlink{radio__test_8c_ad6fd6a9e04a965fc385c2272be71cd70}{00084}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_ad6fd6a9e04a965fc385c2272be71cd70}{radio\_test\_print\_packet}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__packet__t}{radio\_packet\_t}}\ *pkt)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00085}00085\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00086}00086\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00087}00087\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00088}00088\ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ RX\ len=\%u\ RSSI=\%d\ dBm\ SNR=\%d\ dB\ hex:"{}},}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}},}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a6bf8985619e83f6b6f8fd02065a36a6c}{rssi\_dbm}},}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ pkt-\/>\mbox{\hyperlink{structradio__packet__t_acab0b755530b605b24c592961626cded}{snr\_db}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00092}00092\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}};\ i++)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00093}00093\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00094}00094\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \%02X"{}},\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}{data}}[i]);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00095}00095\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00097}00097\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ ascii:"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00098}00098\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}};\ i++)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00099}00099\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00100}00100\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ c\ =\ (char)pkt-\/>\mbox{\hyperlink{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}{data}}[i];}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00101}00101\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%c"{}},\ isprint((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})c)\ ?\ c\ :\ \textcolor{charliteral}{'.'});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00102}00102\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00103}00103\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00104}00104\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00105}00105\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00110}\mbox{\hyperlink{radio__test_8c_a5a8bae0ca1ec19fab52e484b2ad1be06}{00110}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_a5a8bae0ca1ec19fab52e484b2ad1be06}{radio\_test\_print\_packet\_text}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__packet__t}{radio\_packet\_t}}\ *pkt)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00111}00111\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00112}00112\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00113}00113\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00114}00114\ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ RX\ TEXT:\ "{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00115}00115\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}};\ i++)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00116}00116\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00117}00117\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ c\ =\ (char)pkt-\/>\mbox{\hyperlink{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}{data}}[i];}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00118}00118\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}\%c"{}},\ isprint((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})c)\ ?\ c\ :\ \textcolor{charliteral}{'.'});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00119}00119\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00120}00120\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00121}00121\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00122}00122\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00124}\mbox{\hyperlink{radio__test_8c_acbdc55f4b469a388a7284a724652db27}{00124}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_acbdc55f4b469a388a7284a724652db27}{radio\_test\_publish\_packet\_to\_lcd}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__packet__t}{radio\_packet\_t}}\ *pkt)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00125}00125\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00126}00126\ \ \ \ \ \textcolor{keywordflow}{if}\ ((pkt\ ==\ NULL)\ ||\ (pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}}\ ==\ 0U))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00127}00127\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00128}00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00129}00129\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00130}00130\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00131}00131\ \ \ \ \ \textcolor{keywordflow}{if}\ (!lcd\_main\_push\_message(pkt-\/>\mbox{\hyperlink{structradio__packet__t_a6bf8985619e83f6b6f8fd02065a36a6c}{rssi\_dbm}},\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}{data}},\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}}))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00132}00132\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00133}00133\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}LCD\ queue:\ drop\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00134}00134\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00135}00135\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00136}00136\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00138}\mbox{\hyperlink{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}{00138}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}{radio\_test\_store\_packet\_in\_i2c\_memory}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__packet__t}{radio\_packet\_t}}\ *pkt)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00139}00139\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00140}00140\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ rc;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00141}00141\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00142}00142\ \ \ \ \ \textcolor{keywordflow}{if}\ ((pkt\ ==\ NULL)\ ||\ (!s\_msg\_store\_ready))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00143}00143\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00144}00144\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00145}00145\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00146}00146\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00147}00147\ \ \ \ \ rc\ =\ \mbox{\hyperlink{i2c__mem__store_8c_a3ea434f9cae24dc0dd36ce7ce9f8692a}{i2c\_mem\_store\_append\_message}}(\&s\_msg\_store,\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a6bf8985619e83f6b6f8fd02065a36a6c}{rssi\_dbm}},\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}{data}},\ pkt-\/>\mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00148}00148\ \ \ \ \ \textcolor{keywordflow}{if}\ (rc\ !=\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c}{I2C\_MEM\_STORE\_OK}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00149}00149\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00150}00150\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}MEM\ LOG\ write\ failed:\ \%d\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{int})rc);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00151}00151\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00152}00152\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00153}00153\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00157}\mbox{\hyperlink{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd}{00157}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd}{radio\_test\_dump\_tx\_debug}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00158}00158\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00159}00159\ \ \ \ \ uint8\_t\ irq\_flags\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00160}00160\ \ \ \ \ uint8\_t\ dio\_map1\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00161}00161\ \ \ \ \ uint8\_t\ op\_mode\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00162}00162\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00163}00163\ \ \ \ \ \textcolor{keywordflow}{if}\ ((\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_IRQ\_FLAGS,\ \&irq\_flags)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00164}00164\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_DIO\_MAPPING\_1,\ \&dio\_map1)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00165}00165\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_OP\_MODE,\ \&op\_mode)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}}))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00166}00166\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00167}00167\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ DBG:\ reg\ read\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00168}00168\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00169}00169\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00171}00171\ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ DBG:\ irq=0x\%02X\ dio1=0x\%02X\ op=0x\%02X\ state=\%d\(\backslash\)r\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00172}00172\ \ \ \ \ \ \ \ \ \ \ \ irq\_flags,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ dio\_map1,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00174}00174\ \ \ \ \ \ \ \ \ \ \ \ op\_mode,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00175}00175\ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{int})\mbox{\hyperlink{radio__lib_8c_a8b2eab38c2a3358acd0c9e476ceb0664}{radio\_get\_state}}());}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00176}00176\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00177}00177\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00178}00178\ \textcolor{comment}{/*\ Public\ API\ documented\ in\ radio\_test.h.\ */}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00179}\mbox{\hyperlink{radio__test_8c_aa0d702c40f79b6b72a67729715d3e90d}{00179}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__test_8c_aa0d702c40f79b6b72a67729715d3e90d}{radio\_test\_probe}}(uint8\_t\ *version)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00180}00180\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00181}00181\ \ \ \ \ uint8\_t\ reg\_version\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00182}00182\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00183}00183\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_VERSION,\ \&reg\_version)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00184}00184\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00185}00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00186}00186\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00187}00187\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00188}00188\ \ \ \ \ \textcolor{keywordflow}{if}\ (version\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00189}00189\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00190}00190\ \ \ \ \ \ \ \ \ *version\ =\ reg\_version;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00191}00191\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00192}00192\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00193}00193\ \ \ \ \ \textcolor{keywordflow}{return}\ (reg\_version\ ==\ SX1276\_VERSION\_ID);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00194}00194\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00195}00195\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00199}\mbox{\hyperlink{radio__test_8c_aefd1d85763a464e9273283134dcd90f4}{00199}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_aefd1d85763a464e9273283134dcd90f4}{radio\_test\_dump\_basic}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00200}00200\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00201}00201\ \ \ \ \ uint8\_t\ reg\_version\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00202}00202\ \ \ \ \ uint8\_t\ reg\_op\_mode\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00203}00203\ \ \ \ \ uint8\_t\ reg\_irq\_flags\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00204}00204\ \ \ \ \ uint8\_t\ reg\_modem\_cfg\_1\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00205}00205\ \ \ \ \ uint8\_t\ reg\_modem\_cfg\_2\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00206}00206\ \ \ \ \ uint8\_t\ reg\_modem\_cfg\_3\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00207}00207\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00208}00208\ \ \ \ \ \textcolor{keywordflow}{if}\ ((\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_VERSION,\ \&reg\_version)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00209}00209\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_OP\_MODE,\ \&reg\_op\_mode)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00210}00210\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_IRQ\_FLAGS,\ \&reg\_irq\_flags)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00211}00211\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_MODEM\_CONFIG\_1,\ \&reg\_modem\_cfg\_1)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00212}00212\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_MODEM\_CONFIG\_2,\ \&reg\_modem\_cfg\_2)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ||}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00213}00213\ \ \ \ \ \ \ \ \ (\mbox{\hyperlink{radio__lib_8c_a7ccba6e0b241021036804be55c205546}{radio\_raw\_read\_reg}}(SX1276\_REG\_MODEM\_CONFIG\_3,\ \&reg\_modem\_cfg\_3)\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}}))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00214}00214\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00215}00215\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO:\ dump\ read\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00216}00216\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00217}00217\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00218}00218\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00219}00219\ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ REG\ version=0x\%02X\ opmode=0x\%02X\ irq=0x\%02X\ mc1=0x\%02X\ mc2=0x\%02X\ mc3=0x\%02X\(\backslash\)r\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00220}00220\ \ \ \ \ \ \ \ \ \ \ \ reg\_version,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00221}00221\ \ \ \ \ \ \ \ \ \ \ \ reg\_op\_mode,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00222}00222\ \ \ \ \ \ \ \ \ \ \ \ reg\_irq\_flags,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00223}00223\ \ \ \ \ \ \ \ \ \ \ \ reg\_modem\_cfg\_1,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00224}00224\ \ \ \ \ \ \ \ \ \ \ \ reg\_modem\_cfg\_2,}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00225}00225\ \ \ \ \ \ \ \ \ \ \ \ reg\_modem\_cfg\_3);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00226}00226\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00227}00227\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00232}\mbox{\hyperlink{radio__test_8c_a80b69d1de463a0893238ced3d64aa1ad}{00232}}\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__test_8c_a80b69d1de463a0893238ced3d64aa1ad}{radio\_test\_send\_ping}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00233}00233\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00234}00234\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ uint8\_t\ ping\_payload[]\ =\ \{\ \textcolor{charliteral}{'P'},\ \textcolor{charliteral}{'I'},\ \textcolor{charliteral}{'N'},\ \textcolor{charliteral}{'G'}\ \};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00235}00235\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{radio__lib_8c_ab8a0a3a4b9f81878fb5194e58c141a45}{radio\_send\_async}}(ping\_payload,\ (uint8\_t)\textcolor{keyword}{sizeof}(ping\_payload));}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00236}00236\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00237}00237\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00238}00238\ \textcolor{comment}{/*\ Public\ API\ documented\ in\ radio\_test.h.\ */}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00239}\mbox{\hyperlink{radio__test_8c_acb8e3ae7eb6734c7a8edd90d66e761d2}{00239}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_acb8e3ae7eb6734c7a8edd90d66e761d2}{radio\_test\_demo\_init}}(SPI\_HandleTypeDef\ *hspi)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00240}00240\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00241}00241\ \ \ \ \ \mbox{\hyperlink{structradio__hw__cfg__t}{radio\_hw\_cfg\_t}}\ radio\_hw;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00242}00242\ \ \ \ \ \mbox{\hyperlink{structradio__lora__cfg__t}{radio\_lora\_cfg\_t}}\ radio\_cfg;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00243}00243\ \ \ \ \ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ radio\_status;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00244}00244\ \ \ \ \ \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\_mem\_store\_cfg\_t}}\ mem\_cfg;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00245}00245\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ mem\_rc;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00246}00246\ \ \ \ \ uint8\_t\ radio\_version\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00247}00247\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00248}00248\ \ \ \ \ \textcolor{keywordflow}{if}\ (hspi\ ==\ NULL)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00249}00249\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00250}00250\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ init\ failed:\ null\ SPI\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00251}00251\ \ \ \ \ \ \ \ \ s\_demo\_initialized\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00252}00252\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00253}00253\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00254}00254\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00255}00255\ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ init\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00256}00256\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00257}00257\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8c_aaba1a58ad6981efa72e2724df78236e4}{i2c\_mem\_store\_default\_cfg\_m24c01r}}(\&mem\_cfg,\ \&hi2c1);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00258}00258\ \ \ \ \ mem\_rc\ =\ \mbox{\hyperlink{i2c__mem__store_8c_a55b8dd95adc2c388e31bb8fc2b7d990a}{i2c\_mem\_store\_init}}(\&s\_msg\_store,\ \&mem\_cfg,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00259}00259\ \ \ \ \ \textcolor{keywordflow}{if}\ (mem\_rc\ ==\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c}{I2C\_MEM\_STORE\_OK}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00260}00260\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00261}00261\ \ \ \ \ \ \ \ \ s\_msg\_store\_ready\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00262}00262\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}MEM\ LOG\ init\ OK\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00263}00263\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00264}00264\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00265}00265\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00266}00266\ \ \ \ \ \ \ \ \ s\_msg\_store\_ready\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00267}00267\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}MEM\ LOG\ init\ failed:\ \%d\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{int})mem\_rc);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00268}00268\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00269}00269\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00270}00270\ \ \ \ \ \mbox{\hyperlink{radio__lib_8c_a9efcd09b6a2db215734ce3a9fb4e7cbd}{radio\_default\_hw\_cfg}}(\&radio\_hw,\ hspi);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00271}00271\ \ \ \ \ \mbox{\hyperlink{radio__lib_8c_a8f74aa96ac249bb5f5e3568cb05c3ad2}{radio\_default\_lora\_cfg}}(\&radio\_cfg);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00272}00272\ \ \ \ \ radio\_status\ =\ \mbox{\hyperlink{radio__lib_8c_afae7a1e83ac82e227ee247081e134239}{radio\_init}}(\&radio\_hw,\ \&radio\_cfg,\ \mbox{\hyperlink{radio__test_8c_a73f24be84380df580976d9cddc725512}{radio\_test\_event\_cb}},\ NULL);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00273}00273\ \ \ \ \ \textcolor{keywordflow}{if}\ (radio\_status\ !=\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00274}00274\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00275}00275\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ init\ failed:\ \%d\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{int})radio\_status);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00276}00276\ \ \ \ \ \ \ \ \ s\_demo\_initialized\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00277}00277\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00278}00278\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00279}00279\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00280}00280\ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{radio__test_8c_aa0d702c40f79b6b72a67729715d3e90d}{radio\_test\_probe}}(\&radio\_version))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00281}00281\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00282}00282\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ probe\ OK,\ version=0x\%02X\(\backslash\)r\(\backslash\)n"{}},\ radio\_version);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00283}00283\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00284}00284\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00285}00285\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00286}00286\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ probe\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00287}00287\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00288}00288\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00289}00289\ \ \ \ \ \mbox{\hyperlink{radio__test_8c_aefd1d85763a464e9273283134dcd90f4}{radio\_test\_dump\_basic}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00290}00290\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00291}00291\ \ \ \ \ radio\_status\ =\ \mbox{\hyperlink{radio__lib_8c_a1a5388061f0de890fbb5610a368c4c6d}{radio\_start\_rx\_continuous}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00292}00292\ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ RX\ start:\ \%s\(\backslash\)r\(\backslash\)n"{}},\ (radio\_status\ ==\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})\ ?\ \textcolor{stringliteral}{"{}OK"{}}\ :\ \textcolor{stringliteral}{"{}FAIL"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00293}00293\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00294}00294\ \ \ \ \ s\_radio\_cb\_events\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00295}00295\ \ \ \ \ s\_radio\_last\_ping\_ms\ =\ \mbox{\hyperlink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{radio\_test\_now\_ms}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00296}00296\ \ \ \ \ s\_radio\_last\_tx\_start\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00297}00297\ \ \ \ \ s\_demo\_initialized\ =\ (radio\_status\ ==\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00298}00298\ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00299}00299\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00303}\mbox{\hyperlink{radio__test_8c_ae5c770ddc69674cafeab76e370772ae1}{00303}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__test_8c_ae5c770ddc69674cafeab76e370772ae1}{radio\_test\_demo\_process}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00304}00304\ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00305}00305\ \ \ \ \ uint32\_t\ events;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00306}00306\ \ \ \ \ uint32\_t\ cb\_events;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00307}00307\ \ \ \ \ uint32\_t\ key;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00308}00308\ \ \ \ \ \mbox{\hyperlink{structradio__packet__t}{radio\_packet\_t}}\ pkt;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00309}00309\ \ \ \ \ uint32\_t\ now;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00310}00310\ \ \ \ \ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ tx\_status;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00311}00311\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00312}00312\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_demo\_initialized)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00313}00313\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00314}00314\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00315}00315\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00316}00316\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00317}00317\ \ \ \ \ \mbox{\hyperlink{radio__lib_8c_a6ac7a9b0c7acdc55d259f51e32c4c892}{radio\_process}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00318}00318\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00319}00319\ \ \ \ \ events\ =\ \mbox{\hyperlink{radio__lib_8c_a816498247d5d0366054d6007c2a0868b}{radio\_take\_events}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00320}00320\ \ \ \ \ key\ =\ \mbox{\hyperlink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{radio\_test\_irq\_save}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00321}00321\ \ \ \ \ cb\_events\ =\ s\_radio\_cb\_events;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00322}00322\ \ \ \ \ s\_radio\_cb\_events\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00323}00323\ \ \ \ \ \mbox{\hyperlink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{radio\_test\_irq\_restore}}(key);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00324}00324\ \ \ \ \ events\ |=\ cb\_events;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00325}00325\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00326}00326\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfa1d149b25904001e51ed6f939e1fb3d9a}{RADIO\_EVENT\_TX\_DONE}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00327}00327\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00328}00328\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ TX\_DONE\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00329}00329\ \ \ \ \ \ \ \ \ s\_radio\_last\_tx\_start\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00330}00330\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00331}00331\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfaa62d4dc7b1c0ad3228a070cc87ec77c9}{RADIO\_EVENT\_RX\_DONE}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00332}00332\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00333}00333\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ RX\_DONE\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00334}00334\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{radio__lib_8c_a66f3f83cb05b469791d414b94758e01e}{radio\_get\_last\_packet}}(\&pkt))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00335}00335\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00336}00336\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__test_8c_ad6fd6a9e04a965fc385c2272be71cd70}{radio\_test\_print\_packet}}(\&pkt);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00337}00337\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__test_8c_a5a8bae0ca1ec19fab52e484b2ad1be06}{radio\_test\_print\_packet\_text}}(\&pkt);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00338}00338\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__test_8c_acbdc55f4b469a388a7284a724652db27}{radio\_test\_publish\_packet\_to\_lcd}}(\&pkt);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00339}00339\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}{radio\_test\_store\_packet\_in\_i2c\_memory}}(\&pkt);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00340}00340\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00341}00341\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00342}00342\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00343}00343\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ RX:\ no\ packet\ data\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00344}00344\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00345}00345\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00346}00346\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{radio__lib_8c_a8b2eab38c2a3358acd0c9e476ceb0664}{radio\_get\_state}}()\ !=\ \mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711a31f54938d9c9d60c5df407c9c1e52454}{RADIO\_STATE\_RX\_CONT}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00347}00347\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00348}00348\ \ \ \ \ \ \ \ \ \ \ \ \ (void)\mbox{\hyperlink{radio__lib_8c_a1a5388061f0de890fbb5610a368c4c6d}{radio\_start\_rx\_continuous}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00349}00349\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00350}00350\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00351}00351\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfaebc5c9fba6326e9bc7a320de04ab1e00}{RADIO\_EVENT\_RX\_TIMEOUT}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00352}00352\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00353}00353\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ RX\_TIMEOUT\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00354}00354\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00355}00355\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfa85593f2e8599fcb847021bc3d03ed219}{RADIO\_EVENT\_CRC\_ERR}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00356}00356\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00357}00357\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ CRC\_ERR\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00358}00358\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00359}00359\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfaa29abb97d2ea6bf8a4459c42bfac9bf8}{RADIO\_EVENT\_FIFO\_OVERRUN}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00360}00360\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00361}00361\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ FIFO\_OVERRUN\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00362}00362\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00363}00363\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfa177e77f8e6d6384dcdfd46cab7ad6d4e}{RADIO\_EVENT\_CAD\_DONE}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00364}00364\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00365}00365\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ CAD\_DONE\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00366}00366\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00367}00367\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfa7f7068e1aebbac0c2315ae961c6f811b}{RADIO\_EVENT\_CAD\_DETECTED}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00368}00368\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00369}00369\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ CAD\_DETECTED\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00370}00370\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00371}00371\ \ \ \ \ \textcolor{keywordflow}{if}\ ((events\ \&\ \mbox{\hyperlink{radio__lib_8h_a34f401ecedc2a216d2822063915eb8dfa076d204c164b342eb0225e211d4e21e3}{RADIO\_EVENT\_HW\_ERROR}})\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00372}00372\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00373}00373\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ EVT:\ HW\_ERROR\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00374}00374\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00375}00375\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00376}00376\ \ \ \ \ now\ =\ \mbox{\hyperlink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{radio\_test\_now\_ms}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00377}00377\ \ \ \ \ \textcolor{keywordflow}{if}\ ((\mbox{\hyperlink{radio__lib_8c_a8b2eab38c2a3358acd0c9e476ceb0664}{radio\_get\_state}}()\ ==\ \mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4}{RADIO\_STATE\_TX}})\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00378}00378\ \ \ \ \ \ \ \ \ (s\_radio\_last\_tx\_start\_ms\ !=\ 0U)\ \&\&}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00379}00379\ \ \ \ \ \ \ \ \ ((now\ -\/\ s\_radio\_last\_tx\_start\_ms)\ >\ 2000U))}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00380}00380\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00381}00381\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ WARN:\ TX\ stuck,\ recovering\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00382}00382\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd}{radio\_test\_dump\_tx\_debug}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00383}00383\ \ \ \ \ \ \ \ \ (void)\mbox{\hyperlink{radio__lib_8c_a0238040036e92174f6bb12caa1dd7b28}{radio\_standby}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00384}00384\ \ \ \ \ \ \ \ \ (void)\mbox{\hyperlink{radio__lib_8c_a1a5388061f0de890fbb5610a368c4c6d}{radio\_start\_rx\_continuous}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00385}00385\ \ \ \ \ \ \ \ \ s\_radio\_last\_tx\_start\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00386}00386\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00387}00387\ }
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00388}00388\ \ \ \ \ \textcolor{keywordflow}{if}\ ((now\ -\/\ s\_radio\_last\_ping\_ms)\ >=\ 5000U)}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00389}00389\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00390}00390\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{radio__lib_8c_a8b2eab38c2a3358acd0c9e476ceb0664}{radio\_get\_state}}()\ ==\ \mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4}{RADIO\_STATE\_TX}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00391}00391\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00392}00392\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ TX\ busy,\ skip\ ping\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00393}00393\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd}{radio\_test\_dump\_tx\_debug}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00394}00394\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00395}00395\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00396}00396\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00397}00397\ \ \ \ \ \ \ \ \ \ \ \ \ tx\_status\ =\ \mbox{\hyperlink{radio__test_8c_a80b69d1de463a0893238ced3d64aa1ad}{radio\_test\_send\_ping}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00398}00398\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tx\_status\ ==\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2}{RADIO\_OK}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00399}00399\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00400}00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ TX:\ PING\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00401}00401\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_radio\_last\_tx\_start\_ms\ =\ now;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00402}00402\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00403}00403\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00404}00404\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00405}00405\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ TX\ failed:\ \%d\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{int})tx\_status);}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00406}00406\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tx\_status\ ==\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220}{RADIO\_EHW}})}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00407}00407\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00408}00408\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}RADIO\ TX\ recovery:\ standby+rx\_cont\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00409}00409\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void)\mbox{\hyperlink{radio__lib_8c_a0238040036e92174f6bb12caa1dd7b28}{radio\_standby}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00410}00410\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void)\mbox{\hyperlink{radio__lib_8c_a1a5388061f0de890fbb5610a368c4c6d}{radio\_start\_rx\_continuous}}();}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00411}00411\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00412}00412\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00413}00413\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00414}00414\ \ \ \ \ \ \ \ \ s\_radio\_last\_ping\_ms\ =\ now;}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00415}00415\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{radio__test_8c_source_l00416}00416\ \}}
+
+\end{DoxyCode}

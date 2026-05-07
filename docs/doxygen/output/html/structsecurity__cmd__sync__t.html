@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury security_cmd_sync_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structsecurity__cmd__sync__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury security_cmd_sync_t</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a58a7be4854579d507a1e24efc346ec2b" id="r_a58a7be4854579d507a1e24efc346ec2b"><td class="memItemLeft" align="right" valign="top">volatile bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58a7be4854579d507a1e24efc346ec2b">done</a></td></tr>
+<tr class="memitem:aff14028dcdfe2dabd0bb9f8ea312b731" id="r_aff14028dcdfe2dabd0bb9f8ea312b731"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff14028dcdfe2dabd0bb9f8ea312b731">result</a></td></tr>
+<tr class="memitem:a943a49a5f4f653482f457f318a9d2450" id="r_a943a49a5f4f653482f457f318a9d2450"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtrusted__info__t.html">trusted_info_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a943a49a5f4f653482f457f318a9d2450">trusted_out</a></td></tr>
+<tr class="memitem:a0ccd192668020fcb7becb8ed8d638c41" id="r_a0ccd192668020fcb7becb8ed8d638c41"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structsecurity__runtime__cfg__t.html">security_runtime_cfg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ccd192668020fcb7becb8ed8d638c41">runtime_out</a></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock">
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00092">92</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a58a7be4854579d507a1e24efc346ec2b" name="a58a7be4854579d507a1e24efc346ec2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58a7be4854579d507a1e24efc346ec2b">&#9670;&#160;</a></span>done</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile bool security_cmd_sync_t::done</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00094">94</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aff14028dcdfe2dabd0bb9f8ea312b731" name="aff14028dcdfe2dabd0bb9f8ea312b731"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff14028dcdfe2dabd0bb9f8ea312b731">&#9670;&#160;</a></span>result</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_cmd_sync_t::result</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00095">95</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a0ccd192668020fcb7becb8ed8d638c41" name="a0ccd192668020fcb7becb8ed8d638c41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ccd192668020fcb7becb8ed8d638c41">&#9670;&#160;</a></span>runtime_out</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structsecurity__runtime__cfg__t.html">security_runtime_cfg_t</a> security_cmd_sync_t::runtime_out</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00097">97</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a943a49a5f4f653482f457f318a9d2450" name="a943a49a5f4f653482f457f318a9d2450"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a943a49a5f4f653482f457f318a9d2450">&#9670;&#160;</a></span>trusted_out</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtrusted__info__t.html">trusted_info_t</a> security_cmd_sync_t::trusted_out</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00096">96</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="security__main_8c_source.html">security_main.c</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structsecurity__cmd__sync__t.html">security_cmd_sync_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

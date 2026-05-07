@@ -1,0 +1,122 @@
+\doxysection{Dokumentacja katalogu Core/\+App}
+\hypertarget{dir_358a96ec289b26a3ec39132274b023b0}{}\label{dir_358a96ec289b26a3ec39132274b023b0}\index{Dokumentacja katalogu Core/App@{Dokumentacja katalogu Core/App}}
+\doxysubsubsection*{Katalogi}
+\begin{DoxyCompactItemize}
+\item 
+katalog \mbox{\hyperlink{dir_2e0d07f9845ca8507e3ef751a0d667ca}{bmp280\+\_\+lib}}
+\item 
+katalog \mbox{\hyperlink{dir_b491a55cf3c9ae3ce781f510095cd424}{i2c\+\_\+mem\+\_\+store\+\_\+lib}}
+\item 
+katalog \mbox{\hyperlink{dir_bb94bc5970b81fcb423ad55b2c6abf7d}{lcd\+\_\+library}}
+\item 
+katalog \mbox{\hyperlink{dir_45024123d6afdc05bb9645902c1ec7cc}{led\+\_\+array\+\_\+lib}}
+\item 
+katalog \mbox{\hyperlink{dir_a2e8606bee7d2eaf4a9e334d73381ef3}{radio\+\_\+lib}}
+\item 
+katalog \mbox{\hyperlink{dir_3aa3598b8fe5b4c76a427191eb55bc88}{security}}
+\item 
+katalog \mbox{\hyperlink{dir_4708a5e97be5c562a34184c0e9880bf6}{st33ktpm2x\+\_\+lib}}
+\item 
+katalog \mbox{\hyperlink{dir_3d59f1528f7adce26fd2042b99b24c88}{vl53l3cx\+\_\+lib}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Pliki}
+\begin{DoxyCompactItemize}
+\item 
+plik {\bfseries app.\+c}
+\item 
+plik \mbox{\hyperlink{app_8h}{app.\+h}}
+\begin{DoxyCompactList}\small\item\em Main application entry points and shared I2C bus helpers. \end{DoxyCompactList}\item 
+plik {\bfseries bmp280\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{bmp280__main_8h}{bmp280\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em RTOS task facade for periodic BMP280 measurements. \end{DoxyCompactList}\item 
+plik {\bfseries button\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{button__main_8h}{button\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em Polled button task (25 ms) with event queue. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{laviet__crypto_8c}{laviet\+\_\+crypto.\+c}}
+\begin{DoxyCompactList}\small\item\em Portable AES-\/\+CTR and HMAC-\/\+SHA256 backend for LAVIET\+\_\+\+FRAME\+\_\+\+V1. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{laviet__crypto_8h}{laviet\+\_\+crypto.\+h}}
+\begin{DoxyCompactList}\small\item\em Crypto helpers for LAVIET\+\_\+\+FRAME\+\_\+\+V1. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{laviet__frame_8c}{laviet\+\_\+frame.\+c}}
+\begin{DoxyCompactList}\small\item\em LAVIET\+\_\+\+FRAME\+\_\+\+V1 parser, serializer and cheap validation. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{laviet__frame_8h}{laviet\+\_\+frame.\+h}}
+\begin{DoxyCompactList}\small\item\em LAVIET\+\_\+\+FRAME\+\_\+\+V1 wire protocol helpers. \end{DoxyCompactList}\item 
+plik {\bfseries lcd\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{lcd__main_8h}{lcd\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em RTOS-\/facing LCD rendering task API. \end{DoxyCompactList}\item 
+plik {\bfseries led\+\_\+array\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{led__array__main_8h}{led\+\_\+array\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em RTOS task facade for LED array status effects. \end{DoxyCompactList}\item 
+plik {\bfseries menu\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{menu__main_8h}{menu\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em LCD menu controller task. \end{DoxyCompactList}\item 
+plik \mbox{\hyperlink{pager__config_8h}{pager\+\_\+config.\+h}}
+\begin{DoxyCompactList}\small\item\em Application-\/level build and board configuration switches. \end{DoxyCompactList}\item 
+plik {\bfseries radio\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{radio__main_8h}{radio\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em Application radio task, runtime profile and command API. \end{DoxyCompactList}\item 
+plik {\bfseries security\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{security__main_8h}{security\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em Security domain task and command API. \end{DoxyCompactList}\item 
+plik {\bfseries service.\+c}
+\item 
+plik \mbox{\hyperlink{service_8h}{service.\+h}}
+\begin{DoxyCompactList}\small\item\em Optional UART service console task entry point. \end{DoxyCompactList}\item 
+plik {\bfseries tof\+\_\+main.\+c}
+\item 
+plik \mbox{\hyperlink{tof__main_8h}{tof\+\_\+main.\+h}}
+\begin{DoxyCompactList}\small\item\em RTOS task facade for the VL53\+L3\+CX time-\/of-\/flight sensor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+\hypertarget{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md64}{}\doxysubsection{\texorpdfstring{Core/\+App -\/ Free\+RTOS Application Layer}{Core/\+App -\/ Free\+RTOS Application Layer}}\label{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md64}
+Aktualna architektura jest oparta o zadania RTOS i Active Object (kolejki komend/zdarzeń)\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily button\+\_\+main} -\/ polling 3 przycisków co 25 ms ({\ttfamily DIG\+\_\+\+B1/\+B2/\+B3}), debounce, short/long press.
+\item {\ttfamily menu\+\_\+main} -\/ kontroler UI na LCD 20x4 (pager/menu/popup), auto-\/exit 60 s.
+\item {\ttfamily lcd\+\_\+main} -\/ dedykowany task LCD z trybami {\ttfamily MONITOR/\+MENU/\+POPUP}, scroll wiadomości RX.
+\item {\ttfamily radio\+\_\+main} -\/ task radiowy z protokołem {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}, ACK, HMAC/\+AES-\/\+CTR, counter anti-\/replay i presetami Lo\+Ra.
+\item {\ttfamily security\+\_\+main} -\/ task domeny security\+: runtime config, rotacja klucza, TPM bootstrap, log RX do EEPROM.
+\item {\ttfamily bmp280\+\_\+main}, {\ttfamily tof\+\_\+main}, {\ttfamily led\+\_\+array\+\_\+main} -\/ zadania sprzętowe jak wcześniej.
+\end{DoxyItemize}
+
+{\ttfamily \doxylink{app_8c_source}{app.\+c}} pozostaje orchestratoriem\+: inicjuje współdzielony lock I2C i uruchamia taski.\hypertarget{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md65}{}\doxysubsection{\texorpdfstring{Startup}{Startup}}\label{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md65}
+
+\begin{DoxyEnumerate}
+\item {\ttfamily main.\+c} inicjalizuje HAL/peryferia.
+\item {\ttfamily \doxylink{app_8h_add3190cf715f513666f4be42874d91e2}{app\+\_\+init()}}.
+\item {\ttfamily os\+Kernel\+Initialize()}.
+\item {\ttfamily MX\+\_\+\+FREERTOS\+\_\+\+Init()} -\/\texorpdfstring{$>$}{>} {\ttfamily \doxylink{app_8h_a61b6a4129efaad641ca7419e58f81ef1}{app\+\_\+freertos\+\_\+init()}} tworzy taski.
+\item {\ttfamily os\+Kernel\+Start()}.
+\end{DoxyEnumerate}
+
+LCD pokazuje animację {\ttfamily HELLO BEKO}, następnie przechodzi do monitora RX.\hypertarget{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md66}{}\doxysubsection{\texorpdfstring{Radio i UI}{Radio i UI}}\label{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md66}
+
+\begin{DoxyItemize}
+\item Ramki systemowe\+: {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}, 45-\/61 B, {\ttfamily payload} 0-\/16 B, {\ttfamily mac\+\_\+tag} 32 B.
+\item {\ttfamily node\+\_\+id} jest 16-\/bitowe i wyliczane z UID MCU z pominięciem wartości zarezerwowanych.
+\item Topologia jest gwiazdą\+: node nie wykonuje mesh relay ani TTL forwarding.
+\item Każda poprawna unicastowa ramka gateway-\/\texorpdfstring{$>$}{>}node dostaje {\ttfamily ACK} z {\ttfamily msg\+\_\+id} i {\ttfamily counter}.
+\item Każda wiadomość RX\+:
+\begin{DoxyItemize}
+\item print na UART,
+\item jedna linia LCD ({\ttfamily RSSI\+:payload}, 20 znaków),
+\item log do EEPROM (przez {\ttfamily security\+\_\+main}).
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md67}{}\doxysubsection{\texorpdfstring{Build note}{Build note}}\label{dir_358a96ec289b26a3ec39132274b023b0_autotoc_md67}
+Jeśli IDE nie podchwyci nowych plików automatycznie, zrób\+:
+
+
+\begin{DoxyEnumerate}
+\item Refresh projektu
+\item Clean
+\item Rebuild 
+\end{DoxyEnumerate}

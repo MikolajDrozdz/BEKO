@@ -1,0 +1,265 @@
+\doxysection{vl53l3cx\+\_\+lib.\+c}
+\hypertarget{vl53l3cx__lib_8c_source}{}\label{vl53l3cx__lib_8c_source}\index{Core/App/vl53l3cx\_lib/vl53l3cx\_lib.c@{Core/App/vl53l3cx\_lib/vl53l3cx\_lib.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{vl53l3cx__lib_8h}{vl53l3cx\_lib.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{app_8h}{../app.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}app\_delay.h"{}}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}main.h"{}}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}vl53l3cx.h"{}}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}vl53lx\_api.h"{}}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00012}00012\ \textcolor{keyword}{extern}\ I2C\_HandleTypeDef\ hi2c1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00014}00014\ \textcolor{preprocessor}{\#define\ TOF\_I2C\_ADDRESS\_8BIT\ \ \ \ \ \ VL53L3CX\_DEVICE\_ADDRESS}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00015}00015\ \textcolor{preprocessor}{\#define\ TOF\_I2C\_TIMEOUT\_MS\ \ \ \ \ \ \ \ 250U}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00016}00016\ \textcolor{preprocessor}{\#define\ TOF\_TIMING\_BUDGET\_MS\ \ \ \ \ \ 30U}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00017}00017\ \textcolor{preprocessor}{\#define\ TOF\_RESET\_PULSE\_MS\ \ \ \ \ \ \ \ 5U}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00018}00018\ \textcolor{preprocessor}{\#define\ TOF\_BOOT\_TIME\_MS\ \ \ \ \ \ \ \ \ \ 10U}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00020}00020\ \textcolor{keyword}{static}\ VL53L3CX\_Object\_t\ s\_tof\_obj;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00021}00021\ \textcolor{keyword}{static}\ VL53L3CX\_Result\_t\ result;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00022}00022\ \textcolor{keyword}{static}\ uint8\_t\ s\_tof\_initialized\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00023}00023\ \textcolor{keyword}{static}\ uint8\_t\ s\_tof\_started\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00024}00024\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_first\_reading\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00026}00026\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_init(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00027}00027\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_deinit(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00028}00028\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_write(uint16\_t\ address,\ uint8\_t\ *data,\ uint16\_t\ length);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00029}00029\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_read(uint16\_t\ address,\ uint8\_t\ *data,\ uint16\_t\ length);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00030}00030\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_get\_tick(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00031}00031\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_activate(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00032}00032\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_reset\_and\_boot(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00033}00033\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_low\_level\_init(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00034}00034\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_is\_non\_fatal\_ref\_spad\_status(VL53LX\_Error\ status);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00037}00037\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_init(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00038}00038\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00039}00039\ \ \ \textcolor{comment}{/*\ I2C1\ is\ configured\ once\ by\ CubeMX\ in\ MX\_I2C1\_Init().\ */}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00040}00040\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00041}00041\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00044}00044\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_deinit(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00045}00045\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00046}00046\ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00047}00047\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00050}00050\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_write(uint16\_t\ address,\ uint8\_t\ *data,\ uint16\_t\ length)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00051}00051\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00052}00052\ \ \ \textcolor{keywordflow}{return}\ (app\_i2c\_master\_transmit(\&hi2c1,\ address,\ data,\ length,\ TOF\_I2C\_TIMEOUT\_MS)\ ==\ HAL\_OK)\ ?\ 0\ :\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00053}00053\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00056}00056\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_read(uint16\_t\ address,\ uint8\_t\ *data,\ uint16\_t\ length)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00057}00057\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00058}00058\ \ \ \textcolor{keywordflow}{return}\ (app\_i2c\_master\_receive(\&hi2c1,\ address,\ data,\ length,\ TOF\_I2C\_TIMEOUT\_MS)\ ==\ HAL\_OK)\ ?\ 0\ :\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00059}00059\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00062}00062\ \textcolor{keyword}{static}\ int32\_t\ tof\_bus\_get\_tick(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00063}00063\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00064}00064\ \ \ \textcolor{keywordflow}{return}\ (int32\_t)HAL\_GetTick();}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00065}00065\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00066}00066\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00068}00068\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_reset\_and\_boot(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00069}00069\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00070}00070\ \ \ HAL\_GPIO\_WritePin(VL53L3CX\_xshout\_GPIO\_Port,\ VL53L3CX\_xshout\_Pin,\ GPIO\_PIN\_RESET);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00071}00071\ \ \ app\_delay\_ms(TOF\_RESET\_PULSE\_MS);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00072}00072\ \ \ HAL\_GPIO\_WritePin(VL53L3CX\_xshout\_GPIO\_Port,\ VL53L3CX\_xshout\_Pin,\ GPIO\_PIN\_SET);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00073}00073\ \ \ app\_delay\_ms(TOF\_BOOT\_TIME\_MS);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00075}00075\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00076}00076\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00079}00079\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_is\_non\_fatal\_ref\_spad\_status(VL53LX\_Error\ status)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00080}00080\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00081}00081\ \ \ \textcolor{keywordflow}{return}\ (status\ ==\ VL53LX\_WARNING\_REF\_SPAD\_CHAR\_NOT\_ENOUGH\_SPADS)\ ||}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00082}00082\ \ \ \ \ \ \ \ \ \ (status\ ==\ VL53LX\_WARNING\_REF\_SPAD\_CHAR\_RATE\_TOO\_HIGH)\ ||}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00083}00083\ \ \ \ \ \ \ \ \ \ (status\ ==\ VL53LX\_WARNING\_REF\_SPAD\_CHAR\_RATE\_TOO\_LOW);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00084}00084\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00085}00085\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00087}00087\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_low\_level\_init(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00088}00088\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00089}00089\ \ \ VL53LX\_Error\ status;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00091}00091\ \ \ status\ =\ VL53LX\_WaitDeviceBooted(\&s\_tof\_obj);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00092}00092\ \ \ \textcolor{keywordflow}{if}\ (status\ !=\ VL53LX\_ERROR\_NONE)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00093}00093\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00094}00094\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ToF\ init:\ WaitDeviceBooted\ failed\ (\%ld)\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{long})status);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00095}00095\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00096}00096\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00098}00098\ \ \ status\ =\ VL53LX\_DataInit(\&s\_tof\_obj);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00099}00099\ \ \ \textcolor{keywordflow}{if}\ (status\ !=\ VL53LX\_ERROR\_NONE)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00100}00100\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00101}00101\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ToF\ init:\ DataInit\ failed\ (\%ld)\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{long})status);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00102}00102\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00103}00103\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00104}00104\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00105}00105\ \ \ status\ =\ VL53LX\_PerformRefSpadManagement(\&s\_tof\_obj);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00106}00106\ \ \ \textcolor{keywordflow}{if}\ ((status\ !=\ VL53LX\_ERROR\_NONE)\ \&\&\ !tof\_is\_non\_fatal\_ref\_spad\_status(status))}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00107}00107\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00108}00108\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ToF\ init:\ RefSpadManagement\ failed\ (\%ld)\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{long})status);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00109}00109\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00110}00110\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00111}00111\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00112}00112\ \ \ \textcolor{keywordflow}{if}\ (tof\_is\_non\_fatal\_ref\_spad\_status(status))}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00113}00113\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00114}00114\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ToF\ init:\ RefSpadManagement\ warning\ (\%ld),\ continuing\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{long})status);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00115}00115\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00117}00117\ \ \ s\_tof\_obj.IsRanging\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00118}00118\ \ \ s\_tof\_obj.IsBlocking\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00119}00119\ \ \ s\_tof\_obj.IsContinuous\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00120}00120\ \ \ s\_tof\_obj.IsAmbientEnabled\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00121}00121\ \ \ s\_tof\_obj.IsSignalEnabled\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00122}00122\ \ \ s\_tof\_obj.IsInitialized\ =\ 1U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00123}00123\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00124}00124\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00125}00125\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00127}\mbox{\hyperlink{vl53l3cx__lib_8h_a6d8e38c00b44e270d5d8907cff871fc0}{00127}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{vl53l3cx__lib_8h_a6d8e38c00b44e270d5d8907cff871fc0}{tof\_init}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00128}00128\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00129}00129\ \ \ VL53L3CX\_IO\_t\ io\_ctx;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00130}00130\ \ \ VL53L3CX\_ProfileConfig\_t\ profile;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00131}00131\ \ \ uint32\_t\ sensor\_id;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00132}00132\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00133}00133\ \ \ \textcolor{keywordflow}{if}\ (s\_tof\_initialized\ ==\ 1U)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00134}00134\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00135}00135\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00136}00136\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00137}00137\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00138}00138\ \ \ s\_tof\_started\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00139}00139\ \ \ s\_first\_reading\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00140}00140\ \ \ memset(\&s\_tof\_obj,\ 0,\ \textcolor{keyword}{sizeof}(s\_tof\_obj));}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00141}00141\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00142}00142\ \ \ (void)tof\_reset\_and\_boot();}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00143}00143\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00144}00144\ \ \ io\_ctx.Init\ =\ tof\_bus\_init;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00145}00145\ \ \ io\_ctx.DeInit\ =\ tof\_bus\_deinit;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00146}00146\ \ \ io\_ctx.Address\ =\ TOF\_I2C\_ADDRESS\_8BIT;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00147}00147\ \ \ io\_ctx.WriteReg\ =\ tof\_bus\_write;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00148}00148\ \ \ io\_ctx.ReadReg\ =\ tof\_bus\_read;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00149}00149\ \ \ io\_ctx.GetTick\ =\ tof\_bus\_get\_tick;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00150}00150\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00151}00151\ \ \ \textcolor{keywordflow}{if}\ (VL53L3CX\_RegisterBusIO(\&s\_tof\_obj,\ \&io\_ctx)\ !=\ VL53L3CX\_OK)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00152}00152\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00153}00153\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00154}00154\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00155}00155\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00156}00156\ \ \ sensor\_id\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00157}00157\ \ \ \textcolor{keywordflow}{if}\ (VL53L3CX\_ReadID(\&s\_tof\_obj,\ \&sensor\_id)\ !=\ VL53L3CX\_OK)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00158}00158\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00159}00159\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ToF\ init:\ ReadID\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00160}00160\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00161}00161\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00162}00162\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00163}00163\ \ \ \textcolor{keywordflow}{if}\ (sensor\_id\ !=\ VL53L3CX\_ID)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00164}00164\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00165}00165\ \ \ \ \ printf(\textcolor{stringliteral}{"{}ToF\ init:\ unexpected\ sensor\ ID\ 0x\%04lX\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})sensor\_id);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00166}00166\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00167}00167\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00168}00168\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00169}00169\ \ \ \textcolor{keywordflow}{if}\ (!tof\_low\_level\_init())}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00170}00170\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00171}00171\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00172}00172\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00173}00173\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00174}00174\ \ \ profile.RangingProfile\ =\ VL53L3CX\_PROFILE\_LONG;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00175}00175\ \ \ profile.TimingBudget\ =\ TOF\_TIMING\_BUDGET\_MS;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00176}00176\ \ \ profile.Frequency\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00177}00177\ \ \ profile.EnableAmbient\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00178}00178\ \ \ profile.EnableSignal\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00179}00179\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00180}00180\ \ \ \textcolor{keywordflow}{if}\ (VL53L3CX\_ConfigProfile(\&s\_tof\_obj,\ \&profile)\ !=\ VL53L3CX\_OK)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00181}00181\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00182}00182\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00183}00183\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00184}00184\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00185}00185\ \ \ s\_tof\_initialized\ =\ 1U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00186}00186\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00187}00187\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00188}00188\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00190}00190\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ tof\_activate(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00191}00191\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00192}00192\ \ \ \textcolor{keywordflow}{if}\ (s\_tof\_started\ ==\ 1U)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00193}00193\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00194}00194\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00195}00195\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00196}00196\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00197}00197\ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00198}00198\ \textcolor{comment}{\ \ \ *\ Blocking\ mode\ prevents\ timeout/stale\ reads\ when\ the\ caller\ polls\ faster}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00199}00199\ \textcolor{comment}{\ \ \ *\ than\ the\ sensor\ produces\ new\ samples.}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00200}00200\ \textcolor{comment}{\ \ \ */}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00201}00201\ \ \ \textcolor{keywordflow}{if}\ (VL53L3CX\_Start(\&s\_tof\_obj,\ VL53L3CX\_MODE\_BLOCKING\_CONTINUOUS)\ !=\ VL53L3CX\_OK)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00202}00202\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00203}00203\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00204}00204\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00205}00205\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00206}00206\ \ \ s\_tof\_started\ =\ 1U;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00207}00207\ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00208}00208\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00209}00209\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00210}\mbox{\hyperlink{vl53l3cx__lib_8h_a66e11312ac8ffc35f766e41d48362bfa}{00210}}\ int32\_t\ \mbox{\hyperlink{vl53l3cx__lib_8h_a66e11312ac8ffc35f766e41d48362bfa}{tof\_get\_distance}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00211}00211\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00212}00212\ \ \ int32\_t\ status;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00213}00213\ \ \ uint32\_t\ target\_count;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00214}00214\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00215}00215\ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{vl53l3cx__lib_8h_a6d8e38c00b44e270d5d8907cff871fc0}{tof\_init}}())}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00216}00216\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00217}00217\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00218}00218\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00219}00219\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00220}00220\ \ \ \textcolor{keywordflow}{if}\ (!tof\_activate())}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00221}00221\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00222}00222\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00223}00223\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00224}00224\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00225}00225\ \ \ memset(\&result,\ 0,\ \textcolor{keyword}{sizeof}(result));}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00226}00226\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00227}00227\ \ \ \textcolor{keywordflow}{if}\ (s\_first\_reading)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00228}00228\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00229}00229\ \ \ \ \ VL53L3CX\_GetDistance(\&s\_tof\_obj,\ \&result);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00230}00230\ \ \ \ \ s\_first\_reading\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00231}00231\ \ \ \ \ app\_delay\_ms(100U);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00232}00232\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00233}00233\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00234}00234\ \ \ status\ =\ VL53L3CX\_GetDistance(\&s\_tof\_obj,\ \&result);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00235}00235\ \ \ \textcolor{keywordflow}{if}\ (status\ !=\ VL53L3CX\_OK)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00236}00236\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00237}00237\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00238}00238\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00239}00239\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00240}00240\ \ \ target\_count\ =\ result.ZoneResult[0].NumberOfTargets;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00241}00241\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00242}00242\ \ \ \textcolor{keywordflow}{if}\ ((result.ZoneResult[0].Status[0]\ ==\ 0U)\ \&\&}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ (result.ZoneResult[0].Distance[0]\ >\ 0U)\ \&\&}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00244}00244\ \ \ \ \ \ \ \ \ \ \ target\_count\ >\ 0)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00245}00245\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00246}00246\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (int32\_t)result.ZoneResult[0].Distance[0];}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00247}00247\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00248}00248\ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00249}00249\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00250}00250\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00251}00251\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00252}00252\ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00253}00253\ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00254}00254\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00255}\mbox{\hyperlink{vl53l3cx__lib_8h_a28ae890b94f064b79582ad2447f246af}{00255}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{vl53l3cx__lib_8h_a28ae890b94f064b79582ad2447f246af}{VL53L3CX\_TestOnce}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00256}00256\ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00257}00257\ \ \ int32\_t\ distance\_mm;}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00258}00258\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00259}00259\ \ \ distance\_mm\ =\ \mbox{\hyperlink{vl53l3cx__lib_8h_a66e11312ac8ffc35f766e41d48362bfa}{tof\_get\_distance}}();}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00260}00260\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00261}00261\ \ \ \textcolor{keywordflow}{if}\ (distance\_mm\ <\ 0)}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00262}00262\ \ \ \{}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00263}00263\ \ \ \ \ printf(\textcolor{stringliteral}{"{}VL53L3CX:\ read\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00264}00264\ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00265}00265\ \ \ \}}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00266}00266\ }
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00267}00267\ \ \ printf(\textcolor{stringliteral}{"{}VL53L3CX:\ \%ld\ mm\(\backslash\)r\(\backslash\)n"{}},\ distance\_mm);}
+\DoxyCodeLine{\Hypertarget{vl53l3cx__lib_8c_source_l00268}00268\ \}}
+
+\end{DoxyCode}

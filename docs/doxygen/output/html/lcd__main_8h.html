@@ -1,0 +1,545 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/lcd_main.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('lcd__main_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku lcd_main.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>RTOS-facing LCD rendering task API.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
+</div>
+<p><a href="lcd__main_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Wyliczenia</h2></td></tr>
+<tr class="memitem:aeb180324247f06b380f2cf8e52c4c664" id="r_aeb180324247f06b380f2cf8e52c4c664"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a> { <a class="el" href="#aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62">LCD_MODE_MONITOR</a> = 0
+, <a class="el" href="#aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd">LCD_MODE_MENU</a>
+, <a class="el" href="#aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c">LCD_MODE_POPUP</a>
+ }</td></tr>
+<tr class="memdesc:aeb180324247f06b380f2cf8e52c4c664"><td class="mdescLeft">&#160;</td><td class="mdescRight">High-level ownership mode for the LCD task.  <a href="#aeb180324247f06b380f2cf8e52c4c664">Więcej...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:abb7810060d5cef86f0e368eb7970855b" id="r_abb7810060d5cef86f0e368eb7970855b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abb7810060d5cef86f0e368eb7970855b">lcd_main_create_task</a> (void)</td></tr>
+<tr class="memdesc:abb7810060d5cef86f0e368eb7970855b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the LCD task and message queue.  <br /></td></tr>
+<tr class="memitem:a716b30672e73417a3307edaf50798e1e" id="r_a716b30672e73417a3307edaf50798e1e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a716b30672e73417a3307edaf50798e1e">lcd_main_set_line</a> (uint8_t line_index, const char *text)</td></tr>
+<tr class="memdesc:a716b30672e73417a3307edaf50798e1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update one monitor line.  <br /></td></tr>
+<tr class="memitem:a58a60fe2a211490124107dd751cd2afa" id="r_a58a60fe2a211490124107dd751cd2afa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58a60fe2a211490124107dd751cd2afa">lcd_main_set_lines</a> (const char *line0, const char *line1)</td></tr>
+<tr class="memdesc:a58a60fe2a211490124107dd751cd2afa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the first two monitor lines.  <br /></td></tr>
+<tr class="memitem:a7a3d779c06b5c3bb826a0b76f0a65eaf" id="r_a7a3d779c06b5c3bb826a0b76f0a65eaf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a3d779c06b5c3bb826a0b76f0a65eaf">lcd_main_show_menu</a> (const char *l0, const char *l1, const char *l2, const char *l3)</td></tr>
+<tr class="memdesc:a7a3d779c06b5c3bb826a0b76f0a65eaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the menu screen with four LCD lines.  <br /></td></tr>
+<tr class="memitem:ad082e838bff867c86118dd1f6666415c" id="r_ad082e838bff867c86118dd1f6666415c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad082e838bff867c86118dd1f6666415c">lcd_main_push_message</a> (int16_t rssi_dbm, const uint8_t *data, uint32_t length)</td></tr>
+<tr class="memdesc:ad082e838bff867c86118dd1f6666415c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append an RX message to the monitor history.  <br /></td></tr>
+<tr class="memitem:a365bccf7acced9705993a3ab3b8d26fb" id="r_a365bccf7acced9705993a3ab3b8d26fb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a365bccf7acced9705993a3ab3b8d26fb">lcd_main_push_message_from</a> (int16_t rssi_dbm, uint32_t source_id, const uint8_t *data, uint32_t length)</td></tr>
+<tr class="memdesc:a365bccf7acced9705993a3ab3b8d26fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append an RX message with source identifier to the monitor history.  <br /></td></tr>
+<tr class="memitem:abfaf6e6665c4f9be69b0ff8727263475" id="r_abfaf6e6665c4f9be69b0ff8727263475"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfaf6e6665c4f9be69b0ff8727263475">lcd_main_set_mode</a> (<a class="el" href="#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a> mode)</td></tr>
+<tr class="memdesc:abfaf6e6665c4f9be69b0ff8727263475"><td class="mdescLeft">&#160;</td><td class="mdescRight">Switch LCD ownership mode.  <br /></td></tr>
+<tr class="memitem:a3721122bf75b9d6bb01ab6e20390f535" id="r_a3721122bf75b9d6bb01ab6e20390f535"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3721122bf75b9d6bb01ab6e20390f535">lcd_main_show_popup</a> (const char *l0, const char *l1, const char *l2, const char *l3)</td></tr>
+<tr class="memdesc:a3721122bf75b9d6bb01ab6e20390f535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Show a four-line popup screen.  <br /></td></tr>
+<tr class="memitem:a5257397a3cc1538d8b18c73f2fe97d89" id="r_a5257397a3cc1538d8b18c73f2fe97d89"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5257397a3cc1538d8b18c73f2fe97d89">lcd_main_show_boot_hello</a> (void)</td></tr>
+<tr class="memdesc:a5257397a3cc1538d8b18c73f2fe97d89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the boot welcome animation.  <br /></td></tr>
+<tr class="memitem:a38cf36f376608d63b1e1b78e75a671ab" id="r_a38cf36f376608d63b1e1b78e75a671ab"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a38cf36f376608d63b1e1b78e75a671ab">lcd_main_monitor_scroll_up</a> (void)</td></tr>
+<tr class="memdesc:a38cf36f376608d63b1e1b78e75a671ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scroll monitor history one line toward older entries.  <br /></td></tr>
+<tr class="memitem:a531fe799b033e4f82b83525e3c336f0f" id="r_a531fe799b033e4f82b83525e3c336f0f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a531fe799b033e4f82b83525e3c336f0f">lcd_main_monitor_scroll_down</a> (void)</td></tr>
+<tr class="memdesc:a531fe799b033e4f82b83525e3c336f0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scroll monitor history one line toward newer entries.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>RTOS-facing LCD rendering task API. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="lcd__main_8h_source.html">lcd_main.h</a>.</p>
+</div><a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Dokumentacja typów wyliczanych</h2>
+<a id="aeb180324247f06b380f2cf8e52c4c664" name="aeb180324247f06b380f2cf8e52c4c664"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb180324247f06b380f2cf8e52c4c664">&#9670;&#160;</a></span>lcd_main_mode_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>High-level ownership mode for the LCD task. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Wartości wyliczeń</th></tr><tr><td class="fieldname"><a id="aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62" name="aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62"></a>LCD_MODE_MONITOR&#160;</td><td class="fielddoc"><p>Show radio monitor history. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd" name="aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd"></a>LCD_MODE_MENU&#160;</td><td class="fielddoc"><p>Show menu-provided 4-line screen. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c" name="aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c"></a>LCD_MODE_POPUP&#160;</td><td class="fielddoc"><p>Show modal/popup content. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8h_source.html#l00015">15</a> pliku <a class="el" href="lcd__main_8h_source.html">lcd_main.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="abb7810060d5cef86f0e368eb7970855b" name="abb7810060d5cef86f0e368eb7970855b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb7810060d5cef86f0e368eb7970855b">&#9670;&#160;</a></span>lcd_main_create_task()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void lcd_main_create_task </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create the LCD task and message queue. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00088">88</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="app_8c_source.html#l00057">app_freertos_init()</a>.</p>
+
+</div>
+</div>
+<a id="a531fe799b033e4f82b83525e3c336f0f" name="a531fe799b033e4f82b83525e3c336f0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a531fe799b033e4f82b83525e3c336f0f">&#9670;&#160;</a></span>lcd_main_monitor_scroll_down()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_monitor_scroll_down </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scroll monitor history one line toward newer entries. </p>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the request was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00217">217</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a38cf36f376608d63b1e1b78e75a671ab" name="a38cf36f376608d63b1e1b78e75a671ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38cf36f376608d63b1e1b78e75a671ab">&#9670;&#160;</a></span>lcd_main_monitor_scroll_up()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_monitor_scroll_up </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Scroll monitor history one line toward older entries. </p>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the request was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00208">208</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ad082e838bff867c86118dd1f6666415c" name="ad082e838bff867c86118dd1f6666415c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad082e838bff867c86118dd1f6666415c">&#9670;&#160;</a></span>lcd_main_push_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_push_message </td>
+          <td>(</td>
+          <td class="paramtype">int16_t</td>          <td class="paramname"><span class="paramname"><em>rssi_dbm</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>length</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append an RX message to the monitor history. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rssi_dbm</td><td>RSSI associated with the payload. </td></tr>
+    <tr><td class="paramname">data</td><td>Payload bytes. </td></tr>
+    <tr><td class="paramname">length</td><td>Payload length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the message was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00156">156</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a365bccf7acced9705993a3ab3b8d26fb" name="a365bccf7acced9705993a3ab3b8d26fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a365bccf7acced9705993a3ab3b8d26fb">&#9670;&#160;</a></span>lcd_main_push_message_from()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_push_message_from </td>
+          <td>(</td>
+          <td class="paramtype">int16_t</td>          <td class="paramname"><span class="paramname"><em>rssi_dbm</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>source_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>length</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append an RX message with source identifier to the monitor history. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">rssi_dbm</td><td>RSSI associated with the payload. </td></tr>
+    <tr><td class="paramname">source_id</td><td>Source node/device identifier. </td></tr>
+    <tr><td class="paramname">data</td><td>Payload bytes. </td></tr>
+    <tr><td class="paramname">length</td><td>Payload length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the message was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00161">161</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a716b30672e73417a3307edaf50798e1e" name="a716b30672e73417a3307edaf50798e1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a716b30672e73417a3307edaf50798e1e">&#9670;&#160;</a></span>lcd_main_set_line()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_set_line </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>line_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Update one monitor line. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">line_index</td><td>Zero-based LCD line index. </td></tr>
+    <tr><td class="paramname">text</td><td>Text copied and padded to display width. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the update request was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00110">110</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a58a60fe2a211490124107dd751cd2afa" name="a58a60fe2a211490124107dd751cd2afa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58a60fe2a211490124107dd751cd2afa">&#9670;&#160;</a></span>lcd_main_set_lines()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_set_lines </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>line0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>line1</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Update the first two monitor lines. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">line0</td><td>First line text. </td></tr>
+    <tr><td class="paramname">line1</td><td>Second line text. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the update request was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00126">126</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="abfaf6e6665c4f9be69b0ff8727263475" name="abfaf6e6665c4f9be69b0ff8727263475"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfaf6e6665c4f9be69b0ff8727263475">&#9670;&#160;</a></span>lcd_main_set_mode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_set_mode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a></td>          <td class="paramname"><span class="paramname"><em>mode</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Switch LCD ownership mode. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mode</td><td>New LCD mode. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the mode change was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00176">176</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a5257397a3cc1538d8b18c73f2fe97d89" name="a5257397a3cc1538d8b18c73f2fe97d89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5257397a3cc1538d8b18c73f2fe97d89">&#9670;&#160;</a></span>lcd_main_show_boot_hello()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_show_boot_hello </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Queue the boot welcome animation. </p>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the request was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00199">199</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a7a3d779c06b5c3bb826a0b76f0a65eaf" name="a7a3d779c06b5c3bb826a0b76f0a65eaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a3d779c06b5c3bb826a0b76f0a65eaf">&#9670;&#160;</a></span>lcd_main_show_menu()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_show_menu </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l3</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace the menu screen with four LCD lines. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">l0</td><td>First line. </td></tr>
+    <tr><td class="paramname">l1</td><td>Second line. </td></tr>
+    <tr><td class="paramname">l2</td><td>Third line. </td></tr>
+    <tr><td class="paramname">l3</td><td>Fourth line. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the screen was queued.</dd></dl>
+<p>Replace the menu screen with four LCD lines.</p>
+<p>Menu navigation used to enqueue each line separately, which could leave stale rows on screen when the LCD queue was busy. Sending the whole frame atomically keeps the UI coherent. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00143">143</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a3721122bf75b9d6bb01ab6e20390f535" name="a3721122bf75b9d6bb01ab6e20390f535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3721122bf75b9d6bb01ab6e20390f535">&#9670;&#160;</a></span>lcd_main_show_popup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool lcd_main_show_popup </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l0</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>l3</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Show a four-line popup screen. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">l0</td><td>First line. </td></tr>
+    <tr><td class="paramname">l1</td><td>Second line. </td></tr>
+    <tr><td class="paramname">l2</td><td>Third line. </td></tr>
+    <tr><td class="paramname">l3</td><td>Fourth line. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the popup was queued. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="lcd__main_8c_source.html#l00186">186</a> pliku <a class="el" href="lcd__main_8c_source.html">lcd_main.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="lcd__main_8h.html">lcd_main.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

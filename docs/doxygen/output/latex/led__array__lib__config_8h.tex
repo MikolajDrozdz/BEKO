@@ -1,0 +1,62 @@
+\doxysection{Dokumentacja pliku Core/\+App/led\+\_\+array\+\_\+lib/led\+\_\+array\+\_\+lib\+\_\+config.h}
+\hypertarget{led__array__lib__config_8h}{}\label{led__array__lib__config_8h}\index{Core/App/led\_array\_lib/led\_array\_lib\_config.h@{Core/App/led\_array\_lib/led\_array\_lib\_config.h}}
+
+
+Compile-\/time configuration for led\+\_\+array\+\_\+lib.  
+
+
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{led__array__lib__config_8h_a3f7f49ccbd2ef0c29c2e8e69f59c7717}{LED\+\_\+\+ARRAY\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+TICK\+\_\+\+MS}}~1U
+\begin{DoxyCompactList}\small\item\em Default scheduler tick period in milliseconds. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{led__array__lib__config_8h_a16818cf6ca502e60dece4cb34fc80bd9}{LED\+\_\+\+ARRAY\+\_\+\+LIB\+\_\+\+OWNS\+\_\+\+HAL\+\_\+\+SYSTICK\+\_\+\+CALLBACK}}~0
+\begin{DoxyCompactList}\small\item\em Own HAL\+\_\+\+SYSTICK\+\_\+\+Callback in the library. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Compile-\/time configuration for led\+\_\+array\+\_\+lib. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{led__array__lib__config_8h_source}{led\+\_\+array\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{led__array__lib__config_8h_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{led__array__lib__config_8h_a3f7f49ccbd2ef0c29c2e8e69f59c7717}\index{led\_array\_lib\_config.h@{led\_array\_lib\_config.h}!LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS@{LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS}}
+\index{LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS@{LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS}!led\_array\_lib\_config.h@{led\_array\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS}{LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS}}
+{\footnotesize\ttfamily \label{led__array__lib__config_8h_a3f7f49ccbd2ef0c29c2e8e69f59c7717} 
+\#define LED\+\_\+\+ARRAY\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+TICK\+\_\+\+MS~1U}
+
+
+
+Default scheduler tick period in milliseconds. 
+
+For smooth dimming effects keep this at 1 ms. 
+
+Definicja w linii \mbox{\hyperlink{led__array__lib__config_8h_source_l00015}{15}} pliku \mbox{\hyperlink{led__array__lib__config_8h_source}{led\+\_\+array\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{led__array__lib_8c_source_l00457}{led\+\_\+array\+\_\+init()}}.
+
+\Hypertarget{led__array__lib__config_8h_a16818cf6ca502e60dece4cb34fc80bd9}\index{led\_array\_lib\_config.h@{led\_array\_lib\_config.h}!LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK@{LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK}}
+\index{LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK@{LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK}!led\_array\_lib\_config.h@{led\_array\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK}{LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK}}
+{\footnotesize\ttfamily \label{led__array__lib__config_8h_a16818cf6ca502e60dece4cb34fc80bd9} 
+\#define LED\+\_\+\+ARRAY\+\_\+\+LIB\+\_\+\+OWNS\+\_\+\+HAL\+\_\+\+SYSTICK\+\_\+\+CALLBACK~0}
+
+
+
+Own HAL\+\_\+\+SYSTICK\+\_\+\+Callback in the library. 
+
+If set to 1, the library provides HAL\+\_\+\+SYSTICK\+\_\+\+Callback() and calls \doxylink{led__array__lib_8c_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\+\_\+array\+\_\+timer\+\_\+tick()} every Sys\+Tick interrupt.
+
+Keep set to 0 if your project already defines HAL\+\_\+\+SYSTICK\+\_\+\+Callback. 
+
+Definicja w linii \mbox{\hyperlink{led__array__lib__config_8h_source_l00027}{27}} pliku \mbox{\hyperlink{led__array__lib__config_8h_source}{led\+\_\+array\+\_\+lib\+\_\+config.\+h}}.
+

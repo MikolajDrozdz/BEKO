@@ -1,0 +1,1466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/laviet_crypto.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('laviet__crypto_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku laviet_crypto.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Portable AES-CTR and HMAC-SHA256 backend for LAVIET_FRAME_V1.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="laviet__crypto_8h_source.html">laviet_crypto.h</a>&quot;</code><br />
+<code>#include &quot;cmsis_os2.h&quot;</code><br />
+<code>#include &quot;stm32u5xx_hal.h&quot;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div>
+<p><a href="laviet__crypto_8c_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Struktury danych</h2></td></tr>
+<tr class="memitem:laviet_5Fsha256_5Fctx_5Ft" id="r_laviet_5Fsha256_5Fctx_5Ft"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Definicje</h2></td></tr>
+<tr class="memitem:a2dcd1e929e4de79575695a0ae7cbdaee" id="r_a2dcd1e929e4de79575695a0ae7cbdaee"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2dcd1e929e4de79575695a0ae7cbdaee">LAVIET_CRYPTO_TIMEOUT_MS</a>&#160;&#160;&#160;1000U</td></tr>
+<tr class="memitem:a5e530e68eeae5cf579957687c7a78f41" id="r_a5e530e68eeae5cf579957687c7a78f41"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e530e68eeae5cf579957687c7a78f41">LAVIET_TEST_FIXED_FRAME_MAC</a>&#160;&#160;&#160;0U</td></tr>
+<tr class="memitem:a8d8ffb52c6ca5171edce5ee476d2f2bc" id="r_a8d8ffb52c6ca5171edce5ee476d2f2bc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d8ffb52c6ca5171edce5ee476d2f2bc">LAVIET_TEST_FIXED_FRAME_MAC_BYTE</a>&#160;&#160;&#160;0x01U</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:a4d52fc15b8e5265f984386a47a7ed4e8" id="r_a4d52fc15b8e5265f984386a47a7ed4e8"><td class="memItemLeft" align="right" valign="top">static const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d52fc15b8e5265f984386a47a7ed4e8">laviet_hal_status_text</a> (HAL_StatusTypeDef status)</td></tr>
+<tr class="memdesc:a4d52fc15b8e5265f984386a47a7ed4e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a HAL status code to a short diagnostic string.  <br /></td></tr>
+<tr class="memitem:abdbdc31d17e5c785c23ee5b678c4d77a" id="r_abdbdc31d17e5c785c23ee5b678c4d77a"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abdbdc31d17e5c785c23ee5b678c4d77a">laviet_crypto_log_mismatch</a> (const char *stage, const uint8_t *expected, const uint8_t *actual, uint16_t len)</td></tr>
+<tr class="memdesc:abdbdc31d17e5c785c23ee5b678c4d77a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Print the first byte mismatch found during crypto self-test comparison.  <br /></td></tr>
+<tr class="memitem:a2c9529fb75dc905c7bccf6844e89ffda" id="r_a2c9529fb75dc905c7bccf6844e89ffda"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c9529fb75dc905c7bccf6844e89ffda">laviet_rotr32</a> (uint32_t value, uint8_t bits)</td></tr>
+<tr class="memdesc:a2c9529fb75dc905c7bccf6844e89ffda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rotate a 32-bit word right for SHA-256 round functions.  <br /></td></tr>
+<tr class="memitem:a1b3dc45a4b3a19e014e5eb71573f28d3" id="r_a1b3dc45a4b3a19e014e5eb71573f28d3"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b3dc45a4b3a19e014e5eb71573f28d3">laviet_sha256_transform</a> (<a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *ctx, const uint8_t data[64])</td></tr>
+<tr class="memdesc:a1b3dc45a4b3a19e014e5eb71573f28d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process one 512-bit SHA-256 block into the running digest state.  <br /></td></tr>
+<tr class="memitem:a770ef8fc5b5a373f664120976930feb1" id="r_a770ef8fc5b5a373f664120976930feb1"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a770ef8fc5b5a373f664120976930feb1">laviet_sha256_init</a> (<a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *ctx)</td></tr>
+<tr class="memdesc:a770ef8fc5b5a373f664120976930feb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the software SHA-256 context with the standard IV.  <br /></td></tr>
+<tr class="memitem:a57ce6f2af9b3f0ea3315b4ed5ef63ebc" id="r_a57ce6f2af9b3f0ea3315b4ed5ef63ebc"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a57ce6f2af9b3f0ea3315b4ed5ef63ebc">laviet_sha256_update</a> (<a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *ctx, const uint8_t *data, uint16_t len)</td></tr>
+<tr class="memdesc:a57ce6f2af9b3f0ea3315b4ed5ef63ebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Feed bytes into the software SHA-256 streaming context.  <br /></td></tr>
+<tr class="memitem:adeaaba8d629ecbe586ebf5e37fc896cf" id="r_adeaaba8d629ecbe586ebf5e37fc896cf"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adeaaba8d629ecbe586ebf5e37fc896cf">laviet_sha256_final</a> (<a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *ctx, uint8_t hash[<a class="el" href="laviet__crypto_8h.html#a8c31159f0318d31515e6219de28b5bb4">LAVIET_SHA256_LEN</a>])</td></tr>
+<tr class="memdesc:adeaaba8d629ecbe586ebf5e37fc896cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finalize SHA-256 padding and write the 32-byte digest.  <br /></td></tr>
+<tr class="memitem:aa8792e9d4b18fe3a7cf6d560655e3b04" id="r_aa8792e9d4b18fe3a7cf6d560655e3b04"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8792e9d4b18fe3a7cf6d560655e3b04">laviet_aes_xtime</a> (uint8_t x)</td></tr>
+<tr class="memdesc:aa8792e9d4b18fe3a7cf6d560655e3b04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#aa8792e9d4b18fe3a7cf6d560655e3b04" title="Internal helper: laviet_aes_xtime.">laviet_aes_xtime</a></span>.  <br /></td></tr>
+<tr class="memitem:a49eee6a0b99bd0c5977a973307c136bd" id="r_a49eee6a0b99bd0c5977a973307c136bd"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a49eee6a0b99bd0c5977a973307c136bd">laviet_aes_key_expansion</a> (const uint8_t key[16], uint8_t round_key[176])</td></tr>
+<tr class="memdesc:a49eee6a0b99bd0c5977a973307c136bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expand a 128-bit AES key into the AES-128 round-key schedule.  <br /></td></tr>
+<tr class="memitem:a2853c12b5afdbc8c441572b51f97826d" id="r_a2853c12b5afdbc8c441572b51f97826d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2853c12b5afdbc8c441572b51f97826d">laviet_aes_add_round_key</a> (uint8_t state[16], const uint8_t *round_key)</td></tr>
+<tr class="memdesc:a2853c12b5afdbc8c441572b51f97826d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a2853c12b5afdbc8c441572b51f97826d" title="Internal helper: laviet_aes_add_round_key.">laviet_aes_add_round_key</a></span>.  <br /></td></tr>
+<tr class="memitem:a63947fa98954d6f382f06caed608ec7f" id="r_a63947fa98954d6f382f06caed608ec7f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63947fa98954d6f382f06caed608ec7f">laviet_aes_sub_bytes</a> (uint8_t state[16])</td></tr>
+<tr class="memdesc:a63947fa98954d6f382f06caed608ec7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a63947fa98954d6f382f06caed608ec7f" title="Internal helper: laviet_aes_sub_bytes.">laviet_aes_sub_bytes</a></span>.  <br /></td></tr>
+<tr class="memitem:a2b0a51fe96ea98ffc37d4bc6b1500b35" id="r_a2b0a51fe96ea98ffc37d4bc6b1500b35"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b0a51fe96ea98ffc37d4bc6b1500b35">laviet_aes_shift_rows</a> (uint8_t state[16])</td></tr>
+<tr class="memdesc:a2b0a51fe96ea98ffc37d4bc6b1500b35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a2b0a51fe96ea98ffc37d4bc6b1500b35" title="Internal helper: laviet_aes_shift_rows.">laviet_aes_shift_rows</a></span>.  <br /></td></tr>
+<tr class="memitem:a0904b3d3bb692b85cbf1674ee6ad6e66" id="r_a0904b3d3bb692b85cbf1674ee6ad6e66"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0904b3d3bb692b85cbf1674ee6ad6e66">laviet_aes_mix_columns</a> (uint8_t state[16])</td></tr>
+<tr class="memdesc:a0904b3d3bb692b85cbf1674ee6ad6e66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a0904b3d3bb692b85cbf1674ee6ad6e66" title="Internal helper: laviet_aes_mix_columns.">laviet_aes_mix_columns</a></span>.  <br /></td></tr>
+<tr class="memitem:a47d9d7e57de48593c763c6020898b43f" id="r_a47d9d7e57de48593c763c6020898b43f"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47d9d7e57de48593c763c6020898b43f">laviet_aes_encrypt_block</a> (const uint8_t in[16], uint8_t out[16], const uint8_t round_key[176])</td></tr>
+<tr class="memdesc:a47d9d7e57de48593c763c6020898b43f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encrypt one 16-byte block with the software AES-128 implementation.  <br /></td></tr>
+<tr class="memitem:a922eac018383b96c079b2123bffdb5ae" id="r_a922eac018383b96c079b2123bffdb5ae"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a922eac018383b96c079b2123bffdb5ae">laviet_make_counter_block</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame, uint16_t block_index, uint8_t out[16])</td></tr>
+<tr class="memdesc:a922eac018383b96c079b2123bffdb5ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the LAVIET-specific AES-CTR counter block from frame identity fields.  <br /></td></tr>
+<tr class="memitem:af9982f34438c413419e6899e76d5d0f2" id="r_af9982f34438c413419e6899e76d5d0f2"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9982f34438c413419e6899e76d5d0f2">laviet_crypto_lock</a> (void)</td></tr>
+<tr class="memdesc:af9982f34438c413419e6899e76d5d0f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#af9982f34438c413419e6899e76d5d0f2" title="Internal helper: laviet_crypto_lock.">laviet_crypto_lock</a></span>.  <br /></td></tr>
+<tr class="memitem:ab319e5390b4d0c58cbe891d841f3c69d" id="r_ab319e5390b4d0c58cbe891d841f3c69d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab319e5390b4d0c58cbe891d841f3c69d">laviet_crypto_unlock</a> (void)</td></tr>
+<tr class="memdesc:ab319e5390b4d0c58cbe891d841f3c69d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#ab319e5390b4d0c58cbe891d841f3c69d" title="Internal helper: laviet_crypto_unlock.">laviet_crypto_unlock</a></span>.  <br /></td></tr>
+<tr class="memitem:af1a2dcfbf35f75b6c192e5897c184935" id="r_af1a2dcfbf35f75b6c192e5897c184935"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1a2dcfbf35f75b6c192e5897c184935">laviet_hmac_sha256_sw</a> (const uint8_t *key, uint16_t key_len, const uint8_t *data, uint16_t data_len, uint8_t out[<a class="el" href="laviet__crypto_8h.html#a8c31159f0318d31515e6219de28b5bb4">LAVIET_SHA256_LEN</a>])</td></tr>
+<tr class="memdesc:af1a2dcfbf35f75b6c192e5897c184935"><td class="mdescLeft">&#160;</td><td class="mdescRight">Software HMAC-SHA256 implementation used as the portable fallback.  <br /></td></tr>
+<tr class="memitem:aaedfa50089bb8c5badd1e5211f579540" id="r_aaedfa50089bb8c5badd1e5211f579540"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaedfa50089bb8c5badd1e5211f579540">laviet_hmac_sha256_hw_locked</a> (const uint8_t *key, uint16_t key_len, const uint8_t *data, uint16_t data_len, uint8_t out[<a class="el" href="laviet__crypto_8h.html#a8c31159f0318d31515e6219de28b5bb4">LAVIET_SHA256_LEN</a>])</td></tr>
+<tr class="memdesc:aaedfa50089bb8c5badd1e5211f579540"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hardware HASH HMAC-SHA256 path; caller must hold the crypto mutex.  <br /></td></tr>
+<tr class="memitem:a9552a8b02c48560557a81a7ff38b984e" id="r_a9552a8b02c48560557a81a7ff38b984e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9552a8b02c48560557a81a7ff38b984e">laviet_frame_hmac_sha256</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame, const uint8_t key[<a class="el" href="laviet__crypto_8h.html#a9a4059ae3f0f42f0762b68772c88c131">LAVIET_HMAC_KEY_LEN</a>], uint8_t out[<a class="el" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>])</td></tr>
+<tr class="memdesc:a9552a8b02c48560557a81a7ff38b984e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the LAVIET frame MAC over the serialized MAC input.  <br /></td></tr>
+<tr class="memitem:a674aed65481a6f0c1d63f711720dd37a" id="r_a674aed65481a6f0c1d63f711720dd37a"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a674aed65481a6f0c1d63f711720dd37a">laviet_aes_ctr_crypt_sw</a> (uint8_t *data, uint8_t len, const uint8_t key[<a class="el" href="laviet__crypto_8h.html#a0c57a4ee6dd72fe4e62f74d48bcee4f8">LAVIET_AES_KEY_LEN</a>], const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</td></tr>
+<tr class="memdesc:a674aed65481a6f0c1d63f711720dd37a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Software AES-CTR encrypt/decrypt routine for arbitrary LAVIET payload length.  <br /></td></tr>
+<tr class="memitem:af5055c41b7dee63903f51e5bbf6d8107" id="r_af5055c41b7dee63903f51e5bbf6d8107"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5055c41b7dee63903f51e5bbf6d8107">laviet_aes_ctr_crypt_hw_locked</a> (uint8_t *data, uint8_t len, const uint8_t key[<a class="el" href="laviet__crypto_8h.html#a0c57a4ee6dd72fe4e62f74d48bcee4f8">LAVIET_AES_KEY_LEN</a>], const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</td></tr>
+<tr class="memdesc:af5055c41b7dee63903f51e5bbf6d8107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hardware AES-CTR path for one LAVIET payload block; caller must hold the crypto mutex.  <br /></td></tr>
+<tr class="memitem:aa30e764093573b79f92dd069d501879b" id="r_aa30e764093573b79f92dd069d501879b"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa30e764093573b79f92dd069d501879b">laviet_crypto_self_test_locked</a> (void)</td></tr>
+<tr class="memdesc:aa30e764093573b79f92dd069d501879b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare hardware crypto output against software reference vectors under the crypto mutex.  <br /></td></tr>
+<tr class="memitem:a7e6b5382044df5bf7b529c89360ac21b" id="r_a7e6b5382044df5bf7b529c89360ac21b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7e6b5382044df5bf7b529c89360ac21b">laviet_crypto_init</a> (void)</td></tr>
+<tr class="memdesc:a7e6b5382044df5bf7b529c89360ac21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize crypto backends and run the optional hardware self-test.  <br /></td></tr>
+<tr class="memitem:aab7bde8133c277eb09a352c4fba812c0" id="r_aab7bde8133c277eb09a352c4fba812c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab7bde8133c277eb09a352c4fba812c0">laviet_hmac_sha256</a> (const uint8_t *key, uint16_t key_len, const uint8_t *data, uint16_t data_len, uint8_t out[<a class="el" href="laviet__crypto_8h.html#a8c31159f0318d31515e6219de28b5bb4">LAVIET_SHA256_LEN</a>])</td></tr>
+<tr class="memdesc:aab7bde8133c277eb09a352c4fba812c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate HMAC-SHA256 over an arbitrary buffer.  <br /></td></tr>
+<tr class="memitem:a762121cd96ad323f0ef8f3687daa90a4" id="r_a762121cd96ad323f0ef8f3687daa90a4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a762121cd96ad323f0ef8f3687daa90a4">laviet_aes_ctr_crypt</a> (uint8_t *data, uint8_t len, const uint8_t key[<a class="el" href="laviet__crypto_8h.html#a0c57a4ee6dd72fe4e62f74d48bcee4f8">LAVIET_AES_KEY_LEN</a>], const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</td></tr>
+<tr class="memdesc:a762121cd96ad323f0ef8f3687daa90a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encrypt or decrypt a LAVIET payload in-place with AES-CTR.  <br /></td></tr>
+<tr class="memitem:aa31879cc3e98740ffee1f73912c6c88a" id="r_aa31879cc3e98740ffee1f73912c6c88a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa31879cc3e98740ffee1f73912c6c88a">laviet_mac_equal</a> (const uint8_t a[<a class="el" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>], const uint8_t b[<a class="el" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>])</td></tr>
+<tr class="memdesc:aa31879cc3e98740ffee1f73912c6c88a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare two MAC tags without data-dependent early exit.  <br /></td></tr>
+<tr class="memitem:ad8181b01dd76111b6f493f92d9a8f2b4" id="r_ad8181b01dd76111b6f493f92d9a8f2b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8181b01dd76111b6f493f92d9a8f2b4">laviet_secure_zero</a> (void *ptr, size_t len)</td></tr>
+<tr class="memdesc:ad8181b01dd76111b6f493f92d9a8f2b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear sensitive memory through a volatile byte pointer.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Zmienne</h2></td></tr>
+<tr class="memitem:a23e1e1b55fb419610bb3976543fde8c6" id="r_a23e1e1b55fb419610bb3976543fde8c6"><td class="memItemLeft" align="right" valign="top">static osMutexId_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23e1e1b55fb419610bb3976543fde8c6">s_crypto_mutex</a> = NULL</td></tr>
+<tr class="memitem:a94d72851fb0add97478ea4bbfe4632ff" id="r_a94d72851fb0add97478ea4bbfe4632ff"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a94d72851fb0add97478ea4bbfe4632ff">s_crypto_hw_ready</a> = false</td></tr>
+<tr class="memitem:a59bbbad2133b999c532868aa1b500478" id="r_a59bbbad2133b999c532868aa1b500478"><td class="memItemLeft" align="right" valign="top">static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a59bbbad2133b999c532868aa1b500478">s_sha256_k</a> [64]</td></tr>
+<tr class="memitem:aa0b4f7c7933a128867c98a6f72acefc8" id="r_aa0b4f7c7933a128867c98a6f72acefc8"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0b4f7c7933a128867c98a6f72acefc8">s_aes_sbox</a> [256]</td></tr>
+<tr class="memitem:ae4a6eb2ce0e3b25bcd3eb677a14a6fa8" id="r_ae4a6eb2ce0e3b25bcd3eb677a14a6fa8"><td class="memItemLeft" align="right" valign="top">static const uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4a6eb2ce0e3b25bcd3eb677a14a6fa8">s_aes_rcon</a> [11]</td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Portable AES-CTR and HMAC-SHA256 backend for LAVIET_FRAME_V1. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Dokumentacja definicji</h2>
+<a id="a2dcd1e929e4de79575695a0ae7cbdaee" name="a2dcd1e929e4de79575695a0ae7cbdaee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dcd1e929e4de79575695a0ae7cbdaee">&#9670;&#160;</a></span>LAVIET_CRYPTO_TIMEOUT_MS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAVIET_CRYPTO_TIMEOUT_MS&#160;&#160;&#160;1000U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00021">21</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a id="a5e530e68eeae5cf579957687c7a78f41" name="a5e530e68eeae5cf579957687c7a78f41"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e530e68eeae5cf579957687c7a78f41">&#9670;&#160;</a></span>LAVIET_TEST_FIXED_FRAME_MAC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAVIET_TEST_FIXED_FRAME_MAC&#160;&#160;&#160;0U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00022">22</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a id="a8d8ffb52c6ca5171edce5ee476d2f2bc" name="a8d8ffb52c6ca5171edce5ee476d2f2bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d8ffb52c6ca5171edce5ee476d2f2bc">&#9670;&#160;</a></span>LAVIET_TEST_FIXED_FRAME_MAC_BYTE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define LAVIET_TEST_FIXED_FRAME_MAC_BYTE&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00023">23</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a2853c12b5afdbc8c441572b51f97826d" name="a2853c12b5afdbc8c441572b51f97826d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2853c12b5afdbc8c441572b51f97826d">&#9670;&#160;</a></span>laviet_aes_add_round_key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_aes_add_round_key </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>state</em></span>[16], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>round_key</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a2853c12b5afdbc8c441572b51f97826d" title="Internal helper: laviet_aes_add_round_key.">laviet_aes_add_round_key</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00469">469</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00543">laviet_aes_encrypt_block()</a>.</p>
+
+</div>
+</div>
+<a id="a762121cd96ad323f0ef8f3687daa90a4" name="a762121cd96ad323f0ef8f3687daa90a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a762121cd96ad323f0ef8f3687daa90a4">&#9670;&#160;</a></span>laviet_aes_ctr_crypt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_aes_ctr_crypt </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>[LAVIET_AES_KEY_LEN], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Encrypt or decrypt a LAVIET payload in-place with AES-CTR. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>Payload buffer. </td></tr>
+    <tr><td class="paramname">len</td><td>Payload length. </td></tr>
+    <tr><td class="paramname">key</td><td>AES-128 key. </td></tr>
+    <tr><td class="paramname">frame</td><td>Frame fields used to build the CTR nonce. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the operation succeeded. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l01134">1134</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00813">laviet_aes_ctr_crypt_hw_locked()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00775">laviet_aes_ctr_crypt_sw()</a>, <a class="el" href="laviet__crypto_8h_source.html#l00020">LAVIET_AES_KEY_LEN</a>, <a class="el" href="laviet__crypto_8c_source.html#l00592">laviet_crypto_lock()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00603">laviet_crypto_unlock()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01191">laviet_secure_zero()</a>.</p>
+
+</div>
+</div>
+<a id="af5055c41b7dee63903f51e5bbf6d8107" name="af5055c41b7dee63903f51e5bbf6d8107"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5055c41b7dee63903f51e5bbf6d8107">&#9670;&#160;</a></span>laviet_aes_ctr_crypt_hw_locked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_aes_ctr_crypt_hw_locked </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>[LAVIET_AES_KEY_LEN], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hardware AES-CTR path for one LAVIET payload block; caller must hold the crypto mutex. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00813">813</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8h_source.html#l00020">LAVIET_AES_KEY_LEN</a>, <a class="el" href="laviet__crypto_8c_source.html#l00116">laviet_hal_status_text()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00569">laviet_make_counter_block()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01191">laviet_secure_zero()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l01134">laviet_aes_ctr_crypt()</a> i <a class="el" href="laviet__crypto_8c_source.html#l00934">laviet_crypto_self_test_locked()</a>.</p>
+
+</div>
+</div>
+<a id="a674aed65481a6f0c1d63f711720dd37a" name="a674aed65481a6f0c1d63f711720dd37a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a674aed65481a6f0c1d63f711720dd37a">&#9670;&#160;</a></span>laviet_aes_ctr_crypt_sw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_aes_ctr_crypt_sw </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>[LAVIET_AES_KEY_LEN], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Software AES-CTR encrypt/decrypt routine for arbitrary LAVIET payload length. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00775">775</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00543">laviet_aes_encrypt_block()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00438">laviet_aes_key_expansion()</a>, <a class="el" href="laviet__crypto_8h_source.html#l00020">LAVIET_AES_KEY_LEN</a>, <a class="el" href="laviet__crypto_8c_source.html#l00569">laviet_make_counter_block()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01191">laviet_secure_zero()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l01134">laviet_aes_ctr_crypt()</a> i <a class="el" href="laviet__crypto_8c_source.html#l00934">laviet_crypto_self_test_locked()</a>.</p>
+
+</div>
+</div>
+<a id="a47d9d7e57de48593c763c6020898b43f" name="a47d9d7e57de48593c763c6020898b43f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47d9d7e57de48593c763c6020898b43f">&#9670;&#160;</a></span>laviet_aes_encrypt_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_aes_encrypt_block </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>in</em></span>[16], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[16], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>round_key</em></span>[176]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Encrypt one 16-byte block with the software AES-128 implementation. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00543">543</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00469">laviet_aes_add_round_key()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00516">laviet_aes_mix_columns()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00491">laviet_aes_shift_rows()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00480">laviet_aes_sub_bytes()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01191">laviet_secure_zero()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00775">laviet_aes_ctr_crypt_sw()</a>.</p>
+
+</div>
+</div>
+<a id="a49eee6a0b99bd0c5977a973307c136bd" name="a49eee6a0b99bd0c5977a973307c136bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49eee6a0b99bd0c5977a973307c136bd">&#9670;&#160;</a></span>laviet_aes_key_expansion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_aes_key_expansion </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>[16], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>round_key</em></span>[176]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Expand a 128-bit AES key into the AES-128 round-key schedule. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00438">438</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00775">laviet_aes_ctr_crypt_sw()</a>.</p>
+
+</div>
+</div>
+<a id="a0904b3d3bb692b85cbf1674ee6ad6e66" name="a0904b3d3bb692b85cbf1674ee6ad6e66"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0904b3d3bb692b85cbf1674ee6ad6e66">&#9670;&#160;</a></span>laviet_aes_mix_columns()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_aes_mix_columns </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>state</em></span>[16]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a0904b3d3bb692b85cbf1674ee6ad6e66" title="Internal helper: laviet_aes_mix_columns.">laviet_aes_mix_columns</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00516">516</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00432">laviet_aes_xtime()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00543">laviet_aes_encrypt_block()</a>.</p>
+
+</div>
+</div>
+<a id="a2b0a51fe96ea98ffc37d4bc6b1500b35" name="a2b0a51fe96ea98ffc37d4bc6b1500b35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b0a51fe96ea98ffc37d4bc6b1500b35">&#9670;&#160;</a></span>laviet_aes_shift_rows()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_aes_shift_rows </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>state</em></span>[16]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a2b0a51fe96ea98ffc37d4bc6b1500b35" title="Internal helper: laviet_aes_shift_rows.">laviet_aes_shift_rows</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00491">491</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00543">laviet_aes_encrypt_block()</a>.</p>
+
+</div>
+</div>
+<a id="a63947fa98954d6f382f06caed608ec7f" name="a63947fa98954d6f382f06caed608ec7f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63947fa98954d6f382f06caed608ec7f">&#9670;&#160;</a></span>laviet_aes_sub_bytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_aes_sub_bytes </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>state</em></span>[16]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a63947fa98954d6f382f06caed608ec7f" title="Internal helper: laviet_aes_sub_bytes.">laviet_aes_sub_bytes</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00480">480</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00543">laviet_aes_encrypt_block()</a>.</p>
+
+</div>
+</div>
+<a id="aa8792e9d4b18fe3a7cf6d560655e3b04" name="aa8792e9d4b18fe3a7cf6d560655e3b04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8792e9d4b18fe3a7cf6d560655e3b04">&#9670;&#160;</a></span>laviet_aes_xtime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t laviet_aes_xtime </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>x</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#aa8792e9d4b18fe3a7cf6d560655e3b04" title="Internal helper: laviet_aes_xtime.">laviet_aes_xtime</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00432">432</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00516">laviet_aes_mix_columns()</a>.</p>
+
+</div>
+</div>
+<a id="a7e6b5382044df5bf7b529c89360ac21b" name="a7e6b5382044df5bf7b529c89360ac21b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e6b5382044df5bf7b529c89360ac21b">&#9670;&#160;</a></span>laviet_crypto_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_crypto_init </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize crypto backends and run the optional hardware self-test. </p>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the software fallback is usable. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l01049">1049</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00592">laviet_crypto_lock()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00934">laviet_crypto_self_test_locked()</a> i <a class="el" href="laviet__crypto_8c_source.html#l00603">laviet_crypto_unlock()</a>.</p>
+
+</div>
+</div>
+<a id="af9982f34438c413419e6899e76d5d0f2" name="af9982f34438c413419e6899e76d5d0f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9982f34438c413419e6899e76d5d0f2">&#9670;&#160;</a></span>laviet_crypto_lock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_crypto_lock </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#af9982f34438c413419e6899e76d5d0f2" title="Internal helper: laviet_crypto_lock.">laviet_crypto_lock</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00592">592</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l01134">laviet_aes_ctr_crypt()</a>, <a class="el" href="laviet__crypto_8c_source.html#l01049">laviet_crypto_init()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01109">laviet_hmac_sha256()</a>.</p>
+
+</div>
+</div>
+<a id="abdbdc31d17e5c785c23ee5b678c4d77a" name="abdbdc31d17e5c785c23ee5b678c4d77a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdbdc31d17e5c785c23ee5b678c4d77a">&#9670;&#160;</a></span>laviet_crypto_log_mismatch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_crypto_log_mismatch </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>stage</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>expected</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>actual</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Print the first byte mismatch found during crypto self-test comparison. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00207">207</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00934">laviet_crypto_self_test_locked()</a>.</p>
+
+</div>
+</div>
+<a id="aa30e764093573b79f92dd069d501879b" name="aa30e764093573b79f92dd069d501879b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa30e764093573b79f92dd069d501879b">&#9670;&#160;</a></span>laviet_crypto_self_test_locked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_crypto_self_test_locked </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compare hardware crypto output against software reference vectors under the crypto mutex. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00934">934</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00813">laviet_aes_ctr_crypt_hw_locked()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00775">laviet_aes_ctr_crypt_sw()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00207">laviet_crypto_log_mismatch()</a>, <a class="el" href="laviet__frame_8h_source.html#l00035">LAVIET_FLAG_ENCRYPTED</a>, <a class="el" href="laviet__crypto_8c_source.html#l00665">laviet_hmac_sha256_hw_locked()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00612">laviet_hmac_sha256_sw()</a> i <a class="el" href="laviet__crypto_8h_source.html#l00024">LAVIET_SHA256_LEN</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l01049">laviet_crypto_init()</a>.</p>
+
+</div>
+</div>
+<a id="ab319e5390b4d0c58cbe891d841f3c69d" name="ab319e5390b4d0c58cbe891d841f3c69d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab319e5390b4d0c58cbe891d841f3c69d">&#9670;&#160;</a></span>laviet_crypto_unlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_crypto_unlock </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#ab319e5390b4d0c58cbe891d841f3c69d" title="Internal helper: laviet_crypto_unlock.">laviet_crypto_unlock</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00603">603</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l01134">laviet_aes_ctr_crypt()</a>, <a class="el" href="laviet__crypto_8c_source.html#l01049">laviet_crypto_init()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01109">laviet_hmac_sha256()</a>.</p>
+
+</div>
+</div>
+<a id="a9552a8b02c48560557a81a7ff38b984e" name="a9552a8b02c48560557a81a7ff38b984e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9552a8b02c48560557a81a7ff38b984e">&#9670;&#160;</a></span>laviet_frame_hmac_sha256()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_frame_hmac_sha256 </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>[LAVIET_HMAC_KEY_LEN], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[LAVIET_MAC_TAG_LEN]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate the LAVIET frame MAC over the serialized MAC input. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>Frame to authenticate. </td></tr>
+    <tr><td class="paramname">key</td><td>HMAC key. </td></tr>
+    <tr><td class="paramname">out</td><td>[out] MAC tag buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the MAC tag was generated. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00739">739</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8c_source.html#l00378">laviet_frame_build_mac_input()</a>, <a class="el" href="laviet__frame_8h_source.html#l00023">LAVIET_FRAME_HEADER_LEN</a>, <a class="el" href="laviet__crypto_8h_source.html#l00022">LAVIET_HMAC_KEY_LEN</a>, <a class="el" href="laviet__crypto_8c_source.html#l01109">laviet_hmac_sha256()</a>, <a class="el" href="laviet__frame_8h_source.html#l00021">LAVIET_MAC_TAG_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00019">LAVIET_MAX_PAYLOAD</a> i <a class="el" href="laviet__crypto_8c_source.html#l01191">laviet_secure_zero()</a>.</p>
+
+</div>
+</div>
+<a id="a4d52fc15b8e5265f984386a47a7ed4e8" name="a4d52fc15b8e5265f984386a47a7ed4e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d52fc15b8e5265f984386a47a7ed4e8">&#9670;&#160;</a></span>laviet_hal_status_text()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const char * laviet_hal_status_text </td>
+          <td>(</td>
+          <td class="paramtype">HAL_StatusTypeDef</td>          <td class="paramname"><span class="paramname"><em>status</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convert a HAL status code to a short diagnostic string. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00116">116</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00813">laviet_aes_ctr_crypt_hw_locked()</a> i <a class="el" href="laviet__crypto_8c_source.html#l00665">laviet_hmac_sha256_hw_locked()</a>.</p>
+
+</div>
+</div>
+<a id="aab7bde8133c277eb09a352c4fba812c0" name="aab7bde8133c277eb09a352c4fba812c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab7bde8133c277eb09a352c4fba812c0">&#9670;&#160;</a></span>laviet_hmac_sha256()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_hmac_sha256 </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>key_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[LAVIET_SHA256_LEN]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate HMAC-SHA256 over an arbitrary buffer. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">key</td><td>HMAC key bytes. </td></tr>
+    <tr><td class="paramname">key_len</td><td>HMAC key length. </td></tr>
+    <tr><td class="paramname">data</td><td>Data buffer. </td></tr>
+    <tr><td class="paramname">data_len</td><td>Data length. </td></tr>
+    <tr><td class="paramname">out</td><td>[out] 32-byte digest output. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the digest was generated. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l01109">1109</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00592">laviet_crypto_lock()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00603">laviet_crypto_unlock()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00665">laviet_hmac_sha256_hw_locked()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00612">laviet_hmac_sha256_sw()</a> i <a class="el" href="laviet__crypto_8h_source.html#l00024">LAVIET_SHA256_LEN</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00739">laviet_frame_hmac_sha256()</a>.</p>
+
+</div>
+</div>
+<a id="aaedfa50089bb8c5badd1e5211f579540" name="aaedfa50089bb8c5badd1e5211f579540"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaedfa50089bb8c5badd1e5211f579540">&#9670;&#160;</a></span>laviet_hmac_sha256_hw_locked()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_hmac_sha256_hw_locked </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>key_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[LAVIET_SHA256_LEN]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hardware HASH HMAC-SHA256 path; caller must hold the crypto mutex. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00665">665</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00116">laviet_hal_status_text()</a> i <a class="el" href="laviet__crypto_8h_source.html#l00024">LAVIET_SHA256_LEN</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00934">laviet_crypto_self_test_locked()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01109">laviet_hmac_sha256()</a>.</p>
+
+</div>
+</div>
+<a id="af1a2dcfbf35f75b6c192e5897c184935" name="af1a2dcfbf35f75b6c192e5897c184935"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1a2dcfbf35f75b6c192e5897c184935">&#9670;&#160;</a></span>laviet_hmac_sha256_sw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_hmac_sha256_sw </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>key</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>key_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[LAVIET_SHA256_LEN]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Software HMAC-SHA256 implementation used as the portable fallback. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00612">612</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l01191">laviet_secure_zero()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00387">laviet_sha256_final()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00349">laviet_sha256_init()</a>, <a class="el" href="laviet__crypto_8h_source.html#l00024">LAVIET_SHA256_LEN</a> i <a class="el" href="laviet__crypto_8c_source.html#l00364">laviet_sha256_update()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00934">laviet_crypto_self_test_locked()</a> i <a class="el" href="laviet__crypto_8c_source.html#l01109">laviet_hmac_sha256()</a>.</p>
+
+</div>
+</div>
+<a id="aa31879cc3e98740ffee1f73912c6c88a" name="aa31879cc3e98740ffee1f73912c6c88a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa31879cc3e98740ffee1f73912c6c88a">&#9670;&#160;</a></span>laviet_mac_equal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_mac_equal </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>a</em></span>[LAVIET_MAC_TAG_LEN], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>b</em></span>[LAVIET_MAC_TAG_LEN]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compare two MAC tags without data-dependent early exit. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">a</td><td>First MAC tag. </td></tr>
+    <tr><td class="paramname">b</td><td>Second MAC tag. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when tags are identical. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l01172">1172</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00021">LAVIET_MAC_TAG_LEN</a>.</p>
+
+</div>
+</div>
+<a id="a922eac018383b96c079b2123bffdb5ae" name="a922eac018383b96c079b2123bffdb5ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a922eac018383b96c079b2123bffdb5ae">&#9670;&#160;</a></span>laviet_make_counter_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_make_counter_block </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>block_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[16]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Build the LAVIET-specific AES-CTR counter block from frame identity fields. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00569">569</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00102">laviet_frame_t::counter</a>, <a class="el" href="laviet__frame_8h_source.html#l00100">laviet_frame_t::dst_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00101">laviet_frame_t::msg_id</a> i <a class="el" href="laviet__frame_8h_source.html#l00099">laviet_frame_t::src_id</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00813">laviet_aes_ctr_crypt_hw_locked()</a> i <a class="el" href="laviet__crypto_8c_source.html#l00775">laviet_aes_ctr_crypt_sw()</a>.</p>
+
+</div>
+</div>
+<a id="a2c9529fb75dc905c7bccf6844e89ffda" name="a2c9529fb75dc905c7bccf6844e89ffda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c9529fb75dc905c7bccf6844e89ffda">&#9670;&#160;</a></span>laviet_rotr32()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t laviet_rotr32 </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>bits</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Rotate a 32-bit word right for SHA-256 round functions. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00273">273</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00279">laviet_sha256_transform()</a>.</p>
+
+</div>
+</div>
+<a id="ad8181b01dd76111b6f493f92d9a8f2b4" name="ad8181b01dd76111b6f493f92d9a8f2b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8181b01dd76111b6f493f92d9a8f2b4">&#9670;&#160;</a></span>laviet_secure_zero()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_secure_zero </td>
+          <td>(</td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>ptr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Clear sensitive memory through a volatile byte pointer. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>Buffer to wipe. </td></tr>
+    <tr><td class="paramname">len</td><td>Number of bytes to clear. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l01191">1191</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l01134">laviet_aes_ctr_crypt()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00813">laviet_aes_ctr_crypt_hw_locked()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00775">laviet_aes_ctr_crypt_sw()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00543">laviet_aes_encrypt_block()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00739">laviet_frame_hmac_sha256()</a>, <a class="el" href="laviet__crypto_8c_source.html#l00612">laviet_hmac_sha256_sw()</a> i <a class="el" href="security__main_8c_source.html#l00676">security_main_get_peer_link_key()</a>.</p>
+
+</div>
+</div>
+<a id="adeaaba8d629ecbe586ebf5e37fc896cf" name="adeaaba8d629ecbe586ebf5e37fc896cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adeaaba8d629ecbe586ebf5e37fc896cf">&#9670;&#160;</a></span>laviet_sha256_final()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_sha256_final </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>hash</em></span>[LAVIET_SHA256_LEN]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Finalize SHA-256 padding and write the 32-byte digest. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00387">387</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8h_source.html#l00024">LAVIET_SHA256_LEN</a> i <a class="el" href="laviet__crypto_8c_source.html#l00279">laviet_sha256_transform()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00612">laviet_hmac_sha256_sw()</a>.</p>
+
+</div>
+</div>
+<a id="a770ef8fc5b5a373f664120976930feb1" name="a770ef8fc5b5a373f664120976930feb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a770ef8fc5b5a373f664120976930feb1">&#9670;&#160;</a></span>laviet_sha256_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_sha256_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Initialize the software SHA-256 context with the standard IV. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00349">349</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00612">laviet_hmac_sha256_sw()</a>.</p>
+
+</div>
+</div>
+<a id="a1b3dc45a4b3a19e014e5eb71573f28d3" name="a1b3dc45a4b3a19e014e5eb71573f28d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b3dc45a4b3a19e014e5eb71573f28d3">&#9670;&#160;</a></span>laviet_sha256_transform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_sha256_transform </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>data</em></span>[64]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Process one 512-bit SHA-256 block into the running digest state. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00279">279</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00273">laviet_rotr32()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00387">laviet_sha256_final()</a> i <a class="el" href="laviet__crypto_8c_source.html#l00364">laviet_sha256_update()</a>.</p>
+
+</div>
+</div>
+<a id="a57ce6f2af9b3f0ea3315b4ed5ef63ebc" name="a57ce6f2af9b3f0ea3315b4ed5ef63ebc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57ce6f2af9b3f0ea3315b4ed5ef63ebc">&#9670;&#160;</a></span>laviet_sha256_update()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_sha256_update </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structlaviet__sha256__ctx__t.html">laviet_sha256_ctx_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Feed bytes into the software SHA-256 streaming context. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00364">364</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__crypto_8c_source.html#l00279">laviet_sha256_transform()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00612">laviet_hmac_sha256_sw()</a>.</p>
+
+</div>
+</div>
+<a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Dokumentacja zmiennych</h2>
+<a id="ae4a6eb2ce0e3b25bcd3eb677a14a6fa8" name="ae4a6eb2ce0e3b25bcd3eb677a14a6fa8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4a6eb2ce0e3b25bcd3eb677a14a6fa8">&#9670;&#160;</a></span>s_aes_rcon</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t s_aes_rcon[11]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Wartość początkowa:</b><div class="fragment"><div class="line">=</div>
+<div class="line">{</div>
+<div class="line">    0x00U, 0x01U, 0x02U, 0x04U, 0x08U, 0x10U, 0x20U, 0x40U, 0x80U, 0x1BU, 0x36U</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00110">110</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a id="aa0b4f7c7933a128867c98a6f72acefc8" name="aa0b4f7c7933a128867c98a6f72acefc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0b4f7c7933a128867c98a6f72acefc8">&#9670;&#160;</a></span>s_aes_sbox</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t s_aes_sbox[256]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00074">74</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a id="a94d72851fb0add97478ea4bbfe4632ff" name="a94d72851fb0add97478ea4bbfe4632ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a94d72851fb0add97478ea4bbfe4632ff">&#9670;&#160;</a></span>s_crypto_hw_ready</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool s_crypto_hw_ready = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00026">26</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a id="a23e1e1b55fb419610bb3976543fde8c6" name="a23e1e1b55fb419610bb3976543fde8c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23e1e1b55fb419610bb3976543fde8c6">&#9670;&#160;</a></span>s_crypto_mutex</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">osMutexId_t s_crypto_mutex = NULL</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00025">25</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+<a id="a59bbbad2133b999c532868aa1b500478" name="a59bbbad2133b999c532868aa1b500478"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59bbbad2133b999c532868aa1b500478">&#9670;&#160;</a></span>s_sha256_k</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint32_t s_sha256_k[64]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Wartość początkowa:</b><div class="fragment"><div class="line">=</div>
+<div class="line">{</div>
+<div class="line">    0x428A2F98UL, 0x71374491UL, 0xB5C0FBCFUL, 0xE9B5DBA5UL,</div>
+<div class="line">    0x3956C25BUL, 0x59F111F1UL, 0x923F82A4UL, 0xAB1C5ED5UL,</div>
+<div class="line">    0xD807AA98UL, 0x12835B01UL, 0x243185BEUL, 0x550C7DC3UL,</div>
+<div class="line">    0x72BE5D74UL, 0x80DEB1FEUL, 0x9BDC06A7UL, 0xC19BF174UL,</div>
+<div class="line">    0xE49B69C1UL, 0xEFBE4786UL, 0x0FC19DC6UL, 0x240CA1CCUL,</div>
+<div class="line">    0x2DE92C6FUL, 0x4A7484AAUL, 0x5CB0A9DCUL, 0x76F988DAUL,</div>
+<div class="line">    0x983E5152UL, 0xA831C66DUL, 0xB00327C8UL, 0xBF597FC7UL,</div>
+<div class="line">    0xC6E00BF3UL, 0xD5A79147UL, 0x06CA6351UL, 0x14292967UL,</div>
+<div class="line">    0x27B70A85UL, 0x2E1B2138UL, 0x4D2C6DFCUL, 0x53380D13UL,</div>
+<div class="line">    0x650A7354UL, 0x766A0ABBUL, 0x81C2C92EUL, 0x92722C85UL,</div>
+<div class="line">    0xA2BFE8A1UL, 0xA81A664BUL, 0xC24B8B70UL, 0xC76C51A3UL,</div>
+<div class="line">    0xD192E819UL, 0xD6990624UL, 0xF40E3585UL, 0x106AA070UL,</div>
+<div class="line">    0x19A4C116UL, 0x1E376C08UL, 0x2748774CUL, 0x34B0BCB5UL,</div>
+<div class="line">    0x391C0CB3UL, 0x4ED8AA4AUL, 0x5B9CCA4FUL, 0x682E6FF3UL,</div>
+<div class="line">    0x748F82EEUL, 0x78A5636FUL, 0x84C87814UL, 0x8CC70208UL,</div>
+<div class="line">    0x90BEFFFAUL, 0xA4506CEBUL, 0xBEF9A3F7UL, 0xC67178F2UL</div>
+<div class="line">}</div>
+</div><!-- fragment -->
+<p class="definition">Definicja w linii <a class="el" href="laviet__crypto_8c_source.html#l00054">54</a> pliku <a class="el" href="laviet__crypto_8c_source.html">laviet_crypto.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="laviet__crypto_8c.html">laviet_crypto.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

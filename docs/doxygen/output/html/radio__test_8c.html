@@ -1,0 +1,770 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/radio_lib/test/radio_test.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('radio__test_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku radio_test.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Implementacja narzędzi testowych i diagnostycznych <span class="tt">radio_lib</span>.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="radio__test_8h_source.html">radio_test.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="radio__sx1276__regs_8h_source.html">../common/sx1276/radio_sx1276_regs.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="lcd__main_8h_source.html">../../lcd_main.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="i2c__mem__store_8h_source.html">../../i2c_mem_store_lib/i2c_mem_store.h</a>&quot;</code><br />
+<code>#include &quot;cmsis_os2.h&quot;</code><br />
+<code>#include &lt;ctype.h&gt;</code><br />
+<code>#include &lt;stdio.h&gt;</code><br />
+</div>
+<p><a href="radio__test_8c_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:a60f0af674d5b6aaebd5be8e18d57e4a0" id="r_a60f0af674d5b6aaebd5be8e18d57e4a0"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60f0af674d5b6aaebd5be8e18d57e4a0">radio_test_irq_save</a> (void)</td></tr>
+<tr class="memdesc:a60f0af674d5b6aaebd5be8e18d57e4a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a60f0af674d5b6aaebd5be8e18d57e4a0" title="Internal helper: radio_test_irq_save.">radio_test_irq_save</a></span>.  <br /></td></tr>
+<tr class="memitem:a31cf7c2a464a042ab9042eef99b1a44c" id="r_a31cf7c2a464a042ab9042eef99b1a44c"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a31cf7c2a464a042ab9042eef99b1a44c">radio_test_irq_restore</a> (uint32_t primask)</td></tr>
+<tr class="memdesc:a31cf7c2a464a042ab9042eef99b1a44c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a31cf7c2a464a042ab9042eef99b1a44c" title="Internal helper: radio_test_irq_restore.">radio_test_irq_restore</a></span>.  <br /></td></tr>
+<tr class="memitem:a403adee1464c5e8a3eba437b8e0120e8" id="r_a403adee1464c5e8a3eba437b8e0120e8"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a403adee1464c5e8a3eba437b8e0120e8">radio_test_now_ms</a> (void)</td></tr>
+<tr class="memdesc:a403adee1464c5e8a3eba437b8e0120e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a403adee1464c5e8a3eba437b8e0120e8" title="Internal helper: radio_test_now_ms.">radio_test_now_ms</a></span>.  <br /></td></tr>
+<tr class="memitem:a73f24be84380df580976d9cddc725512" id="r_a73f24be84380df580976d9cddc725512"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73f24be84380df580976d9cddc725512">radio_test_event_cb</a> (uint32_t events, void *user_ctx)</td></tr>
+<tr class="memdesc:a73f24be84380df580976d9cddc725512"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback zdarzeń radiowych używany w scenariuszu demo.  <br /></td></tr>
+<tr class="memitem:ad6fd6a9e04a965fc385c2272be71cd70" id="r_ad6fd6a9e04a965fc385c2272be71cd70"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad6fd6a9e04a965fc385c2272be71cd70">radio_test_print_packet</a> (const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *pkt)</td></tr>
+<tr class="memdesc:ad6fd6a9e04a965fc385c2272be71cd70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drukuje szczegóły odebranego pakietu (HEX + ASCII).  <br /></td></tr>
+<tr class="memitem:a5a8bae0ca1ec19fab52e484b2ad1be06" id="r_a5a8bae0ca1ec19fab52e484b2ad1be06"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a8bae0ca1ec19fab52e484b2ad1be06">radio_test_print_packet_text</a> (const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *pkt)</td></tr>
+<tr class="memdesc:a5a8bae0ca1ec19fab52e484b2ad1be06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drukuje payload odebranego pakietu jako tekst terminalowy.  <br /></td></tr>
+<tr class="memitem:acbdc55f4b469a388a7284a724652db27" id="r_acbdc55f4b469a388a7284a724652db27"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbdc55f4b469a388a7284a724652db27">radio_test_publish_packet_to_lcd</a> (const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *pkt)</td></tr>
+<tr class="memdesc:acbdc55f4b469a388a7284a724652db27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#acbdc55f4b469a388a7284a724652db27" title="Internal helper: radio_test_publish_packet_to_lcd.">radio_test_publish_packet_to_lcd</a></span>.  <br /></td></tr>
+<tr class="memitem:ab4ca23c24498af664837c4ddb2f77f7e" id="r_ab4ca23c24498af664837c4ddb2f77f7e"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab4ca23c24498af664837c4ddb2f77f7e">radio_test_store_packet_in_i2c_memory</a> (const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *pkt)</td></tr>
+<tr class="memdesc:ab4ca23c24498af664837c4ddb2f77f7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#ab4ca23c24498af664837c4ddb2f77f7e" title="Internal helper: radio_test_store_packet_in_i2c_memory.">radio_test_store_packet_in_i2c_memory</a></span>.  <br /></td></tr>
+<tr class="memitem:ae8b7e9aa4d5d10202671042544325bcd" id="r_ae8b7e9aa4d5d10202671042544325bcd"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8b7e9aa4d5d10202671042544325bcd">radio_test_dump_tx_debug</a> (void)</td></tr>
+<tr class="memdesc:ae8b7e9aa4d5d10202671042544325bcd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drukuje podstawowe rejestry diagnostyczne ścieżki TX.  <br /></td></tr>
+<tr class="memitem:aa0d702c40f79b6b72a67729715d3e90d" id="r_aa0d702c40f79b6b72a67729715d3e90d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0d702c40f79b6b72a67729715d3e90d">radio_test_probe</a> (uint8_t *version)</td></tr>
+<tr class="memdesc:aa0d702c40f79b6b72a67729715d3e90d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sprawdza wersję układu i porównuje z oczekiwanym ID SX1276.  <br /></td></tr>
+<tr class="memitem:aefd1d85763a464e9273283134dcd90f4" id="r_aefd1d85763a464e9273283134dcd90f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aefd1d85763a464e9273283134dcd90f4">radio_test_dump_basic</a> (void)</td></tr>
+<tr class="memdesc:aefd1d85763a464e9273283134dcd90f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Drukuje skrócony zrzut podstawowych rejestrów radiowych.  <br /></td></tr>
+<tr class="memitem:a80b69d1de463a0893238ced3d64aa1ad" id="r_a80b69d1de463a0893238ced3d64aa1ad"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80b69d1de463a0893238ced3d64aa1ad">radio_test_send_ping</a> (void)</td></tr>
+<tr class="memdesc:a80b69d1de463a0893238ced3d64aa1ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wysyła testowy pakiet "PING".  <br /></td></tr>
+<tr class="memitem:acb8e3ae7eb6734c7a8edd90d66e761d2" id="r_acb8e3ae7eb6734c7a8edd90d66e761d2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb8e3ae7eb6734c7a8edd90d66e761d2">radio_test_demo_init</a> (SPI_HandleTypeDef *hspi)</td></tr>
+<tr class="memdesc:acb8e3ae7eb6734c7a8edd90d66e761d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inicjalizuje demonstracyjny scenariusz pracy radia.  <br /></td></tr>
+<tr class="memitem:ae5c770ddc69674cafeab76e370772ae1" id="r_ae5c770ddc69674cafeab76e370772ae1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5c770ddc69674cafeab76e370772ae1">radio_test_demo_process</a> (void)</td></tr>
+<tr class="memdesc:ae5c770ddc69674cafeab76e370772ae1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obsługuje logikę demo: zdarzenia, watchdog TX i okresowe PING.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-var-members" class="groupheader"><a id="var-members" name="var-members"></a>
+Zmienne</h2></td></tr>
+<tr class="memitem:aa47c68a05c80ec82f586577c138b99b1" id="r_aa47c68a05c80ec82f586577c138b99b1"><td class="memItemLeft" align="right" valign="top">static volatile uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa47c68a05c80ec82f586577c138b99b1">s_radio_cb_events</a> = 0U</td></tr>
+<tr class="memitem:aa00fab8408507be666df34a6efdc1966" id="r_aa00fab8408507be666df34a6efdc1966"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa00fab8408507be666df34a6efdc1966">s_radio_last_ping_ms</a> = 0U</td></tr>
+<tr class="memitem:a233c90a3b06952f977a0fdf8cdc2b7ab" id="r_a233c90a3b06952f977a0fdf8cdc2b7ab"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a233c90a3b06952f977a0fdf8cdc2b7ab">s_radio_last_tx_start_ms</a> = 0U</td></tr>
+<tr class="memitem:a480d66658d74d2b8310cfac512de7198" id="r_a480d66658d74d2b8310cfac512de7198"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a480d66658d74d2b8310cfac512de7198">s_demo_initialized</a> = false</td></tr>
+<tr class="memitem:a332cc7384ceff4383534220966c1442e" id="r_a332cc7384ceff4383534220966c1442e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a332cc7384ceff4383534220966c1442e">s_msg_store</a></td></tr>
+<tr class="memitem:a459fd5592e55b9491dc2376401616eb2" id="r_a459fd5592e55b9491dc2376401616eb2"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a459fd5592e55b9491dc2376401616eb2">s_msg_store_ready</a> = false</td></tr>
+<tr class="memitem:af7b2c26e44dadaaa798a5c3d82914ba7" id="r_af7b2c26e44dadaaa798a5c3d82914ba7"><td class="memItemLeft" align="right" valign="top"><a id="af7b2c26e44dadaaa798a5c3d82914ba7" name="af7b2c26e44dadaaa798a5c3d82914ba7"></a>
+I2C_HandleTypeDef&#160;</td><td class="memItemRight" valign="bottom"><b>hi2c1</b></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Implementacja narzędzi testowych i diagnostycznych <span class="tt">radio_lib</span>. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="acb8e3ae7eb6734c7a8edd90d66e761d2" name="acb8e3ae7eb6734c7a8edd90d66e761d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb8e3ae7eb6734c7a8edd90d66e761d2">&#9670;&#160;</a></span>radio_test_demo_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_demo_init </td>
+          <td>(</td>
+          <td class="paramtype">SPI_HandleTypeDef *</td>          <td class="paramname"><span class="paramname"><em>hspi</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inicjalizuje demonstracyjny scenariusz pracy radia. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">hspi</td><td>Uchwyt SPI przekazany z aplikacji. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00239">239</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00440">i2c_mem_store_default_cfg_m24c01r()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="radio__lib_8c_source.html#l00029">radio_default_hw_cfg()</a>, <a class="el" href="radio__lib_8c_source.html#l00034">radio_default_lora_cfg()</a>, <a class="el" href="radio__lib_8c_source.html#l00100">radio_init()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__lib_8c_source.html#l00135">radio_start_rx_continuous()</a>, <a class="el" href="radio__test_8c_source.html#l00199">radio_test_dump_basic()</a>, <a class="el" href="radio__test_8c_source.html#l00069">radio_test_event_cb()</a>, <a class="el" href="radio__test_8c_source.html#l00044">radio_test_now_ms()</a> i <a class="el" href="radio__test_8c_source.html#l00179">radio_test_probe()</a>.</p>
+
+</div>
+</div>
+<a id="ae5c770ddc69674cafeab76e370772ae1" name="ae5c770ddc69674cafeab76e370772ae1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5c770ddc69674cafeab76e370772ae1">&#9670;&#160;</a></span>radio_test_demo_process()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_demo_process </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Obsługuje logikę demo: zdarzenia, watchdog TX i okresowe PING. </p>
+<p>Obsługuje pętlę demona testowego (zdarzenia, logi, cykliczny ping). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00303">303</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00060">RADIO_EVENT_CAD_DETECTED</a>, <a class="el" href="radio__lib_8h_source.html#l00059">RADIO_EVENT_CAD_DONE</a>, <a class="el" href="radio__lib_8h_source.html#l00058">RADIO_EVENT_CRC_ERR</a>, <a class="el" href="radio__lib_8h_source.html#l00061">RADIO_EVENT_FIFO_OVERRUN</a>, <a class="el" href="radio__lib_8h_source.html#l00062">RADIO_EVENT_HW_ERROR</a>, <a class="el" href="radio__lib_8h_source.html#l00056">RADIO_EVENT_RX_DONE</a>, <a class="el" href="radio__lib_8h_source.html#l00057">RADIO_EVENT_RX_TIMEOUT</a>, <a class="el" href="radio__lib_8h_source.html#l00055">RADIO_EVENT_TX_DONE</a>, <a class="el" href="radio__lib_8c_source.html#l00250">radio_get_last_packet()</a>, <a class="el" href="radio__lib_8c_source.html#l00266">radio_get_state()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__lib_8c_source.html#l00215">radio_process()</a>, <a class="el" href="radio__lib_8c_source.html#l00183">radio_standby()</a>, <a class="el" href="radio__lib_8c_source.html#l00135">radio_start_rx_continuous()</a>, <a class="el" href="radio__lib_8h_source.html#l00044">RADIO_STATE_RX_CONT</a>, <a class="el" href="radio__lib_8h_source.html#l00046">RADIO_STATE_TX</a>, <a class="el" href="radio__lib_8c_source.html#l00234">radio_take_events()</a>, <a class="el" href="radio__test_8c_source.html#l00157">radio_test_dump_tx_debug()</a>, <a class="el" href="radio__test_8c_source.html#l00035">radio_test_irq_restore()</a>, <a class="el" href="radio__test_8c_source.html#l00027">radio_test_irq_save()</a>, <a class="el" href="radio__test_8c_source.html#l00044">radio_test_now_ms()</a>, <a class="el" href="radio__test_8c_source.html#l00084">radio_test_print_packet()</a>, <a class="el" href="radio__test_8c_source.html#l00110">radio_test_print_packet_text()</a>, <a class="el" href="radio__test_8c_source.html#l00124">radio_test_publish_packet_to_lcd()</a>, <a class="el" href="radio__test_8c_source.html#l00232">radio_test_send_ping()</a> i <a class="el" href="radio__test_8c_source.html#l00138">radio_test_store_packet_in_i2c_memory()</a>.</p>
+
+</div>
+</div>
+<a id="aefd1d85763a464e9273283134dcd90f4" name="aefd1d85763a464e9273283134dcd90f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefd1d85763a464e9273283134dcd90f4">&#9670;&#160;</a></span>radio_test_dump_basic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_dump_basic </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Drukuje skrócony zrzut podstawowych rejestrów radiowych. </p>
+<p>Drukuje podstawowy zrzut rejestrów przez <span class="tt">printf</span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00199">199</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00239">radio_test_demo_init()</a>.</p>
+
+</div>
+</div>
+<a id="ae8b7e9aa4d5d10202671042544325bcd" name="ae8b7e9aa4d5d10202671042544325bcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8b7e9aa4d5d10202671042544325bcd">&#9670;&#160;</a></span>radio_test_dump_tx_debug()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_dump_tx_debug </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Drukuje podstawowe rejestry diagnostyczne ścieżki TX. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00157">157</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8c_source.html#l00266">radio_get_state()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a id="a73f24be84380df580976d9cddc725512" name="a73f24be84380df580976d9cddc725512"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73f24be84380df580976d9cddc725512">&#9670;&#160;</a></span>radio_test_event_cb()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_event_cb </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>events</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>user_ctx</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Callback zdarzeń radiowych używany w scenariuszu demo. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">events</td><td>Maska zdarzeń z <span class="tt">radio_lib</span>. </td></tr>
+    <tr><td class="paramname">user_ctx</td><td>Nieużywany kontekst użytkownika. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00069">69</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__test_8c_source.html#l00035">radio_test_irq_restore()</a> i <a class="el" href="radio__test_8c_source.html#l00027">radio_test_irq_save()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00239">radio_test_demo_init()</a>.</p>
+
+</div>
+</div>
+<a id="a31cf7c2a464a042ab9042eef99b1a44c" name="a31cf7c2a464a042ab9042eef99b1a44c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31cf7c2a464a042ab9042eef99b1a44c">&#9670;&#160;</a></span>radio_test_irq_restore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_irq_restore </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>primask</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a31cf7c2a464a042ab9042eef99b1a44c" title="Internal helper: radio_test_irq_restore.">radio_test_irq_restore</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00035">35</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a> i <a class="el" href="radio__test_8c_source.html#l00069">radio_test_event_cb()</a>.</p>
+
+</div>
+</div>
+<a id="a60f0af674d5b6aaebd5be8e18d57e4a0" name="a60f0af674d5b6aaebd5be8e18d57e4a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60f0af674d5b6aaebd5be8e18d57e4a0">&#9670;&#160;</a></span>radio_test_irq_save()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_test_irq_save </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a60f0af674d5b6aaebd5be8e18d57e4a0" title="Internal helper: radio_test_irq_save.">radio_test_irq_save</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00027">27</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a> i <a class="el" href="radio__test_8c_source.html#l00069">radio_test_event_cb()</a>.</p>
+
+</div>
+</div>
+<a id="a403adee1464c5e8a3eba437b8e0120e8" name="a403adee1464c5e8a3eba437b8e0120e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a403adee1464c5e8a3eba437b8e0120e8">&#9670;&#160;</a></span>radio_test_now_ms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_test_now_ms </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a403adee1464c5e8a3eba437b8e0120e8" title="Internal helper: radio_test_now_ms.">radio_test_now_ms</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00044">44</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00239">radio_test_demo_init()</a> i <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a id="ad6fd6a9e04a965fc385c2272be71cd70" name="ad6fd6a9e04a965fc385c2272be71cd70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6fd6a9e04a965fc385c2272be71cd70">&#9670;&#160;</a></span>radio_test_print_packet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_print_packet </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *</td>          <td class="paramname"><span class="paramname"><em>pkt</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Drukuje szczegóły odebranego pakietu (HEX + ASCII). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pkt</td><td>Wskaźnik na pakiet do wydruku. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00084">84</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00214">radio_packet_t::data</a>, <a class="el" href="radio__lib_8h_source.html#l00215">radio_packet_t::length</a>, <a class="el" href="radio__lib_8h_source.html#l00216">radio_packet_t::rssi_dbm</a> i <a class="el" href="radio__lib_8h_source.html#l00217">radio_packet_t::snr_db</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a id="a5a8bae0ca1ec19fab52e484b2ad1be06" name="a5a8bae0ca1ec19fab52e484b2ad1be06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a8bae0ca1ec19fab52e484b2ad1be06">&#9670;&#160;</a></span>radio_test_print_packet_text()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_print_packet_text </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *</td>          <td class="paramname"><span class="paramname"><em>pkt</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Drukuje payload odebranego pakietu jako tekst terminalowy. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pkt</td><td>Wskaźnik na pakiet do wydruku. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00110">110</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00214">radio_packet_t::data</a> i <a class="el" href="radio__lib_8h_source.html#l00215">radio_packet_t::length</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a id="aa0d702c40f79b6b72a67729715d3e90d" name="aa0d702c40f79b6b72a67729715d3e90d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0d702c40f79b6b72a67729715d3e90d">&#9670;&#160;</a></span>radio_test_probe()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_test_probe </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>version</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sprawdza wersję układu i porównuje z oczekiwanym ID SX1276. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">version</td><td>[out] Opcjonalny odczyt surowego rejestru wersji. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> gdy układ odpowiada poprawnym identyfikatorem. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00179">179</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00239">radio_test_demo_init()</a>.</p>
+
+</div>
+</div>
+<a id="acbdc55f4b469a388a7284a724652db27" name="acbdc55f4b469a388a7284a724652db27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbdc55f4b469a388a7284a724652db27">&#9670;&#160;</a></span>radio_test_publish_packet_to_lcd()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_publish_packet_to_lcd </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *</td>          <td class="paramname"><span class="paramname"><em>pkt</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#acbdc55f4b469a388a7284a724652db27" title="Internal helper: radio_test_publish_packet_to_lcd.">radio_test_publish_packet_to_lcd</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00124">124</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00214">radio_packet_t::data</a>, <a class="el" href="radio__lib_8h_source.html#l00215">radio_packet_t::length</a> i <a class="el" href="radio__lib_8h_source.html#l00216">radio_packet_t::rssi_dbm</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a id="a80b69d1de463a0893238ced3d64aa1ad" name="a80b69d1de463a0893238ced3d64aa1ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80b69d1de463a0893238ced3d64aa1ad">&#9670;&#160;</a></span>radio_test_send_ping()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_test_send_ping </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wysyła testowy pakiet "PING". </p>
+<p>Wysyła krótką ramkę testową "PING".</p>
+<dl class="section return"><dt>Zwraca</dt><dd>Kod statusu z <span class="tt"><a class="el" href="radio__lib_8c.html#ab8a0a3a4b9f81878fb5194e58c141a45" title="Rozpoczyna nadawanie asynchroniczne.">radio_send_async</a></span>. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00232">232</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8c_source.html#l00167">radio_send_async()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a id="ab4ca23c24498af664837c4ddb2f77f7e" name="ab4ca23c24498af664837c4ddb2f77f7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab4ca23c24498af664837c4ddb2f77f7e">&#9670;&#160;</a></span>radio_test_store_packet_in_i2c_memory()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_test_store_packet_in_i2c_memory </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structradio__packet__t.html">radio_packet_t</a> *</td>          <td class="paramname"><span class="paramname"><em>pkt</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#ab4ca23c24498af664837c4ddb2f77f7e" title="Internal helper: radio_test_store_packet_in_i2c_memory.">radio_test_store_packet_in_i2c_memory</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00138">138</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00214">radio_packet_t::data</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="radio__lib_8h_source.html#l00215">radio_packet_t::length</a> i <a class="el" href="radio__lib_8h_source.html#l00216">radio_packet_t::rssi_dbm</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00303">radio_test_demo_process()</a>.</p>
+
+</div>
+</div>
+<a name="doc-var-members" id="doc-var-members"></a><h2 id="header-doc-var-members" class="groupheader">Dokumentacja zmiennych</h2>
+<a id="a480d66658d74d2b8310cfac512de7198" name="a480d66658d74d2b8310cfac512de7198"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a480d66658d74d2b8310cfac512de7198">&#9670;&#160;</a></span>s_demo_initialized</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool s_demo_initialized = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00020">20</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+</div>
+</div>
+<a id="a332cc7384ceff4383534220966c1442e" name="a332cc7384ceff4383534220966c1442e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a332cc7384ceff4383534220966c1442e">&#9670;&#160;</a></span>s_msg_store</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> s_msg_store</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00021">21</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+</div>
+</div>
+<a id="a459fd5592e55b9491dc2376401616eb2" name="a459fd5592e55b9491dc2376401616eb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a459fd5592e55b9491dc2376401616eb2">&#9670;&#160;</a></span>s_msg_store_ready</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool s_msg_store_ready = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00022">22</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+</div>
+</div>
+<a id="aa47c68a05c80ec82f586577c138b99b1" name="aa47c68a05c80ec82f586577c138b99b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa47c68a05c80ec82f586577c138b99b1">&#9670;&#160;</a></span>s_radio_cb_events</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">volatile uint32_t s_radio_cb_events = 0U</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00017">17</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+</div>
+</div>
+<a id="aa00fab8408507be666df34a6efdc1966" name="aa00fab8408507be666df34a6efdc1966"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa00fab8408507be666df34a6efdc1966">&#9670;&#160;</a></span>s_radio_last_ping_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t s_radio_last_ping_ms = 0U</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00018">18</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+</div>
+</div>
+<a id="a233c90a3b06952f977a0fdf8cdc2b7ab" name="a233c90a3b06952f977a0fdf8cdc2b7ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a233c90a3b06952f977a0fdf8cdc2b7ab">&#9670;&#160;</a></span>s_radio_last_tx_start_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t s_radio_last_tx_start_ms = 0U</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__test_8c_source.html#l00019">19</a> pliku <a class="el" href="radio__test_8c_source.html">radio_test.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_a2e8606bee7d2eaf4a9e334d73381ef3.html">radio_lib</a></li><li class="navelem"><b>test</b></li><li class="navelem"><a href="radio__test_8c.html">radio_test.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

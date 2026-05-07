@@ -1,0 +1,91 @@
+\doxysection{Dokumentacja struktury st33ktpm2x\+\_\+t}
+\hypertarget{structst33ktpm2x__t}{}\label{structst33ktpm2x__t}\index{st33ktpm2x\_t@{st33ktpm2x\_t}}
+
+
+Driver context for one TPM device.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/st33ktpm2x\+\_\+lib/st33ktpm2x.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structst33ktpm2x__t_ac20197af8ff84023d0bbbfc77f8add05}{cfg}}
+\begin{DoxyCompactList}\small\item\em Active runtime configuration. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structst33ktpm2x__t_a613590c5d8a478fd7b3d3f8f18f5029d}{initialized}}
+\begin{DoxyCompactList}\small\item\em Driver init state. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structst33ktpm2x__t_a8ff12fe910a44f3d27ccadb1d4c0c9b0}{locality0\+\_\+acquired}}
+\begin{DoxyCompactList}\small\item\em Locality 0 acquisition state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Driver context for one TPM device. 
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00109}{109}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structst33ktpm2x__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structst33ktpm2x__t_ac20197af8ff84023d0bbbfc77f8add05}\index{st33ktpm2x\_t@{st33ktpm2x\_t}!cfg@{cfg}}
+\index{cfg@{cfg}!st33ktpm2x\_t@{st33ktpm2x\_t}}
+\doxysubsubsection{\texorpdfstring{cfg}{cfg}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__t_ac20197af8ff84023d0bbbfc77f8add05} 
+\mbox{\hyperlink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}} st33ktpm2x\+\_\+t\+::cfg}
+
+
+
+Active runtime configuration. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{111}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{st33\+\_\+wait\+\_\+burst()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00605}{st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00547}{st33ktpm2x\+\_\+init()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{structst33ktpm2x__t_a613590c5d8a478fd7b3d3f8f18f5029d}\index{st33ktpm2x\_t@{st33ktpm2x\_t}!initialized@{initialized}}
+\index{initialized@{initialized}!st33ktpm2x\_t@{st33ktpm2x\_t}}
+\doxysubsubsection{\texorpdfstring{initialized}{initialized}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__t_a613590c5d8a478fd7b3d3f8f18f5029d} 
+bool st33ktpm2x\+\_\+t\+::initialized}
+
+
+
+Driver init state. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{112}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00605}{st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00565}{st33ktpm2x\+\_\+deinit()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00547}{st33ktpm2x\+\_\+init()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00643}{st33ktpm2x\+\_\+pp\+\_\+wait\+\_\+pressed()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00755}{st33ktpm2x\+\_\+read\+\_\+identity()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01270}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{structst33ktpm2x__t_a8ff12fe910a44f3d27ccadb1d4c0c9b0}\index{st33ktpm2x\_t@{st33ktpm2x\_t}!locality0\_acquired@{locality0\_acquired}}
+\index{locality0\_acquired@{locality0\_acquired}!st33ktpm2x\_t@{st33ktpm2x\_t}}
+\doxysubsubsection{\texorpdfstring{locality0\_acquired}{locality0\_acquired}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__t_a8ff12fe910a44f3d27ccadb1d4c0c9b0} 
+bool st33ktpm2x\+\_\+t\+::locality0\+\_\+acquired}
+
+
+
+Locality 0 acquisition state. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00113}{113}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/st33ktpm2x\+\_\+lib/\mbox{\hyperlink{st33ktpm2x_8h}{st33ktpm2x.\+h}}\end{DoxyCompactItemize}

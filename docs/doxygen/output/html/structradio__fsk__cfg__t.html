@@ -1,0 +1,394 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury radio_fsk_cfg_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structradio__fsk__cfg__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury radio_fsk_cfg_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Konfiguracja backendu FSK/GFSK/MSK/GMSK.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="radio__lib_8h_source.html">Core/App/radio_lib/radio_lib.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a2f3ac2a93a0f3e80f2b4bb19f4201be4" id="r_a2f3ac2a93a0f3e80f2b4bb19f4201be4"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f3ac2a93a0f3e80f2b4bb19f4201be4">frequency_hz</a></td></tr>
+<tr class="memdesc:a2f3ac2a93a0f3e80f2b4bb19f4201be4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Częstotliwość RF [Hz].  <br /></td></tr>
+<tr class="memitem:af9e1018f3050027e324b54016c5dfb24" id="r_af9e1018f3050027e324b54016c5dfb24"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af9e1018f3050027e324b54016c5dfb24">bitrate_bps</a></td></tr>
+<tr class="memdesc:af9e1018f3050027e324b54016c5dfb24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitrate [bps].  <br /></td></tr>
+<tr class="memitem:a34fde4b1daf682dec204301b121a3130" id="r_a34fde4b1daf682dec204301b121a3130"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#a227ddbfeda5a2c2c4cbe5ab3bde9b6cd">radio_lora_bw_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34fde4b1daf682dec204301b121a3130">rx_bandwidth</a></td></tr>
+<tr class="memdesc:a34fde4b1daf682dec204301b121a3130"><td class="mdescLeft">&#160;</td><td class="mdescRight">Szerokość pasma RX zakodowana tym samym enumem co w LoRa.  <br /></td></tr>
+<tr class="memitem:adfbf5d8d4c4f35ce394589182d9cc28b" id="r_adfbf5d8d4c4f35ce394589182d9cc28b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#a8f5d0079fa3953459eba6bbce9b417cb">radio_fsk_shaping_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfbf5d8d4c4f35ce394589182d9cc28b">shaping</a></td></tr>
+<tr class="memdesc:adfbf5d8d4c4f35ce394589182d9cc28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odmiana/kanał shapingu modulacji.  <br /></td></tr>
+<tr class="memitem:aae88a9a6518e6b8ec04b6b41eb60b4a2" id="r_aae88a9a6518e6b8ec04b6b41eb60b4a2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#aa1fffd53496074eea43b15c754d11b8c">radio_fsk_filter_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae88a9a6518e6b8ec04b6b41eb60b4a2">filter</a></td></tr>
+<tr class="memdesc:aae88a9a6518e6b8ec04b6b41eb60b4a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typ filtra BT dla wariantów gaussowskich.  <br /></td></tr>
+<tr class="memitem:aa66e764c40359f0b8ee7e426e720d352" id="r_aa66e764c40359f0b8ee7e426e720d352"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa66e764c40359f0b8ee7e426e720d352">tx_power_dbm</a></td></tr>
+<tr class="memdesc:aa66e764c40359f0b8ee7e426e720d352"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moc TX [dBm].  <br /></td></tr>
+<tr class="memitem:aee39b3e3153684fb6eeba0a2fe3dd132" id="r_aee39b3e3153684fb6eeba0a2fe3dd132"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee39b3e3153684fb6eeba0a2fe3dd132">preamble_len</a></td></tr>
+<tr class="memdesc:aee39b3e3153684fb6eeba0a2fe3dd132"><td class="mdescLeft">&#160;</td><td class="mdescRight">Długość preambuły [B].  <br /></td></tr>
+<tr class="memitem:ab5c1822492d822f6049e1050dc4fb1b2" id="r_ab5c1822492d822f6049e1050dc4fb1b2"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab5c1822492d822f6049e1050dc4fb1b2">sync_word_len</a></td></tr>
+<tr class="memdesc:ab5c1822492d822f6049e1050dc4fb1b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Długość słowa synchronizacji [B].  <br /></td></tr>
+<tr class="memitem:addbaf97073aa2f36f08a5067afce80d9" id="r_addbaf97073aa2f36f08a5067afce80d9"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#addbaf97073aa2f36f08a5067afce80d9">sync_word</a></td></tr>
+<tr class="memdesc:addbaf97073aa2f36f08a5067afce80d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wzorzec sync word, używane najmłodsze <span class="tt"><a class="el" href="#ab5c1822492d822f6049e1050dc4fb1b2" title="Długość słowa synchronizacji [B].">sync_word_len</a></span> bajtów.  <br /></td></tr>
+<tr class="memitem:a28c3584880f9b3988bd7179f9c30bfba" id="r_a28c3584880f9b3988bd7179f9c30bfba"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#af7547c58e390a035fdcac378bc75b455">radio_address_filter_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28c3584880f9b3988bd7179f9c30bfba">address_filter</a></td></tr>
+<tr class="memdesc:a28c3584880f9b3988bd7179f9c30bfba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filtrowanie adresowe packet engine.  <br /></td></tr>
+<tr class="memitem:a26d6452de81c352e5e84c7e283c52801" id="r_a26d6452de81c352e5e84c7e283c52801"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#a1226502377d5e0372e1069714b8c7fbd">radio_packet_crc_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26d6452de81c352e5e84c7e283c52801">crc_type</a></td></tr>
+<tr class="memdesc:a26d6452de81c352e5e84c7e283c52801"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typ CRC packet engine.  <br /></td></tr>
+<tr class="memitem:a130bb81886de7e6bc9cfc6448793a88e" id="r_a130bb81886de7e6bc9cfc6448793a88e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a130bb81886de7e6bc9cfc6448793a88e">data_whitening</a></td></tr>
+<tr class="memdesc:a130bb81886de7e6bc9cfc6448793a88e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Włączenie whitening-u danych.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Konfiguracja backendu FSK/GFSK/MSK/GMSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00177">177</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a28c3584880f9b3988bd7179f9c30bfba" name="a28c3584880f9b3988bd7179f9c30bfba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28c3584880f9b3988bd7179f9c30bfba">&#9670;&#160;</a></span>address_filter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#af7547c58e390a035fdcac378bc75b455">radio_address_filter_t</a> radio_fsk_cfg_t::address_filter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Filtrowanie adresowe packet engine. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00188">188</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00208">radio_get_packet_config_1()</a>.</p>
+
+</div>
+</div>
+<a id="af9e1018f3050027e324b54016c5dfb24" name="af9e1018f3050027e324b54016c5dfb24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9e1018f3050027e324b54016c5dfb24">&#9670;&#160;</a></span>bitrate_bps</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_fsk_cfg_t::bitrate_bps</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bitrate [bps]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00180">180</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00162">radio_get_frequency_deviation()</a>.</p>
+
+</div>
+</div>
+<a id="a26d6452de81c352e5e84c7e283c52801" name="a26d6452de81c352e5e84c7e283c52801"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26d6452de81c352e5e84c7e283c52801">&#9670;&#160;</a></span>crc_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#a1226502377d5e0372e1069714b8c7fbd">radio_packet_crc_t</a> radio_fsk_cfg_t::crc_type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Typ CRC packet engine. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00189">189</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00208">radio_get_packet_config_1()</a>.</p>
+
+</div>
+</div>
+<a id="a130bb81886de7e6bc9cfc6448793a88e" name="a130bb81886de7e6bc9cfc6448793a88e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a130bb81886de7e6bc9cfc6448793a88e">&#9670;&#160;</a></span>data_whitening</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_fsk_cfg_t::data_whitening</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Włączenie whitening-u danych. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00190">190</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00208">radio_get_packet_config_1()</a>.</p>
+
+</div>
+</div>
+<a id="aae88a9a6518e6b8ec04b6b41eb60b4a2" name="aae88a9a6518e6b8ec04b6b41eb60b4a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae88a9a6518e6b8ec04b6b41eb60b4a2">&#9670;&#160;</a></span>filter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#aa1fffd53496074eea43b15c754d11b8c">radio_fsk_filter_t</a> radio_fsk_cfg_t::filter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Typ filtra BT dla wariantów gaussowskich. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00183">183</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>.</p>
+
+</div>
+</div>
+<a id="a2f3ac2a93a0f3e80f2b4bb19f4201be4" name="a2f3ac2a93a0f3e80f2b4bb19f4201be4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f3ac2a93a0f3e80f2b4bb19f4201be4">&#9670;&#160;</a></span>frequency_hz</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_fsk_cfg_t::frequency_hz</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Częstotliwość RF [Hz]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00179">179</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="aee39b3e3153684fb6eeba0a2fe3dd132" name="aee39b3e3153684fb6eeba0a2fe3dd132"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee39b3e3153684fb6eeba0a2fe3dd132">&#9670;&#160;</a></span>preamble_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t radio_fsk_cfg_t::preamble_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Długość preambuły [B]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00185">185</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a34fde4b1daf682dec204301b121a3130" name="a34fde4b1daf682dec204301b121a3130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34fde4b1daf682dec204301b121a3130">&#9670;&#160;</a></span>rx_bandwidth</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#a227ddbfeda5a2c2c4cbe5ab3bde9b6cd">radio_lora_bw_t</a> radio_fsk_cfg_t::rx_bandwidth</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Szerokość pasma RX zakodowana tym samym enumem co w LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00181">181</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="adfbf5d8d4c4f35ce394589182d9cc28b" name="adfbf5d8d4c4f35ce394589182d9cc28b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfbf5d8d4c4f35ce394589182d9cc28b">&#9670;&#160;</a></span>shaping</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#a8f5d0079fa3953459eba6bbce9b417cb">radio_fsk_shaping_t</a> radio_fsk_cfg_t::shaping</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odmiana/kanał shapingu modulacji. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00182">182</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a>, <a class="el" href="radio__fsk_8c_source.html#l00162">radio_get_frequency_deviation()</a> i <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>.</p>
+
+</div>
+</div>
+<a id="addbaf97073aa2f36f08a5067afce80d9" name="addbaf97073aa2f36f08a5067afce80d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#addbaf97073aa2f36f08a5067afce80d9">&#9670;&#160;</a></span>sync_word</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_fsk_cfg_t::sync_word</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wzorzec sync word, używane najmłodsze <span class="tt"><a class="el" href="#ab5c1822492d822f6049e1050dc4fb1b2" title="Długość słowa synchronizacji [B].">sync_word_len</a></span> bajtów. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00187">187</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00250">radio_write_sync_word()</a>.</p>
+
+</div>
+</div>
+<a id="ab5c1822492d822f6049e1050dc4fb1b2" name="ab5c1822492d822f6049e1050dc4fb1b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5c1822492d822f6049e1050dc4fb1b2">&#9670;&#160;</a></span>sync_word_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_fsk_cfg_t::sync_word_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Długość słowa synchronizacji [B]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00186">186</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a> i <a class="el" href="radio__fsk_8c_source.html#l00250">radio_write_sync_word()</a>.</p>
+
+</div>
+</div>
+<a id="aa66e764c40359f0b8ee7e426e720d352" name="aa66e764c40359f0b8ee7e426e720d352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa66e764c40359f0b8ee7e426e720d352">&#9670;&#160;</a></span>tx_power_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int8_t radio_fsk_cfg_t::tx_power_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Moc TX [dBm]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00184">184</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a> i <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/radio_lib/<a class="el" href="radio__lib_8h_source.html">radio_lib.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structradio__fsk__cfg__t.html">radio_fsk_cfg_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

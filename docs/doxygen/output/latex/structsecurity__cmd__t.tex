@@ -1,0 +1,215 @@
+\doxysection{Dokumentacja struktury security\+\_\+cmd\+\_\+t}
+\hypertarget{structsecurity__cmd__t}{}\label{structsecurity__cmd__t}\index{security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+security\+\_\+cmd\+\_\+id\+\_\+t \mbox{\hyperlink{structsecurity__cmd__t_a9b14b3bf7b26a6dcf7076b2ce2ae0a28}{id}}
+\item 
+\mbox{\hyperlink{structsecurity__cmd__sync__t}{security\+\_\+cmd\+\_\+sync\+\_\+t}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structsecurity__cmd__t_a9ab46969f77e22f3dba690df29979e34}{sync}}
+\item 
+\Hypertarget{structsecurity__cmd__t_a8e53cfa6924d653054d339088c89e5c5}\label{structsecurity__cmd__t_a8e53cfa6924d653054d339088c89e5c5} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+union \{\\
+\>struct \{\\
+\>\>uint32\_t \mbox{\hyperlink{structsecurity__cmd__t_a8470facba2e00171710e260d1ae89877}{node\_id}}\\
+\>\>uint8\_t \mbox{\hyperlink{structsecurity__cmd__t_af3c46b4c1efc7d1e623fd6bbc30a046a}{code\_len}}\\
+\>\>uint8\_t \mbox{\hyperlink{structsecurity__cmd__t_ae5ab226ef56b01134dd5481f40128a48}{code}} \mbox{[}SECURITY\_CODE\_MAX\mbox{]}\\
+\>\>bool \mbox{\hyperlink{structsecurity__cmd__t_a9096e4df827e632f1e2077f91a922d2b}{gateway\_slot}}\\
+\>\} {\bfseries add\_device}\\
+\>struct \{\\
+\>\>uint32\_t \mbox{\hyperlink{structsecurity__cmd__t_a8470facba2e00171710e260d1ae89877}{node\_id}}\\
+\>\} {\bfseries del\_device}\\
+\>struct \{\\
+\>\>uint8\_t \mbox{\hyperlink{structsecurity__cmd__t_a33e22aa79484cac9683d67dccc793acd}{index}}\\
+\>\} {\bfseries get\_device}\\
+\>struct \{\\
+\>\>bool \mbox{\hyperlink{structsecurity__cmd__t_a4d62a87cfd71d82c9754dc55c6e6ce9b}{enabled}}\\
+\>\} {\bfseries set\_bool}\\
+\>struct \{\\
+\>\>uint32\_t \mbox{\hyperlink{structsecurity__cmd__t_ac4915f34b510ed377be41a2a6b2ea566}{value}}\\
+\>\} {\bfseries set\_u32}\\
+\>struct \{\\
+\>\>\mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\_notify\_mode\_t}} \mbox{\hyperlink{structsecurity__cmd__t_a1a9c9e891f98271b6a39f9b7c4746259}{mode}}\\
+\>\} {\bfseries set\_notify}\\
+\>struct \{\\
+\>\>uint8\_t \mbox{\hyperlink{structsecurity__cmd__t_aec9d94ba86cbfbc27c0abadc0716c658}{preset\_id}}\\
+\>\} {\bfseries set\_preset}\\
+\>struct \{\\
+\>\>\mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\_main\_runtime\_cfg\_t}} \mbox{\hyperlink{structsecurity__cmd__t_ac964b952b6f087e0c8832b03fd31c35a}{cfg}}\\
+\>\} {\bfseries set\_radio}\\
+\>struct \{\\
+\>\>int16\_t \mbox{\hyperlink{structsecurity__cmd__t_a199a3d156d5ae9a839468084eedcc411}{rssi\_dbm}}\\
+\>\>uint8\_t \mbox{\hyperlink{structsecurity__cmd__t_a6bcd97aa1bd7d9949bf97fdddb428e89}{len}}\\
+\>\>uint8\_t \mbox{\hyperlink{structsecurity__cmd__t_ae5a31aaf0c1ed099295c7a430bce7ebc}{payload}} \mbox{[}I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX\mbox{]}\\
+\>\} {\bfseries log\_msg}\\
+\} {\bfseries u}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00100}{100}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structsecurity__cmd__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structsecurity__cmd__t_ac964b952b6f087e0c8832b03fd31c35a}\index{security\_cmd\_t@{security\_cmd\_t}!cfg@{cfg}}
+\index{cfg@{cfg}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{cfg}{cfg}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_ac964b952b6f087e0c8832b03fd31c35a} 
+\mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}} security\+\_\+cmd\+\_\+t\+::cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00139}{139}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_ae5ab226ef56b01134dd5481f40128a48}\index{security\_cmd\_t@{security\_cmd\_t}!code@{code}}
+\index{code@{code}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{code}{code}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_ae5ab226ef56b01134dd5481f40128a48} 
+uint8\+\_\+t security\+\_\+cmd\+\_\+t\+::code\mbox{[}SECURITY\+\_\+\+CODE\+\_\+\+MAX\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00110}{110}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_af3c46b4c1efc7d1e623fd6bbc30a046a}\index{security\_cmd\_t@{security\_cmd\_t}!code\_len@{code\_len}}
+\index{code\_len@{code\_len}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{code\_len}{code\_len}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_af3c46b4c1efc7d1e623fd6bbc30a046a} 
+uint8\+\_\+t security\+\_\+cmd\+\_\+t\+::code\+\_\+len}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00109}{109}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a4d62a87cfd71d82c9754dc55c6e6ce9b}\index{security\_cmd\_t@{security\_cmd\_t}!enabled@{enabled}}
+\index{enabled@{enabled}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{enabled}{enabled}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a4d62a87cfd71d82c9754dc55c6e6ce9b} 
+bool security\+\_\+cmd\+\_\+t\+::enabled}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00123}{123}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a9096e4df827e632f1e2077f91a922d2b}\index{security\_cmd\_t@{security\_cmd\_t}!gateway\_slot@{gateway\_slot}}
+\index{gateway\_slot@{gateway\_slot}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_slot}{gateway\_slot}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a9096e4df827e632f1e2077f91a922d2b} 
+bool security\+\_\+cmd\+\_\+t\+::gateway\+\_\+slot}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00111}{111}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a9b14b3bf7b26a6dcf7076b2ce2ae0a28}\index{security\_cmd\_t@{security\_cmd\_t}!id@{id}}
+\index{id@{id}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a9b14b3bf7b26a6dcf7076b2ce2ae0a28} 
+security\+\_\+cmd\+\_\+id\+\_\+t security\+\_\+cmd\+\_\+t\+::id}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00102}{102}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a33e22aa79484cac9683d67dccc793acd}\index{security\_cmd\_t@{security\_cmd\_t}!index@{index}}
+\index{index@{index}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{index}{index}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a33e22aa79484cac9683d67dccc793acd} 
+uint8\+\_\+t security\+\_\+cmd\+\_\+t\+::index}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00119}{119}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a6bcd97aa1bd7d9949bf97fdddb428e89}\index{security\_cmd\_t@{security\_cmd\_t}!len@{len}}
+\index{len@{len}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{len}{len}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a6bcd97aa1bd7d9949bf97fdddb428e89} 
+uint8\+\_\+t security\+\_\+cmd\+\_\+t\+::len}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00144}{144}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a1a9c9e891f98271b6a39f9b7c4746259}\index{security\_cmd\_t@{security\_cmd\_t}!mode@{mode}}
+\index{mode@{mode}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{mode}{mode}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a1a9c9e891f98271b6a39f9b7c4746259} 
+\mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}} security\+\_\+cmd\+\_\+t\+::mode}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00131}{131}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a8470facba2e00171710e260d1ae89877}\index{security\_cmd\_t@{security\_cmd\_t}!node\_id@{node\_id}}
+\index{node\_id@{node\_id}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{node\_id}{node\_id}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a8470facba2e00171710e260d1ae89877} 
+uint32\+\_\+t security\+\_\+cmd\+\_\+t\+::node\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00108}{108}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_ae5a31aaf0c1ed099295c7a430bce7ebc}\index{security\_cmd\_t@{security\_cmd\_t}!payload@{payload}}
+\index{payload@{payload}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{payload}{payload}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_ae5a31aaf0c1ed099295c7a430bce7ebc} 
+uint8\+\_\+t security\+\_\+cmd\+\_\+t\+::payload\mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+PAYLOAD\+\_\+\+MAX\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00145}{145}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_aec9d94ba86cbfbc27c0abadc0716c658}\index{security\_cmd\_t@{security\_cmd\_t}!preset\_id@{preset\_id}}
+\index{preset\_id@{preset\_id}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{preset\_id}{preset\_id}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_aec9d94ba86cbfbc27c0abadc0716c658} 
+uint8\+\_\+t security\+\_\+cmd\+\_\+t\+::preset\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00135}{135}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a199a3d156d5ae9a839468084eedcc411}\index{security\_cmd\_t@{security\_cmd\_t}!rssi\_dbm@{rssi\_dbm}}
+\index{rssi\_dbm@{rssi\_dbm}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{rssi\_dbm}{rssi\_dbm}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a199a3d156d5ae9a839468084eedcc411} 
+int16\+\_\+t security\+\_\+cmd\+\_\+t\+::rssi\+\_\+dbm}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00143}{143}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_a9ab46969f77e22f3dba690df29979e34}\index{security\_cmd\_t@{security\_cmd\_t}!sync@{sync}}
+\index{sync@{sync}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{sync}{sync}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_a9ab46969f77e22f3dba690df29979e34} 
+\mbox{\hyperlink{structsecurity__cmd__sync__t}{security\+\_\+cmd\+\_\+sync\+\_\+t}}\texorpdfstring{$\ast$}{*} security\+\_\+cmd\+\_\+t\+::sync}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00103}{103}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{structsecurity__cmd__t_ac4915f34b510ed377be41a2a6b2ea566}\index{security\_cmd\_t@{security\_cmd\_t}!value@{value}}
+\index{value@{value}!security\_cmd\_t@{security\_cmd\_t}}
+\doxysubsubsection{\texorpdfstring{value}{value}}
+{\footnotesize\ttfamily \label{structsecurity__cmd__t_ac4915f34b510ed377be41a2a6b2ea566} 
+uint32\+\_\+t security\+\_\+cmd\+\_\+t\+::value}
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00127}{127}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/security\+\_\+main.\+c\end{DoxyCompactItemize}

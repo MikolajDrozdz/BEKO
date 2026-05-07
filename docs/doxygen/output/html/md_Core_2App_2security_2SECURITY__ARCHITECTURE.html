@@ -1,0 +1,1319 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: BEKO Security Architecture</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('md_Core_2App_2security_2SECURITY__ARCHITECTURE.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">BEKO Security Architecture </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p><a class="anchor" id="autotoc_md80"></a></p>
+<p>Ten dokument opisuje, jak firmware BEKO chroni komunikację radiową, sekrety lokalne, TPM, AES/HMAC, EEPROM, liczniki anti-replay i dostęp lokalny przez menu.</p>
+<p>Dokument jest pisany z perspektywy aktualnego kodu firmware STM32 w katalogu <span class="tt">Core/App</span>. Jeżeli backend gatewaya albo frontend RPi zmieni protokół, ten plik należy zaktualizować razem z kodem.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md81"></a>
+1. Skrót</h1>
+<p>Najważniejsze decyzje bezpieczeństwa:</p>
+<ul>
+<li>TPM jest lokalnym root-of-trust dla noda.</li>
+<li>Root seed urządzenia jest przechowywany w TPM NV index <span class="tt">0x01C10101</span>.</li>
+<li>Zapis root seeda do głównego indexu wymaga TPM Physical Presence (<span class="tt">PPWRITE</span>).</li>
+<li>TPM PP jest podłączony bezpośrednio do TPM, pin <span class="tt">7</span>, aktywny stanem <span class="tt">VDD</span>.</li>
+<li>TPM komunikuje się z MCU przez <span class="tt">I2C3</span>, <span class="tt">PC0=SCL</span>, <span class="tt">PC1=SDA</span>.</li>
+<li><span class="tt">TPM_RESET#</span> jest na <span class="tt">PB0</span>, aktywny niskim stanem.</li>
+<li><span class="tt">TPM_DAVINT#</span> / <span class="tt">PIRQ</span> jest na <span class="tt">PH0</span>, aktywny niskim stanem.</li>
+<li>Sekrety w EEPROM są szyfrowane kluczem wyprowadzonym z root seeda TPM.</li>
+<li>Payload radiowy jest szyfrowany <span class="tt">AES-CTR</span>.</li>
+<li>Integralność i autentyczność ramki zapewnia <span class="tt">HMAC-SHA256</span>.</li>
+<li>HMAC obejmuje nagłówek i payload, czyli także <span class="tt">src_id</span>, <span class="tt">dst_id</span>, <span class="tt">msg_id</span> i <span class="tt">counter</span>.</li>
+<li>Odbiornik weryfikuje HMAC przed odszyfrowaniem payloadu.</li>
+<li>Porównanie MAC jest stałoczasowe względem długości tagu.</li>
+<li>Backend crypto używa sprzętowego AES/HASH STM32, jeżeli self-test przejdzie.</li>
+<li>Jeżeli hardware crypto nie przejdzie self-testu, firmware używa software fallback.</li>
+<li>Klucze i bufory tymczasowe są zerowane po użyciu przez <span class="tt"><a class="el" href="laviet__crypto_8c.html#ad8181b01dd76111b6f493f92d9a8f2b4" title="Clear sensitive memory through a volatile byte pointer.">laviet_secure_zero()</a></span>.</li>
+<li>Dostęp do menu chronią role lokalne i PIN operator/admin.</li>
+<li>Logi TPM TIS można włączyć przez <span class="tt">TPM_INIT_LOG</span>; domyślnie verbose TPM init jest schowany.</li>
+<li>Logowanie wrażliwych payloadów na UART jest kontrolowane przez <span class="tt"><a class="el" href="pager__config_8h.html#a6176f7b270798f1eb48d2d02c68dc4f3" title="Enable verbose UART logs for sensitive secure/control payloads.">PAGER_CONFIG_UART_SENSITIVE_LOGS</a></span>.</li>
+</ul>
+<p>W uproszczeniu:</p>
+<div class="fragment"><div class="line">TPM NV root seed</div>
+<div class="line">    |</div>
+<div class="line">    +-- HMAC(seed, &quot;SEC:NET:ROOT&quot;)   -&gt; lokalny network key</div>
+<div class="line">    |</div>
+<div class="line">    +-- HMAC(seed, &quot;SEC:EEPROM:KEY&quot;) -&gt; klucz szyfrowania sekretów EEPROM</div>
+<div class="line"> </div>
+<div class="line">Pair code + local_id + peer_id</div>
+<div class="line">    |</div>
+<div class="line">    +-- peer link base key</div>
+<div class="line">          |</div>
+<div class="line">          +-- HMAC(base, &quot;LV1K&quot; + domain + 0x01) -&gt; AES-CTR enc key</div>
+<div class="line">          |</div>
+<div class="line">          +-- HMAC(base, &quot;LV1K&quot; + domain + 0x02) -&gt; HMAC-SHA256 key</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md82"></a>
+2. Cele bezpieczeństwa</h1>
+<p>System chroni cztery główne obszary:</p>
+<ol type="1">
+<li>Poufność wiadomości radiowych.</li>
+<li>Integralność i autentyczność ramek.</li>
+<li>Trwałe sekrety noda: root seed, trusted devices, pair code, countery.</li>
+<li>Lokalny dostęp operatora/administratora.</li>
+</ol>
+<p>System nie zakłada, że radio jest zaufane. Kanał radiowy jest traktowany jako publiczny:</p>
+<ul>
+<li>każdy może podsłuchać,</li>
+<li>każdy może wysłać bajty,</li>
+<li>każdy może powtórzyć starą transmisję,</li>
+<li>każdy może próbować floodować,</li>
+<li>pakiety mogą zginąć albo przyjść po czasie.</li>
+</ul>
+<p>Dlatego bezpieczeństwo nie opiera się na LoRa/FSK/OOK jako takich. Radio jest tylko transportem. Ochrona jest w warstwie aplikacyjnej <span class="tt">LAVIET_FRAME_V1</span>.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md83"></a>
+3. Model atakującego</h1>
+<p>Zakładany atakujący może:</p>
+<ul>
+<li>słuchać kanału radiowego,</li>
+<li>wysyłać własne pakiety SX1276/RFM95,</li>
+<li>powtarzać stare ramki,</li>
+<li>próbować zgadnąć <span class="tt">src_id</span>,</li>
+<li>próbować podszyć się pod gateway albo node,</li>
+<li>odczytać zewnętrzny EEPROM po fizycznym dostępie do płytki,</li>
+<li>obserwować UART, jeżeli ma dostęp serwisowy,</li>
+<li>zresetować zasilanie w niekorzystnym momencie.</li>
+</ul>
+<p>Zakładany atakujący nie powinien móc:</p>
+<ul>
+<li>odczytać sekretów z TPM bez obejścia zabezpieczeń TPM,</li>
+<li>zapisać nowego root seeda bez fizycznej obecności TPM PP,</li>
+<li>wygenerować poprawnego HMAC bez właściwego klucza,</li>
+<li>zmodyfikować zaszyfrowanej wiadomości tak, żeby przeszła HMAC,</li>
+<li>udawać sparowanego peer-a po zakończonym pairingu bez pair code.</li>
+</ul>
+<p>Ważne: jeżeli atakujący ma pełny dostęp debug/SWD do działającego MCU i może czytać RAM, może próbować odczytywać klucze w czasie użycia. Ten projekt ogranicza czas życia sekretów w RAM, ale nie zastępuje pełnej ochrony debug portu, secure boot ani TrustZone policy.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md84"></a>
+4. Granice bezpieczeństwa</h1>
+<p>System ma kilka granic zaufania:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Granica  </th><th class="markdownTableHeadNone">Co jest zaufane  </th><th class="markdownTableHeadNone">Co jest niezaufane  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">MCU firmware  </td><td class="markdownTableBodyNone">kod firmware, jeśli flash/debug są kontrolowane  </td><td class="markdownTableBodyNone">radio RX, payloady, zewnętrzny świat  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">TPM  </td><td class="markdownTableBodyNone">root seed i operacje NV/PP  </td><td class="markdownTableBodyNone">I2C jako transport, dopóki komenda nie przejdzie TPM  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">EEPROM  </td><td class="markdownTableBodyNone">nośnik danych  </td><td class="markdownTableBodyNone">zawartość EEPROM bez weryfikacji CRC i deszyfrowania  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Radio  </td><td class="markdownTableBodyNone">nic samo z siebie  </td><td class="markdownTableBodyNone">każda ramka przed HMAC  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Menu lokalne  </td><td class="markdownTableBodyNone">świadoma interakcja użytkownika  </td><td class="markdownTableBodyNone">przypadkowe naciśnięcia i nieuprawniony operator  </td></tr>
+</table>
+<p>Najważniejsza zasada: żadna ramka radiowa nie powinna dostać się do logiki aplikacji jako zaufana, dopóki:</p>
+<ol type="1">
+<li>parser nie potwierdzi formatu,</li>
+<li>HMAC nie pasuje,</li>
+<li>polityka adresacji i typu nie jest poprawna,</li>
+<li>counter/replay policy nie jest spełniona,</li>
+<li>payload, jeżeli zaszyfrowany, nie zostanie odszyfrowany poprawnym kluczem.</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md85"></a>
+5. Komponenty implementacji</h1>
+<p>Główne pliki:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Plik  </th><th class="markdownTableHeadNone">Rola  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="security__main_8c_source.html">Core/App/security_main.c</a></span>  </td><td class="markdownTableBodyNone">TPM bootstrap, root seed, storage key, trusted devices, runtime security config  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="st33ktpm2x_8c.html" title="ST33KTPM2X driver implementation (TIS over I2C).">Core/App/st33ktpm2x_lib/st33ktpm2x.c</a></span>  </td><td class="markdownTableBodyNone">driver ST33KTPM2X/TIS over I2C, komendy TPM2  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="laviet__crypto_8c.html" title="Portable AES-CTR and HMAC-SHA256 backend for LAVIET_FRAME_V1.">Core/App/laviet_crypto.c</a></span>  </td><td class="markdownTableBodyNone">AES-CTR, HMAC-SHA256, hardware backend, fallback software, self-test  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="laviet__frame_8c.html" title="LAVIET_FRAME_V1 parser, serializer and cheap validation.">Core/App/laviet_frame.c</a></span>  </td><td class="markdownTableBodyNone">parser, serializer, walidacja <span class="tt">LAVIET_FRAME_V1</span>, input do HMAC  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="radio__main_8c_source.html">Core/App/radio_main.c</a></span>  </td><td class="markdownTableBodyNone">TX/RX ramek, ACK, pairing, countery, szyfrowanie i MAC  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="i2c__mem__store_8c.html" title="Implementation of external I2C memory storage helper.">Core/App/i2c_mem_store_lib/i2c_mem_store.c</a></span>  </td><td class="markdownTableBodyNone">EEPROM storage, CRC, secret slots, XTEA-CTR dla małych rekordów  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="menu__main_8c_source.html">Core/App/menu_main.c</a></span>  </td><td class="markdownTableBodyNone">role lokalne, PIN operator/admin, dostęp do menu Security  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="pager__config_8h.html" title="Application-level build and board configuration switches.">Core/App/pager_config.h</a></span>  </td><td class="markdownTableBodyNone">flagi produkcyjne/logowania  </td></tr>
+</table>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md86"></a>
+6. TPM jako root-of-trust</h1>
+<p>TPM jest używany po to, żeby główny sekret urządzenia nie był stałą w firmware ani zwykłym bajtem w EEPROM.</p>
+<p>Obecny TPM:</p>
+<ul>
+<li>model/rodzina: ST33KTPM2X,</li>
+<li>adres I2C 7-bit: <span class="tt">0x2E</span>,</li>
+<li>magistrala: <span class="tt">I2C3</span>,</li>
+<li>linie: <span class="tt">PC0=SCL</span>, <span class="tt">PC1=SDA</span>,</li>
+<li>reset: <span class="tt">TPM_RESET#</span> na <span class="tt">PB0</span>, aktywny <span class="tt">GND</span>,</li>
+<li>interrupt/data available: <span class="tt">TPM_DAVINT#</span> na <span class="tt">PH0</span>, aktywny <span class="tt">GND</span>,</li>
+<li>physical presence: TPM pin <span class="tt">7</span>, aktywny <span class="tt">VDD</span>, podłączony do TPM, nie do GPIO MCU.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md87"></a>
+6.1. Dlaczego TPM jest bezpieczniejszy niż EEPROM</h2>
+<p>EEPROM jest tylko pamięcią. Jeśli ktoś fizycznie odczyta EEPROM, dostaje zapisane bajty.</p>
+<p>TPM jest układem bezpieczeństwa:</p>
+<ul>
+<li>ma własne komendy i polityki autoryzacji,</li>
+<li>może wymagać platform auth albo physical presence,</li>
+<li>nie udostępnia NV write bez spełnienia atrybutów indexu,</li>
+<li>wykonuje <span class="tt">TPM2_GetRandom</span>,</li>
+<li>separuje trwały sekret od zwykłej pamięci aplikacji,</li>
+<li>pozwala przechowywać root seed poza firmware.</li>
+</ul>
+<p>W tym projekcie TPM nie jest używany jako “magiczne szyfrowanie wszystkiego”. TPM jest korzeniem hierarchii kluczy. To oznacza, że z niego pochodzi materiał, który potem zasila klucze robocze.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md88"></a>
+7. TPM init</h1>
+<p>Podczas startu <span class="tt">security_main</span> wykonuje:</p>
+<ol type="1">
+<li>Konfigurację drivera TPM przez <span class="tt"><a class="el" href="st33ktpm2x_8c.html#a4395b053468eaa84de32315c833c9a2e" title="Fill config with safe defaults (including PB0 reset pin defaults from main.h).">st33ktpm2x_default_cfg</a>(&amp;cfg, &amp;hi2c3)</span>.</li>
+<li>Hard reset TPM przez <span class="tt">TPM_RESET#</span>.</li>
+<li>Opcjonalny odczyt <span class="tt">DAVINT#</span>.</li>
+<li>Skan/probe I2C3, jeśli <span class="tt">TPM_INIT_LOG</span> jest aktywny.</li>
+<li>Odczyt identyfikacji TPM (<span class="tt">DID_VID</span>, <span class="tt">RID</span>).</li>
+<li><span class="tt">TPM2_Startup(ST_CLEAR)</span>.</li>
+<li><span class="tt">TPM2_SelfTest(full_test=false)</span>.</li>
+<li>Ustawienie <span class="tt">s_tpm_ready=true</span>, jeśli transport i podstawowe komendy działają.</li>
+</ol>
+<p>Przykładowe logi poprawnego startu:</p>
+<div class="fragment"><div class="line">SEC: TPM ready DIDVID=0x0003104A RID=0x01 self_test_tpm_rc=0x0000090A</div>
+<div class="line">SEC: TPM NV read idx=0x01C10101 rc=0(OK) tpm_rc=0x00000000 len=8 nonzero=1</div>
+<div class="line">SEC: root seed loaded from TPM</div>
+<div class="line">SEC: MEM secret key derived from TPM root seed</div>
+</div><!-- fragment --><p><span class="tt">self_test_tpm_rc=0x0000090A</span> oznacza odpowiedź TPM na self-test. Firmware traktuje transport TPM jako gotowy, jeżeli komendy krytyczne, np. NV read, działają poprawnie. To dlatego root seed może zostać odczytany mimo diagnostycznego kodu z self-testu.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md89"></a>
+7.1. Verbose logi TPM</h2>
+<p>Pełne logi TIS/FIFO są ukryte za <span class="tt">TPM_INIT_LOG</span>.</p>
+<p>Domyślnie nie są wypisywane:</p>
+<div class="fragment"><div class="line">TPM TIS transceive start ...</div>
+<div class="line">TPM TIS request locality ...</div>
+<div class="line">TPM TIS data_avail ...</div>
+<div class="line">SEC: TPM reg8 DIDVID ...</div>
+</div><!-- fragment --><p>Dlaczego to jest dobre:</p>
+<ul>
+<li>normalny UART nie jest zalewany danymi,</li>
+<li>mniej ryzyka przypadkowego wypisania informacji serwisowej,</li>
+<li>debug magistrali można włączyć tylko świadomie podczas diagnostyki.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md90"></a>
+8. Root seed</h1>
+<p>Root seed jest głównym trwałym sekretem noda.</p>
+<p>Parametry:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Parametr  </th><th class="markdownTableHeadNone">Wartość  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Rozmiar  </td><td class="markdownTableBodyNone"><span class="tt">8 B</span> (<span class="tt">SECURITY_KEY_SEED_BYTES</span>)  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Główny TPM NV index  </td><td class="markdownTableBodyNone"><span class="tt">0x01C10101</span>  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Legacy TPM NV index  </td><td class="markdownTableBodyNone"><span class="tt">0x01C10100</span>  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Atrybuty głównego indexu  </td><td class="markdownTableBodyNone"><span class="tt">PPWRITE</span>, <span class="tt">OWNERREAD</span>, <span class="tt">NO_DA</span>  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Zapis  </td><td class="markdownTableBodyNone">wymaga TPM Physical Presence  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Odczyt  </td><td class="markdownTableBodyNone">owner read  </td></tr>
+</table>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md91"></a>
+8.1. Dlaczego seed nie jest w firmware</h2>
+<p>Gdyby klucz był wpisany jako stała w kodzie:</p>
+<ul>
+<li>każdy egzemplarz miałby ten sam sekret,</li>
+<li>wyciek firmware ujawniłby sekret,</li>
+<li>nie byłoby sensownej rotacji,</li>
+<li>nie dałoby się związać sekretu z konkretną płytką.</li>
+</ul>
+<p>W obecnym modelu firmware zna tylko algorytm:</p>
+<div class="fragment"><div class="line">root seed -&gt; HMAC labels -&gt; klucze robocze</div>
+</div><!-- fragment --><p>Sam root seed jest ładowany z TPM podczas startu.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md92"></a>
+8.2. Lifecycle root seeda</h2>
+<p>Przy starcie firmware wykonuje:</p>
+<ol type="1">
+<li>Próbuje odczytać <span class="tt">0x01C10101</span>.</li>
+<li>Jeśli główny index nie ma danych, próbuje legacy index <span class="tt">0x01C10100</span>.</li>
+<li>Jeśli legacy seed istnieje, firmware próbuje migrować go do PP-protected index.</li>
+<li>Jeśli nie ma żadnego seeda, firmware generuje nowy seed.</li>
+<li>Jeśli TPM jest gotowy, nowy seed jest zapisywany do TPM NV.</li>
+<li>Zapis do <span class="tt">0x01C10101</span> wymaga aktywnego TPM PP.</li>
+<li>Seed jest używany do wyprowadzenia kluczy.</li>
+<li>Bufory tymczasowe z seedem są zerowane.</li>
+</ol>
+<p>Przykład:</p>
+<div class="fragment"><div class="line">SEC: TPM NV read idx=0x01C10101 rc=0(OK) tpm_rc=0x00000000 len=8 nonzero=1</div>
+<div class="line">SEC: root seed loaded from TPM</div>
+<div class="line">SEC: MEM secret key derived from TPM root seed</div>
+</div><!-- fragment --><p>Przykład, gdy zapis wymaga fizycznej obecności:</p>
+<div class="fragment"><div class="line">SEC: TPM NV write PP idx=0x01C10101 rc=7(ETPM_RC) tpm_rc=...</div>
+<div class="line">SEC: root seed write requires TPM PP button</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md93"></a>
+8.3. Physical Presence</h2>
+<p>Physical Presence (<span class="tt">PP</span>) jest ważne, bo chroni operacje, które zmieniają root seeda.</p>
+<p>W obecnym hardware:</p>
+<ul>
+<li>przycisk PP jest podłączony do TPM pin <span class="tt">7</span>,</li>
+<li>aktywny poziom to <span class="tt">VDD</span>,</li>
+<li>STM32 nie odczytuje PP jako GPIO,</li>
+<li>TPM sam egzekwuje warunek dla operacji <span class="tt">PPWRITE</span>.</li>
+</ul>
+<p>To oznacza:</p>
+<ul>
+<li>firmware nie może “udawać” fizycznej obecności przez samo ustawienie GPIO,</li>
+<li>zdalny atak radiowy nie powinien móc nadpisać root seeda,</li>
+<li>operator musi fizycznie nacisnąć/aktywować PP podczas rotacji wymagającej zapisu.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md94"></a>
+8.4. Ograniczenie: seed ma 8 bajtów</h2>
+<p>Aktualny root seed ma <span class="tt">8 B</span>, czyli 64 bity.</p>
+<p>To jest istotne ograniczenie. Architektura hierarchii kluczy jest poprawna, ale dla długoterminowego bezpieczeństwa produkcyjnego lepiej zwiększyć seed do <span class="tt">16 B</span> albo <span class="tt">32 B</span>.</p>
+<p>Dlaczego mimo tego obecny model jest lepszy niż stały klucz:</p>
+<ul>
+<li>seed nie jest stałą firmware,</li>
+<li>seed może być inny per urządzenie,</li>
+<li>seed jest w TPM,</li>
+<li>zapis wymaga PP,</li>
+<li>klucze robocze są separowane labelami HMAC.</li>
+</ul>
+<p>Co poprawić docelowo:</p>
+<div class="fragment"><div class="line">SECURITY_KEY_SEED_BYTES: 8 -&gt; 16 albo 32</div>
+<div class="line">TPM NV data_size:        8 -&gt; 16 albo 32</div>
+<div class="line">test migracji EEPROM i TPM NV</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md95"></a>
+9. Entropia i generowanie seeda</h1>
+<p>Firmware używa dwóch źródeł entropii:</p>
+<ol type="1">
+<li>Preferowane: <span class="tt">TPM2_GetRandom</span>.</li>
+<li>Fallback: STM32 HAL RNG (<span class="tt">HAL_RNG_GenerateRandomNumber</span>).</li>
+</ol>
+<p>Przepływ:</p>
+<div class="fragment"><div class="line">security_get_entropy_bytes()</div>
+<div class="line">    if TPM ready:</div>
+<div class="line">        TPM2_GetRandom(len)</div>
+<div class="line">        if OK: return</div>
+<div class="line">        else: log, disable TPM ready for entropy path</div>
+<div class="line"> </div>
+<div class="line">    HAL_RNG_GenerateRandomNumber()</div>
+</div><!-- fragment --><p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>TPM RNG jest niezależny od MCU,</li>
+<li>HAL RNG daje fallback, gdy TPM random nie jest dostępny,</li>
+<li>seed nie jest deterministyczny,</li>
+<li>brak RNG powoduje błąd init/rotacji, a nie użycie stałego seeda.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md96"></a>
+10. Hierarchia kluczy</h1>
+<p>Firmware nie używa jednego klucza do wszystkiego.</p>
+<p>Z root seeda powstają oddzielne domeny:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Domena  </th><th class="markdownTableHeadNone">Funkcja  </th><th class="markdownTableHeadNone">Label  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Network/root key  </td><td class="markdownTableBodyNone">lokalny klucz sieciowy noda  </td><td class="markdownTableBodyNone"><span class="tt">SEC:NET:ROOT</span>  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">EEPROM secret key  </td><td class="markdownTableBodyNone">szyfrowanie secret slots EEPROM  </td><td class="markdownTableBodyNone"><span class="tt">SEC:EEPROM:KEY</span>  </td></tr>
+</table>
+<p>Implementacyjnie:</p>
+<div class="fragment"><div class="line">network_key = HMAC-SHA256(seed, &quot;SEC:NET:ROOT&quot;)[0..15]</div>
+<div class="line">store_key   = HMAC-SHA256(seed, &quot;SEC:EEPROM:KEY&quot;)[0..15]</div>
+</div><!-- fragment --><p>Dlaczego labelowanie jest bezpieczne:</p>
+<ul>
+<li>ten sam root seed nie jest używany bezpośrednio jako klucz AES,</li>
+<li>różne zastosowania dostają różne klucze,</li>
+<li>wyciek jednego klucza roboczego nie musi ujawniać drugiego,</li>
+<li>label utrudnia przypadkowe reuse materiału między protokołami.</li>
+</ul>
+<p>Przykład:</p>
+<div class="fragment"><div class="line">seed = 8 losowych bajtów z TPM</div>
+<div class="line"> </div>
+<div class="line">HMAC(seed, &quot;SEC:NET:ROOT&quot;)</div>
+<div class="line">  -&gt; digest 32 B</div>
+<div class="line">  -&gt; pierwsze 16 B jako network_key</div>
+<div class="line"> </div>
+<div class="line">HMAC(seed, &quot;SEC:EEPROM:KEY&quot;)</div>
+<div class="line">  -&gt; digest 32 B</div>
+<div class="line">  -&gt; pierwsze 16 B jako EEPROM secret key</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md97"></a>
+11. Klucze ramek radiowych</h1>
+<p>Ramki radiowe nie używają bezpośrednio root seeda TPM. Używają kluczy ramek wyprowadzanych z trybu relacji peer.</p>
+<p>Są dwa główne tryby:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Tryb  </th><th class="markdownTableHeadNone">Kiedy  </th><th class="markdownTableHeadNone">Materiał bazowy  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684" title="Derive keys from a 32-bit pair code.">SECURITY_FRAME_KEY_MODE_PAIR_V1_32</a></span>  </td><td class="markdownTableBodyNone">zwykła komunikacja sparowany peer &lt;-&gt; node  </td><td class="markdownTableBodyNone">pair code / trusted entry  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt"><a class="el" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5" title="Use the shared frame root key.">SECURITY_FRAME_KEY_MODE_SHARED</a></span>  </td><td class="markdownTableBodyNone">pairing, error, broadcast/control fallback  </td><td class="markdownTableBodyNone">stały shared frame root key  </td></tr>
+</table>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md98"></a>
+11.1. Pair link key</h2>
+<p>Dla sparowanego urządzenia firmware pobiera zapisany <span class="tt">pair code</span> z trusted storage i wyprowadza z niego klucz relacji:</p>
+<div class="fragment"><div class="line">lo = min(local_node_id, peer_node_id)</div>
+<div class="line">hi = max(local_node_id, peer_node_id)</div>
+<div class="line">base_key = HMAC-SHA256(pair_code, &quot;SEC:PAIR:V1&quot; || lo || hi)[0..15]</div>
+</div><!-- fragment --><p>Relacja jest zależna od:</p>
+<ul>
+<li>lokalnego <span class="tt">node_id</span>,</li>
+<li><span class="tt">peer_id</span>,</li>
+<li>pair code,</li>
+<li>trybu derivation.</li>
+</ul>
+<p>Następnie powstają dwa oddzielne klucze:</p>
+<div class="fragment"><div class="line">info = &quot;LV1K&quot; || domain_id || 0x00 || purpose</div>
+<div class="line"> </div>
+<div class="line">purpose=0x01 -&gt; AES-CTR enc_key 16 B</div>
+<div class="line">purpose=0x02 -&gt; HMAC-SHA256 hmac_key 32 B</div>
+</div><!-- fragment --><p><span class="tt">domain_id</span>:</p>
+<ul>
+<li>dla broadcastu: <span class="tt">0xFFFF</span>,</li>
+<li>dla unicastu: mniejszy z <span class="tt">local_id</span> i <span class="tt">peer_id</span>.</li>
+</ul>
+<p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>AES i HMAC nie używają tego samego klucza,</li>
+<li>klucze zależą od pary urządzeń,</li>
+<li>ten sam pair code nie daje identycznych kluczy dla każdej relacji, jeśli identyfikatory są inne,</li>
+<li>HMAC jako KDF daje separację domen.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md99"></a>
+11.2. Shared mode</h2>
+<p><span class="tt"><a class="el" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5" title="Use the shared frame root key.">SECURITY_FRAME_KEY_MODE_SHARED</a></span> używa stałego root key:</p>
+<div class="fragment"><div class="line">&quot;LAVIET_SHARED_V1&quot;</div>
+</div><!-- fragment --><p>Ten tryb jest używany dla ramek, które muszą istnieć przed pełnym zaufaniem albo poza relacją pair:</p>
+<ul>
+<li>pairing,</li>
+<li>część ramek control/error,</li>
+<li>broadcast.</li>
+</ul>
+<p>To nie daje tej samej siły co pair-specific key. Shared mode należy traktować jako tryb bootstrap/compatibility, a nie docelową ochronę poufnych danych użytkownika.</p>
+<p>Bezpieczna zasada:</p>
+<ul>
+<li>zwykłe wiadomości i odpowiedzi powinny używać pair-derived keys,</li>
+<li>broadcast powinien nie przenosić sekretów,</li>
+<li>pairing powinien mieć lokalne potwierdzenie użytkownika,</li>
+<li>docelowo pairing powinien dostać challenge-response lub TPM policy.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md100"></a>
+12. Ramka <span class="tt">LAVIET_FRAME_V1</span></h1>
+<p>Struktura:</p>
+<div class="fragment"><div class="line">ver_type    1 B</div>
+<div class="line">flags       1 B</div>
+<div class="line">src_id      2 B</div>
+<div class="line">dst_id      2 B</div>
+<div class="line">msg_id      2 B</div>
+<div class="line">counter     4 B</div>
+<div class="line">payload_len 1 B</div>
+<div class="line">payload     0..16 B</div>
+<div class="line">mac_tag     32 B</div>
+</div><!-- fragment --><p>Rozmiar:</p>
+<div class="fragment"><div class="line">min = 45 B</div>
+<div class="line">max = 61 B</div>
+</div><!-- fragment --><p>Adresacja:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Adres  </th><th class="markdownTableHeadNone">Znaczenie  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">0x0000</span>  </td><td class="markdownTableBodyNone">nieważny  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">0x0001</span>  </td><td class="markdownTableBodyNone">gateway  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">0x0002..0xFFFE</span>  </td><td class="markdownTableBodyNone">node  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">0xFFFF</span>  </td><td class="markdownTableBodyNone">broadcast  </td></tr>
+</table>
+<p>Typy:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Typ  </th><th class="markdownTableHeadNone">Znaczenie  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">DATA</span>  </td><td class="markdownTableBodyNone">zwykła wiadomość  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">ACK</span>  </td><td class="markdownTableBodyNone">potwierdzenie dostarczenia  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">RESP</span>  </td><td class="markdownTableBodyNone">odpowiedź  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">PAIR_REQ</span>  </td><td class="markdownTableBodyNone">żądanie parowania  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">PAIR_RESP</span>  </td><td class="markdownTableBodyNone">odpowiedź parowania  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">CFG</span>  </td><td class="markdownTableBodyNone">konfiguracja  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">COUNTER_SYNC</span>  </td><td class="markdownTableBodyNone">synchronizacja countera  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">KEY_ROTATE</span>  </td><td class="markdownTableBodyNone">rotacja klucza  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">ERROR</span>  </td><td class="markdownTableBodyNone">błąd/protokół  </td></tr>
+</table>
+<p>Flagi:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Flaga  </th><th class="markdownTableHeadNone">Znaczenie  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">ENCRYPTED</span>  </td><td class="markdownTableBodyNone">payload jest szyfrowany AES-CTR  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">ACK_REQUIRED</span>  </td><td class="markdownTableBodyNone">odbiorca ma odesłać ACK  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">IS_ACK</span>  </td><td class="markdownTableBodyNone">ramka jest ACK  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">PAIRING</span>  </td><td class="markdownTableBodyNone">ramka należy do pairingu  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">CONFIG_ACCESS</span>  </td><td class="markdownTableBodyNone">ramka konfiguracyjna  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">BROADCAST</span>  </td><td class="markdownTableBodyNone">dst to broadcast  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">COUNTER_OVERRIDE</span>  </td><td class="markdownTableBodyNone">specjalna zmiana countera  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">KEY_UPDATE</span>  </td><td class="markdownTableBodyNone">rotacja klucza  </td></tr>
+</table>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md101"></a>
+13. Walidacja ramek</h1>
+<p><span class="tt"><a class="el" href="laviet__frame_8c.html#a9df225dfc1501016db4186285f38f71e" title="Validate parsed frame fields before encryption/MAC checks.">laviet_frame_validate_plain()</a></span> odrzuca:</p>
+<ul>
+<li>złą wersję protokołu,</li>
+<li>nieznany typ,</li>
+<li><span class="tt">src_id=0</span>,</li>
+<li><span class="tt">src_id=0xFFFF</span>,</li>
+<li><span class="tt">dst_id=0</span>,</li>
+<li><span class="tt">msg_id=0</span>,</li>
+<li>payload dłuższy niż 16 B,</li>
+<li>broadcast bez flagi <span class="tt">BROADCAST</span>,</li>
+<li>broadcast z <span class="tt">ACK_REQUIRED</span>,</li>
+<li>niepoprawne kombinacje flag dla typu.</li>
+</ul>
+<p>Przykład:</p>
+<div class="fragment"><div class="line">DATA + IS_ACK -&gt; błąd flag</div>
+<div class="line">ACK + payload_len != 6 -&gt; błąd payload</div>
+<div class="line">COUNTER_SYNC bez COUNTER_OVERRIDE -&gt; błąd flag</div>
+<div class="line">BROADCAST + ACK_REQUIRED -&gt; błąd flag</div>
+</div><!-- fragment --><p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>tanie błędy są odrzucane przed kosztowną logiką,</li>
+<li>niepoprawne typy nie trafiają do handlerów,</li>
+<li>broadcast nie może wymusić ACK,</li>
+<li><span class="tt">src_id</span> i <span class="tt">dst_id</span> mają ścisłą semantykę,</li>
+<li>payload ma twardy limit 16 B.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md102"></a>
+14. HMAC-SHA256</h1>
+<p>Każda ramka ma <span class="tt">mac_tag</span> 32 B.</p>
+<p>MAC liczony jest po:</p>
+<div class="fragment"><div class="line">ver_type ||</div>
+<div class="line">flags ||</div>
+<div class="line">src_id ||</div>
+<div class="line">dst_id ||</div>
+<div class="line">msg_id ||</div>
+<div class="line">counter ||</div>
+<div class="line">payload_len ||</div>
+<div class="line">payload</div>
+</div><!-- fragment --><p><span class="tt">mac_tag</span> nie jest częścią inputu do HMAC.</p>
+<p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>zmiana payloadu zmienia HMAC,</li>
+<li>zmiana adresu nadawcy zmienia HMAC,</li>
+<li>zmiana adresu odbiorcy zmienia HMAC,</li>
+<li>zmiana <span class="tt">msg_id</span> zmienia HMAC,</li>
+<li>zmiana <span class="tt">counter</span> zmienia HMAC,</li>
+<li>zmiana flag, np. dopisanie <span class="tt">ENCRYPTED</span>, zmienia HMAC.</li>
+</ul>
+<p>Atakujący może wysłać losową ramkę, ale bez <span class="tt">hmac_key</span> nie powinien być w stanie policzyć poprawnego <span class="tt">mac_tag</span>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md103"></a>
+14.1. Kolejność RX</h2>
+<p>W RX kolejność jest krytyczna:</p>
+<div class="fragment"><div class="line">decode bytes -&gt; validate plain -&gt; derive keys -&gt; verify HMAC -&gt; decrypt -&gt; handle</div>
+</div><!-- fragment --><p>Payload jest odszyfrowywany dopiero po HMAC.</p>
+<p>Dlaczego:</p>
+<ul>
+<li>AES-CTR jest strumieniowy i sam nie daje integralności,</li>
+<li>odszyfrowywanie losowych danych nie powinno sterować logiką,</li>
+<li>HMAC chroni ciphertext i nagłówek.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md104"></a>
+14.2. Stałoczasowe porównanie MAC</h2>
+<p><span class="tt"><a class="el" href="laviet__crypto_8c.html#aa31879cc3e98740ffee1f73912c6c88a" title="Compare two MAC tags without data-dependent early exit.">laviet_mac_equal()</a></span> porównuje wszystkie 32 bajty i akumuluje różnice:</p>
+<div class="fragment"><div class="line">diff |= a[i] ^ b[i];</div>
+</div><!-- fragment --><p>Nie kończy po pierwszej różnicy.</p>
+<p>Dlaczego:</p>
+<ul>
+<li>ogranicza leak timingowy mówiący, ile bajtów MAC było poprawnych,</li>
+<li>jest prostą i właściwą praktyką przy tagach MAC.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md105"></a>
+15. AES-CTR</h1>
+<p>Payload jest szyfrowany AES-CTR, gdy flaga <span class="tt">ENCRYPTED</span> jest ustawiona.</p>
+<p>Właściwości AES-CTR:</p>
+<ul>
+<li>nie wymaga paddingu,</li>
+<li>działa dla payloadów 1..16 B,</li>
+<li>ten sam algorytm szyfruje i deszyfruje,</li>
+<li>ciphertext ma tę samą długość co plaintext,</li>
+<li>wymaga unikalnego counter block dla danego klucza.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md106"></a>
+15.1. Counter block AES-CTR</h2>
+<p>Counter block ma 16 B:</p>
+<div class="fragment"><div class="line">0..2   &quot;LV1&quot;</div>
+<div class="line">3      0x00</div>
+<div class="line">4..5   src_id</div>
+<div class="line">6..7   dst_id</div>
+<div class="line">8..9   msg_id</div>
+<div class="line">10..13 frame.counter</div>
+<div class="line">14..15 block_index</div>
+</div><!-- fragment --><p>Dla obecnego payloadu max 16 B <span class="tt">block_index</span> zwykle wynosi <span class="tt">0</span>.</p>
+<p>Przykład:</p>
+<div class="fragment"><div class="line">src_id  = 0x1234</div>
+<div class="line">dst_id  = 0x0001</div>
+<div class="line">msg_id  = 0x4567</div>
+<div class="line">counter = 0x89ABCDEF</div>
+<div class="line">block   = 0</div>
+<div class="line"> </div>
+<div class="line">counter block:</div>
+<div class="line">4C 56 31 00 12 34 00 01 45 67 89 AB CD EF 00 00</div>
+</div><!-- fragment --><p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>nonce/counter zależy od nadawcy, odbiorcy, msg_id i countera,</li>
+<li>powtórzenie tego samego counter block przy tym samym kluczu jest utrudnione przez monotoniczny counter i msg_id,</li>
+<li>HMAC obejmuje te same pola, więc atakujący nie może zmienić nonce bez uszkodzenia MAC.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md107"></a>
+15.2. AES-CTR nie jest autentykacją</h2>
+<p>AES-CTR sam nie chroni przed modyfikacją bitów.</p>
+<p>Przykład problemu bez HMAC:</p>
+<div class="fragment"><div class="line">plaintext  = &quot;OK&quot;</div>
+<div class="line">ciphertext = AES_CTR(plaintext)</div>
+<div class="line">atakujący zmienia bit ciphertextu</div>
+<div class="line">odbiorca dostaje zmieniony plaintext</div>
+</div><!-- fragment --><p>W BEKO ten atak nie powinien przejść, bo HMAC jest liczony po zaszyfrowanym payloadzie i nagłówku. Zmieniony ciphertext da inny HMAC.</p>
+<p>Dlatego bezpieczeństwo wiadomości to:</p>
+<div class="fragment"><div class="line">Poufność:       AES-CTR</div>
+<div class="line">Integralność:   HMAC-SHA256</div>
+<div class="line">Autentyczność:  HMAC-SHA256 z kluczem relacji</div>
+<div class="line">Anti-replay:    counter policy</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md108"></a>
+16. Hardware crypto STM32</h1>
+<p><span class="tt"><a class="el" href="laviet__crypto_8c.html#a7e6b5382044df5bf7b529c89360ac21b" title="Initialize crypto backends and run the optional hardware self-test.">laviet_crypto_init()</a></span> sprawdza, czy:</p>
+<ul>
+<li><span class="tt">hcryp.Instance == AES</span>,</li>
+<li>AES HAL jest <span class="tt">READY</span>,</li>
+<li>HASH HAL jest <span class="tt">READY</span>.</li>
+</ul>
+<p>Potem wykonuje self-test:</p>
+<ol type="1">
+<li>HMAC software.</li>
+<li>HMAC hardware.</li>
+<li>Porównanie HMAC.</li>
+<li>AES-CTR software dla 0 B.</li>
+<li>AES-CTR hardware dla 0 B.</li>
+<li>AES-CTR software dla 1 B.</li>
+<li>AES-CTR hardware dla 1 B.</li>
+<li>Porównanie 1 B.</li>
+<li>AES-CTR software dla 16 B.</li>
+<li>AES-CTR hardware dla 16 B.</li>
+<li>Porównanie 16 B.</li>
+<li>Roundtrip encrypt/decrypt.</li>
+</ol>
+<p>Poprawny log:</p>
+<div class="fragment"><div class="line">CRYPTO: AES pre_self_test inst=0x420c0000 state=1(READY) err=0x00000000 ...</div>
+<div class="line">CRYPTO: HASH pre_self_test state=1(READY) err=0x00000000 ...</div>
+<div class="line">CRYPTO: hardware backend ready</div>
+</div><!-- fragment --><p>Jeżeli test nie przejdzie:</p>
+<div class="fragment"><div class="line">CRYPTO: self-test mismatch stage=aes_1B_compare index=0 expected=0xAE actual=0x41 len=1</div>
+<div class="line">CRYPTO: hardware self-test failed, using software fallback</div>
+</div><!-- fragment --><p>Firmware wtedy nadal działa, ale używa software fallback.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md109"></a>
+16.1. Dlaczego self-test jest ważny</h2>
+<p>AES/HASH HAL może być <span class="tt">READY</span>, ale wynik może być zły, np. przez:</p>
+<ul>
+<li>błędny <span class="tt">DataType</span>,</li>
+<li>złą endianowość key/IV/input,</li>
+<li>złą długość jednostki danych,</li>
+<li>błąd konfiguracji <span class="tt">.ioc</span>.</li>
+</ul>
+<p>Self-test porównuje hardware z implementacją software i dopiero wtedy włącza <span class="tt">s_crypto_hw_ready</span>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md110"></a>
+16.2. Pakowanie big-endian do AES</h2>
+<p>STM32 AES przyjmuje key/IV/data jako <span class="tt">uint32_t *</span>.</p>
+<p>Firmware jawnie pakuje bajty protokołu do słów big-endian:</p>
+<div class="fragment"><div class="line">bytes[0..3] -&gt; word = b0&lt;&lt;24 | b1&lt;&lt;16 | b2&lt;&lt;8 | b3</div>
+</div><!-- fragment --><p>Po AES wynik jest rozpakowywany z powrotem do bajtów.</p>
+<p>Dlaczego:</p>
+<ul>
+<li>ramka LAVIET jest big-endian,</li>
+<li>AES test vector software działa na kolejności bajtowej protokołu,</li>
+<li>rzutowanie <span class="tt">uint8_t[16]</span> na <span class="tt">uint32_t *</span> dawało odwrócenie bajtów na little-endian MCU,</li>
+<li>jawne pakowanie usuwa niejednoznaczność.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md111"></a>
+17. Software fallback</h1>
+<p>Software fallback istnieje jako zabezpieczenie dostępności.</p>
+<p>Jeżeli hardware AES/HASH:</p>
+<ul>
+<li>nie jest gotowy,</li>
+<li>nie przejdzie self-testu,</li>
+<li>zwróci błąd HAL,</li>
+<li>nie da się zablokować mutexa,</li>
+</ul>
+<p>to firmware używa implementacji software.</p>
+<p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>system nie przechodzi na “brak crypto”,</li>
+<li>nadal liczy HMAC,</li>
+<li>nadal szyfruje AES-CTR,</li>
+<li>hardware path jest tylko akceleratorem, nie jedynym źródłem poprawności.</li>
+</ul>
+<p>Ograniczenie:</p>
+<ul>
+<li>software AES/HMAC działa w RAM MCU i może być wolniejszy,</li>
+<li>przy pełnym modelu produkcyjnym trzeba też chronić debug/SWD i pamięć.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md112"></a>
+18. EEPROM secret storage</h1>
+<p>Zewnętrzny EEPROM jest traktowany jako niezaufany nośnik.</p>
+<p>Przechowywane tam dane:</p>
+<ul>
+<li>metadata store,</li>
+<li>trusted devices,</li>
+<li>pair code,</li>
+<li>gateway counters,</li>
+<li>opcjonalne logi,</li>
+<li>runtime config.</li>
+</ul>
+<p>Na M24C01-R pamięć ma tylko 128 B, więc obecnie:</p>
+<div class="fragment"><div class="line">secret_area_bytes = 72 B</div>
+<div class="line">secret slot size  = 24 B</div>
+<div class="line">secret slots      = 3</div>
+<div class="line">log slots         = 0</div>
+</div><!-- fragment --><p>Przy tym układzie slot <span class="tt">2</span> jest zarezerwowany na gateway counters, więc trwałe trusted devices mają pojemność:</p>
+<div class="fragment"><div class="line">trusted slot 0 = gateway</div>
+<div class="line">trusted slot 1 = dodatkowy node</div>
+</div><!-- fragment --><p>Firmware nie powinien akceptować trusted device jako zapisanego, jeżeli wpis nie został rzeczywiście utrwalony. Zapis trusted wykonuje write -&gt; read-back -&gt; compare; dopiero po poprawnej weryfikacji wpis trafia do RAM jako zaufany.</p>
+<p>Log:</p>
+<div class="fragment"><div class="line">SEC: MEM store ready log_slots=0 secret_slots=3</div>
+<div class="line">SEC: MEM log disabled, storage reserved for trusted devices</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md113"></a>
+18.1. Szyfrowanie secret slots</h2>
+<p><span class="tt">i2c_mem_store</span> używa XTEA-CTR dla secret slots.</p>
+<p>Klucz:</p>
+<div class="fragment"><div class="line">store_key = HMAC(root_seed, &quot;SEC:EEPROM:KEY&quot;)[0..15]</div>
+</div><!-- fragment --><p>Slot zawiera:</p>
+<div class="fragment"><div class="line">magic      2 B</div>
+<div class="line">length     1 B</div>
+<div class="line">slot_id    1 B</div>
+<div class="line">nonce      4 B</div>
+<div class="line">ciphertext 14 B</div>
+<div class="line">crc16      2 B</div>
+</div><!-- fragment --><p>Dlaczego to jest bezpieczniejsze niż plaintext EEPROM:</p>
+<ul>
+<li>odczyt EEPROM nie ujawnia pair code bez store key,</li>
+<li>store key nie jest w EEPROM,</li>
+<li>store key pochodzi z TPM root seed,</li>
+<li>każdy zapis dostaje nonce z <span class="tt">secret_counter</span>,</li>
+<li>CRC wykrywa przypadkowe uszkodzenia i proste manipulacje formatu.</li>
+</ul>
+<p>Ważne ograniczenie:</p>
+<ul>
+<li>CRC nie jest MAC.</li>
+<li>Integralność kryptograficzna EEPROM secret slots nie jest tak mocna jak HMAC.</li>
+<li>Docelowo warto dodać HMAC/AEAD dla rekordów EEPROM albo rozszerzyć format.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md114"></a>
+19. Trusted devices</h1>
+<p>Trusted entry zawiera:</p>
+<div class="fragment"><div class="line">node_id</div>
+<div class="line">code_len</div>
+<div class="line">pair code</div>
+<div class="line">is_master</div>
+<div class="line">in_use</div>
+</div><!-- fragment --><p>Slot <span class="tt">0</span> jest traktowany jako gateway/master slot.</p>
+<p>Po sparowaniu:</p>
+<ol type="1">
+<li>pair code jest zapisany w trusted storage,</li>
+<li>trusted storage trafia do encrypted secret slot EEPROM,</li>
+<li>późniejsze ramki unicast używają pair-derived keys,</li>
+<li>RX od nieznanego źródła jest odrzucany dla <span class="tt">DATA</span> i <span class="tt">RESP</span>.</li>
+</ol>
+<p>Wyjątek: gateway (<span class="tt">src_id=0x0001</span>) może wysłać <span class="tt">DATA/RESP</span> jako broadcast (<span class="tt">dst_id=0xFFFF</span>) po poprawnym HMAC w domenie broadcast/shared. Taka ramka nie wymaga wpisu w trusted slotach, ale nie dostaje ACK i nie powinna przenosić sekretów. Unicast <span class="tt">DATA/RESP</span> nadal wymaga sparowanego źródła.</p>
+<p>Przykład RX spoza sieci:</p>
+<div class="fragment"><div class="line">RADIO RX outside-network drop src=0x1234 dst=0x77CD type=DATA</div>
+</div><!-- fragment --><p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>samo zgadnięcie <span class="tt">src_id</span> nie wystarczy,</li>
+<li>trzeba mieć pair code, żeby wyprowadzić poprawny HMAC key,</li>
+<li>nawet po HMAC dodatkowo sprawdzana jest lista trusted dla zwykłych wiadomości.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md115"></a>
+20. Pairing</h1>
+<p>Pairing ma dwa warianty:</p>
+<ul>
+<li>zwykły pairing node-device,</li>
+<li>network pairing z gatewayem.</li>
+</ul>
+<p>Ogólny przepływ:</p>
+<div class="fragment"><div class="line">1. Lokalnie uruchamiasz tryb parowania.</div>
+<div class="line">2. Node otwiera okno czasowe.</div>
+<div class="line">3. Druga strona wysyła PAIR_REQ albo PAIR_RESP.</div>
+<div class="line">4. Firmware parsuje pair payload.</div>
+<div class="line">5. Użytkownik lokalnie akceptuje.</div>
+<div class="line">6. Pair code trafia do trusted storage.</div>
+<div class="line">7. Kolejne ramki używają pair-derived keys.</div>
+</div><!-- fragment --><p>Dlaczego pairing nie jest tylko radiowy:</p>
+<ul>
+<li>wymaga aktywnego lokalnego okna,</li>
+<li>wymaga lokalnej akceptacji,</li>
+<li>dla gatewaya slot może być zablokowany po zapisaniu,</li>
+<li>RX spoza okna parowania jest ignorowany.</li>
+</ul>
+<p>Ograniczenie:</p>
+<ul>
+<li>shared pairing key jest statyczny,</li>
+<li>pair code ma ograniczoną długość,</li>
+<li>docelowo pairing powinien dostać challenge-response i/lub TPM policy session.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md116"></a>
+21. ACK</h1>
+<p>ACK jest osobną ramką <span class="tt"><a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7" title="Acknowledgement payload.">LAVIET_TYPE_ACK</a></span>.</p>
+<p>Payload ACK:</p>
+<div class="fragment"><div class="line">acked_msg_id  2 B</div>
+<div class="line">acked_counter 4 B</div>
+</div><!-- fragment --><p>Nadawca akceptuje ACK tylko, jeśli pasują:</p>
+<ul>
+<li><span class="tt">src_id</span>,</li>
+<li><span class="tt">msg_id</span>,</li>
+<li><span class="tt">counter</span>.</li>
+</ul>
+<p>Tu <span class="tt">msg_id</span> i <span class="tt">counter</span> oznaczają pola z payloadu ACK, czyli <span class="tt">acked_msg_id</span> i <span class="tt">acked_counter</span>. Zewnętrzne pole <span class="tt">counter</span> samej ramki ACK jest osobnym licznikiem TX nadawcy ACK i nie musi być równe <span class="tt">acked_counter</span>.</p>
+<p>Przykład:</p>
+<div class="fragment"><div class="line">RADIO ACK wait dst=0x0001 msg=0x0042 counter=123 timeout=6000 ms</div>
+<div class="line">RADIO RX OK type=ACK src=0x0001 dst=0x77CD msg=0x2F5E counter=456 flags=0x04 len=6</div>
+<div class="line">RADIO RX ACK src=0x0001 ack_msg=0x0042 ack_counter=123</div>
+<div class="line">RADIO ACK delivered src=0x0001 msg=0x0042 counter=123 retries=0</div>
+</div><!-- fragment --><p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>przypadkowy ACK nie zamyka pending TX,</li>
+<li>opóźniony ACK jest rozpoznawany jako late/duplicate,</li>
+<li>ACK nie jest generowany dla broadcastu,</li>
+<li>ACK nie jest szyfrowany, ale jest MACowany jak każda ramka.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md117"></a>
+22. Counter i anti-replay</h1>
+<p>Ramka ma 32-bitowy <span class="tt">counter</span>.</p>
+<p>Firmware przechowuje:</p>
+<div class="fragment"><div class="line">s_gateway_rx_counter</div>
+<div class="line">s_gateway_tx_counter</div>
+</div><!-- fragment --><p>Gateway/backend powinien przechowywać analogiczne, rozdzielone wartości:</p>
+<div class="fragment"><div class="line">gateway_tx_counter          ostatni counter użyty przez gateway w ramce do noda</div>
+<div class="line">node_rx_counter[node_id]    ostatni counter zaakceptowany od danego noda</div>
+</div><!-- fragment --><p><span class="tt">gateway_tx_counter</span> musi być trwały i monotoniczny. Backend nie powinien zerować go przy restarcie procesu. Dla każdej ramki gateway -&gt; node:</p>
+<div class="fragment"><div class="line">counter = gateway_tx_counter + 1</div>
+<div class="line">persist gateway_tx_counter = counter</div>
+<div class="line">zbuduj nonce/AES/HMAC z tym counterem</div>
+<div class="line">wyślij ramkę</div>
+</div><!-- fragment --><p>Dla ACK wysyłanego przez gateway zewnętrzny <span class="tt">frame.counter</span> też pochodzi z <span class="tt">gateway_tx_counter</span>, natomiast payload ACK musi zawierać <span class="tt">msg_id</span> i <span class="tt">counter</span> oryginalnej ramki noda:</p>
+<div class="fragment"><div class="line">ack_payload = acked_msg_id || acked_counter</div>
+</div><!-- fragment --><p>Przy odbiorze ACK od noda backend musi dopasowywać potwierdzenie po payloadzie ACK (<span class="tt">acked_msg_id</span>, <span class="tt">acked_counter</span>), a nie po zewnętrznym <span class="tt">frame.counter</span> ramki ACK.</p>
+<p>W EEPROM slot counter ma:</p>
+<div class="fragment"><div class="line">magic   0xC7</div>
+<div class="line">version 1</div>
+<div class="line">rx      4 B</div>
+<div class="line">tx      4 B</div>
+</div><!-- fragment --><p>Dlaczego counter jest potrzebny:</p>
+<ul>
+<li>AES-CTR wymaga unikalnego counter block,</li>
+<li>HMAC chroni counter przed modyfikacją,</li>
+<li>odbiornik może wykryć stare ramki,</li>
+<li>ACK może być dopasowany do konkretnej transmisji.</li>
+</ul>
+<p>Przykład replay:</p>
+<div class="fragment"><div class="line">last gateway counter = 100</div>
+<div class="line">przychodzi ramka DATA z counter = 95</div>
+<div class="line">odbiornik wykrywa replay/stary counter</div>
+</div><!-- fragment --><p>W obecnym kodzie istnieje diagnostyczna ścieżka <span class="tt">RADIO RX REPLAY bypass</span>, co jest zaznaczone w <span class="tt">todo.md</span> jako zadanie do przywrócenia finalnej polityki anti-replay. Docelowo ramki z <span class="tt">counter &lt;= last_counter</span> powinny być odrzucane po poprawnym HMAC, przed wykonaniem akcji aplikacyjnej.</p>
+<p>Bezpieczna docelowa polityka:</p>
+<div class="fragment"><div class="line">if src == gateway and type != COUNTER_SYNC:</div>
+<div class="line">    if counter &lt;= stored_rx_counter:</div>
+<div class="line">        drop as replay</div>
+<div class="line">    else:</div>
+<div class="line">        process</div>
+<div class="line">        persist new counter</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md118"></a>
+23. <span class="tt">COUNTER_SYNC</span></h1>
+<p><span class="tt">COUNTER_SYNC</span> jest specjalną ramką gateway -&gt; node.</p>
+<p>Wymagania:</p>
+<ul>
+<li><span class="tt">src_id == 0x0001</span>,</li>
+<li>typ <span class="tt">COUNTER_SYNC</span>,</li>
+<li>flaga <span class="tt">COUNTER_OVERRIDE</span>,</li>
+<li>payload 4 B,</li>
+<li>poprawny HMAC,</li>
+<li>payload zaszyfrowany.</li>
+</ul>
+<p>Użycie:</p>
+<div class="fragment"><div class="line">payload = new_counter_be32</div>
+</div><!-- fragment --><p>Jeżeli backend utracił trwały <span class="tt">gateway_tx_counter</span> albo node zapamiętał wyższy licznik niż backend, nie trzeba restartować firmware noda. Backend powinien wysłać kontrolną ramkę <span class="tt">COUNTER_SYNC</span>:</p>
+<div class="fragment"><div class="line">ver_type = 0x17                         # v1 + COUNTER_SYNC</div>
+<div class="line">flags    = 0x41                         # ENCRYPTED | COUNTER_OVERRIDE</div>
+<div class="line">flags    = 0x43                         # ENCRYPTED | ACK_REQUIRED | COUNTER_OVERRIDE, gdy backend chce ACK</div>
+<div class="line">src_id   = 0x0001</div>
+<div class="line">dst_id   = node_id</div>
+<div class="line">payload  = AES_CTR(new_counter_be32)</div>
+<div class="line">mac      = HMAC(header || encrypted_payload)</div>
+</div><!-- fragment --><p>Po wysłaniu <span class="tt">COUNTER_SYNC</span> backend ustawia swój <span class="tt">gateway_tx_counter</span> na co najmniej <span class="tt">new_counter</span>, a następna zwykła ramka gateway -&gt; node musi mieć <span class="tt">counter &gt; new_counter</span>. <span class="tt">new_counter</span> nie powinien być mniejszy od wartości, którą node mógł już zapamiętać; w praktyce wybiera się aktualny trwały licznik backendu albo większą wartość z zapasem.</p>
+<p>Dlaczego to jest bezpieczne:</p>
+<ul>
+<li>tylko gateway może wysłać poprawnie uwierzytelnioną synchronizację,</li>
+<li>counter sync nie jest zwykłą wiadomością,</li>
+<li>flaga <span class="tt">COUNTER_OVERRIDE</span> odróżnia operację od zwykłego DATA,</li>
+<li>HMAC chroni nową wartość countera.</li>
+</ul>
+<p>Ryzyko:</p>
+<ul>
+<li>jeżeli gateway zostanie przejęty, może zsynchronizować counter.</li>
+<li>to jest akceptowany model: gateway jest centralnym zaufanym węzłem topologii gwiazdy.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md119"></a>
+24. Broadcast</h1>
+<p>Broadcast ma adres <span class="tt">0xFFFF</span>.</p>
+<p>Zasady:</p>
+<ul>
+<li>broadcast nie wymaga ACK,</li>
+<li>broadcast nie może mieć <span class="tt">ACK_REQUIRED</span>,</li>
+<li>node nie wysyła zwykłych wiadomości na broadcast,</li>
+<li>broadcast może być używany przez gateway,</li>
+<li>gateway broadcast <span class="tt">DATA/RESP</span> jest akceptowany po poprawnym HMAC shared/broadcast nawet przed trusted-list,</li>
+<li>broadcast nie powinien przenosić sekretów.</li>
+</ul>
+<p>Gateway z branchu <span class="tt">gateway</span> dla <span class="tt">coded=true</span> broadcast używa <span class="tt">broadcast_group_key</span>, nie samego <span class="tt">LAVIET_SHARED_V1</span>. Node musi najpierw odebrać unicastowe <span class="tt">KEY_ROTATE</span> od gatewaya:</p>
+<div class="fragment"><div class="line">B7 01 epoch_be32 fragment_index fragment_count fragment[8]</div>
+<div class="line">B7 01 epoch_be32 fragment_index fragment_count fragment[8]</div>
+<div class="line">B7 02 epoch_be32 00 00 00 00 00 00 00 00 00 00</div>
+</div><!-- fragment --><p>Po aktywacji node wyprowadza:</p>
+<div class="fragment"><div class="line">broadcast_base_key = HMAC_SHA256(</div>
+<div class="line">    key  = broadcast_group_key[16],</div>
+<div class="line">    data = &quot;LAVIET:BCAST:GROUP:V1&quot; || epoch_be32 || 0xFFFF</div>
+<div class="line">)[0..15]</div>
+<div class="line"> </div>
+<div class="line">broadcast_aes_key  = HMAC_SHA256(broadcast_base_key, &quot;LV1K&quot; || 0xFFFF || 00 || 01)[0..15]</div>
+<div class="line">broadcast_hmac_key = HMAC_SHA256(broadcast_base_key, &quot;LV1K&quot; || 0xFFFF || 00 || 02)</div>
+</div><!-- fragment --><p>Dla zaszyfrowanego broadcastu RX próbuje najpierw aktywny group key, a potem fallback <span class="tt">SHARED</span>. Jeśli <span class="tt">KEY_ROTATE</span> nie dotarł albo nie został aktywowany, <span class="tt">flags=0x21</span> (<span class="tt">ENCRYPTED | BROADCAST</span>) zakończy się <span class="tt">HMAC drop</span>.</p>
+<p>Dlaczego broadcast jest słabszy:</p>
+<ul>
+<li>wiele urządzeń odbiera tę samą ramkę,</li>
+<li>nie ma per-node ACK,</li>
+<li>w praktyce używa shared/broadcast key domain,</li>
+<li>nie daje takiego samego potwierdzenia dostarczenia jak unicast.</li>
+</ul>
+<p>Bezpieczne użycie:</p>
+<div class="fragment"><div class="line">broadcast: krótkie komunikaty, wezwania, prośby o odpowiedź</div>
+<div class="line">unicast: dane wrażliwe, konfiguracja, ACK, odpowiedzi</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md120"></a>
+25. Lokalny PIN i role</h1>
+<p>Menu ma role:</p>
+<ul>
+<li>operator,</li>
+<li>admin.</li>
+</ul>
+<p>Domyślne PIN-y w kodzie:</p>
+<div class="fragment"><div class="line">operator: 0000</div>
+<div class="line">admin:    9999</div>
+</div><!-- fragment --><p>PIN:</p>
+<ul>
+<li>ma 4 cyfry,</li>
+<li>może być włączony/wyłączony,</li>
+<li>może zostać zmieniony w <span class="tt">Security -&gt; PIN settings</span>,</li>
+<li>unlock trwa <span class="tt">60000 ms</span>,</li>
+<li>admin unlock odblokowuje też poziom operatora.</li>
+</ul>
+<p>Dlaczego PIN jest użyteczny:</p>
+<ul>
+<li>ogranicza przypadkowe albo nieuprawnione wejście w menu,</li>
+<li>oddziela normalny tryb użytkownika od konfiguracji,</li>
+<li>wymaga świadomej lokalnej interakcji.</li>
+</ul>
+<p>Ograniczenie:</p>
+<ul>
+<li>PIN w obecnym kodzie jest runtime/static, nie jest jeszcze trwale zapisany jako HMAC/TPM-protected secret.</li>
+<li>PIN nie jest głównym sekretem kryptograficznym.</li>
+<li>PIN nie zastępuje TPM PP.</li>
+</ul>
+<p>Docelowo PIN powinien być zapisany jako:</p>
+<div class="fragment"><div class="line">pin_hash = HMAC(TPM-derived local auth key, salt || pin)</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md121"></a>
+26. Logi UART</h1>
+<p>Logi są potrzebne do uruchamiania embedded, ale mogą ujawniać za dużo.</p>
+<p>Bezpieczne zasady:</p>
+<ul>
+<li>nie logować root seeda,</li>
+<li>nie logować pełnych kluczy,</li>
+<li>nie logować pair code w trybie produkcyjnym,</li>
+<li>debug HMAC/payload trzymać za flagą produkcyjną,</li>
+<li>TPM verbose logi tylko z <span class="tt">TPM_INIT_LOG</span>.</li>
+</ul>
+<p>Aktualne mechanizmy:</p>
+<ul>
+<li><span class="tt">TPM_INIT_LOG</span> ukrywa szczegółowe logi TPM TIS,</li>
+<li><span class="tt"><a class="el" href="pager__config_8h.html#a6176f7b270798f1eb48d2d02c68dc4f3" title="Enable verbose UART logs for sensitive secure/control payloads.">PAGER_CONFIG_UART_SENSITIVE_LOGS</a></span> kontroluje wrażliwe logi UART,</li>
+<li>startup pokazuje statusy, ale nie powinien drukować sekretów.</li>
+</ul>
+<p>Przykład dobrego startupu:</p>
+<div class="fragment"><div class="line">APP: FreeRTOS bootstrap</div>
+<div class="line">CRYPTO: hardware backend ready</div>
+<div class="line">SEC: TPM ready DIDVID=0x0003104A RID=0x01 self_test_tpm_rc=0x0000090A</div>
+<div class="line">SEC: TPM NV read idx=0x01C10101 rc=0(OK) tpm_rc=0x00000000 len=8 nonzero=1</div>
+<div class="line">SEC: root seed loaded from TPM</div>
+<div class="line">SEC: MEM secret key derived from TPM root seed</div>
+<div class="line">SEC: task ready</div>
+<div class="line">MENU: task ready</div>
+<div class="line">RADIO: init OK laviet_node=0x77CD</div>
+</div><!-- fragment --><h1 class="doxsection"><a class="anchor" id="autotoc_md122"></a>
+27. Dlaczego ta architektura jest bezpieczna</h1>
+<p>Bezpieczeństwo wynika z warstw, a nie z jednego mechanizmu.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md123"></a>
+27.1. Atak: podsłuch radiowy</h2>
+<p>Atakujący słyszy ciphertext.</p>
+<p>Ochrona:</p>
+<ul>
+<li>payload jest szyfrowany AES-CTR,</li>
+<li>klucz AES jest pair-derived,</li>
+<li>counter block zawiera pola ramki,</li>
+<li>HMAC chroni nagłówek i ciphertext.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>podsłuch nie daje plaintextu,</li>
+<li>modyfikacja ciphertextu psuje HMAC.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md124"></a>
+27.2. Atak: zmiana payloadu</h2>
+<p>Atakujący zmienia bajt payloadu.</p>
+<p>Ochrona:</p>
+<ul>
+<li>HMAC obejmuje payload,</li>
+<li>porównanie MAC wykrywa zmianę.</li>
+</ul>
+<p>Efekt:</p>
+<div class="fragment"><div class="line">RADIO RX HMAC drop src=...</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md125"></a>
+27.3. Atak: zmiana adresu docelowego</h2>
+<p>Atakujący próbuje zmienić <span class="tt">dst_id</span>.</p>
+<p>Ochrona:</p>
+<ul>
+<li><span class="tt">dst_id</span> jest w HMAC input,</li>
+<li>zmiana <span class="tt">dst_id</span> psuje HMAC,</li>
+<li>parser sprawdza poprawność adresacji.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>ramka zostaje odrzucona.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md126"></a>
+27.4. Atak: fałszywy ACK</h2>
+<p>Atakujący wysyła ACK.</p>
+<p>Ochrona:</p>
+<ul>
+<li>ACK też jest ramką z HMAC,</li>
+<li>ACK payload zawiera <span class="tt">acked_msg_id</span> i <span class="tt">acked_counter</span>,</li>
+<li>tracker wymaga zgodności <span class="tt">src_id</span>, <span class="tt">msg_id</span>, <span class="tt">counter</span>.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>losowy ACK nie zamyka transmisji.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md127"></a>
+27.5. Atak: odczyt EEPROM</h2>
+<p>Atakujący odczytuje zewnętrzny EEPROM.</p>
+<p>Ochrona:</p>
+<ul>
+<li>secret slots są szyfrowane,</li>
+<li>klucz EEPROM pochodzi z TPM root seed,</li>
+<li>root seed nie jest w EEPROM,</li>
+<li>rekordy mają CRC.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>attacker widzi ciphertext i metadata, nie pair code wprost.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md128"></a>
+27.6. Atak: zdalna rotacja root seeda</h2>
+<p>Atakujący próbuje zdalnie wymusić zmianę root seeda.</p>
+<p>Ochrona:</p>
+<ul>
+<li>zapis do TPM NV index <span class="tt">0x01C10101</span> wymaga <span class="tt">PPWRITE</span>,</li>
+<li>PP jest egzekwowane przez TPM,</li>
+<li>PP jest fizyczne, pin TPM <span class="tt">7</span>, aktywny <span class="tt">VDD</span>,</li>
+<li>STM32 nie może tego zastąpić zwykłą zmienną.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>bez fizycznej obecności zapis seeda powinien się nie udać.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md129"></a>
+27.7. Atak: błąd hardware AES/HASH</h2>
+<p>Problem:</p>
+<ul>
+<li>HAL może być <span class="tt">READY</span>, ale wynik AES może być błędny przez endianowość.</li>
+</ul>
+<p>Ochrona:</p>
+<ul>
+<li>self-test porównuje hardware i software,</li>
+<li>niezgodność wyłącza hardware backend,</li>
+<li>fallback nadal wykonuje crypto.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>system nie używa cichego, błędnego AES.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md130"></a>
+27.8. Atak: przypadkowe wejście w menu admin</h2>
+<p>Ochrona:</p>
+<ul>
+<li>strony menu mają wymagany poziom auth,</li>
+<li>PIN operator/admin,</li>
+<li>unlock wygasa po czasie,</li>
+<li>użytkownik bez PIN może czytać/odpowiadać, ale nie konfigurować.</li>
+</ul>
+<p>Efekt:</p>
+<ul>
+<li>konfiguracja nie jest dostępna z normalnego ekranu pracy.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md131"></a>
+28. Ograniczenia obecnego wdrożenia</h1>
+<p>To są punkty, których nie wolno ukrywać:</p>
+<ol type="1">
+<li>Root seed ma obecnie 8 B. Dla produkcji lepiej zwiększyć do 16/32 B.</li>
+<li>Shared mode używa stałego firmware key i jest słabszy niż pair-specific mode.</li>
+<li>Secret slots EEPROM używają CRC, nie kryptograficznego MAC.</li>
+<li>Finalna polityka replay-drop jest oznaczona w TODO jako praca do domknięcia.</li>
+<li>PIN nie jest jeszcze trwale zapisany jako TPM/HMAC-protected secret.</li>
+<li>Brakuje pełnego secure boot / debug lock / TrustZone policy.</li>
+<li>Pairing powinien docelowo dostać challenge-response albo TPM policy session.</li>
+<li><span class="tt">KEY_ROTATE</span> jako pełny radiowy protokół rotacji nie jest jeszcze domknięty.</li>
+<li>Brakuje per-source rate limiting i abuse scoring dla flood/replay.</li>
+<li>Broadcast ma niższy poziom pewności niż unicast.</li>
+</ol>
+<p>Te ograniczenia nie unieważniają architektury. One pokazują, gdzie są granice obecnego poziomu bezpieczeństwa.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md132"></a>
+29. Zalecane utwardzenia</h1>
+<p>Najważniejsze następne kroki:</p>
+<ol type="1">
+<li>Zwiększyć <span class="tt">SECURITY_KEY_SEED_BYTES</span> do 16 albo 32.</li>
+<li>Dodać HMAC/AEAD dla EEPROM secret slots.</li>
+<li>Przywrócić finalny drop dla replay ramek gatewaya.</li>
+<li>Dodać test replay attack.</li>
+<li>Dodać test odtwarzania sekretów po reboocie.</li>
+<li>Dodać test migracji <span class="tt">0x01C10100 -&gt; 0x01C10101</span>.</li>
+<li>Przenieść PIN do trwałego TPM-derived hash.</li>
+<li>Dodać rate limiting per <span class="tt">src_id</span>.</li>
+<li>Dodać abuse counters: bad HMAC, replay, malformed frame.</li>
+<li>Domknąć <span class="tt">KEY_ROTATE</span> jako protokół radiowy.</li>
+<li>Dodać policy/session TPM dla pairingu lub operacji admin.</li>
+<li>Wyłączyć/maskować wrażliwe UART logi w buildzie produkcyjnym.</li>
+<li>Zablokować debug/SWD w urządzeniach produkcyjnych.</li>
+</ol>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md133"></a>
+30. Przykłady</h1>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md134"></a>
+30.1. Przykład: budowa zaszyfrowanej ramki DATA</h2>
+<p>Założenia:</p>
+<div class="fragment"><div class="line">src_id  = 0x77CD</div>
+<div class="line">dst_id  = 0x0001</div>
+<div class="line">msg_id  = 0x0042</div>
+<div class="line">counter = 0x00000010</div>
+<div class="line">payload = &quot;STS:OK&quot;</div>
+</div><!-- fragment --><p>Kroki:</p>
+<div class="fragment"><div class="line">1. frame.payload = &quot;STS:OK&quot;</div>
+<div class="line">2. frame.flags = ACK_REQUIRED | ENCRYPTED</div>
+<div class="line">3. enc_key, hmac_key = derive_pair_keys(0x77CD, 0x0001, pair_code)</div>
+<div class="line">4. AES-CTR encrypt payload</div>
+<div class="line">5. HMAC(header || encrypted_payload)</div>
+<div class="line">6. encode frame</div>
+<div class="line">7. send raw bytes</div>
+<div class="line">8. wait for ACK(msg_id=0x0042, counter=0x00000010)</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md135"></a>
+30.2. Przykład: odbiór zaszyfrowanej ramki</h2>
+<div class="fragment"><div class="line">1. radio RX bytes</div>
+<div class="line">2. laviet_frame_decode()</div>
+<div class="line">3. derive expected HMAC key</div>
+<div class="line">4. calculate HMAC over header || payload</div>
+<div class="line">5. constant-time compare with mac_tag</div>
+<div class="line">6. if HMAC OK: AES-CTR decrypt payload</div>
+<div class="line">7. if dst_id == local or broadcast: handle</div>
+<div class="line">8. if ACK_REQUIRED and unicast: send ACK</div>
+<div class="line">9. persist latest counter</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md136"></a>
+30.3. Przykład: odrzucenie zmienionej ramki</h2>
+<div class="fragment"><div class="line">Atakujący zmienia dst_id:</div>
+<div class="line"> </div>
+<div class="line">original dst_id = 0x77CD</div>
+<div class="line">tampered dst_id = 0x1234</div>
+<div class="line"> </div>
+<div class="line">HMAC input zmienił się, ale mac_tag został stary.</div>
+<div class="line">Odbiornik liczy expected MAC i dostaje inną wartość.</div>
+<div class="line"> </div>
+<div class="line">Wynik:</div>
+<div class="line">RADIO RX HMAC drop src=...</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md137"></a>
+30.4. Przykład: rotacja root seeda</h2>
+<div class="fragment"><div class="line">1. Admin wchodzi do Security -&gt; Keys.</div>
+<div class="line">2. Firmware prosi o aktywne TPM PP.</div>
+<div class="line">3. Użytkownik trzyma przycisk PP.</div>
+<div class="line">4. Firmware generuje seed z TPM RNG albo HAL RNG.</div>
+<div class="line">5. Firmware zapisuje seed do NV index 0x01C10101.</div>
+<div class="line">6. TPM egzekwuje PPWRITE.</div>
+<div class="line">7. Firmware wyprowadza network_key i EEPROM key.</div>
+<div class="line">8. EEPROM secret store dostaje nowy klucz.</div>
+</div><!-- fragment --><p>Bez PP:</p>
+<div class="fragment"><div class="line">SEC: root seed write requires TPM PP button</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md138"></a>
+30.5. Przykład: hardware crypto self-test</h2>
+<p>Poprawny:</p>
+<div class="fragment"><div class="line">CRYPTO: AES pre_self_test inst=0x420c0000 state=1(READY) err=0x00000000</div>
+<div class="line">CRYPTO: HASH pre_self_test state=1(READY) err=0x00000000</div>
+<div class="line">CRYPTO: hardware backend ready</div>
+</div><!-- fragment --><p>Błędna endianowość AES:</p>
+<div class="fragment"><div class="line">CRYPTO: self-test mismatch stage=aes_1B_compare index=0 expected=0xAE actual=0x41 len=1</div>
+<div class="line">CRYPTO: hardware self-test failed, using software fallback</div>
+</div><!-- fragment --><p>Po poprawce pakowania big-endian:</p>
+<div class="fragment"><div class="line">CRYPTO: hardware backend ready</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md139"></a>
+30.6. Przykład: EEPROM secret slot</h2>
+<p>Plain trusted payload:</p>
+<div class="fragment"><div class="line">id_len   = 4</div>
+<div class="line">code_len = 8</div>
+<div class="line">id       = node_id as 4 B</div>
+<div class="line">code     = pair code 8 B</div>
+</div><!-- fragment --><p>Po zapisie:</p>
+<div class="fragment"><div class="line">magic      = C0 DE</div>
+<div class="line">len        = 14</div>
+<div class="line">slot       = 0</div>
+<div class="line">nonce      = monotonic secret_counter</div>
+<div class="line">ciphertext = XTEA-CTR(plain, store_key, nonce)</div>
+<div class="line">crc16      = CRC rekordu</div>
+</div><!-- fragment --><p>Atakujący z EEPROM widzi ciphertext, nie pair code.</p>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md140"></a>
+31. Checklist dla testów</h1>
+<p>Po zmianie security trzeba wykonać:</p>
+<ul>
+<li>boot z TPM podłączonym,</li>
+<li>boot bez aktywnego <span class="tt">TPM_INIT_LOG</span>,</li>
+<li>boot z <span class="tt">TPM_INIT_LOG</span>, jeśli diagnozujemy I2C,</li>
+<li>potwierdzenie <span class="tt">CRYPTO: hardware backend ready</span>,</li>
+<li>odczyt root seed z <span class="tt">0x01C10101</span>,</li>
+<li>reboot i ponowny odczyt tego samego stanu trusted/counter,</li>
+<li>re-pair gateway,</li>
+<li><span class="tt">DATA -&gt; ACK</span> gateway -&gt; node,</li>
+<li><span class="tt">RESP -&gt; ACK</span> node -&gt; gateway,</li>
+<li>broadcast RX bez ACK,</li>
+<li>próba ramki spoza trusted network,</li>
+<li>próba starego countera,</li>
+<li>próba złego HMAC,</li>
+<li>rotacja root seeda z PP,</li>
+<li>rotacja root seeda bez PP, oczekiwany błąd,</li>
+<li>test zaniku zasilania podczas zapisu EEPROM.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md141"></a>
+32. Najkrótsza odpowiedź “dlaczego to jest bezpieczne”</h1>
+<p>Bo sekret główny nie jest w firmware ani w EEPROM, tylko w TPM; zapis sekretu wymaga fizycznej obecności; klucze robocze są wyprowadzane z separacją domen; każda ramka jest uwierzytelniana HMAC po nagłówku i payloadzie; payload jest szyfrowany AES-CTR z nonce/counter zależnym od ramki; błędny hardware crypto jest wykrywany self-testem; EEPROM trzyma sekrety zaszyfrowane kluczem wyprowadzonym z TPM; a lokalne operacje konfiguracyjne są chronione PIN-em i menu role.</p>
+<p>Nie jest to jednak koniec prac. Największe produkcyjne utwardzenia to: seed 16/32 B, replay-drop bez bypassu diagnostycznego, MAC/AEAD dla EEPROM secret slots, TPM policy dla pairingu/admin i trwały TPM-derived PIN hash. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

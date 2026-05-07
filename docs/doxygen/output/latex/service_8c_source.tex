@@ -1,0 +1,1111 @@
+\doxysection{service.\+c}
+\hypertarget{service_8c_source}{}\label{service_8c_source}\index{Core/App/service.c@{Core/App/service.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{service_8h}{service.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}cmsis\_os2.h"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00004}00004\ \textcolor{preprocessor}{\#include\ "{}FreeRTOS.h"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00005}00005\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{laviet__frame_8h}{laviet\_frame.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}main.h"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00007}00007\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__main_8h}{radio\_main.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__lib_8h}{radio\_lib/radio\_lib.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{security__main_8h}{security\_main.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00011}00011\ \textcolor{preprocessor}{\#include\ <ctype.h>}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <limits.h>}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00017}00017\ \textcolor{preprocessor}{\#if\ SERVICE\_UART}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00019}00019\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_TASK\_STACK\_SIZE\ \ \ \ 2048U}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00020}00020\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_TASK\_STACK\_WORDS\ \ \ (SERVICE\_UART\_TASK\_STACK\_SIZE\ /\ sizeof(StackType\_t))}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00021}00021\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_LINE\_BUF\_SIZE\ \ \ \ \ \ (8U\ +\ (RADIO\_LIB\_MAX\_PAYLOAD\ *\ 3U))}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00022}00022\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_RX\_RING\_SIZE\ \ \ \ \ \ \ 1024U}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00023}00023\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_POLL\_DELAY\_MS\ \ \ \ \ \ 1U}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00024}00024\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_IRQ\_PRIORITY\ \ \ \ \ \ \ 5U}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00025}00025\ \textcolor{preprocessor}{\#define\ SERVICE\_UART\_TOKEN\_MAX\ \ \ \ \ \ \ \ \ \ 24U}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00027}00027\ \textcolor{keyword}{extern}\ UART\_HandleTypeDef\ huart1;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00029}00029\ \textcolor{keyword}{static}\ osThreadId\_t\ s\_service\_uart\_task\ =\ NULL;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00030}00030\ \textcolor{keyword}{static}\ StaticTask\_t\ s\_service\_uart\_task\_cb;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00031}00031\ \textcolor{keyword}{static}\ StackType\_t\ s\_service\_uart\_task\_stack[SERVICE\_UART\_TASK\_STACK\_WORDS];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00032}00032\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ s\_service\_uart\_line[SERVICE\_UART\_LINE\_BUF\_SIZE];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00033}00033\ \textcolor{keyword}{static}\ uint8\_t\ s\_service\_uart\_tx\_bytes[\mbox{\hyperlink{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}{RADIO\_LIB\_MAX\_PAYLOAD}}];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00034}00034\ \textcolor{keyword}{static}\ uint8\_t\ s\_service\_uart\_rx\_ring[SERVICE\_UART\_RX\_RING\_SIZE];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00035}00035\ \textcolor{keyword}{static}\ \textcolor{keyword}{volatile}\ uint16\_t\ s\_service\_uart\_rx\_head\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00036}00036\ \textcolor{keyword}{static}\ \textcolor{keyword}{volatile}\ uint16\_t\ s\_service\_uart\_rx\_tail\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00037}00037\ \textcolor{keyword}{static}\ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{bool}\ s\_service\_uart\_rx\_overflow\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00038}00038\ \textcolor{keyword}{static}\ uint8\_t\ s\_service\_uart\_rx\_byte\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00039}00039\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_service\_uart\_unlocked\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00040}00040\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00041}00041\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ osThreadAttr\_t\ s\_service\_uart\_task\_attr\ =}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00042}00042\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00043}00043\ \ \ \ \ .name\ =\ \textcolor{stringliteral}{"{}uart\_service"{}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00044}00044\ \ \ \ \ .priority\ =\ (osPriority\_t)osPriorityLow,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00045}00045\ \ \ \ \ .stack\_mem\ =\ s\_service\_uart\_task\_stack,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00046}00046\ \ \ \ \ .stack\_size\ =\ \textcolor{keyword}{sizeof}(s\_service\_uart\_task\_stack),}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00047}00047\ \ \ \ \ .cb\_mem\ =\ \&s\_service\_uart\_task\_cb,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00048}00048\ \ \ \ \ .cb\_size\ =\ \textcolor{keyword}{sizeof}(s\_service\_uart\_task\_cb)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00049}00049\ \};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00051}00051\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_task\_fn(\textcolor{keywordtype}{void}\ *argument);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00052}00052\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_rx\_start(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00053}00053\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_rx\_read\_byte(uint8\_t\ *out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00054}00054\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_rx\_take\_overflow(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00055}00055\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_rx\_clear(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00056}00056\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_rx\_push\_from\_isr(uint8\_t\ ch);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00057}00057\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_line(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00058}00058\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_locked\_help(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00059}00059\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_help(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00060}00060\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_cfg(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00061}00061\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_radio\_result(\textcolor{keywordtype}{bool}\ ok);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00062}00062\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_login(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00063}00063\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_send\_hex(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *payload);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00064}00064\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_text(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00065}00065\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_mod(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00066}00066\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_preset(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00067}00067\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_freq(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00068}00068\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_bw(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00069}00069\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_option(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00070}00070\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_bool\_cmd(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \textcolor{keywordtype}{bool}\ (*setter)(\textcolor{keywordtype}{bool}));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00071}00071\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_u32\_cmd(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \textcolor{keywordtype}{bool}\ (*setter)(uint32\_t));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00072}00072\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_auto\_ping\_mode(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00073}00073\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_save(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00074}00074\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_hex\_bytes(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00076}00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *len\_out,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **error\_out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00078}00078\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_u32\_token(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *token,\ uint32\_t\ *value\_out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00079}00079\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_u32\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ uint32\_t\ *value\_out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00080}00080\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_bool\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \textcolor{keywordtype}{bool}\ *value\_out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00081}00081\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_mod\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\_main\_modulation\_t}}\ *mod\_out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00082}00082\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_next\_token(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **cursor,\ \textcolor{keywordtype}{char}\ *out,\ uint8\_t\ out\_size);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00083}00083\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *service\_uart\_skip\_space(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00084}00084\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_token\_equals(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *b);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00085}00085\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_match\_prefix(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **cursor,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prefix);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00086}00086\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ service\_uart\_hex\_nibble(\textcolor{keywordtype}{char}\ c);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00087}00087\ \textcolor{keyword}{static}\ uint32\_t\ service\_uart\_get\_service\_code(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00088}00088\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *service\_uart\_mod\_text(\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\_main\_modulation\_t}}\ modulation);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00089}00089\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *service\_uart\_ap\_mode\_text(\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\_main\_auto\_ping\_mode\_t}}\ mode);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00091}\mbox{\hyperlink{service_8h_ad9002873ec70472fd9aa9a7ac510bd4e}{00091}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{service_8h_ad9002873ec70472fd9aa9a7ac510bd4e}{service\_uart\_create\_task}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00092}00092\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00093}00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_service\_uart\_task\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00094}00094\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00095}00095\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00096}00096\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00098}00098\ \ \ \ \ HAL\_NVIC\_SetPriority(USART1\_IRQn,\ SERVICE\_UART\_IRQ\_PRIORITY,\ 0U);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00099}00099\ \ \ \ \ HAL\_NVIC\_EnableIRQ(USART1\_IRQn);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00100}00100\ \ \ \ \ service\_uart\_rx\_start();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00101}00101\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00102}00102\ \ \ \ \ s\_service\_uart\_task\ =\ osThreadNew(service\_uart\_task\_fn,\ NULL,\ \&s\_service\_uart\_task\_attr);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00103}00103\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_service\_uart\_task\ ==\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00104}00104\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00105}00105\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ UART:\ task\ create\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00106}00106\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00107}00107\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00108}00108\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00110}00110\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_task\_fn(\textcolor{keywordtype}{void}\ *argument)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00111}00111\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00112}00112\ \ \ \ \ uint16\_t\ line\_len\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00113}00113\ \ \ \ \ \textcolor{keywordtype}{bool}\ line\_overflow\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00115}00115\ \ \ \ \ (void)argument;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00116}00116\ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ UART\ locked.\ Use\ LOGIN\ <code>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00117}00117\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00118}00118\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00119}00119\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00120}00120\ \ \ \ \ \ \ \ \ uint8\_t\ ch\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00121}00121\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ did\_work\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00122}00122\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00123}00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_rx\_take\_overflow())}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00124}00124\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00125}00125\ \ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_rx\_clear();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ line\_len\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ line\_overflow\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00128}00128\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ rx\ overflow\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00129}00129\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00130}00130\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00131}00131\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (service\_uart\_rx\_read\_byte(\&ch))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00132}00132\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00133}00133\ \ \ \ \ \ \ \ \ \ \ \ \ did\_work\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((ch\ ==\ (uint8\_t)\textcolor{charliteral}{'\(\backslash\)r'})\ ||\ (ch\ ==\ (uint8\_t)\textcolor{charliteral}{'\(\backslash\)n'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (line\_overflow)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00137}00137\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ line\ too\ long\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (line\_len\ >\ 0U)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_service\_uart\_line[line\_len]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00143}00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_handle\_line(s\_service\_uart\_line);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\_len\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00147}00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\_overflow\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ ((ch\ ==\ 0x08U)\ ||\ (ch\ ==\ 0x7FU))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00150}00150\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00151}00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!line\_overflow\ \&\&\ (line\_len\ >\ 0U))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00152}00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00153}00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\_len-\/-\/;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00154}00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00155}00155\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00156}00156\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (line\_overflow)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00157}00157\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00158}00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ Drop\ input\ until\ end-\/of-\/line.\ */}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00159}00159\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00160}00160\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (line\_len\ >=\ (uint16\_t)(\textcolor{keyword}{sizeof}(s\_service\_uart\_line)\ -\/\ 1U))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00161}00161\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00162}00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\_overflow\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00163}00163\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00164}00164\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (isprint((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})ch)\ ||\ (ch\ ==\ (uint8\_t)\textcolor{charliteral}{'\(\backslash\)t'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00165}00165\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00166}00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_service\_uart\_line[line\_len]\ =\ (char)ch;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00167}00167\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ line\_len++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00168}00168\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00169}00169\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00171}00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!did\_work)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00172}00172\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ \ osDelay(SERVICE\_UART\_POLL\_DELAY\_MS);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00174}00174\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00175}00175\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00176}00176\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00177}00177\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00179}00179\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_rx\_start(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00180}00180\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00181}00181\ \ \ \ \ (void)HAL\_UART\_Receive\_IT(\&huart1,\ \&s\_service\_uart\_rx\_byte,\ 1U);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00182}00182\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00183}00183\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00185}00185\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_rx\_read\_byte(uint8\_t\ *out)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00186}00186\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00187}00187\ \ \ \ \ uint32\_t\ primask;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00188}00188\ \ \ \ \ \textcolor{keywordtype}{bool}\ ok\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00189}00189\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00190}00190\ \ \ \ \ \textcolor{keywordflow}{if}\ (out\ ==\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00191}00191\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00192}00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00193}00193\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00194}00194\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00195}00195\ \ \ \ \ primask\ =\ \_\_get\_PRIMASK();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00196}00196\ \ \ \ \ \_\_disable\_irq();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00197}00197\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_service\_uart\_rx\_tail\ !=\ s\_service\_uart\_rx\_head)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00198}00198\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00199}00199\ \ \ \ \ \ \ \ \ *out\ =\ s\_service\_uart\_rx\_ring[s\_service\_uart\_rx\_tail];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00200}00200\ \ \ \ \ \ \ \ \ s\_service\_uart\_rx\_tail\ =\ (uint16\_t)((s\_service\_uart\_rx\_tail\ +\ 1U)\ \%\ SERVICE\_UART\_RX\_RING\_SIZE);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00201}00201\ \ \ \ \ \ \ \ \ ok\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00202}00202\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00203}00203\ \ \ \ \ \_\_set\_PRIMASK(primask);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00204}00204\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00205}00205\ \ \ \ \ \textcolor{keywordflow}{return}\ ok;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00206}00206\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00207}00207\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00209}00209\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_rx\_take\_overflow(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00210}00210\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00211}00211\ \ \ \ \ uint32\_t\ primask;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00212}00212\ \ \ \ \ \textcolor{keywordtype}{bool}\ overflow;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00213}00213\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00214}00214\ \ \ \ \ primask\ =\ \_\_get\_PRIMASK();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00215}00215\ \ \ \ \ \_\_disable\_irq();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00216}00216\ \ \ \ \ overflow\ =\ s\_service\_uart\_rx\_overflow;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00217}00217\ \ \ \ \ s\_service\_uart\_rx\_overflow\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00218}00218\ \ \ \ \ \_\_set\_PRIMASK(primask);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00219}00219\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00220}00220\ \ \ \ \ \textcolor{keywordflow}{return}\ overflow;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00221}00221\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00222}00222\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00224}00224\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_rx\_clear(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00225}00225\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00226}00226\ \ \ \ \ uint32\_t\ primask;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00227}00227\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00228}00228\ \ \ \ \ primask\ =\ \_\_get\_PRIMASK();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00229}00229\ \ \ \ \ \_\_disable\_irq();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00230}00230\ \ \ \ \ s\_service\_uart\_rx\_head\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00231}00231\ \ \ \ \ s\_service\_uart\_rx\_tail\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00232}00232\ \ \ \ \ \_\_set\_PRIMASK(primask);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00233}00233\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00234}00234\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00236}00236\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_rx\_push\_from\_isr(uint8\_t\ ch)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00237}00237\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00238}00238\ \ \ \ \ uint16\_t\ next\ =\ (uint16\_t)((s\_service\_uart\_rx\_head\ +\ 1U)\ \%\ SERVICE\_UART\_RX\_RING\_SIZE);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00239}00239\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00240}00240\ \ \ \ \ \textcolor{keywordflow}{if}\ (next\ ==\ s\_service\_uart\_rx\_tail)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00241}00241\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00242}00242\ \ \ \ \ \ \ \ \ s\_service\_uart\_rx\_overflow\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00243}00243\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00244}00244\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00245}00245\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00246}00246\ \ \ \ \ s\_service\_uart\_rx\_ring[s\_service\_uart\_rx\_head]\ =\ ch;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00247}00247\ \ \ \ \ s\_service\_uart\_rx\_head\ =\ next;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00248}00248\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00249}00249\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00250}00250\ \textcolor{keywordtype}{void}\ USART1\_IRQHandler(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00251}00251\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00252}00252\ \ \ \ \ HAL\_UART\_IRQHandler(\&huart1);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00253}00253\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00254}00254\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00255}00255\ \textcolor{keywordtype}{void}\ HAL\_UART\_RxCpltCallback(UART\_HandleTypeDef\ *huart)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00256}00256\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00257}00257\ \ \ \ \ \textcolor{keywordflow}{if}\ ((huart\ !=\ NULL)\ \&\&\ (huart-\/>Instance\ ==\ USART1))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00258}00258\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00259}00259\ \ \ \ \ \ \ \ \ service\_uart\_rx\_push\_from\_isr(s\_service\_uart\_rx\_byte);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00260}00260\ \ \ \ \ \ \ \ \ service\_uart\_rx\_start();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00261}00261\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00262}00262\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00263}00263\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00264}00264\ \textcolor{keywordtype}{void}\ HAL\_UART\_ErrorCallback(UART\_HandleTypeDef\ *huart)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00265}00265\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00266}00266\ \ \ \ \ \textcolor{keywordflow}{if}\ ((huart\ !=\ NULL)\ \&\&\ (huart-\/>Instance\ ==\ USART1))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00267}00267\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00268}00268\ \ \ \ \ \ \ \ \ s\_service\_uart\_rx\_overflow\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00269}00269\ \ \ \ \ \ \ \ \ service\_uart\_rx\_start();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00270}00270\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00271}00271\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00272}00272\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00274}00274\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_line(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *line)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00275}00275\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00276}00276\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00277}00277\ \ \ \ \ \textcolor{keywordtype}{char}\ cmd[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00278}00278\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00279}00279\ \ \ \ \ \textcolor{keywordflow}{if}\ (line\ ==\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00280}00280\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00281}00281\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00282}00282\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00283}00283\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00284}00284\ \ \ \ \ p\ =\ service\_uart\_skip\_space(line);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00285}00285\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_match\_prefix(\&p,\ \textcolor{stringliteral}{"{}SEND:"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00286}00286\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00287}00287\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_service\_uart\_unlocked)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00288}00288\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00289}00289\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ LOCKED:\ use\ LOGIN\ <code>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00290}00290\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00291}00291\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00292}00292\ \ \ \ \ \ \ \ \ service\_uart\_handle\_send\_hex(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00293}00293\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00294}00294\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00295}00295\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00296}00296\ \ \ \ \ p\ =\ line;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00297}00297\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_next\_token(\&p,\ cmd,\ \textcolor{keyword}{sizeof}(cmd)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00298}00298\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00299}00299\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00300}00300\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00301}00301\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00302}00302\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}LOGIN"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00303}00303\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}AUTH"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00304}00304\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}UNLOCK"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00305}00305\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00306}00306\ \ \ \ \ \ \ \ \ service\_uart\_handle\_login(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00307}00307\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00308}00308\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}LOGOUT"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00309}00309\ \ \ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}LOCK"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00310}00310\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00311}00311\ \ \ \ \ \ \ \ \ s\_service\_uart\_unlocked\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00312}00312\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ LOCKED\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00313}00313\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00314}00314\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (!s\_service\_uart\_unlocked)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00315}00315\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00316}00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}HELP"{}})\ ||\ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}?"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00317}00317\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00318}00318\ \ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_print\_locked\_help();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00319}00319\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00320}00320\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00321}00321\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00322}00322\ \ \ \ \ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ LOCKED:\ use\ LOGIN\ <code>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00323}00323\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00324}00324\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00325}00325\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}HELP"{}})\ ||\ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}?"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00326}00326\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00327}00327\ \ \ \ \ \ \ \ \ service\_uart\_print\_help();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00328}00328\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00329}00329\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}CFG"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00330}00330\ \ \ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}CFG?"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00331}00331\ \ \ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}STATUS"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00332}00332\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00333}00333\ \ \ \ \ \ \ \ \ service\_uart\_print\_cfg();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00334}00334\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00335}00335\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}SEND"{}})\ ||\ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}TX"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00336}00336\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00337}00337\ \ \ \ \ \ \ \ \ service\_uart\_handle\_send\_hex(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00338}00338\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00339}00339\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}TEXT"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00340}00340\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00341}00341\ \ \ \ \ \ \ \ \ service\_uart\_handle\_text(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00342}00342\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00343}00343\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}MOD"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00344}00344\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00345}00345\ \ \ \ \ \ \ \ \ service\_uart\_handle\_mod(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00346}00346\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00347}00347\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}PRESET"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00348}00348\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00349}00349\ \ \ \ \ \ \ \ \ service\_uart\_handle\_preset(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00350}00350\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00351}00351\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}FREQ"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00352}00352\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00353}00353\ \ \ \ \ \ \ \ \ service\_uart\_handle\_freq(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00354}00354\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00355}00355\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}BW"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00356}00356\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00357}00357\ \ \ \ \ \ \ \ \ service\_uart\_handle\_bw(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00358}00358\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00359}00359\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}OPTION"{}})\ ||\ service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}SET"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00360}00360\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00361}00361\ \ \ \ \ \ \ \ \ service\_uart\_handle\_option(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00362}00362\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00363}00363\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}FH"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00364}00364\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00365}00365\ \ \ \ \ \ \ \ \ service\_uart\_handle\_bool\_cmd(p,\ radio\_main\_cmd\_set\_fh);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00366}00366\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00367}00367\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}FH\_PERIOD"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00368}00368\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00369}00369\ \ \ \ \ \ \ \ \ service\_uart\_handle\_u32\_cmd(p,\ radio\_main\_cmd\_set\_fh\_period);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00370}00370\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00371}00371\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}CODING"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00372}00372\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00373}00373\ \ \ \ \ \ \ \ \ service\_uart\_handle\_bool\_cmd(p,\ radio\_main\_cmd\_set\_coding);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00374}00374\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00375}00375\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}AUTOPING"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00376}00376\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00377}00377\ \ \ \ \ \ \ \ \ service\_uart\_handle\_bool\_cmd(p,\ radio\_main\_cmd\_set\_auto\_ping);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00378}00378\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00379}00379\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}AUTOPING\_PERIOD"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00380}00380\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00381}00381\ \ \ \ \ \ \ \ \ service\_uart\_handle\_u32\_cmd(p,\ radio\_main\_cmd\_set\_auto\_ping\_period);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00382}00382\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00383}00383\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}AUTOPING\_MODE"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00384}00384\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00385}00385\ \ \ \ \ \ \ \ \ service\_uart\_handle\_auto\_ping\_mode(p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00386}00386\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00387}00387\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}RESET"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00388}00388\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00389}00389\ \ \ \ \ \ \ \ \ service\_uart\_print\_radio\_result(\mbox{\hyperlink{radio__main_8h_a6b34b76f51130d8b14324fc0fb5fa4b6}{radio\_main\_cmd\_reset\_module}}());}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00390}00390\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00391}00391\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(cmd,\ \textcolor{stringliteral}{"{}SAVE"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00392}00392\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00393}00393\ \ \ \ \ \ \ \ \ service\_uart\_handle\_save();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00394}00394\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00395}00395\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00396}00396\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00397}00397\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ unknown\ command,\ type\ HELP\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00398}00398\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00399}00399\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00400}00400\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00402}00402\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_locked\_help(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00403}00403\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00404}00404\ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ UART\ locked\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00405}00405\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ LOGIN\ <device\ address>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00406}00406\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ Address\ may\ be\ decimal,\ hex,\ or\ 0x-\/prefixed\ hex\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00407}00407\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00408}00408\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00410}00410\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_help(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00411}00411\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00412}00412\ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ UART\ commands:\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00413}00413\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ HELP\ |\ CFG?\ |\ LOGOUT\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00414}00414\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ SEND:\ <hex\ bytes>\ |\ TX\ <hex\ bytes>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00415}00415\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ TEXT\ <dst>\ <ascii\ up\ to\ 16B>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00416}00416\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ MOD\ <LORA|FSK|OOK|0|1|2>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00417}00417\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ PRESET\ <0..2>\ |\ FREQ\ <Hz>\ |\ BW\ <0..9>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00418}00418\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ OPTION\ <id>\ <value>\ \ (radio\_main\_option\_t)\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00419}00419\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ FH\ <ON|OFF>\ |\ FH\_PERIOD\ <ms>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00420}00420\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ CODING\ <ON|OFF>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00421}00421\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ AUTOPING\ <ON|OFF>\ |\ AUTOPING\_PERIOD\ <ms>\ |\ AUTOPING\_MODE\ <FRAME|RAW>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00422}00422\ \ \ \ \ printf(\textcolor{stringliteral}{"{}\ \ RESET\ |\ SAVE\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00423}00423\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00424}00424\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00426}00426\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_cfg(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00427}00427\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00428}00428\ \ \ \ \ \mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\_main\_runtime\_cfg\_t}}\ cfg;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00429}00429\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00430}00430\ \ \ \ \ \textcolor{keywordflow}{if}\ (!radio\_main\_get\_runtime\_cfg(\&cfg))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00431}00431\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00432}00432\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ cfg\ unavailable\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00433}00433\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00434}00434\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00435}00435\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00436}00436\ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ CFG:\ node=0x\%04lX\ mod=\%s\ fh=\%u\ coding=\%u\ ap=\%u\ ap\_period=\%lu\ ap\_mode=\%s\(\backslash\)r\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00437}00437\ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})\mbox{\hyperlink{radio__main_8h_a808700d24d8fefed60600dedb2980765}{radio\_main\_get\_node\_id}}(),}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00438}00438\ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_mod\_text(cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a3aa95b5698f03b6fdec6727acc62306d}{active\_modulation}}),}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00439}00439\ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a871702e26b4bbe94a8be9457daf49930}{fh\_enabled}}\ ?\ 1U\ :\ 0U,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00440}00440\ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab2ea0bddf78233ff02e4814e5f463ddc}{coding\_enabled}}\ ?\ 1U\ :\ 0U,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00441}00441\ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ae7d142da278727d229869a47900b7935}{auto\_ping\_enabled}}\ ?\ 1U\ :\ 0U,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00442}00442\ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a86ed33383dae08e08419c1c9462f1e0f}{auto\_ping\_period\_ms}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00443}00443\ \ \ \ \ \ \ \ \ \ \ \ service\_uart\_ap\_mode\_text(cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a96d13a5d87f5c5eba1c37f6f50b8f494}{auto\_ping\_mode}}));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00444}00444\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00445}00445\ \ \ \ \ \textcolor{keywordflow}{if}\ (cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a3aa95b5698f03b6fdec6727acc62306d}{active\_modulation}}\ ==\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a9e9da87b1dc8b43ea0a75dcf25090c0f}{RADIO\_MAIN\_MODULATION\_FSK}})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00446}00446\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00447}00447\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ FSK:\ freq=\%lu\ bitrate=\%lu\ bw=\%u\ shape=\%u\ filter=\%u\ pwr=\%d\ pre=\%u\ sync\_len=\%u\ sync=0x\%08lX\ addr=\%u\ crc=\%u\ white=\%u\(\backslash\)r\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00448}00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a1c1f1f4c410b1cc06d89b6a937568b8a}{frequency\_hz}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00449}00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_aa2ccdd70cb00a706032253feb29a97d4}{bitrate\_bps}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00450}00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_ab473bca483baa00f7851f408ac48f72a}{rx\_bandwidth}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00451}00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_ab43b4d34c788708d7d6b9743108ab67b}{shaping}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00452}00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a08b0a6d9d4e50501899962419cd8def8}{filter}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00453}00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_abba17f753479a17731660d7702329fd8}{tx\_power\_dbm}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00454}00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a3607a4617ef8725a4c248fe452a4c098}{preamble\_len}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00455}00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a05de369da05174d46f91ce3d6cff4841}{sync\_word\_len}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00456}00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})(cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a3d5aab6df6010f89574e94c9c2ec155d}{sync\_word}}\ \&\ 0xFFFFFFFFUL),}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00457}00457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_add9b154833acdd78e7cd463f6b7912a6}{address\_filter}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00458}00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a2599d70824fc79dcd86801cf04e188ee}{crc\_type}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00459}00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a414c8ba2bd1b5174eedce2f449bb510b}{fsk}}.\mbox{\hyperlink{structradio__main__fsk__cfg__t_a714eadf6819dc27cb4c62a6d8200ce30}{data\_whitening}}\ ?\ 1U\ :\ 0U);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00460}00460\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00461}00461\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a3aa95b5698f03b6fdec6727acc62306d}{active\_modulation}}\ ==\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a56d2b96dabc1e8701c595f80b0ade0be}{RADIO\_MAIN\_MODULATION\_OOK}})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00462}00462\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00463}00463\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ OOK:\ freq=\%lu\ bitrate=\%lu\ bw=\%u\ pwr=\%d\ pre=\%u\ sync\_len=\%u\ sync=0x\%08lX\ thr=\%u/\%u\(\backslash\)r\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00464}00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_ae09c70cc854b73039a5cd7d82deed020}{frequency\_hz}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00465}00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_ad479d08ccacb1bb8d3f9db4c91e7ad63}{bitrate\_bps}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00466}00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_a71fc6aab1039a7b5fc0d48cd8a14e9ee}{rx\_bandwidth}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00467}00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_a1abb1edfe80055bb279d05be714ac9a9}{tx\_power\_dbm}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00468}00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_abd106c4cfb7aaec43744fb0cfd73899b}{preamble\_len}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00469}00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_a251c1c9eeec91f1104ee9c3787ef51fd}{sync\_word\_len}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00470}00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_a444003a83c1a0929263250ef23a6a60e}{sync\_word}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00471}00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_abaaa96deefb6507b2492306f224a5e8b}{threshold}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00472}00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_a75455c8ef06556eb687aed5d1dafd3bc}{ook}}.\mbox{\hyperlink{structradio__main__ook__cfg__t_ab05762303dfbf92b1212ed885d9b7839}{threshold\_value}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00473}00473\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00474}00474\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00475}00475\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00476}00476\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ LORA:\ freq=\%lu\ bw=\%u\ sf=\%u\ cr=4/\%u\ pwr=\%d\ pre=\%u\ sync=0x\%02X\ crc=\%u\ hdr=\%s\ iq=\%u\(\backslash\)r\(\backslash\)n"{}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00477}00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{long})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a236743b550328d327f192949f48581eb}{frequency\_hz}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00478}00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a300ec2a46e684c012f0ee12b5679f988}{bandwidth}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00479}00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a2700bd692fbae8c52754804205d30553}{spreading\_factor}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00480}00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a47ad70fdf79b88a8225739cad8ca1ce0}{coding\_rate}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00481}00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a9f879a727b2e50b9ed424d3ec7f23ba5}{tx\_power\_dbm}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00482}00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a7b19ae88b893b564bd0e9a6ab3c8e498}{preamble\_len}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00483}00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a970a51b95fd38c9143cb4f78cfa630ab}{sync\_word}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00484}00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a76436ba006f22d9657e1ed345854a892}{crc\_on}}\ ?\ 1U\ :\ 0U,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00485}00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_a12734a038b4af79bba8156b7ac7c1ca2}{implicit\_header}}\ ?\ \textcolor{stringliteral}{"{}implicit"{}}\ :\ \textcolor{stringliteral}{"{}explicit"{}},}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00486}00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cfg.\mbox{\hyperlink{structradio__main__runtime__cfg__t_ab8e1049c679181b12cad752382966c92}{lora}}.\mbox{\hyperlink{structradio__lora__cfg__t_aa6fba08b43dcf5b0985ce0c492b74783}{invert\_iq}}\ ?\ 1U\ :\ 0U);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00487}00487\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00488}00488\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00489}00489\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00491}00491\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_print\_radio\_result(\textcolor{keywordtype}{bool}\ ok)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00492}00492\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00493}00493\ \ \ \ \ \textcolor{keywordtype}{char}\ last\_error[21];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00494}00494\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00495}00495\ \ \ \ \ \textcolor{keywordflow}{if}\ (ok)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00496}00496\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00497}00497\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ OK\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00498}00498\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00499}00499\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00500}00500\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00501}00501\ \ \ \ \ \textcolor{keywordflow}{if}\ (radio\_main\_get\_last\_error\_text(last\_error,\ \textcolor{keyword}{sizeof}(last\_error))\ \&\&\ (last\_error[0]\ !=\ \textcolor{charliteral}{'\(\backslash\)0'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00502}00502\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00503}00503\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ \%s\(\backslash\)r\(\backslash\)n"{}},\ last\_error);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00504}00504\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00505}00505\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00506}00506\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00507}00507\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ command\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00508}00508\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00509}00509\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00510}00510\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00512}00512\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_login(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00513}00513\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00514}00514\ \ \ \ \ uint32\_t\ code;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00515}00515\ \ \ \ \ uint32\_t\ expected;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00516}00516\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00517}00517\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_parse\_u32\_arg(args,\ \&code))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00518}00518\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00519}00519\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ LOGIN\ <device\ address>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00520}00520\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00521}00521\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00522}00522\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00523}00523\ \ \ \ \ expected\ =\ service\_uart\_get\_service\_code();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00524}00524\ \ \ \ \ \textcolor{keywordflow}{if}\ ((expected\ !=\ 0U)\ \&\&\ (code\ ==\ expected))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00525}00525\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00526}00526\ \ \ \ \ \ \ \ \ s\_service\_uart\_unlocked\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00527}00527\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ OK:\ panel\ enabled\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00528}00528\ \ \ \ \ \ \ \ \ service\_uart\_print\_help();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00529}00529\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00530}00530\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00531}00531\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00532}00532\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ bad\ code\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00533}00533\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00534}00534\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00535}00535\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00537}00537\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_send\_hex(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *payload)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00538}00538\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00539}00539\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *error\ =\ NULL;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00540}00540\ \ \ \ \ uint8\_t\ len\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00541}00541\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00542}00542\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_parse\_hex\_bytes(payload,\ s\_service\_uart\_tx\_bytes,\ \&len,\ \&error))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00543}00543\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00544}00544\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ \%s\(\backslash\)r\(\backslash\)n"{}},\ (error\ !=\ NULL)\ ?\ error\ :\ \textcolor{stringliteral}{"{}bad\ hex"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00545}00545\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00546}00546\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00547}00547\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00548}00548\ \ \ \ \ \textcolor{keywordflow}{if}\ (radio\_main\_cmd\_send\_raw(s\_service\_uart\_tx\_bytes,\ len))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00549}00549\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00550}00550\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ SEND\ OK:\ \%u\ B\(\backslash\)r\(\backslash\)n"{}},\ (\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int})len);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00551}00551\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00552}00552\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00553}00553\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00554}00554\ \ \ \ \ service\_uart\_print\_radio\_result(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00555}00555\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00556}00556\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00558}00558\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_text(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00559}00559\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00560}00560\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00561}00561\ \ \ \ \ uint32\_t\ dst;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00562}00562\ \ \ \ \ \textcolor{keywordtype}{char}\ token[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00563}00563\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00564}00564\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_next\_token(\&args,\ token,\ \textcolor{keyword}{sizeof}(token))\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00565}00565\ \ \ \ \ \ \ \ \ !service\_uart\_parse\_u32\_arg(token,\ \&dst))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00566}00566\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00567}00567\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ TEXT\ <dst>\ <ascii>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00568}00568\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00569}00569\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00570}00570\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00571}00571\ \ \ \ \ text\ =\ service\_uart\_skip\_space(args);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00572}00572\ \ \ \ \ \textcolor{keywordflow}{if}\ ((text\ ==\ NULL)\ ||\ (*text\ ==\ \textcolor{charliteral}{'\(\backslash\)0'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00573}00573\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00574}00574\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ empty\ text\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00575}00575\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00576}00576\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00577}00577\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00578}00578\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_send\_user\_text(text,\ dst));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00579}00579\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00580}00580\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00582}00582\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_mod(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00583}00583\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00584}00584\ \ \ \ \ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\_main\_modulation\_t}}\ mod;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00585}00585\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00586}00586\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_parse\_mod\_arg(args,\ \&mod))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00587}00587\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00588}00588\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ MOD\ <LORA|FSK|OOK|0|1|2>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00589}00589\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00590}00590\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00591}00591\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00592}00592\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_set\_modulation((uint8\_t)mod));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00593}00593\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00594}00594\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00596}00596\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_preset(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00597}00597\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00598}00598\ \ \ \ \ uint32\_t\ preset;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00599}00599\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00600}00600\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_parse\_u32\_arg(args,\ \&preset)\ ||\ (preset\ >\ 2UL))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00601}00601\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00602}00602\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ PRESET\ <0..2>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00603}00603\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00604}00604\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00605}00605\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00606}00606\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_set\_lora\_preset((uint8\_t)preset));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00607}00607\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00608}00608\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00610}00610\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_freq(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00611}00611\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00612}00612\ \ \ \ \ uint32\_t\ freq;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00613}00613\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00614}00614\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_parse\_u32\_arg(args,\ \&freq))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00615}00615\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00616}00616\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ FREQ\ <Hz>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00617}00617\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00618}00618\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00619}00619\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00620}00620\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_set\_modulation\_freq(freq));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00621}00621\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00622}00622\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00624}00624\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_bw(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00625}00625\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00626}00626\ \ \ \ \ uint32\_t\ bw;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00627}00627\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00628}00628\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_parse\_u32\_arg(args,\ \&bw)\ ||\ (bw\ >\ 9UL))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00629}00629\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00630}00630\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ BW\ <0..9>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00631}00631\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00632}00632\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00633}00633\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00634}00634\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_set\_modulation\_bw((uint8\_t)bw));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00635}00635\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00636}00636\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00638}00638\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_option(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00639}00639\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00640}00640\ \ \ \ \ uint32\_t\ option;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00641}00641\ \ \ \ \ uint32\_t\ value;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00642}00642\ \ \ \ \ \textcolor{keywordtype}{char}\ token[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00643}00643\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00644}00644\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_next\_token(\&args,\ token,\ \textcolor{keyword}{sizeof}(token))\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00645}00645\ \ \ \ \ \ \ \ \ !service\_uart\_parse\_u32\_arg(token,\ \&option)\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00646}00646\ \ \ \ \ \ \ \ \ (option\ >\ (uint32\_t)\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7947be97f2c979de56828e4de0adf58d}{RADIO\_MAIN\_OPTION\_OOK\_RESET\_DEFAULTS}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00647}00647\ \ \ \ \ \ \ \ \ !service\_uart\_parse\_u32\_arg(args,\ \&value))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00648}00648\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00649}00649\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ OPTION\ <id>\ <value>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00650}00650\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00651}00651\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00652}00652\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00653}00653\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_set\_option((\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2}{radio\_main\_option\_t}})option,\ value));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00654}00654\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00655}00655\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00657}00657\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_bool\_cmd(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \textcolor{keywordtype}{bool}\ (*setter)(\textcolor{keywordtype}{bool}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00658}00658\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00659}00659\ \ \ \ \ \textcolor{keywordtype}{bool}\ value;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00660}00660\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00661}00661\ \ \ \ \ \textcolor{keywordflow}{if}\ ((setter\ ==\ NULL)\ ||\ !service\_uart\_parse\_bool\_arg(args,\ \&value))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00662}00662\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00663}00663\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ <cmd>\ <ON|OFF>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00664}00664\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00665}00665\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00666}00666\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00667}00667\ \ \ \ \ service\_uart\_print\_radio\_result(setter(value));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00668}00668\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00669}00669\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00671}00671\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_u32\_cmd(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \textcolor{keywordtype}{bool}\ (*setter)(uint32\_t))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00672}00672\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00673}00673\ \ \ \ \ uint32\_t\ value;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00674}00674\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00675}00675\ \ \ \ \ \textcolor{keywordflow}{if}\ ((setter\ ==\ NULL)\ ||\ !service\_uart\_parse\_u32\_arg(args,\ \&value))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00676}00676\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00677}00677\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ <cmd>\ <value>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00678}00678\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00679}00679\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00680}00680\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00681}00681\ \ \ \ \ service\_uart\_print\_radio\_result(setter(value));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00682}00682\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00683}00683\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00685}00685\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_auto\_ping\_mode(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00686}00686\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00687}00687\ \ \ \ \ \textcolor{keywordtype}{char}\ token[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00688}00688\ \ \ \ \ \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\_main\_auto\_ping\_mode\_t}}\ mode;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00689}00689\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00690}00690\ \ \ \ \ \textcolor{keywordflow}{if}\ (!service\_uart\_next\_token(\&args,\ token,\ \textcolor{keyword}{sizeof}(token)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00691}00691\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00692}00692\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ AUTOPING\_MODE\ <FRAME|RAW>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00693}00693\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00694}00694\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00695}00695\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00696}00696\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}FRAME"{}})\ ||\ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}0"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00697}00697\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00698}00698\ \ \ \ \ \ \ \ \ mode\ =\ \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6a53209418691d97bd3b03a305513a4fe6}{RADIO\_MAIN\_AUTO\_PING\_FRAME}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00699}00699\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00700}00700\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}RAW"{}})\ ||\ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}1"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00701}00701\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00702}00702\ \ \ \ \ \ \ \ \ mode\ =\ \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6af4cbf424b6a2df00cd89eb89105c1add}{RADIO\_MAIN\_AUTO\_PING\_RAW}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00703}00703\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00704}00704\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00705}00705\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00706}00706\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ use\ AUTOPING\_MODE\ <FRAME|RAW>\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00707}00707\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00708}00708\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00709}00709\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00710}00710\ \ \ \ \ service\_uart\_print\_radio\_result(radio\_main\_cmd\_set\_auto\_ping\_mode(mode));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00711}00711\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00712}00712\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00714}00714\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ service\_uart\_handle\_save(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00715}00715\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00716}00716\ \ \ \ \ \mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\_main\_runtime\_cfg\_t}}\ cfg;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00717}00717\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00718}00718\ \ \ \ \ \textcolor{keywordflow}{if}\ (!radio\_main\_get\_runtime\_cfg(\&cfg))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00719}00719\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00720}00720\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ cfg\ unavailable\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00721}00721\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00722}00722\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00723}00723\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00724}00724\ \ \ \ \ \textcolor{keywordflow}{if}\ (security\_main\_cmd\_set\_radio\_runtime\_cfg(\&cfg))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00725}00725\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00726}00726\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ OK:\ saved\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00727}00727\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00728}00728\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00729}00729\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00730}00730\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}SERVICE\ ERR:\ save\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00731}00731\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00732}00732\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00733}00733\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00735}00735\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_hex\_bytes(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00736}00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00737}00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *len\_out,}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00738}00738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **error\_out)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00739}00739\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00740}00740\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *p\ =\ service\_uart\_skip\_space(text);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00741}00741\ \ \ \ \ uint16\_t\ count\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00742}00742\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00743}00743\ \ \ \ \ \textcolor{keywordflow}{if}\ ((data\ ==\ NULL)\ ||\ (len\_out\ ==\ NULL))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00744}00744\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00745}00745\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00746}00746\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00747}00747\ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}internal\ error"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00748}00748\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00749}00749\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00750}00750\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00751}00751\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00752}00752\ \ \ \ \ \textcolor{keywordflow}{while}\ ((p\ !=\ NULL)\ \&\&\ (*p\ !=\ \textcolor{charliteral}{'\(\backslash\)0'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00753}00753\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00754}00754\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ high;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00755}00755\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ low;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00756}00756\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00757}00757\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (isspace((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*p)\ ||\ (*p\ ==\ \textcolor{charliteral}{','})\ ||\ (*p\ ==\ \textcolor{charliteral}{';'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00758}00758\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00759}00759\ \ \ \ \ \ \ \ \ \ \ \ \ p++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00760}00760\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00761}00761\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (*p\ ==\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00762}00762\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00763}00763\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00764}00764\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00765}00765\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*p\ ==\ \textcolor{charliteral}{'0'})\ \&\&\ ((p[1]\ ==\ \textcolor{charliteral}{'x'})\ ||\ (p[1]\ ==\ \textcolor{charliteral}{'X'})))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00766}00766\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00767}00767\ \ \ \ \ \ \ \ \ \ \ \ \ p\ +=\ 2;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00768}00768\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00769}00769\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00770}00770\ \ \ \ \ \ \ \ \ high\ =\ service\_uart\_hex\_nibble(*p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00771}00771\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (high\ <\ 0)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00772}00772\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00773}00773\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00774}00774\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00775}00775\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}bad\ hex\ byte"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00776}00776\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00777}00777\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00778}00778\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00779}00779\ \ \ \ \ \ \ \ \ p++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00780}00780\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00781}00781\ \ \ \ \ \ \ \ \ low\ =\ service\_uart\_hex\_nibble(*p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00782}00782\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (low\ <\ 0)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00783}00783\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00784}00784\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00785}00785\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00786}00786\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}hex\ byte\ needs\ 2\ digits"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00787}00787\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00788}00788\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00789}00789\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00790}00790\ \ \ \ \ \ \ \ \ p++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00791}00791\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00792}00792\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isxdigit((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*p))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00793}00793\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00794}00794\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00795}00795\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00796}00796\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}hex\ byte\ too\ long"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00797}00797\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00798}00798\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00799}00799\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00800}00800\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (count\ >=\ \mbox{\hyperlink{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}{RADIO\_LIB\_MAX\_PAYLOAD}})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00801}00801\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00802}00802\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00803}00803\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00804}00804\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}too\ many\ bytes"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00805}00805\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00806}00806\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00807}00807\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00808}00808\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00809}00809\ \ \ \ \ \ \ \ \ data[count]\ =\ (uint8\_t)(((uint8\_t)high\ <<\ 4)\ |\ (uint8\_t)low);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00810}00810\ \ \ \ \ \ \ \ \ count++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00811}00811\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00812}00812\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*p\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})\ \&\&}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00813}00813\ \ \ \ \ \ \ \ \ \ \ \ \ !isspace((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*p)\ \&\&}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00814}00814\ \ \ \ \ \ \ \ \ \ \ \ \ (*p\ !=\ \textcolor{charliteral}{','})\ \&\&}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00815}00815\ \ \ \ \ \ \ \ \ \ \ \ \ (*p\ !=\ \textcolor{charliteral}{';'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00816}00816\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00817}00817\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00818}00818\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00819}00819\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}missing\ separator"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00820}00820\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00821}00821\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00822}00822\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00823}00823\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00824}00824\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00825}00825\ \ \ \ \ \textcolor{keywordflow}{if}\ (count\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00826}00826\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00827}00827\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (error\_out\ !=\ NULL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00828}00828\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00829}00829\ \ \ \ \ \ \ \ \ \ \ \ \ *error\_out\ =\ \textcolor{stringliteral}{"{}no\ bytes"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00830}00830\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00831}00831\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00832}00832\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00833}00833\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00834}00834\ \ \ \ \ *len\_out\ =\ (uint8\_t)count;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00835}00835\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00836}00836\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00837}00837\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00839}00839\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_u32\_token(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *token,\ uint32\_t\ *value\_out)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00840}00840\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00841}00841\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00842}00842\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *scan;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00843}00843\ \ \ \ \ uint32\_t\ value\ =\ 0UL;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00844}00844\ \ \ \ \ uint32\_t\ base\ =\ 10UL;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00845}00845\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00846}00846\ \ \ \ \ \textcolor{keywordflow}{if}\ ((token\ ==\ NULL)\ ||\ (value\_out\ ==\ NULL))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00847}00847\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00848}00848\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00849}00849\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00850}00850\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00851}00851\ \ \ \ \ p\ =\ token;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00852}00852\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p[0]\ ==\ \textcolor{charliteral}{'0'})\ \&\&\ ((p[1]\ ==\ \textcolor{charliteral}{'x'})\ ||\ (p[1]\ ==\ \textcolor{charliteral}{'X'})))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00853}00853\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00854}00854\ \ \ \ \ \ \ \ \ base\ =\ 16UL;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00855}00855\ \ \ \ \ \ \ \ \ p\ +=\ 2;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00856}00856\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00857}00857\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00858}00858\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00859}00859\ \ \ \ \ \ \ \ \ scan\ =\ p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00860}00860\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (*scan\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00861}00861\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00862}00862\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (((*scan\ >=\ \textcolor{charliteral}{'A'})\ \&\&\ (*scan\ <=\ \textcolor{charliteral}{'F'}))\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00863}00863\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ((*scan\ >=\ \textcolor{charliteral}{'a'})\ \&\&\ (*scan\ <=\ \textcolor{charliteral}{'f'})))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00864}00864\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00865}00865\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ base\ =\ 16UL;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00866}00866\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00867}00867\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00868}00868\ \ \ \ \ \ \ \ \ \ \ \ \ scan++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00869}00869\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00870}00870\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00871}00871\ \ \ \ \ \textcolor{keywordflow}{if}\ (*p\ ==\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00872}00872\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00873}00873\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00874}00874\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00875}00875\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00876}00876\ \ \ \ \ \textcolor{keywordflow}{while}\ (*p\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00877}00877\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00878}00878\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ digit;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00879}00879\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00880}00880\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*p\ >=\ \textcolor{charliteral}{'0'})\ \&\&\ (*p\ <=\ \textcolor{charliteral}{'9'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00881}00881\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00882}00882\ \ \ \ \ \ \ \ \ \ \ \ \ digit\ =\ (int)(*p\ -\/\ \textcolor{charliteral}{'0'});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00883}00883\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00884}00884\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (base\ ==\ 16UL)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00885}00885\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00886}00886\ \ \ \ \ \ \ \ \ \ \ \ \ digit\ =\ service\_uart\_hex\_nibble(*p);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00887}00887\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00888}00888\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00889}00889\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00890}00890\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00891}00891\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00892}00892\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00893}00893\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((digit\ <\ 0)\ ||\ ((uint32\_t)digit\ >=\ base)\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00894}00894\ \ \ \ \ \ \ \ \ \ \ \ \ (value\ >\ ((UINT32\_MAX\ -\/\ (uint32\_t)digit)\ /\ base)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00895}00895\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00896}00896\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00897}00897\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00898}00898\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00899}00899\ \ \ \ \ \ \ \ \ value\ =\ (value\ *\ base)\ +\ (uint32\_t)digit;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00900}00900\ \ \ \ \ \ \ \ \ p++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00901}00901\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00902}00902\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00903}00903\ \ \ \ \ *value\_out\ =\ value;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00904}00904\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00905}00905\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00906}00906\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00908}00908\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_u32\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ uint32\_t\ *value\_out)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00909}00909\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00910}00910\ \ \ \ \ \textcolor{keywordtype}{char}\ token[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00911}00911\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00912}00912\ \ \ \ \ \textcolor{keywordflow}{if}\ ((args\ ==\ NULL)\ ||\ (value\_out\ ==\ NULL)\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00913}00913\ \ \ \ \ \ \ \ \ !service\_uart\_next\_token(\&args,\ token,\ \textcolor{keyword}{sizeof}(token)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00914}00914\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00915}00915\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00916}00916\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00917}00917\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00918}00918\ \ \ \ \ \textcolor{keywordflow}{return}\ service\_uart\_parse\_u32\_token(token,\ value\_out);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00919}00919\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00920}00920\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00922}00922\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_bool\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \textcolor{keywordtype}{bool}\ *value\_out)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00923}00923\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00924}00924\ \ \ \ \ \textcolor{keywordtype}{char}\ token[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00925}00925\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00926}00926\ \ \ \ \ \textcolor{keywordflow}{if}\ ((value\_out\ ==\ NULL)\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00927}00927\ \ \ \ \ \ \ \ \ !service\_uart\_next\_token(\&args,\ token,\ \textcolor{keyword}{sizeof}(token)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00928}00928\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00929}00929\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00930}00930\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00931}00931\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00932}00932\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}ON"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00933}00933\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}1"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00934}00934\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}TRUE"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00935}00935\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}ENABLE"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00936}00936\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00937}00937\ \ \ \ \ \ \ \ \ *value\_out\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00938}00938\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00939}00939\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00940}00940\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00941}00941\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}OFF"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00942}00942\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}0"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00943}00943\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}FALSE"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00944}00944\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}DISABLE"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00945}00945\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00946}00946\ \ \ \ \ \ \ \ \ *value\_out\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00947}00947\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00948}00948\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00949}00949\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00950}00950\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00951}00951\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00952}00952\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00954}00954\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_parse\_mod\_arg(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *args,\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\_main\_modulation\_t}}\ *mod\_out)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00955}00955\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00956}00956\ \ \ \ \ \textcolor{keywordtype}{char}\ token[SERVICE\_UART\_TOKEN\_MAX];}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00957}00957\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00958}00958\ \ \ \ \ \textcolor{keywordflow}{if}\ ((mod\_out\ ==\ NULL)\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00959}00959\ \ \ \ \ \ \ \ \ !service\_uart\_next\_token(\&args,\ token,\ \textcolor{keyword}{sizeof}(token)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00960}00960\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00961}00961\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00962}00962\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00963}00963\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00964}00964\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}LORA"{}})\ ||\ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}0"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00965}00965\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00966}00966\ \ \ \ \ \ \ \ \ *mod\_out\ =\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1aeeb0dc39a1ce649d1fe2d542f199b31a}{RADIO\_MAIN\_MODULATION\_LORA}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00967}00967\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00968}00968\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00969}00969\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}FSK"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00970}00970\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}GFSK"{}})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00971}00971\ \ \ \ \ \ \ \ \ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}1"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00972}00972\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00973}00973\ \ \ \ \ \ \ \ \ *mod\_out\ =\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a9e9da87b1dc8b43ea0a75dcf25090c0f}{RADIO\_MAIN\_MODULATION\_FSK}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00974}00974\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00975}00975\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00976}00976\ \ \ \ \ \textcolor{keywordflow}{if}\ (service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}OOK"{}})\ ||\ service\_uart\_token\_equals(token,\ \textcolor{stringliteral}{"{}2"{}}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00977}00977\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00978}00978\ \ \ \ \ \ \ \ \ *mod\_out\ =\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a56d2b96dabc1e8701c595f80b0ade0be}{RADIO\_MAIN\_MODULATION\_OOK}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00979}00979\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00980}00980\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00981}00981\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00982}00982\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00983}00983\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00984}00984\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00986}00986\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_next\_token(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **cursor,\ \textcolor{keywordtype}{char}\ *out,\ uint8\_t\ out\_size)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00987}00987\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00988}00988\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00989}00989\ \ \ \ \ uint8\_t\ len\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00990}00990\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00991}00991\ \ \ \ \ \textcolor{keywordflow}{if}\ ((cursor\ ==\ NULL)\ ||\ (*cursor\ ==\ NULL)\ ||\ (out\ ==\ NULL)\ ||\ (out\_size\ ==\ 0U))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00992}00992\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00993}00993\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00994}00994\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00995}00995\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00996}00996\ \ \ \ \ p\ =\ service\_uart\_skip\_space(*cursor);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00997}00997\ \ \ \ \ \textcolor{keywordflow}{if}\ ((p\ ==\ NULL)\ ||\ (*p\ ==\ \textcolor{charliteral}{'\(\backslash\)0'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00998}00998\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l00999}00999\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01000}01000\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01001}01001\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01002}01002\ \ \ \ \ \textcolor{keywordflow}{while}\ ((*p\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})\ \&\&\ !isspace((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*p))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01003}01003\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01004}01004\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\ <\ (uint8\_t)(out\_size\ -\/\ 1U))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01005}01005\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01006}01006\ \ \ \ \ \ \ \ \ \ \ \ \ out[len]\ =\ *p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01007}01007\ \ \ \ \ \ \ \ \ \ \ \ \ len++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01008}01008\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01009}01009\ \ \ \ \ \ \ \ \ p++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01010}01010\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01011}01011\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01012}01012\ \ \ \ \ out[len]\ =\ \textcolor{charliteral}{'\(\backslash\)0'};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01013}01013\ \ \ \ \ *cursor\ =\ p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01014}01014\ \ \ \ \ \textcolor{keywordflow}{return}\ (len\ >\ 0U);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01015}01015\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01016}01016\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01018}01018\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *service\_uart\_skip\_space(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *text)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01019}01019\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01020}01020\ \ \ \ \ \textcolor{keywordflow}{while}\ ((text\ !=\ NULL)\ \&\&\ isspace((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*text))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01021}01021\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01022}01022\ \ \ \ \ \ \ \ \ text++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01023}01023\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01024}01024\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01025}01025\ \ \ \ \ \textcolor{keywordflow}{return}\ text;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01026}01026\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01027}01027\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01029}01029\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_token\_equals(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *a,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *b)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01030}01030\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01031}01031\ \ \ \ \ \textcolor{keywordflow}{if}\ ((a\ ==\ NULL)\ ||\ (b\ ==\ NULL))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01032}01032\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01033}01033\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01034}01034\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01035}01035\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01036}01036\ \ \ \ \ \textcolor{keywordflow}{while}\ ((*a\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})\ \&\&\ (*b\ !=\ \textcolor{charliteral}{'\(\backslash\)0'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01037}01037\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01038}01038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (toupper((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*a)\ !=\ toupper((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*b))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01039}01039\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01040}01040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01041}01041\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01042}01042\ \ \ \ \ \ \ \ \ a++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01043}01043\ \ \ \ \ \ \ \ \ b++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01044}01044\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01045}01045\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01046}01046\ \ \ \ \ \textcolor{keywordflow}{return}\ ((*a\ ==\ \textcolor{charliteral}{'\(\backslash\)0'})\ \&\&\ (*b\ ==\ \textcolor{charliteral}{'\(\backslash\)0'}));}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01047}01047\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01048}01048\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01050}01050\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ service\_uart\_match\_prefix(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ **cursor,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *prefix)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01051}01051\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01052}01052\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01053}01053\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01054}01054\ \ \ \ \ \textcolor{keywordflow}{if}\ ((cursor\ ==\ NULL)\ ||\ (*cursor\ ==\ NULL)\ ||\ (prefix\ ==\ NULL))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01055}01055\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01056}01056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01057}01057\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01058}01058\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01059}01059\ \ \ \ \ p\ =\ service\_uart\_skip\_space(*cursor);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01060}01060\ \ \ \ \ \textcolor{keywordflow}{while}\ (*prefix\ !=\ \textcolor{charliteral}{'\(\backslash\)0'})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01061}01061\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01062}01062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((*p\ ==\ \textcolor{charliteral}{'\(\backslash\)0'})\ ||}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01063}01063\ \ \ \ \ \ \ \ \ \ \ \ \ (toupper((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*p)\ !=\ toupper((\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char})*prefix)))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01064}01064\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01065}01065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01066}01066\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01067}01067\ \ \ \ \ \ \ \ \ p++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01068}01068\ \ \ \ \ \ \ \ \ prefix++;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01069}01069\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01070}01070\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01071}01071\ \ \ \ \ *cursor\ =\ p;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01072}01072\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01073}01073\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01074}01074\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01076}01076\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ service\_uart\_hex\_nibble(\textcolor{keywordtype}{char}\ c)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01077}01077\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01078}01078\ \ \ \ \ \textcolor{keywordflow}{if}\ ((c\ >=\ \textcolor{charliteral}{'0'})\ \&\&\ (c\ <=\ \textcolor{charliteral}{'9'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01079}01079\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01080}01080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})(c\ -\/\ \textcolor{charliteral}{'0'});}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01081}01081\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01082}01082\ \ \ \ \ \textcolor{keywordflow}{if}\ ((c\ >=\ \textcolor{charliteral}{'A'})\ \&\&\ (c\ <=\ \textcolor{charliteral}{'F'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01083}01083\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01084}01084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})(c\ -\/\ \textcolor{charliteral}{'A'}\ +\ 10);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01085}01085\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01086}01086\ \ \ \ \ \textcolor{keywordflow}{if}\ ((c\ >=\ \textcolor{charliteral}{'a'})\ \&\&\ (c\ <=\ \textcolor{charliteral}{'f'}))}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01087}01087\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01088}01088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{int})(c\ -\/\ \textcolor{charliteral}{'a'}\ +\ 10);}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01089}01089\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01090}01090\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01091}01091\ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01092}01092\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01093}01093\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01095}01095\ \textcolor{keyword}{static}\ uint32\_t\ service\_uart\_get\_service\_code(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01096}01096\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01097}01097\ \ \ \ \ uint32\_t\ node\_id\ =\ \mbox{\hyperlink{radio__main_8h_a808700d24d8fefed60600dedb2980765}{radio\_main\_get\_node\_id}}();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01098}01098\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01099}01099\ \ \ \ \ \textcolor{keywordflow}{if}\ (node\_id\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01100}01100\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01101}01101\ \ \ \ \ \ \ \ \ node\_id\ =\ \mbox{\hyperlink{laviet__frame_8c_a58d0b229430a6d71b5f09e953192db3d}{laviet\_local\_node\_id}}();}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01102}01102\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01103}01103\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01104}01104\ \ \ \ \ \textcolor{keywordflow}{return}\ node\_id;}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01105}01105\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01106}01106\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01108}01108\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *service\_uart\_mod\_text(\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\_main\_modulation\_t}}\ modulation)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01109}01109\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01110}01110\ \ \ \ \ \textcolor{keywordflow}{switch}\ (modulation)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01111}01111\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01112}01112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a9e9da87b1dc8b43ea0a75dcf25090c0f}{RADIO\_MAIN\_MODULATION\_FSK}}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01113}01113\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}FSK"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01114}01114\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a56d2b96dabc1e8701c595f80b0ade0be}{RADIO\_MAIN\_MODULATION\_OOK}}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01115}01115\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}OOK"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01116}01116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1aeeb0dc39a1ce649d1fe2d542f199b31a}{RADIO\_MAIN\_MODULATION\_LORA}}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01117}01117\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01118}01118\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}LORA"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01119}01119\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01120}01120\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01121}01121\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01123}01123\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *service\_uart\_ap\_mode\_text(\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\_main\_auto\_ping\_mode\_t}}\ mode)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01124}01124\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01125}01125\ \ \ \ \ \textcolor{keywordflow}{switch}\ (mode)}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01126}01126\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01127}01127\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6af4cbf424b6a2df00cd89eb89105c1add}{RADIO\_MAIN\_AUTO\_PING\_RAW}}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01128}01128\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}RAW"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01129}01129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6a53209418691d97bd3b03a305513a4fe6}{RADIO\_MAIN\_AUTO\_PING\_FRAME}}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01130}01130\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01131}01131\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}FRAME"{}};}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01132}01132\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01133}01133\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01134}01134\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01135}01135\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01136}01136\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01137}01137\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{service_8h_ad9002873ec70472fd9aa9a7ac510bd4e}{service\_uart\_create\_task}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01138}01138\ \{}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01139}01139\ \}}
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01140}01140\ }
+\DoxyCodeLine{\Hypertarget{service_8c_source_l01141}01141\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ SERVICE\_UART\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

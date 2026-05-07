@@ -1,0 +1,160 @@
+\doxysection{bmp280\+\_\+main.\+c}
+\hypertarget{bmp280__main_8c_source}{}\label{bmp280__main_8c_source}\index{Core/App/bmp280\_main.c@{Core/App/bmp280\_main.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00001}00001\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{bmp280__main_8h}{bmp280\_main.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00003}00003\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{pager__config_8h}{pager\_config.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00005}00005\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00007}00007\ \textcolor{preprocessor}{\#if\ PAGER\_CONFIG\_BMP280\_MOUNTED}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{app_8h}{app.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00010}00010\ \textcolor{preprocessor}{\#include\ "{}cmsis\_os2.h"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00011}00011\ \textcolor{preprocessor}{\#include\ "{}FreeRTOS.h"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}semphr.h"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00013}00013\ \textcolor{preprocessor}{\#include\ "{}task.h"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00014}00014\ \textcolor{preprocessor}{\#include\ "{}main.h"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00016}00016\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00018}00018\ \textcolor{keyword}{extern}\ I2C\_HandleTypeDef\ hi2c1;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00020}00020\ \textcolor{preprocessor}{\#define\ BMP280\_TASK\_STACK\_SIZE\ \ \ 3072U}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00021}00021\ \textcolor{preprocessor}{\#define\ BMP280\_TASK\_STACK\_WORDS\ \ (BMP280\_TASK\_STACK\_SIZE\ /\ sizeof(StackType\_t))}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00023}00023\ \textcolor{keyword}{static}\ osThreadId\_t\ s\_bmp280\_task\ =\ NULL;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00024}00024\ \textcolor{keyword}{static}\ osMutexId\_t\ s\_bmp280\_data\_mutex\ =\ NULL;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00025}00025\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structbmp280__api__data__t}{bmp280\_api\_data\_t}}\ s\_bmp280\_last;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00026}00026\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_bmp280\_has\_data\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00027}00027\ \textcolor{keyword}{static}\ StaticTask\_t\ s\_bmp280\_task\_cb;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00028}00028\ \textcolor{keyword}{static}\ StackType\_t\ s\_bmp280\_task\_stack[BMP280\_TASK\_STACK\_WORDS];}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00029}00029\ \textcolor{keyword}{static}\ StaticSemaphore\_t\ s\_bmp280\_data\_mutex\_cb;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00031}00031\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ bmp280\_main\_task\_fn(\textcolor{keywordtype}{void}\ *argument);}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00032}00032\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00033}00033\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ osMutexAttr\_t\ s\_bmp280\_data\_mutex\_attr\ =}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00034}00034\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00035}00035\ \ \ \ \ .name\ =\ \textcolor{stringliteral}{"{}bmp280\_data\_mutex"{}},}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00036}00036\ \ \ \ \ .cb\_mem\ =\ \&s\_bmp280\_data\_mutex\_cb,}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00037}00037\ \ \ \ \ .cb\_size\ =\ \textcolor{keyword}{sizeof}(s\_bmp280\_data\_mutex\_cb)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00038}00038\ \};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00039}00039\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00040}00040\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ osThreadAttr\_t\ s\_bmp280\_task\_attr\ =}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00041}00041\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00042}00042\ \ \ \ \ .name\ =\ \textcolor{stringliteral}{"{}bmp280\_task"{}},}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00043}00043\ \ \ \ \ .priority\ =\ (osPriority\_t)osPriorityBelowNormal,}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00044}00044\ \ \ \ \ .stack\_mem\ =\ s\_bmp280\_task\_stack,}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00045}00045\ \ \ \ \ .stack\_size\ =\ \textcolor{keyword}{sizeof}(s\_bmp280\_task\_stack),}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00046}00046\ \ \ \ \ .cb\_mem\ =\ \&s\_bmp280\_task\_cb,}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00047}00047\ \ \ \ \ .cb\_size\ =\ \textcolor{keyword}{sizeof}(s\_bmp280\_task\_cb)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00048}00048\ \};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00049}00049\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00050}00050\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00052}00052\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ s\_bmp280\_not\_mounted\_logged\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00054}00054\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00056}\mbox{\hyperlink{bmp280__main_8h_a3bc6ff102da579107271228ecd7e8503}{00056}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{bmp280__main_8h_a3bc6ff102da579107271228ecd7e8503}{bmp280\_main\_create\_task}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00057}00057\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00058}00058\ \textcolor{preprocessor}{\#if\ PAGER\_CONFIG\_BMP280\_MOUNTED}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00059}00059\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_bmp280\_data\_mutex\ ==\ NULL)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00060}00060\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00061}00061\ \ \ \ \ \ \ \ \ s\_bmp280\_data\_mutex\ =\ osMutexNew(\&s\_bmp280\_data\_mutex\_attr);}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00062}00062\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00063}00063\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00064}00064\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_bmp280\_task\ ==\ NULL)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00065}00065\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00066}00066\ \ \ \ \ \ \ \ \ s\_bmp280\_task\ =\ osThreadNew(bmp280\_main\_task\_fn,\ NULL,\ \&s\_bmp280\_task\_attr);}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00067}00067\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00068}00068\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00069}00069\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_bmp280\_not\_mounted\_logged)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00070}00070\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00071}00071\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}BMP280:\ not\ mounted,\ task\ disabled\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00072}00072\ \ \ \ \ \ \ \ \ s\_bmp280\_not\_mounted\_logged\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00073}00073\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00074}00074\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00075}00075\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00077}\mbox{\hyperlink{bmp280__main_8h_a08830ecb372b100860821945c78e144e}{00077}}\ \textcolor{keywordtype}{bool}\ bmp280\_main\_get\_last(\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\_api\_data\_t}}\ *out\_data)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00078}00078\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00079}00079\ \textcolor{preprocessor}{\#if\ PAGER\_CONFIG\_BMP280\_MOUNTED}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00080}00080\ \ \ \ \ \textcolor{keywordtype}{bool}\ has\_data;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00082}00082\ \ \ \ \ \textcolor{keywordflow}{if}\ ((out\_data\ ==\ NULL)\ ||\ (s\_bmp280\_data\_mutex\ ==\ NULL))}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00083}00083\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00084}00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00085}00085\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00086}00086\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00087}00087\ \ \ \ \ \textcolor{keywordflow}{if}\ (osMutexAcquire(s\_bmp280\_data\_mutex,\ 50U)\ !=\ osOK)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00088}00088\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00089}00089\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00090}00090\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00091}00091\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00092}00092\ \ \ \ \ has\_data\ =\ s\_bmp280\_has\_data;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00093}00093\ \ \ \ \ \textcolor{keywordflow}{if}\ (has\_data)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00094}00094\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00095}00095\ \ \ \ \ \ \ \ \ *out\_data\ =\ s\_bmp280\_last;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00096}00096\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00098}00098\ \ \ \ \ (void)osMutexRelease(s\_bmp280\_data\_mutex);}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00099}00099\ \ \ \ \ \textcolor{keywordflow}{return}\ has\_data;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00100}00100\ \textcolor{preprocessor}{\#else}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00101}00101\ \ \ \ \ (void)out\_data;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00102}00102\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00103}00103\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00104}00104\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00105}00105\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00106}00106\ \textcolor{preprocessor}{\#if\ PAGER\_CONFIG\_BMP280\_MOUNTED}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00108}00108\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ bmp280\_main\_task\_fn(\textcolor{keywordtype}{void}\ *argument)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00109}00109\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00110}00110\ \ \ \ \ \mbox{\hyperlink{structbmp280__api__data__t}{bmp280\_api\_data\_t}}\ sample;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00111}00111\ \ \ \ \ \textcolor{keywordtype}{bool}\ sensor\_ready;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00112}00112\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00113}00113\ \ \ \ \ (void)argument;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00115}00115\ \ \ \ \ \textcolor{keywordflow}{if}\ (app\_i2c\_lock(0U))}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00116}00116\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00117}00117\ \ \ \ \ \ \ \ \ sensor\_ready\ =\ bmp280\_api\_init(\&hi2c1,\ \mbox{\hyperlink{bmp280_8h_a0b9ffea4fca103b7edef727777596909}{BMP280\_I2C\_ADDRESS\_1}});}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00118}00118\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{app_8h_af477839583a45714e98bfc804c2efa27}{app\_i2c\_unlock}}();}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00119}00119\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00120}00120\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00121}00121\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00122}00122\ \ \ \ \ \ \ \ \ sensor\_ready\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00123}00123\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00125}00125\ \ \ \ \ \textcolor{keywordflow}{if}\ (!sensor\_ready)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00126}00126\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00127}00127\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}BMP280\ task:\ init\ failed\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00128}00128\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00129}00129\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00130}00130\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00131}00131\ \ \ \ \ \ \ \ \ printf(\textcolor{stringliteral}{"{}BMP280\ task:\ init\ OK\(\backslash\)r\(\backslash\)n"{}});}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00132}00132\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00133}00133\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00134}00134\ \ \ \ \ memset(\&sample,\ 0,\ \textcolor{keyword}{sizeof}(sample));}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00135}00135\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00136}00136\ \ \ \ \ \textcolor{keywordflow}{for}\ (;;)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00137}00137\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00138}00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (sensor\_ready\ \&\&\ app\_i2c\_lock(0U))}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00139}00139\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bmp280\_api\_measure\_all(\&sample,\ 80U))}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00141}00141\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00142}00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (osMutexAcquire(s\_bmp280\_data\_mutex,\ 50U)\ ==\ osOK)}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00143}00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00144}00144\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_bmp280\_last\ =\ sample;}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00145}00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_bmp280\_has\_data\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (void)osMutexRelease(s\_bmp280\_data\_mutex);}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00147}00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00148}00148\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{app_8h_af477839583a45714e98bfc804c2efa27}{app\_i2c\_unlock}}();}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00150}00150\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00151}00151\ }
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00152}00152\ \ \ \ \ \ \ \ \ osDelay(1000U);}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00153}00153\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00154}00154\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280__main_8c_source_l00155}00155\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury radio_ook_cfg_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structradio__ook__cfg__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury radio_ook_cfg_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Konfiguracja backendu OOK.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="radio__lib_8h_source.html">Core/App/radio_lib/radio_lib.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a1cd70f9579e690215454443da56e8202" id="r_a1cd70f9579e690215454443da56e8202"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1cd70f9579e690215454443da56e8202">frequency_hz</a></td></tr>
+<tr class="memdesc:a1cd70f9579e690215454443da56e8202"><td class="mdescLeft">&#160;</td><td class="mdescRight">Częstotliwość nośna [Hz].  <br /></td></tr>
+<tr class="memitem:a1562ee373e75d0288a248649c65b4825" id="r_a1562ee373e75d0288a248649c65b4825"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1562ee373e75d0288a248649c65b4825">bitrate_bps</a></td></tr>
+<tr class="memdesc:a1562ee373e75d0288a248649c65b4825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bitrate [bps].  <br /></td></tr>
+<tr class="memitem:a63f1d3616756d1619939ef1af6727683" id="r_a63f1d3616756d1619939ef1af6727683"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#a227ddbfeda5a2c2c4cbe5ab3bde9b6cd">radio_lora_bw_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a63f1d3616756d1619939ef1af6727683">rx_bandwidth</a></td></tr>
+<tr class="memdesc:a63f1d3616756d1619939ef1af6727683"><td class="mdescLeft">&#160;</td><td class="mdescRight">Szerokość pasma RX.  <br /></td></tr>
+<tr class="memitem:ac97fc01870388b5fa504efc48f98aba2" id="r_ac97fc01870388b5fa504efc48f98aba2"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac97fc01870388b5fa504efc48f98aba2">tx_power_dbm</a></td></tr>
+<tr class="memdesc:ac97fc01870388b5fa504efc48f98aba2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Moc TX [dBm].  <br /></td></tr>
+<tr class="memitem:a6cc869c17494ca0a5b928b9579ca290c" id="r_a6cc869c17494ca0a5b928b9579ca290c"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6cc869c17494ca0a5b928b9579ca290c">preamble_len</a></td></tr>
+<tr class="memdesc:a6cc869c17494ca0a5b928b9579ca290c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Długość preambuły [B].  <br /></td></tr>
+<tr class="memitem:ac1570ced30f50cdd0f2e2eb33a06f8f1" id="r_ac1570ced30f50cdd0f2e2eb33a06f8f1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1570ced30f50cdd0f2e2eb33a06f8f1">sync_word_len</a></td></tr>
+<tr class="memdesc:ac1570ced30f50cdd0f2e2eb33a06f8f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Długość słowa synchronizacji [B].  <br /></td></tr>
+<tr class="memitem:a0a0ac8370d2e38f589faa1c38d7a9420" id="r_a0a0ac8370d2e38f589faa1c38d7a9420"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a0ac8370d2e38f589faa1c38d7a9420">sync_word</a></td></tr>
+<tr class="memdesc:a0a0ac8370d2e38f589faa1c38d7a9420"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wzorzec sync word, używane najmłodsze <span class="tt"><a class="el" href="#ac1570ced30f50cdd0f2e2eb33a06f8f1" title="Długość słowa synchronizacji [B].">sync_word_len</a></span> bajtów.  <br /></td></tr>
+<tr class="memitem:a4df92ee576358c41c483923f4ecf762d" id="r_a4df92ee576358c41c483923f4ecf762d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab065a1bf715bdccf9a32593a32e57d9a">radio_ook_threshold_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4df92ee576358c41c483923f4ecf762d">threshold</a></td></tr>
+<tr class="memdesc:a4df92ee576358c41c483923f4ecf762d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tryb progu OOK.  <br /></td></tr>
+<tr class="memitem:a81569ed81fb355b5a7e6137e78d42d79" id="r_a81569ed81fb355b5a7e6137e78d42d79"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81569ed81fb355b5a7e6137e78d42d79">threshold_value</a></td></tr>
+<tr class="memdesc:a81569ed81fb355b5a7e6137e78d42d79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Surowa wartość progu zależna od trybu.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Konfiguracja backendu OOK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00196">196</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a1562ee373e75d0288a248649c65b4825" name="a1562ee373e75d0288a248649c65b4825"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1562ee373e75d0288a248649c65b4825">&#9670;&#160;</a></span>bitrate_bps</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_ook_cfg_t::bitrate_bps</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Bitrate [bps]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00199">199</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00068">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a1cd70f9579e690215454443da56e8202" name="a1cd70f9579e690215454443da56e8202"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cd70f9579e690215454443da56e8202">&#9670;&#160;</a></span>frequency_hz</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_ook_cfg_t::frequency_hz</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Częstotliwość nośna [Hz]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00198">198</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00068">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a6cc869c17494ca0a5b928b9579ca290c" name="a6cc869c17494ca0a5b928b9579ca290c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6cc869c17494ca0a5b928b9579ca290c">&#9670;&#160;</a></span>preamble_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t radio_ook_cfg_t::preamble_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Długość preambuły [B]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00202">202</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00068">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a63f1d3616756d1619939ef1af6727683" name="a63f1d3616756d1619939ef1af6727683"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a63f1d3616756d1619939ef1af6727683">&#9670;&#160;</a></span>rx_bandwidth</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#a227ddbfeda5a2c2c4cbe5ab3bde9b6cd">radio_lora_bw_t</a> radio_ook_cfg_t::rx_bandwidth</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Szerokość pasma RX. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00200">200</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00068">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a0a0ac8370d2e38f589faa1c38d7a9420" name="a0a0ac8370d2e38f589faa1c38d7a9420"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a0ac8370d2e38f589faa1c38d7a9420">&#9670;&#160;</a></span>sync_word</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_ook_cfg_t::sync_word</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wzorzec sync word, używane najmłodsze <span class="tt"><a class="el" href="#ac1570ced30f50cdd0f2e2eb33a06f8f1" title="Długość słowa synchronizacji [B].">sync_word_len</a></span> bajtów. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00204">204</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a> i <a class="el" href="radio__ook_8c_source.html#l00125">radio_write_sync_word()</a>.</p>
+
+</div>
+</div>
+<a id="ac1570ced30f50cdd0f2e2eb33a06f8f1" name="ac1570ced30f50cdd0f2e2eb33a06f8f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1570ced30f50cdd0f2e2eb33a06f8f1">&#9670;&#160;</a></span>sync_word_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_ook_cfg_t::sync_word_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Długość słowa synchronizacji [B]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00203">203</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00068">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a> i <a class="el" href="radio__ook_8c_source.html#l00125">radio_write_sync_word()</a>.</p>
+
+</div>
+</div>
+<a id="a4df92ee576358c41c483923f4ecf762d" name="a4df92ee576358c41c483923f4ecf762d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4df92ee576358c41c483923f4ecf762d">&#9670;&#160;</a></span>threshold</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab065a1bf715bdccf9a32593a32e57d9a">radio_ook_threshold_t</a> radio_ook_cfg_t::threshold</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Tryb progu OOK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00205">205</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00178">radio_apply_threshold()</a>, <a class="el" href="radio__ook_8c_source.html#l00068">radio_cfg_valid()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a81569ed81fb355b5a7e6137e78d42d79" name="a81569ed81fb355b5a7e6137e78d42d79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81569ed81fb355b5a7e6137e78d42d79">&#9670;&#160;</a></span>threshold_value</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_ook_cfg_t::threshold_value</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Surowa wartość progu zależna od trybu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00206">206</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00178">radio_apply_threshold()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="ac97fc01870388b5fa504efc48f98aba2" name="ac97fc01870388b5fa504efc48f98aba2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac97fc01870388b5fa504efc48f98aba2">&#9670;&#160;</a></span>tx_power_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int8_t radio_ook_cfg_t::tx_power_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Moc TX [dBm]. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00201">201</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a> i <a class="el" href="radio__lib_8c_source.html#l00061">radio_default_ook_cfg()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/radio_lib/<a class="el" href="radio__lib_8h_source.html">radio_lib.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structradio__ook__cfg__t.html">radio_ook_cfg_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

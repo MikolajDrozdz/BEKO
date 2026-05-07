@@ -1,0 +1,111 @@
+\doxysection{Dokumentacja struktury i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t}
+\hypertarget{structi2c__mem__store__trusted__device__t}{}\label{structi2c__mem__store__trusted__device__t}\index{i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}}
+
+
+Trusted-\/device object stored in encrypted partition.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib/i2c\+\_\+mem\+\_\+store.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a466b53c05e71e6463b474d925ab1fcf4}{id\+\_\+len}}
+\begin{DoxyCompactList}\small\item\em Device identifier length. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a390e7764a81895a3b039fb4d074f8318}{code\+\_\+len}}
+\begin{DoxyCompactList}\small\item\em Device/service code length. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a53afb90ac1bd8821a505c53e39724a64}{id}} \mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+ID\+\_\+\+MAX\mbox{]}
+\begin{DoxyCompactList}\small\item\em Device identifier bytes. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_abe88c485bb7cee38f5c27641e77fd017}{code}} \mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+CODE\+\_\+\+MAX\mbox{]}
+\begin{DoxyCompactList}\small\item\em Encrypted content payload before encryption. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Trusted-\/device object stored in encrypted partition. 
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00074}{74}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structi2c__mem__store__trusted__device__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structi2c__mem__store__trusted__device__t_abe88c485bb7cee38f5c27641e77fd017}\index{i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}!code@{code}}
+\index{code@{code}!i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}}
+\doxysubsubsection{\texorpdfstring{code}{code}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__trusted__device__t_abe88c485bb7cee38f5c27641e77fd017} 
+uint8\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::code\mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+CODE\+\_\+\+MAX\mbox{]}}
+
+
+
+Encrypted content payload before encryption. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00079}{79}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00787}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read()}} i \mbox{\hyperlink{i2c__mem__store_8c_source_l00758}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write()}}.
+
+\Hypertarget{structi2c__mem__store__trusted__device__t_a390e7764a81895a3b039fb4d074f8318}\index{i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}!code\_len@{code\_len}}
+\index{code\_len@{code\_len}!i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}}
+\doxysubsubsection{\texorpdfstring{code\_len}{code\_len}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__trusted__device__t_a390e7764a81895a3b039fb4d074f8318} 
+uint8\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::code\+\_\+len}
+
+
+
+Device/service code length. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00077}{77}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00787}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read()}} i \mbox{\hyperlink{i2c__mem__store_8c_source_l00758}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write()}}.
+
+\Hypertarget{structi2c__mem__store__trusted__device__t_a53afb90ac1bd8821a505c53e39724a64}\index{i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}!id@{id}}
+\index{id@{id}!i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__trusted__device__t_a53afb90ac1bd8821a505c53e39724a64} 
+uint8\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::id\mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+ID\+\_\+\+MAX\mbox{]}}
+
+
+
+Device identifier bytes. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00078}{78}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00787}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read()}} i \mbox{\hyperlink{i2c__mem__store_8c_source_l00758}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write()}}.
+
+\Hypertarget{structi2c__mem__store__trusted__device__t_a466b53c05e71e6463b474d925ab1fcf4}\index{i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}!id\_len@{id\_len}}
+\index{id\_len@{id\_len}!i2c\_mem\_store\_trusted\_device\_t@{i2c\_mem\_store\_trusted\_device\_t}}
+\doxysubsubsection{\texorpdfstring{id\_len}{id\_len}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__trusted__device__t_a466b53c05e71e6463b474d925ab1fcf4} 
+uint8\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::id\+\_\+len}
+
+
+
+Device identifier length. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00076}{76}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00787}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read()}} i \mbox{\hyperlink{i2c__mem__store_8c_source_l00758}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib/\mbox{\hyperlink{i2c__mem__store_8h}{i2c\+\_\+mem\+\_\+store.\+h}}\end{DoxyCompactItemize}

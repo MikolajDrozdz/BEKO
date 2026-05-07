@@ -1,0 +1,53 @@
+\chapter{BEKO Pager Firmware }
+\hypertarget{index}{}\label{index}\index{BEKO Pager Firmware@{BEKO Pager Firmware}}
+\hypertarget{index_intro}{}\doxysection{\texorpdfstring{Wprowadzenie}{Wprowadzenie}}\label{index_intro}
+BEKO Pager Firmware to aplikacja STM32 dla bezprzewodowego noda systemu pagerowego. Kod aplikacyjny znajduje sie w {\ttfamily Core/\+App} i obejmuje\+:
+
+
+\begin{DoxyItemize}
+\item warstwe radiowa SX1276/\+RFM95 z backendami Lo\+Ra, FSK i OOK,
+\item protokol ramki {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1},
+\item kryptografie AES-\/\+CTR oraz HMAC-\/\+SHA256,
+\item zadanie security z TPM ST33\+KTPM2X i magazynem I2C EEPROM/\+FRAM,
+\item lokalny interfejs LCD, menu, przyciski i LED,
+\item sensory BMP280 oraz VL53\+L3\+CX,
+\item opcjonalna konsole serwisowa UART.
+\end{DoxyItemize}\hypertarget{index_start}{}\doxysection{\texorpdfstring{Punkty startowe}{Punkty startowe}}\label{index_start}
+Najwazniejsze pliki publicznego API\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{app_8h}{Core/\+App/app.\+h}} -\/ inicjalizacja aplikacji i wspolne wrappery I2C,
+\item {\ttfamily \doxylink{radio__main_8h}{Core/\+App/radio\+\_\+main.\+h}} -\/ zadanie radiowe i komendy runtime,
+\item {\ttfamily \doxylink{security__main_8h}{Core/\+App/security\+\_\+main.\+h}} -\/ zadanie security, klucze i trusted storage,
+\item {\ttfamily \doxylink{laviet__frame_8h}{Core/\+App/laviet\+\_\+frame.\+h}} -\/ parser i serializer ramki LAVIET,
+\item {\ttfamily \doxylink{laviet__crypto_8h}{Core/\+App/laviet\+\_\+crypto.\+h}} -\/ HMAC-\/\+SHA256, AES-\/\+CTR i porownanie MAC,
+\item {\ttfamily \doxylink{menu__main_8h}{Core/\+App/menu\+\_\+main.\+h}} oraz {\ttfamily \doxylink{lcd__main_8h}{Core/\+App/lcd\+\_\+main.\+h}} -\/ lokalny UI.
+\end{DoxyItemize}\hypertarget{index_pages}{}\doxysection{\texorpdfstring{Strony opisowe}{Strony opisowe}}\label{index_pages}
+
+\begin{DoxyItemize}
+\item \doxylink{doxygen_build}{Generowanie dokumentacji}
+\item \doxylink{doxygen_architecture}{Architektura firmware}
+\item \doxylink{doxygen_modules}{Mapa modulow}
+\item \doxylink{doxygen_security}{Bezpieczenstwo}
+\end{DoxyItemize}\hypertarget{index_generation}{}\doxysection{\texorpdfstring{Generowanie dokumentacji}{Generowanie dokumentacji}}\label{index_generation}
+Z katalogu glownego projektu\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{doxygen\ Doxyfile}
+
+\end{DoxyCode}
+
+
+Plik startowy HTML powstaje w\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{docs/doxygen/output/html/index.html}
+
+\end{DoxyCode}
+ \input{doxygen_build}
+\input{doxygen_architecture}
+\input{doxygen_modules}
+\input{doxygen_security}

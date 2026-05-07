@@ -1,0 +1,133 @@
+\doxysection{Dokumentacja pliku Core/\+App/menu\+\_\+main.h}
+\hypertarget{menu__main_8h}{}\label{menu__main_8h}\index{Core/App/menu\_main.h@{Core/App/menu\_main.h}}
+
+
+LCD menu controller task.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structmenu__notification__t}{menu\+\_\+notification\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Message passed from application subsystems to the menu task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5}{menu\+\_\+notification\+\_\+type\+\_\+t}} \{ \newline
+\mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a83595c87913916f3b9a9fb09e45452ac}{MENU\+\_\+\+NOTIFICATION\+\_\+\+RX}} = 0
+, \mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5aeabc34f67c30def35ba4ef7c40642d29}{MENU\+\_\+\+NOTIFICATION\+\_\+\+WARNING}}
+, \mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5ac5fb15679120400da26272fb6d28ee55}{MENU\+\_\+\+NOTIFICATION\+\_\+\+ERROR}}
+, \mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a53aa3eb5748d86fc11f6fa8dce217681}{MENU\+\_\+\+NOTIFICATION\+\_\+\+PAIRING}}
+, \newline
+\mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5afbf09e0e58c625c0530b0251e949bf88}{MENU\+\_\+\+NOTIFICATION\+\_\+\+SECURITY}}
+, \mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a777150ae81b4a7cae7c1ea0ee3fbdf69}{MENU\+\_\+\+NOTIFICATION\+\_\+\+DELIVERY}}
+ \}
+\begin{DoxyCompactList}\small\item\em Notification classes accepted by the menu task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{menu__main_8h_aec03d8598b890c15095b74efd5131325}{menu\+\_\+main\+\_\+create\+\_\+task}} (void)
+\begin{DoxyCompactList}\small\item\em Create the LCD menu task and notification queue. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{menu__main_8h_a7ea19f7035e0e36e54a3d2213601a250}{menu\+\_\+main\+\_\+post\+\_\+notification}} (const \mbox{\hyperlink{structmenu__notification__t}{menu\+\_\+notification\+\_\+t}} \texorpdfstring{$\ast$}{*}n)
+\begin{DoxyCompactList}\small\item\em Queue a notification for menu/\+UI handling. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+LCD menu controller task. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{menu__main_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5}\index{menu\_main.h@{menu\_main.h}!menu\_notification\_type\_t@{menu\_notification\_type\_t}}
+\index{menu\_notification\_type\_t@{menu\_notification\_type\_t}!menu\_main.h@{menu\_main.h}}
+\doxysubsubsection{\texorpdfstring{menu\_notification\_type\_t}{menu\_notification\_type\_t}}
+{\footnotesize\ttfamily \label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5} 
+enum \mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5}{menu\+\_\+notification\+\_\+type\+\_\+t}}}
+
+
+
+Notification classes accepted by the menu task. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MENU\_NOTIFICATION\_RX@{MENU\_NOTIFICATION\_RX}!menu\_main.h@{menu\_main.h}}\index{menu\_main.h@{menu\_main.h}!MENU\_NOTIFICATION\_RX@{MENU\_NOTIFICATION\_RX}}}\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a83595c87913916f3b9a9fb09e45452ac}\label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a83595c87913916f3b9a9fb09e45452ac} 
+MENU\+\_\+\+NOTIFICATION\+\_\+\+RX&Received user/radio payload. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MENU\_NOTIFICATION\_WARNING@{MENU\_NOTIFICATION\_WARNING}!menu\_main.h@{menu\_main.h}}\index{menu\_main.h@{menu\_main.h}!MENU\_NOTIFICATION\_WARNING@{MENU\_NOTIFICATION\_WARNING}}}\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5aeabc34f67c30def35ba4ef7c40642d29}\label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5aeabc34f67c30def35ba4ef7c40642d29} 
+MENU\+\_\+\+NOTIFICATION\+\_\+\+WARNING&Non-\/fatal warning for the UI. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MENU\_NOTIFICATION\_ERROR@{MENU\_NOTIFICATION\_ERROR}!menu\_main.h@{menu\_main.h}}\index{menu\_main.h@{menu\_main.h}!MENU\_NOTIFICATION\_ERROR@{MENU\_NOTIFICATION\_ERROR}}}\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5ac5fb15679120400da26272fb6d28ee55}\label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5ac5fb15679120400da26272fb6d28ee55} 
+MENU\+\_\+\+NOTIFICATION\+\_\+\+ERROR&Error popup or status message. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MENU\_NOTIFICATION\_PAIRING@{MENU\_NOTIFICATION\_PAIRING}!menu\_main.h@{menu\_main.h}}\index{menu\_main.h@{menu\_main.h}!MENU\_NOTIFICATION\_PAIRING@{MENU\_NOTIFICATION\_PAIRING}}}\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a53aa3eb5748d86fc11f6fa8dce217681}\label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a53aa3eb5748d86fc11f6fa8dce217681} 
+MENU\+\_\+\+NOTIFICATION\+\_\+\+PAIRING&Pairing workflow update. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MENU\_NOTIFICATION\_SECURITY@{MENU\_NOTIFICATION\_SECURITY}!menu\_main.h@{menu\_main.h}}\index{menu\_main.h@{menu\_main.h}!MENU\_NOTIFICATION\_SECURITY@{MENU\_NOTIFICATION\_SECURITY}}}\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5afbf09e0e58c625c0530b0251e949bf88}\label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5afbf09e0e58c625c0530b0251e949bf88} 
+MENU\+\_\+\+NOTIFICATION\+\_\+\+SECURITY&Security subsystem update. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{MENU\_NOTIFICATION\_DELIVERY@{MENU\_NOTIFICATION\_DELIVERY}!menu\_main.h@{menu\_main.h}}\index{menu\_main.h@{menu\_main.h}!MENU\_NOTIFICATION\_DELIVERY@{MENU\_NOTIFICATION\_DELIVERY}}}\Hypertarget{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a777150ae81b4a7cae7c1ea0ee3fbdf69}\label{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5a777150ae81b4a7cae7c1ea0ee3fbdf69} 
+MENU\+\_\+\+NOTIFICATION\+\_\+\+DELIVERY&Delivery/\+ACK status update. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00015}{15}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{menu__main_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{menu__main_8h_aec03d8598b890c15095b74efd5131325}\index{menu\_main.h@{menu\_main.h}!menu\_main\_create\_task@{menu\_main\_create\_task}}
+\index{menu\_main\_create\_task@{menu\_main\_create\_task}!menu\_main.h@{menu\_main.h}}
+\doxysubsubsection{\texorpdfstring{menu\_main\_create\_task()}{menu\_main\_create\_task()}}
+{\footnotesize\ttfamily \label{menu__main_8h_aec03d8598b890c15095b74efd5131325} 
+void menu\+\_\+main\+\_\+create\+\_\+task (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create the LCD menu task and notification queue. 
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l01386}{1386}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00057}{app\+\_\+freertos\+\_\+init()}}.
+
+\Hypertarget{menu__main_8h_a7ea19f7035e0e36e54a3d2213601a250}\index{menu\_main.h@{menu\_main.h}!menu\_main\_post\_notification@{menu\_main\_post\_notification}}
+\index{menu\_main\_post\_notification@{menu\_main\_post\_notification}!menu\_main.h@{menu\_main.h}}
+\doxysubsubsection{\texorpdfstring{menu\_main\_post\_notification()}{menu\_main\_post\_notification()}}
+{\footnotesize\ttfamily \label{menu__main_8h_a7ea19f7035e0e36e54a3d2213601a250} 
+bool menu\+\_\+main\+\_\+post\+\_\+notification (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structmenu__notification__t}{menu\+\_\+notification\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{n}{}\end{DoxyParamCaption})}
+
+
+
+Queue a notification for menu/\+UI handling. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em n} & Notification object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the notification was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8c_source_l01408}{1408}} pliku \mbox{\hyperlink{menu__main_8c_source}{menu\+\_\+main.\+c}}.
+

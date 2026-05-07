@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja katalogu Core/App/security</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('dir_3aa3598b8fe5b4c76a427191eb55bc88.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja katalogu security</div></div>
+</div><!--header-->
+<div class="contents">
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md68"></a>
+Security</h1>
+<p>Ten katalog zbiera założenia i zadania dla bezpieczeństwa komunikacji BEKO.</p>
+<p>Dokumenty pomocnicze:</p><ul>
+<li><span class="tt">SECURITY_ARCHITECTURE.md</span> - pełny opis architektury bezpieczeństwa: TPM, AES/HMAC, root seed, EEPROM, ramki, ACK, anti-replay, PIN i przykłady,</li>
+<li><span class="tt">THREAT_MODEL.md</span> - skrócony model zagrożeń dla bieżącej architektury,</li>
+<li><span class="tt">STRIDE_CIA_ANALYSIS.md</span> - tabela klas ataków, obecnych zabezpieczeń i dalszych mitigacji.</li>
+<li><span class="tt">../../../gateway_docs/SECURITY_CRYPTO_OVERVIEW.md</span> - przekrojowy opis kryptografii i ochrony całego systemu, w tym gatewaya.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md69"></a>
+Aktualny model</h1>
+<ul>
+<li><span class="tt">LAVIET_FRAME_V1</span> używa <span class="tt">src_id</span>, <span class="tt">dst_id</span>, <span class="tt">msg_id</span>, <span class="tt">counter</span>, <span class="tt">payload_len</span> i <span class="tt">mac_tag</span>.</li>
+<li>Ramki są uwierzytelniane HMAC-SHA256, a payload może być szyfrowany AES-CTR.</li>
+<li>Relay mesh/TTL został usunięty z bieżącej architektury; node działa w topologii gwiazdy z gatewayem.</li>
+<li>Ochrona przed replay w pierwszym wdrożeniu używa monotonicznego <span class="tt">counter</span> dla relacji gateway-node i zapisuje go w małym slocie <span class="tt">secret</span> NVM.</li>
+<li><span class="tt">TPM PP</span> w obecnym hardware jest podłączony do samego modułu TPM, nie do GPIO MCU. Pin TPM PP to pin <span class="tt">7</span>, aktywny stanem <span class="tt">VDD</span>.</li>
+<li>TPM jest podłączony przez <span class="tt">I2C3</span> (<span class="tt">PC0</span> = SCL, <span class="tt">PC1</span> = SDA); reset <span class="tt">TPM_RESET#</span> jest na <span class="tt">PB0</span>, a <span class="tt">TPM_DAVINT#</span> / <span class="tt">PIRQ</span> na <span class="tt">PH0</span> jako <span class="tt">EXTI0</span>, aktywny niskim stanem.</li>
+<li>Firmware używa TPM jako źródła trwałego root seeda:<ul>
+<li>główny NV index: <span class="tt">0x01C10101</span>,</li>
+<li>legacy read-only/migration index: <span class="tt">0x01C10100</span>,</li>
+<li>atrybuty głównego indexu: <span class="tt">PPWRITE</span>, <span class="tt">OWNERREAD</span>, <span class="tt">NO_DA</span>.</li>
+</ul>
+</li>
+<li>Zapis lub rotacja root seeda wymaga aktywnego TPM PP. STM32 nie odczytuje tego pinu jako GPIO; wymuszenie odbywa się przez TPM authorization (<span class="tt">TPM_RH_PLATFORM</span> dla <span class="tt">NV_Write</span>).</li>
+<li>Klucz szyfrowania sekretów EEPROM jest wyprowadzany z TPM-backed root seeda. Przy pierwszym starcie po zmianie firmware próbuje przepisać stare wpisy EEPROM z dawnego stałego klucza na klucz wyprowadzony z TPM.</li>
+<li>PP nie zabezpiecza jeszcze całego pairingu radiowego. Jeśli pairing albo inne operacje administracyjne mają wymagać fizycznej obecności, trzeba dodać osobne TPM policy/session albo równoważny flow oparty o TPM.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md70"></a>
+DoS / Flood Defense</h1>
+<p>Poniżej są mechanizmy, które można wdrażać warstwowo. Nie trzeba robić wszystkiego naraz.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md71"></a>
+1. Rate limiting per source</h2>
+<ul>
+<li>Trzymać licznik ramek na <span class="tt">src_id</span> w krótkim oknie czasu, np. <span class="tt">N / 10 s</span>.</li>
+<li>Po przekroczeniu limitu przestać obsługiwać ruch z tego źródła.</li>
+<li>Dla bardzo agresywnych źródeł wejść w czasowe <span class="tt">cooldown</span>.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md72"></a>
+2. Global TX budget</h2>
+<ul>
+<li>Osobno limitować ruch użytkownika i ruch administracyjny.</li>
+<li>Węzeł nie powinien poświęcić całego duty-cycle na flood control traffic.</li>
+<li>Praktycznie: token bucket dla TX, np. osobny budżet na minutę.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md73"></a>
+3. Separate limits for control traffic</h2>
+<ul>
+<li><span class="tt">PAIR_REQ</span>, <span class="tt">PAIR_RESP</span>, <span class="tt">ERROR</span>, <span class="tt">CFG</span>, <span class="tt">COUNTER_SYNC</span>, <span class="tt">KEY_ROTATE</span> i <span class="tt">ACK</span> powinny mieć niższe limity niż zwykłe <span class="tt">DATA</span>.</li>
+<li>Pairing powinien działać tylko w krótkim oknie serwisowym.</li>
+<li>Powtarzane <span class="tt">PAIR_REQ</span> od jednego źródła powinny być szybko wyciszane.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md74"></a>
+4. Replay-aware abuse scoring</h2>
+<ul>
+<li>Każde wykrycie replay zwiększa licznik nadużyć dla <span class="tt">src_id</span>.</li>
+<li>Po kilku replayach z rzędu można:<ul>
+<li>zablokować obsługę źródła,</li>
+<li>obniżyć priorytet,</li>
+<li>logować zdarzenie security.</li>
+</ul>
+</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md75"></a>
+5. Strict frame policy</h2>
+<ul>
+<li>Przyjmować tylko ramki, które pasują do topologii gateway-node.</li>
+<li>Nie generować <span class="tt">ACK</span> dla broadcastu ani dla błędnego HMAC/replay.</li>
+<li>Walidować typ, flagi, <span class="tt">payload_len</span>, <span class="tt">src_id</span> i <span class="tt">dst_id</span> przed kryptografią.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md76"></a>
+6. Bounded parsing cost</h2>
+<ul>
+<li>Odrzucać ramki z nieprawidłowym <span class="tt">src_id</span>, <span class="tt">dst_id</span>, <span class="tt">msg_id</span>, <span class="tt">counter</span> lub długością przed cięższą logiką.</li>
+<li>Nie robić drogich operacji kryptograficznych dla ruchu, który już wygląda na śmieciowy.</li>
+<li>Przy floodzie najtańsze filtry powinny działać jako pierwsze.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md77"></a>
+7. Queue and UI protection</h2>
+<ul>
+<li>Oddzielić logi security od ścieżki krytycznej UI.</li>
+<li>Nie generować popupu dla każdego zdarzenia flood/replay.</li>
+<li>Zamiast tego agregować liczniki i wyświetlać skrócony status.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md78"></a>
+8. Channel occupancy protection</h2>
+<ul>
+<li>Auto-ping i control traffic powinny respektować duty-cycle i własny budżet TX.</li>
+<li>W stanie przeciążenia najpierw ograniczać ruch administracyjny/testowy, dopiero potem ruch użytkownika.</li>
+<li>Dobrze działa też adaptacyjne wydłużanie odstępów TX po wykryciu floodu.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="autotoc_md79"></a>
+Najbardziej opłacalna kolejność wdrożenia</h1>
+<ol type="1">
+<li>Per-source rate limiting.</li>
+<li>Global TX budget.</li>
+<li>Abuse scoring dla replay/flood.</li>
+<li>Ograniczenia pairing/control traffic.</li>
+<li>Agregowane logowanie security zamiast popup spam. </li>
+</ol>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_3aa3598b8fe5b4c76a427191eb55bc88.html">security</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

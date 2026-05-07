@@ -1,0 +1,68 @@
+\doxysection{Generowanie dokumentacji }
+\hypertarget{doxygen_build}{}\label{doxygen_build}\index{Generowanie dokumentacji@{Generowanie dokumentacji}}
+\hypertarget{doxygen_build_doxygen_requirements}{}\doxysubsection{\texorpdfstring{Wymagania}{Wymagania}}\label{doxygen_build_doxygen_requirements}
+Do wygenerowania dokumentacji HTML potrzebny jest Doxygen. Do pliku PDF potrzebny jest tez La\+TeX z {\ttfamily pdflatex} i {\ttfamily makeindex}.
+
+Na Ubuntu zestaw narzedzi mozna zainstalowac komenda\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sudo\ apt-\/get\ install\ doxygen\ graphviz\ texlive-\/latex-\/base\ texlive-\/latex-\/extra\ texlive-\/fonts-\/recommended\ texlive-\/lang-\/polish}
+
+\end{DoxyCode}
+\hypertarget{doxygen_build_doxygen_command}{}\doxysubsection{\texorpdfstring{Komenda}{Komenda}}\label{doxygen_build_doxygen_command}
+Uruchom generator HTML i La\+TeX z katalogu glownego repozytorium\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{doxygen\ Doxyfile}
+
+\end{DoxyCode}
+
+
+Wynik HTML\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{docs/doxygen/output/html/index.html}
+
+\end{DoxyCode}
+
+
+PDF powstaje z wygenerowanych plikow La\+TeX\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make\ -\/C\ docs/doxygen/output/latex}
+
+\end{DoxyCode}
+
+
+Wynik PDF\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{docs/doxygen/output/latex/refman.pdf}
+
+\end{DoxyCode}
+\hypertarget{doxygen_build_doxygen_scope}{}\doxysubsection{\texorpdfstring{Zakres wejscia}{Zakres wejscia}}\label{doxygen_build_doxygen_scope}
+Konfiguracja dokumentuje\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily README.\+md},
+\item {\ttfamily Core/\+App},
+\item {\ttfamily docs/doxygen}.
+\end{DoxyItemize}
+
+Katalogi {\ttfamily Drivers}, {\ttfamily Middlewares}, {\ttfamily Debug}, {\ttfamily .git} i {\ttfamily .metadata} sa wykluczone. Dzieki temu dokumentacja skupia sie na kodzie aplikacji BEKO, a nie na wygenerowanym lub zewnetrznym kodzie HAL/\+BSP/\+Free\+RTOS.\hypertarget{doxygen_build_doxygen_output}{}\doxysubsection{\texorpdfstring{Polityka plikow wynikowych}{Polityka plikow wynikowych}}\label{doxygen_build_doxygen_output}
+Wygenerowany HTML jest ignorowany przez Git przez wpis\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{docs/doxygen/output/}
+
+\end{DoxyCode}
+
+
+W repo zostaja tylko zrodla dokumentacji i konfiguracja. 

@@ -1,0 +1,230 @@
+\doxysection{Dokumentacja struktury led\+\_\+array\+\_\+ctx\+\_\+t}
+\hypertarget{structled__array__ctx__t}{}\label{structled__array__ctx__t}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{structled__array__ctx__t_a6fd9f1d2788a9a221c32f0621e5112bc}{initialized}}
+\item 
+bool \mbox{\hyperlink{structled__array__ctx__t_a0f52ce51e28605e8bac98aa720fa9729}{timer\+\_\+running}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structled__array__ctx__t_a2b4c2dfe1eaf342fa9ed64c54aab670d}{tick\+\_\+period\+\_\+ms}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structled__array__ctx__t_a4b79ac05dcae971971704ddfa4e3734d}{last\+\_\+tick\+\_\+ms}}
+\item 
+\mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\+\_\+array\+\_\+effect\+\_\+t}} \mbox{\hyperlink{structled__array__ctx__t_add157fc1f0b3a203e80b345768b393fa}{effect}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structled__array__ctx__t_a1b13b9082d342e259faff29ca4134f04}{manual\+\_\+brightness}} \mbox{[}LED\+\_\+\+ARRAY\+\_\+\+COUNT\mbox{]}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structled__array__ctx__t_a02efc95f1491d8032d5d2eb682af96d2}{active\+\_\+brightness}} \mbox{[}LED\+\_\+\+ARRAY\+\_\+\+COUNT\mbox{]}
+\item 
+\Hypertarget{structled__array__ctx__t_a4654fbd0e89963aa773fa5befe6ce753}\label{structled__array__ctx__t_a4654fbd0e89963aa773fa5befe6ce753} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_a5c6385ed55ace61500dd5b556d48a8ae}{mask}}\\
+\>uint16\_t \mbox{\hyperlink{structled__array__ctx__t_adb209fa8194fd6671b06160d652b1db0}{duration\_ms}}\\
+\>uint32\_t \mbox{\hyperlink{structled__array__ctx__t_a2bb3523f53a76df003812df6e3933f6e}{elapsed\_ms}}\\
+\} {\bfseries fade}\\
+
+\end{tabbing}\item 
+\Hypertarget{structled__array__ctx__t_a8ad5dc4341bf43bd4401fe6ae21fa8c7}\label{structled__array__ctx__t_a8ad5dc4341bf43bd4401fe6ae21fa8c7} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_a5c6385ed55ace61500dd5b556d48a8ae}{mask}}\\
+\>uint16\_t \mbox{\hyperlink{structled__array__ctx__t_a8a322d14242be6328b0fe301e903d130}{period\_ms}}\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_a126cb7b893981199bb15502ef8611956}{min\_pct}}\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_af30dc7d6c6e7a33cd849a1c00c4df138}{max\_pct}}\\
+\>uint32\_t \mbox{\hyperlink{structled__array__ctx__t_a2bb3523f53a76df003812df6e3933f6e}{elapsed\_ms}}\\
+\} {\bfseries breath}\\
+
+\end{tabbing}\item 
+\Hypertarget{structled__array__ctx__t_aea665daef78b613ce9c948c56de31362}\label{structled__array__ctx__t_aea665daef78b613ce9c948c56de31362} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>uint16\_t \mbox{\hyperlink{structled__array__ctx__t_aa6829f9a45bf3f712e6c9fb5ad22e3ec}{step\_ms}}\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_a126cb7b893981199bb15502ef8611956}{min\_pct}}\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_af30dc7d6c6e7a33cd849a1c00c4df138}{max\_pct}}\\
+\>uint16\_t \mbox{\hyperlink{structled__array__ctx__t_a66dbf6d28ec93f75c1eeccd3027254cd}{phase\_accum\_ms}}\\
+\>uint8\_t \mbox{\hyperlink{structled__array__ctx__t_ac52e92a9e8e203a2bc67d28e7481851c}{phase\_base}}\\
+\} {\bfseries rainbow}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00018}{18}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structled__array__ctx__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structled__array__ctx__t_a02efc95f1491d8032d5d2eb682af96d2}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!active\_brightness@{active\_brightness}}
+\index{active\_brightness@{active\_brightness}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{active\_brightness}{active\_brightness}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a02efc95f1491d8032d5d2eb682af96d2} 
+uint8\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::active\+\_\+brightness\mbox{[}LED\+\_\+\+ARRAY\+\_\+\+COUNT\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00026}{26}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_adb209fa8194fd6671b06160d652b1db0}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!duration\_ms@{duration\_ms}}
+\index{duration\_ms@{duration\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{duration\_ms}{duration\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_adb209fa8194fd6671b06160d652b1db0} 
+uint16\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::duration\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00030}{30}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_add157fc1f0b3a203e80b345768b393fa}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!effect@{effect}}
+\index{effect@{effect}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{effect}{effect}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_add157fc1f0b3a203e80b345768b393fa} 
+\mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\+\_\+array\+\_\+effect\+\_\+t}} led\+\_\+array\+\_\+ctx\+\_\+t\+::effect}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00024}{24}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a2bb3523f53a76df003812df6e3933f6e}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!elapsed\_ms@{elapsed\_ms}}
+\index{elapsed\_ms@{elapsed\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{elapsed\_ms}{elapsed\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a2bb3523f53a76df003812df6e3933f6e} 
+uint32\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::elapsed\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00031}{31}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a6fd9f1d2788a9a221c32f0621e5112bc}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!initialized@{initialized}}
+\index{initialized@{initialized}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{initialized}{initialized}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a6fd9f1d2788a9a221c32f0621e5112bc} 
+bool led\+\_\+array\+\_\+ctx\+\_\+t\+::initialized}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00020}{20}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a4b79ac05dcae971971704ddfa4e3734d}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!last\_tick\_ms@{last\_tick\_ms}}
+\index{last\_tick\_ms@{last\_tick\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{last\_tick\_ms}{last\_tick\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a4b79ac05dcae971971704ddfa4e3734d} 
+uint32\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::last\+\_\+tick\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00023}{23}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a1b13b9082d342e259faff29ca4134f04}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!manual\_brightness@{manual\_brightness}}
+\index{manual\_brightness@{manual\_brightness}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{manual\_brightness}{manual\_brightness}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a1b13b9082d342e259faff29ca4134f04} 
+uint8\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::manual\+\_\+brightness\mbox{[}LED\+\_\+\+ARRAY\+\_\+\+COUNT\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00025}{25}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a5c6385ed55ace61500dd5b556d48a8ae}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!mask@{mask}}
+\index{mask@{mask}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{mask}{mask}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a5c6385ed55ace61500dd5b556d48a8ae} 
+uint8\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::mask}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00029}{29}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_af30dc7d6c6e7a33cd849a1c00c4df138}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!max\_pct@{max\_pct}}
+\index{max\_pct@{max\_pct}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{max\_pct}{max\_pct}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_af30dc7d6c6e7a33cd849a1c00c4df138} 
+uint8\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::max\+\_\+pct}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00038}{38}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a126cb7b893981199bb15502ef8611956}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!min\_pct@{min\_pct}}
+\index{min\_pct@{min\_pct}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{min\_pct}{min\_pct}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a126cb7b893981199bb15502ef8611956} 
+uint8\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::min\+\_\+pct}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00037}{37}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a8a322d14242be6328b0fe301e903d130}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!period\_ms@{period\_ms}}
+\index{period\_ms@{period\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{period\_ms}{period\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a8a322d14242be6328b0fe301e903d130} 
+uint16\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::period\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00036}{36}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a66dbf6d28ec93f75c1eeccd3027254cd}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!phase\_accum\_ms@{phase\_accum\_ms}}
+\index{phase\_accum\_ms@{phase\_accum\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{phase\_accum\_ms}{phase\_accum\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a66dbf6d28ec93f75c1eeccd3027254cd} 
+uint16\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::phase\+\_\+accum\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00046}{46}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_ac52e92a9e8e203a2bc67d28e7481851c}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!phase\_base@{phase\_base}}
+\index{phase\_base@{phase\_base}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{phase\_base}{phase\_base}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_ac52e92a9e8e203a2bc67d28e7481851c} 
+uint8\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::phase\+\_\+base}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00047}{47}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_aa6829f9a45bf3f712e6c9fb5ad22e3ec}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!step\_ms@{step\_ms}}
+\index{step\_ms@{step\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{step\_ms}{step\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_aa6829f9a45bf3f712e6c9fb5ad22e3ec} 
+uint16\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::step\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00043}{43}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a2b4c2dfe1eaf342fa9ed64c54aab670d}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!tick\_period\_ms@{tick\_period\_ms}}
+\index{tick\_period\_ms@{tick\_period\_ms}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{tick\_period\_ms}{tick\_period\_ms}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a2b4c2dfe1eaf342fa9ed64c54aab670d} 
+uint32\+\_\+t led\+\_\+array\+\_\+ctx\+\_\+t\+::tick\+\_\+period\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00022}{22}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+\Hypertarget{structled__array__ctx__t_a0f52ce51e28605e8bac98aa720fa9729}\index{led\_array\_ctx\_t@{led\_array\_ctx\_t}!timer\_running@{timer\_running}}
+\index{timer\_running@{timer\_running}!led\_array\_ctx\_t@{led\_array\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{timer\_running}{timer\_running}}
+{\footnotesize\ttfamily \label{structled__array__ctx__t_a0f52ce51e28605e8bac98aa720fa9729} 
+bool led\+\_\+array\+\_\+ctx\+\_\+t\+::timer\+\_\+running}
+
+
+
+Definicja w linii \mbox{\hyperlink{led__array__lib_8c_source_l00021}{21}} pliku \mbox{\hyperlink{led__array__lib_8c_source}{led\+\_\+array\+\_\+lib.\+c}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/led\+\_\+array\+\_\+lib/\mbox{\hyperlink{led__array__lib_8c}{led\+\_\+array\+\_\+lib.\+c}}\end{DoxyCompactItemize}

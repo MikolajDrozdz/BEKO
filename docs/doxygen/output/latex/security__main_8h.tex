@@ -1,0 +1,747 @@
+\doxysection{Dokumentacja pliku Core/\+App/security\+\_\+main.h}
+\hypertarget{security__main_8h}{}\label{security__main_8h}\index{Core/App/security\_main.h@{Core/App/security\_main.h}}
+
+
+Security domain task and command API.  
+
+
+{\ttfamily \#include "{}radio\+\_\+main.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structtrusted__info__t}{trusted\+\_\+info\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Public descriptor of one trusted pairing entry. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structsecurity__runtime__cfg__t}{security\+\_\+runtime\+\_\+cfg\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Persistent and runtime security settings snapshot. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}} \{ \mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134}{SECURITY\+\_\+\+NOTIFY\+\_\+\+POPUP}} = 0
+, \mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa}{SECURITY\+\_\+\+NOTIFY\+\_\+\+BADGE}} = 1
+ \}
+\begin{DoxyCompactList}\small\item\em UI delivery mode for security notifications. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}} \{ \mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+SHARED}} = 0
+, \mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+PAIR\+\_\+\+V1\+\_\+32}} = 1
+ \}
+\begin{DoxyCompactList}\small\item\em Key derivation mode used for LAVIET frame encryption and MAC keys. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{security__main_8h_a5e5d1fd009639cd21d5d6a03b5b2e45e}{security\+\_\+main\+\_\+create\+\_\+task}} (void)
+\begin{DoxyCompactList}\small\item\em Create the security task and command queue. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a425bac2da999ce76947e64ec50f72ef9}{security\+\_\+main\+\_\+cmd\+\_\+add\+\_\+device}} (uint32\+\_\+t node\+\_\+id, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}code, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Add or update a trusted device entry. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_af37f0b84768bbd0296afc2f093762eb4}{security\+\_\+main\+\_\+cmd\+\_\+add\+\_\+gateway}} (uint32\+\_\+t node\+\_\+id, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}code, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Add or update the gateway/master trusted entry. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a2a00c6cfe296e91d3415fbe32bde165b}{security\+\_\+main\+\_\+cmd\+\_\+delete\+\_\+device}} (uint32\+\_\+t node\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Delete a trusted device entry by node identifier. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_aeffd0652df1bd5ef3405f17fde25ee46}{security\+\_\+main\+\_\+cmd\+\_\+get\+\_\+device}} (uint8\+\_\+t idx, \mbox{\hyperlink{structtrusted__info__t}{trusted\+\_\+info\+\_\+t}} \texorpdfstring{$\ast$}{*}out)
+\begin{DoxyCompactList}\small\item\em Read one trusted device entry. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a445f2ffa986d1d58a8e12156b707dcef}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+coding}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Persist and apply protected/coded traffic setting. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a30ef1a7f5c57b29e2a7e407a7b5a0547}{security\+\_\+main\+\_\+cmd\+\_\+rotate\+\_\+key}} (void)
+\begin{DoxyCompactList}\small\item\em Rotate the current network key seed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a4d4763228cbd3a88becf8d04e3cfa787}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Persist and apply frequency hopping setting. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a31ab4ad96996bd450ebb874fafbb8c69}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh\+\_\+period}} (uint32\+\_\+t period\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Persist the frequency hopping period. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_afdc76a209f710b0d82c527f1aa02a0bf}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+notify\+\_\+mode}} (\mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}} mode)
+\begin{DoxyCompactList}\small\item\em Persist the preferred security notification mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_ac2726382f442cef00240e4a26e8b2435}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+lora\+\_\+preset}} (uint8\+\_\+t preset\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Persist the selected Lo\+Ra preset. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a6c986cdc0094108d8a80d2a914e8b92c}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Persist and apply automatic ping enable state. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_af14139ea0f2c92859a7b507da14478d9}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+period}} (uint32\+\_\+t period\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Persist the automatic ping period. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a907918d943b589ec9a6e1a053793525d}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+mode}} (\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} mode)
+\begin{DoxyCompactList}\small\item\em Persist the automatic ping payload mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a77c76eb3074f4d6ffd848f1644d59b54}{security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+radio\+\_\+runtime\+\_\+cfg}} (const \mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Persist a full radio runtime configuration snapshot. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a3f302ce6a78b4a956b7d00324729c1f2}{security\+\_\+main\+\_\+cmd\+\_\+get\+\_\+runtime\+\_\+cfg}} (\mbox{\hyperlink{structsecurity__runtime__cfg__t}{security\+\_\+runtime\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Read the current security runtime configuration. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a4a1e053738c3cce21920f949c108e268}{security\+\_\+main\+\_\+get\+\_\+network\+\_\+key}} (uint8\+\_\+t key\+\_\+out\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Copy the active 128-\/bit network key. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a795e3bb5f5fcabb53835162f95d67256}{security\+\_\+main\+\_\+get\+\_\+peer\+\_\+link\+\_\+key}} (uint32\+\_\+t local\+\_\+node\+\_\+id, uint32\+\_\+t peer\+\_\+node\+\_\+id, uint8\+\_\+t key\+\_\+out\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Derive a peer link key for two node identifiers. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_aa4189d6354ce14afa54109f0c4b313e7}{security\+\_\+main\+\_\+get\+\_\+frame\+\_\+keys\+\_\+mode}} (uint16\+\_\+t local\+\_\+id, uint16\+\_\+t peer\+\_\+id, \mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}} mode, uint8\+\_\+t enc\+\_\+key\+\_\+out\mbox{[}16\mbox{]}, uint8\+\_\+t hmac\+\_\+key\+\_\+out\mbox{[}32\mbox{]})
+\begin{DoxyCompactList}\small\item\em Derive frame encryption and HMAC keys using a selected mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a6a23f7cd61ee62ef92636d6278d0cad8}{security\+\_\+main\+\_\+get\+\_\+frame\+\_\+keys\+\_\+for\+\_\+code}} (uint16\+\_\+t local\+\_\+id, uint16\+\_\+t peer\+\_\+id, \mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}} mode, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}code, uint8\+\_\+t code\+\_\+len, uint8\+\_\+t enc\+\_\+key\+\_\+out\mbox{[}16\mbox{]}, uint8\+\_\+t hmac\+\_\+key\+\_\+out\mbox{[}32\mbox{]})
+\begin{DoxyCompactList}\small\item\em Derive frame keys from an explicit pairing code. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a62501ee7d71d2d76a2475b161c86a88d}{security\+\_\+main\+\_\+get\+\_\+frame\+\_\+keys}} (uint16\+\_\+t local\+\_\+id, uint16\+\_\+t peer\+\_\+id, bool use\+\_\+pair\+\_\+link, uint8\+\_\+t enc\+\_\+key\+\_\+out\mbox{[}16\mbox{]}, uint8\+\_\+t hmac\+\_\+key\+\_\+out\mbox{[}32\mbox{]})
+\begin{DoxyCompactList}\small\item\em Derive frame keys using either shared or pair-\/link material. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a94c9da553ec4db79b7fcf2a9d65ec40d}{security\+\_\+main\+\_\+get\+\_\+gateway\+\_\+counter}} (uint32\+\_\+t \texorpdfstring{$\ast$}{*}rx\+\_\+counter\+\_\+out, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tx\+\_\+counter\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Read persisted gateway RX/\+TX counters. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a9654b4edf718ae5c617a46ad4b32de8d}{security\+\_\+main\+\_\+commit\+\_\+gateway\+\_\+counter}} (uint32\+\_\+t rx\+\_\+counter, uint32\+\_\+t tx\+\_\+counter)
+\begin{DoxyCompactList}\small\item\em Persist gateway RX/\+TX counters after successful frame processing. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_a3a298bb9b01e50a594a79a3018a7eb66}{security\+\_\+main\+\_\+log\+\_\+message}} (int16\+\_\+t rssi\+\_\+dbm, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}payload, uint8\+\_\+t payload\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Append a received message to the protected message log. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{security__main_8h_ae37167b38ba5dda48e8bbdd7dda5ff59}{security\+\_\+main\+\_\+get\+\_\+tpm\+\_\+ready}} (bool \texorpdfstring{$\ast$}{*}ready\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Read whether TPM-\/backed services are ready. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Security domain task and command API. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{security__main_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{security__main_8h_a34060fea8432016b9cd4d2912e574771}\index{security\_main.h@{security\_main.h}!security\_frame\_key\_mode\_t@{security\_frame\_key\_mode\_t}}
+\index{security\_frame\_key\_mode\_t@{security\_frame\_key\_mode\_t}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_frame\_key\_mode\_t}{security\_frame\_key\_mode\_t}}
+{\footnotesize\ttfamily \label{security__main_8h_a34060fea8432016b9cd4d2912e574771} 
+enum \mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}}}
+
+
+
+Key derivation mode used for LAVIET frame encryption and MAC keys. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SECURITY\_FRAME\_KEY\_MODE\_SHARED@{SECURITY\_FRAME\_KEY\_MODE\_SHARED}!security\_main.h@{security\_main.h}}\index{security\_main.h@{security\_main.h}!SECURITY\_FRAME\_KEY\_MODE\_SHARED@{SECURITY\_FRAME\_KEY\_MODE\_SHARED}}}\Hypertarget{security__main_8h_a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5}\label{security__main_8h_a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5} 
+SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+SHARED&Use the shared frame root key. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SECURITY\_FRAME\_KEY\_MODE\_PAIR\_V1\_32@{SECURITY\_FRAME\_KEY\_MODE\_PAIR\_V1\_32}!security\_main.h@{security\_main.h}}\index{security\_main.h@{security\_main.h}!SECURITY\_FRAME\_KEY\_MODE\_PAIR\_V1\_32@{SECURITY\_FRAME\_KEY\_MODE\_PAIR\_V1\_32}}}\Hypertarget{security__main_8h_a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684}\label{security__main_8h_a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684} 
+SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+PAIR\+\_\+\+V1\+\_\+32&Derive keys from a 32-\/bit pair code. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00039}{39}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}\index{security\_main.h@{security\_main.h}!security\_notify\_mode\_t@{security\_notify\_mode\_t}}
+\index{security\_notify\_mode\_t@{security\_notify\_mode\_t}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_notify\_mode\_t}{security\_notify\_mode\_t}}
+{\footnotesize\ttfamily \label{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae} 
+enum \mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}}}
+
+
+
+UI delivery mode for security notifications. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SECURITY\_NOTIFY\_POPUP@{SECURITY\_NOTIFY\_POPUP}!security\_main.h@{security\_main.h}}\index{security\_main.h@{security\_main.h}!SECURITY\_NOTIFY\_POPUP@{SECURITY\_NOTIFY\_POPUP}}}\Hypertarget{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134}\label{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134} 
+SECURITY\+\_\+\+NOTIFY\+\_\+\+POPUP&Show notifications as popups. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{SECURITY\_NOTIFY\_BADGE@{SECURITY\_NOTIFY\_BADGE}!security\_main.h@{security\_main.h}}\index{security\_main.h@{security\_main.h}!SECURITY\_NOTIFY\_BADGE@{SECURITY\_NOTIFY\_BADGE}}}\Hypertarget{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa}\label{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa} 
+SECURITY\+\_\+\+NOTIFY\+\_\+\+BADGE&Prefer compact badge/status notifications. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00030}{30}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{security__main_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{security__main_8h_a425bac2da999ce76947e64ec50f72ef9}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_add\_device@{security\_main\_cmd\_add\_device}}
+\index{security\_main\_cmd\_add\_device@{security\_main\_cmd\_add\_device}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_add\_device()}{security\_main\_cmd\_add\_device()}}
+{\footnotesize\ttfamily \label{security__main_8h_a425bac2da999ce76947e64ec50f72ef9} 
+bool security\+\_\+main\+\_\+cmd\+\_\+add\+\_\+device (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{node\+\_\+id}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{code}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Add or update a trusted device entry. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em node\+\_\+id} & Trusted node identifier. \\
+\hline
+{\em code} & Pairing code bytes. \\
+\hline
+{\em len} & Pairing code length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00405}{405}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_af37f0b84768bbd0296afc2f093762eb4}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_add\_gateway@{security\_main\_cmd\_add\_gateway}}
+\index{security\_main\_cmd\_add\_gateway@{security\_main\_cmd\_add\_gateway}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_add\_gateway()}{security\_main\_cmd\_add\_gateway()}}
+{\footnotesize\ttfamily \label{security__main_8h_af37f0b84768bbd0296afc2f093762eb4} 
+bool security\+\_\+main\+\_\+cmd\+\_\+add\+\_\+gateway (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{node\+\_\+id}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{code}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Add or update the gateway/master trusted entry. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em node\+\_\+id} & Gateway node identifier. \\
+\hline
+{\em code} & Pairing code bytes. \\
+\hline
+{\em len} & Pairing code length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00423}{423}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a2a00c6cfe296e91d3415fbe32bde165b}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_delete\_device@{security\_main\_cmd\_delete\_device}}
+\index{security\_main\_cmd\_delete\_device@{security\_main\_cmd\_delete\_device}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_delete\_device()}{security\_main\_cmd\_delete\_device()}}
+{\footnotesize\ttfamily \label{security__main_8h_a2a00c6cfe296e91d3415fbe32bde165b} 
+bool security\+\_\+main\+\_\+cmd\+\_\+delete\+\_\+device (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{node\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Delete a trusted device entry by node identifier. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em node\+\_\+id} & Node identifier to remove. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00441}{441}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_aeffd0652df1bd5ef3405f17fde25ee46}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_get\_device@{security\_main\_cmd\_get\_device}}
+\index{security\_main\_cmd\_get\_device@{security\_main\_cmd\_get\_device}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_get\_device()}{security\_main\_cmd\_get\_device()}}
+{\footnotesize\ttfamily \label{security__main_8h_aeffd0652df1bd5ef3405f17fde25ee46} 
+bool security\+\_\+main\+\_\+cmd\+\_\+get\+\_\+device (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{idx}{, }\item[{\mbox{\hyperlink{structtrusted__info__t}{trusted\+\_\+info\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{out}{}\end{DoxyParamCaption})}
+
+
+
+Read one trusted device entry. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em idx} & Logical trusted-\/entry index. \\
+\hline
+{\em out} & \mbox{[}out\mbox{]} Destination descriptor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when a descriptor was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00453}{453}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a3f302ce6a78b4a956b7d00324729c1f2}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_get\_runtime\_cfg@{security\_main\_cmd\_get\_runtime\_cfg}}
+\index{security\_main\_cmd\_get\_runtime\_cfg@{security\_main\_cmd\_get\_runtime\_cfg}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_get\_runtime\_cfg()}{security\_main\_cmd\_get\_runtime\_cfg()}}
+{\footnotesize\ttfamily \label{security__main_8h_a3f302ce6a78b4a956b7d00324729c1f2} 
+bool security\+\_\+main\+\_\+cmd\+\_\+get\+\_\+runtime\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsecurity__runtime__cfg__t}{security\+\_\+runtime\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg\+\_\+out}{}\end{DoxyParamCaption})}
+
+
+
+Read the current security runtime configuration. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg\+\_\+out} & \mbox{[}out\mbox{]} Destination configuration snapshot. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the snapshot was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00590}{590}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a30ef1a7f5c57b29e2a7e407a7b5a0547}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_rotate\_key@{security\_main\_cmd\_rotate\_key}}
+\index{security\_main\_cmd\_rotate\_key@{security\_main\_cmd\_rotate\_key}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_rotate\_key()}{security\_main\_cmd\_rotate\_key()}}
+{\footnotesize\ttfamily \label{security__main_8h_a30ef1a7f5c57b29e2a7e407a7b5a0547} 
+bool security\+\_\+main\+\_\+cmd\+\_\+rotate\+\_\+key (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Rotate the current network key seed. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when key rotation completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00487}{487}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a6c986cdc0094108d8a80d2a914e8b92c}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_auto\_ping@{security\_main\_cmd\_set\_auto\_ping}}
+\index{security\_main\_cmd\_set\_auto\_ping@{security\_main\_cmd\_set\_auto\_ping}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_auto\_ping()}{security\_main\_cmd\_set\_auto\_ping()}}
+{\footnotesize\ttfamily \label{security__main_8h_a6c986cdc0094108d8a80d2a914e8b92c} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Persist and apply automatic ping enable state. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em enabled} & Desired auto-\/ping state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00541}{541}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a907918d943b589ec9a6e1a053793525d}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_auto\_ping\_mode@{security\_main\_cmd\_set\_auto\_ping\_mode}}
+\index{security\_main\_cmd\_set\_auto\_ping\_mode@{security\_main\_cmd\_set\_auto\_ping\_mode}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_auto\_ping\_mode()}{security\_main\_cmd\_set\_auto\_ping\_mode()}}
+{\footnotesize\ttfamily \label{security__main_8h_a907918d943b589ec9a6e1a053793525d} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+mode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}}}]{mode}{}\end{DoxyParamCaption})}
+
+
+
+Persist the automatic ping payload mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mode} & Payload mode. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00563}{563}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_af14139ea0f2c92859a7b507da14478d9}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_auto\_ping\_period@{security\_main\_cmd\_set\_auto\_ping\_period}}
+\index{security\_main\_cmd\_set\_auto\_ping\_period@{security\_main\_cmd\_set\_auto\_ping\_period}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_auto\_ping\_period()}{security\_main\_cmd\_set\_auto\_ping\_period()}}
+{\footnotesize\ttfamily \label{security__main_8h_af14139ea0f2c92859a7b507da14478d9} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+period (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Persist the automatic ping period. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em period\+\_\+ms} & Period in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00552}{552}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a445f2ffa986d1d58a8e12156b707dcef}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_coding@{security\_main\_cmd\_set\_coding}}
+\index{security\_main\_cmd\_set\_coding@{security\_main\_cmd\_set\_coding}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_coding()}{security\_main\_cmd\_set\_coding()}}
+{\footnotesize\ttfamily \label{security__main_8h_a445f2ffa986d1d58a8e12156b707dcef} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+coding (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Persist and apply protected/coded traffic setting. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em enabled} & Desired coding state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00476}{476}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a4d4763228cbd3a88becf8d04e3cfa787}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_fh@{security\_main\_cmd\_set\_fh}}
+\index{security\_main\_cmd\_set\_fh@{security\_main\_cmd\_set\_fh}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_fh()}{security\_main\_cmd\_set\_fh()}}
+{\footnotesize\ttfamily \label{security__main_8h_a4d4763228cbd3a88becf8d04e3cfa787} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Persist and apply frequency hopping setting. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em enabled} & Desired FH state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00497}{497}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a31ab4ad96996bd450ebb874fafbb8c69}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_fh\_period@{security\_main\_cmd\_set\_fh\_period}}
+\index{security\_main\_cmd\_set\_fh\_period@{security\_main\_cmd\_set\_fh\_period}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_fh\_period()}{security\_main\_cmd\_set\_fh\_period()}}
+{\footnotesize\ttfamily \label{security__main_8h_a31ab4ad96996bd450ebb874fafbb8c69} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh\+\_\+period (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Persist the frequency hopping period. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em period\+\_\+ms} & Period in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00508}{508}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_ac2726382f442cef00240e4a26e8b2435}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_lora\_preset@{security\_main\_cmd\_set\_lora\_preset}}
+\index{security\_main\_cmd\_set\_lora\_preset@{security\_main\_cmd\_set\_lora\_preset}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_lora\_preset()}{security\_main\_cmd\_set\_lora\_preset()}}
+{\footnotesize\ttfamily \label{security__main_8h_ac2726382f442cef00240e4a26e8b2435} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+lora\+\_\+preset (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{preset\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Persist the selected Lo\+Ra preset. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em preset\+\_\+id} & Preset index. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00530}{530}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_afdc76a209f710b0d82c527f1aa02a0bf}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_notify\_mode@{security\_main\_cmd\_set\_notify\_mode}}
+\index{security\_main\_cmd\_set\_notify\_mode@{security\_main\_cmd\_set\_notify\_mode}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_notify\_mode()}{security\_main\_cmd\_set\_notify\_mode()}}
+{\footnotesize\ttfamily \label{security__main_8h_afdc76a209f710b0d82c527f1aa02a0bf} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+notify\+\_\+mode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}}}]{mode}{}\end{DoxyParamCaption})}
+
+
+
+Persist the preferred security notification mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mode} & Notification display mode. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00519}{519}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a77c76eb3074f4d6ffd848f1644d59b54}\index{security\_main.h@{security\_main.h}!security\_main\_cmd\_set\_radio\_runtime\_cfg@{security\_main\_cmd\_set\_radio\_runtime\_cfg}}
+\index{security\_main\_cmd\_set\_radio\_runtime\_cfg@{security\_main\_cmd\_set\_radio\_runtime\_cfg}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_cmd\_set\_radio\_runtime\_cfg()}{security\_main\_cmd\_set\_radio\_runtime\_cfg()}}
+{\footnotesize\ttfamily \label{security__main_8h_a77c76eb3074f4d6ffd848f1644d59b54} 
+bool security\+\_\+main\+\_\+cmd\+\_\+set\+\_\+radio\+\_\+runtime\+\_\+cfg (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Persist a full radio runtime configuration snapshot. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg} & Runtime radio snapshot. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command completed successfully. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00574}{574}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a9654b4edf718ae5c617a46ad4b32de8d}\index{security\_main.h@{security\_main.h}!security\_main\_commit\_gateway\_counter@{security\_main\_commit\_gateway\_counter}}
+\index{security\_main\_commit\_gateway\_counter@{security\_main\_commit\_gateway\_counter}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_commit\_gateway\_counter()}{security\_main\_commit\_gateway\_counter()}}
+{\footnotesize\ttfamily \label{security__main_8h_a9654b4edf718ae5c617a46ad4b32de8d} 
+bool security\+\_\+main\+\_\+commit\+\_\+gateway\+\_\+counter (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{rx\+\_\+counter}{, }\item[{uint32\+\_\+t}]{tx\+\_\+counter}{}\end{DoxyParamCaption})}
+
+
+
+Persist gateway RX/\+TX counters after successful frame processing. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em rx\+\_\+counter} & RX counter to store. \\
+\hline
+{\em tx\+\_\+counter} & TX counter to store. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when counters were stored. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00852}{852}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a5e5d1fd009639cd21d5d6a03b5b2e45e}\index{security\_main.h@{security\_main.h}!security\_main\_create\_task@{security\_main\_create\_task}}
+\index{security\_main\_create\_task@{security\_main\_create\_task}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_create\_task()}{security\_main\_create\_task()}}
+{\footnotesize\ttfamily \label{security__main_8h_a5e5d1fd009639cd21d5d6a03b5b2e45e} 
+void security\+\_\+main\+\_\+create\+\_\+task (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create the security task and command queue. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00367}{367}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00057}{app\+\_\+freertos\+\_\+init()}}.
+
+\Hypertarget{security__main_8h_a62501ee7d71d2d76a2475b161c86a88d}\index{security\_main.h@{security\_main.h}!security\_main\_get\_frame\_keys@{security\_main\_get\_frame\_keys}}
+\index{security\_main\_get\_frame\_keys@{security\_main\_get\_frame\_keys}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_frame\_keys()}{security\_main\_get\_frame\_keys()}}
+{\footnotesize\ttfamily \label{security__main_8h_a62501ee7d71d2d76a2475b161c86a88d} 
+bool security\+\_\+main\+\_\+get\+\_\+frame\+\_\+keys (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{local\+\_\+id}{, }\item[{uint16\+\_\+t}]{peer\+\_\+id}{, }\item[{bool}]{use\+\_\+pair\+\_\+link}{, }\item[{uint8\+\_\+t}]{enc\+\_\+key\+\_\+out}{\mbox{[}16\mbox{]}, }\item[{uint8\+\_\+t}]{hmac\+\_\+key\+\_\+out}{\mbox{[}32\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Derive frame keys using either shared or pair-\/link material. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em local\+\_\+id} & Local frame node identifier. \\
+\hline
+{\em peer\+\_\+id} & Peer frame node identifier. \\
+\hline
+{\em use\+\_\+pair\+\_\+link} & Use peer link material instead of the shared root mode. \\
+\hline
+{\em enc\+\_\+key\+\_\+out} & \mbox{[}out\mbox{]} 128-\/bit encryption key. \\
+\hline
+{\em hmac\+\_\+key\+\_\+out} & \mbox{[}out\mbox{]} 256-\/bit HMAC key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when both keys were derived. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00816}{816}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00032}{LAVIET\+\_\+\+BROADCAST\+\_\+\+ID}}, \mbox{\hyperlink{security__main_8h_source_l00042}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+PAIR\+\_\+\+V1\+\_\+32}} i \mbox{\hyperlink{security__main_8h_source_l00041}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+SHARED}}.
+
+\Hypertarget{security__main_8h_a6a23f7cd61ee62ef92636d6278d0cad8}\index{security\_main.h@{security\_main.h}!security\_main\_get\_frame\_keys\_for\_code@{security\_main\_get\_frame\_keys\_for\_code}}
+\index{security\_main\_get\_frame\_keys\_for\_code@{security\_main\_get\_frame\_keys\_for\_code}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_frame\_keys\_for\_code()}{security\_main\_get\_frame\_keys\_for\_code()}}
+{\footnotesize\ttfamily \label{security__main_8h_a6a23f7cd61ee62ef92636d6278d0cad8} 
+bool security\+\_\+main\+\_\+get\+\_\+frame\+\_\+keys\+\_\+for\+\_\+code (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{local\+\_\+id}{, }\item[{uint16\+\_\+t}]{peer\+\_\+id}{, }\item[{\mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}}}]{mode}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{code}{, }\item[{uint8\+\_\+t}]{code\+\_\+len}{, }\item[{uint8\+\_\+t}]{enc\+\_\+key\+\_\+out}{\mbox{[}16\mbox{]}, }\item[{uint8\+\_\+t}]{hmac\+\_\+key\+\_\+out}{\mbox{[}32\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Derive frame keys from an explicit pairing code. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em local\+\_\+id} & Local frame node identifier. \\
+\hline
+{\em peer\+\_\+id} & Peer frame node identifier. \\
+\hline
+{\em mode} & Key derivation mode. \\
+\hline
+{\em code} & Pairing code bytes. \\
+\hline
+{\em code\+\_\+len} & Pairing code length. \\
+\hline
+{\em enc\+\_\+key\+\_\+out} & \mbox{[}out\mbox{]} 128-\/bit encryption key. \\
+\hline
+{\em hmac\+\_\+key\+\_\+out} & \mbox{[}out\mbox{]} 256-\/bit HMAC key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when both keys were derived. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00798}{798}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_aa4189d6354ce14afa54109f0c4b313e7}\index{security\_main.h@{security\_main.h}!security\_main\_get\_frame\_keys\_mode@{security\_main\_get\_frame\_keys\_mode}}
+\index{security\_main\_get\_frame\_keys\_mode@{security\_main\_get\_frame\_keys\_mode}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_frame\_keys\_mode()}{security\_main\_get\_frame\_keys\_mode()}}
+{\footnotesize\ttfamily \label{security__main_8h_aa4189d6354ce14afa54109f0c4b313e7} 
+bool security\+\_\+main\+\_\+get\+\_\+frame\+\_\+keys\+\_\+mode (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{local\+\_\+id}{, }\item[{uint16\+\_\+t}]{peer\+\_\+id}{, }\item[{\mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}}}]{mode}{, }\item[{uint8\+\_\+t}]{enc\+\_\+key\+\_\+out}{\mbox{[}16\mbox{]}, }\item[{uint8\+\_\+t}]{hmac\+\_\+key\+\_\+out}{\mbox{[}32\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Derive frame encryption and HMAC keys using a selected mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em local\+\_\+id} & Local frame node identifier. \\
+\hline
+{\em peer\+\_\+id} & Peer frame node identifier. \\
+\hline
+{\em mode} & Key derivation mode. \\
+\hline
+{\em enc\+\_\+key\+\_\+out} & \mbox{[}out\mbox{]} 128-\/bit encryption key. \\
+\hline
+{\em hmac\+\_\+key\+\_\+out} & \mbox{[}out\mbox{]} 256-\/bit HMAC key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when both keys were derived. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00782}{782}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a94c9da553ec4db79b7fcf2a9d65ec40d}\index{security\_main.h@{security\_main.h}!security\_main\_get\_gateway\_counter@{security\_main\_get\_gateway\_counter}}
+\index{security\_main\_get\_gateway\_counter@{security\_main\_get\_gateway\_counter}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_gateway\_counter()}{security\_main\_get\_gateway\_counter()}}
+{\footnotesize\ttfamily \label{security__main_8h_a94c9da553ec4db79b7fcf2a9d65ec40d} 
+bool security\+\_\+main\+\_\+get\+\_\+gateway\+\_\+counter (\begin{DoxyParamCaption}\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{rx\+\_\+counter\+\_\+out}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tx\+\_\+counter\+\_\+out}{}\end{DoxyParamCaption})}
+
+
+
+Read persisted gateway RX/\+TX counters. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em rx\+\_\+counter\+\_\+out} & \mbox{[}out\mbox{]} Last RX counter. \\
+\hline
+{\em tx\+\_\+counter\+\_\+out} & \mbox{[}out\mbox{]} Last TX counter. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when counters were copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00832}{832}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a4a1e053738c3cce21920f949c108e268}\index{security\_main.h@{security\_main.h}!security\_main\_get\_network\_key@{security\_main\_get\_network\_key}}
+\index{security\_main\_get\_network\_key@{security\_main\_get\_network\_key}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_network\_key()}{security\_main\_get\_network\_key()}}
+{\footnotesize\ttfamily \label{security__main_8h_a4a1e053738c3cce21920f949c108e268} 
+bool security\+\_\+main\+\_\+get\+\_\+network\+\_\+key (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{key\+\_\+out}{\mbox{[}16\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Copy the active 128-\/bit network key. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em key\+\_\+out} & \mbox{[}out\mbox{]} Destination key buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the key was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00612}{612}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a795e3bb5f5fcabb53835162f95d67256}\index{security\_main.h@{security\_main.h}!security\_main\_get\_peer\_link\_key@{security\_main\_get\_peer\_link\_key}}
+\index{security\_main\_get\_peer\_link\_key@{security\_main\_get\_peer\_link\_key}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_peer\_link\_key()}{security\_main\_get\_peer\_link\_key()}}
+{\footnotesize\ttfamily \label{security__main_8h_a795e3bb5f5fcabb53835162f95d67256} 
+bool security\+\_\+main\+\_\+get\+\_\+peer\+\_\+link\+\_\+key (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{local\+\_\+node\+\_\+id}{, }\item[{uint32\+\_\+t}]{peer\+\_\+node\+\_\+id}{, }\item[{uint8\+\_\+t}]{key\+\_\+out}{\mbox{[}16\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Derive a peer link key for two node identifiers. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em local\+\_\+node\+\_\+id} & Local node identifier. \\
+\hline
+{\em peer\+\_\+node\+\_\+id} & Peer node identifier. \\
+\hline
+{\em key\+\_\+out} & \mbox{[}out\mbox{]} Destination 128-\/bit key. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the key was derived. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00676}{676}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}.
+
+\Hypertarget{security__main_8h_ae37167b38ba5dda48e8bbdd7dda5ff59}\index{security\_main.h@{security\_main.h}!security\_main\_get\_tpm\_ready@{security\_main\_get\_tpm\_ready}}
+\index{security\_main\_get\_tpm\_ready@{security\_main\_get\_tpm\_ready}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_get\_tpm\_ready()}{security\_main\_get\_tpm\_ready()}}
+{\footnotesize\ttfamily \label{security__main_8h_ae37167b38ba5dda48e8bbdd7dda5ff59} 
+bool security\+\_\+main\+\_\+get\+\_\+tpm\+\_\+ready (\begin{DoxyParamCaption}\item[{bool \texorpdfstring{$\ast$}{*}}]{ready\+\_\+out}{}\end{DoxyParamCaption})}
+
+
+
+Read whether TPM-\/backed services are ready. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ready\+\_\+out} & \mbox{[}out\mbox{]} TPM readiness flag. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the flag was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00908}{908}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+
+\Hypertarget{security__main_8h_a3a298bb9b01e50a594a79a3018a7eb66}\index{security\_main.h@{security\_main.h}!security\_main\_log\_message@{security\_main\_log\_message}}
+\index{security\_main\_log\_message@{security\_main\_log\_message}!security\_main.h@{security\_main.h}}
+\doxysubsubsection{\texorpdfstring{security\_main\_log\_message()}{security\_main\_log\_message()}}
+{\footnotesize\ttfamily \label{security__main_8h_a3a298bb9b01e50a594a79a3018a7eb66} 
+bool security\+\_\+main\+\_\+log\+\_\+message (\begin{DoxyParamCaption}\item[{int16\+\_\+t}]{rssi\+\_\+dbm}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{payload}{, }\item[{uint8\+\_\+t}]{payload\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Append a received message to the protected message log. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em rssi\+\_\+dbm} & RSSI attached to the payload. \\
+\hline
+{\em payload} & Payload bytes. \\
+\hline
+{\em payload\+\_\+len} & Payload length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the log operation succeeded. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8c_source_l00879}{879}} pliku \mbox{\hyperlink{security__main_8c_source}{security\+\_\+main.\+c}}.
+

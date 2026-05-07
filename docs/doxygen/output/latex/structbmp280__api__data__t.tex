@@ -1,0 +1,111 @@
+\doxysection{Dokumentacja struktury bmp280\+\_\+api\+\_\+data\+\_\+t}
+\hypertarget{structbmp280__api__data__t}{}\label{structbmp280__api__data__t}\index{bmp280\_api\_data\_t@{bmp280\_api\_data\_t}}
+
+
+Cached measurement container.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/bmp280\+\_\+lib/bmp280\+\_\+api.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{structbmp280__api__data__t_a02cd22fc9f5ab4d56ad0a4030c32fbcc}{temperature\+\_\+c}}
+\begin{DoxyCompactList}\small\item\em Temperature in degrees Celsius. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{structbmp280__api__data__t_a42cce66fc55265a774bedb3128aa5560}{pressure\+\_\+pa}}
+\begin{DoxyCompactList}\small\item\em Pressure in Pascals. \end{DoxyCompactList}\item 
+float \mbox{\hyperlink{structbmp280__api__data__t_a2742b572bd5521f99fc8b82affabb999}{pressure\+\_\+hpa}}
+\begin{DoxyCompactList}\small\item\em Pressure in h\+Pa/mbar. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structbmp280__api__data__t_a89362d19f03fe20e8fea985654bca91d}{timestamp\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em {\ttfamily HAL\+\_\+\+Get\+Tick()} timestamp of the last successful measurement. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structbmp280__api__data__t_a59be9da411615bd0bfe28d578b6a0176}{valid}}
+\begin{DoxyCompactList}\small\item\em Set after the first successful measurement. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Cached measurement container. 
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8h_source_l00020}{20}} pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structbmp280__api__data__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structbmp280__api__data__t_a2742b572bd5521f99fc8b82affabb999}\index{bmp280\_api\_data\_t@{bmp280\_api\_data\_t}!pressure\_hpa@{pressure\_hpa}}
+\index{pressure\_hpa@{pressure\_hpa}!bmp280\_api\_data\_t@{bmp280\_api\_data\_t}}
+\doxysubsubsection{\texorpdfstring{pressure\_hpa}{pressure\_hpa}}
+{\footnotesize\ttfamily \label{structbmp280__api__data__t_a2742b572bd5521f99fc8b82affabb999} 
+float bmp280\+\_\+api\+\_\+data\+\_\+t\+::pressure\+\_\+hpa}
+
+
+
+Pressure in h\+Pa/mbar. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8h_source_l00024}{24}} pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+\Hypertarget{structbmp280__api__data__t_a42cce66fc55265a774bedb3128aa5560}\index{bmp280\_api\_data\_t@{bmp280\_api\_data\_t}!pressure\_pa@{pressure\_pa}}
+\index{pressure\_pa@{pressure\_pa}!bmp280\_api\_data\_t@{bmp280\_api\_data\_t}}
+\doxysubsubsection{\texorpdfstring{pressure\_pa}{pressure\_pa}}
+{\footnotesize\ttfamily \label{structbmp280__api__data__t_a42cce66fc55265a774bedb3128aa5560} 
+float bmp280\+\_\+api\+\_\+data\+\_\+t\+::pressure\+\_\+pa}
+
+
+
+Pressure in Pascals. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8h_source_l00023}{23}} pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+\Hypertarget{structbmp280__api__data__t_a02cd22fc9f5ab4d56ad0a4030c32fbcc}\index{bmp280\_api\_data\_t@{bmp280\_api\_data\_t}!temperature\_c@{temperature\_c}}
+\index{temperature\_c@{temperature\_c}!bmp280\_api\_data\_t@{bmp280\_api\_data\_t}}
+\doxysubsubsection{\texorpdfstring{temperature\_c}{temperature\_c}}
+{\footnotesize\ttfamily \label{structbmp280__api__data__t_a02cd22fc9f5ab4d56ad0a4030c32fbcc} 
+float bmp280\+\_\+api\+\_\+data\+\_\+t\+::temperature\+\_\+c}
+
+
+
+Temperature in degrees Celsius. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8h_source_l00022}{22}} pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+\Hypertarget{structbmp280__api__data__t_a89362d19f03fe20e8fea985654bca91d}\index{bmp280\_api\_data\_t@{bmp280\_api\_data\_t}!timestamp\_ms@{timestamp\_ms}}
+\index{timestamp\_ms@{timestamp\_ms}!bmp280\_api\_data\_t@{bmp280\_api\_data\_t}}
+\doxysubsubsection{\texorpdfstring{timestamp\_ms}{timestamp\_ms}}
+{\footnotesize\ttfamily \label{structbmp280__api__data__t_a89362d19f03fe20e8fea985654bca91d} 
+uint32\+\_\+t bmp280\+\_\+api\+\_\+data\+\_\+t\+::timestamp\+\_\+ms}
+
+
+
+{\ttfamily HAL\+\_\+\+Get\+Tick()} timestamp of the last successful measurement. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8h_source_l00025}{25}} pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+\Hypertarget{structbmp280__api__data__t_a59be9da411615bd0bfe28d578b6a0176}\index{bmp280\_api\_data\_t@{bmp280\_api\_data\_t}!valid@{valid}}
+\index{valid@{valid}!bmp280\_api\_data\_t@{bmp280\_api\_data\_t}}
+\doxysubsubsection{\texorpdfstring{valid}{valid}}
+{\footnotesize\ttfamily \label{structbmp280__api__data__t_a59be9da411615bd0bfe28d578b6a0176} 
+bool bmp280\+\_\+api\+\_\+data\+\_\+t\+::valid}
+
+
+
+Set after the first successful measurement. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8h_source_l00026}{26}} pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/bmp280\+\_\+lib/\mbox{\hyperlink{bmp280__api_8h}{bmp280\+\_\+api.\+h}}\end{DoxyCompactItemize}

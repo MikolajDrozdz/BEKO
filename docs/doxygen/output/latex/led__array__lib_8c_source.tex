@@ -1,0 +1,722 @@
+\doxysection{led\+\_\+array\+\_\+lib.\+c}
+\hypertarget{led__array__lib_8c_source}{}\label{led__array__lib_8c_source}\index{Core/App/led\_array\_lib/led\_array\_lib.c@{Core/App/led\_array\_lib/led\_array\_lib.c}}
+\mbox{\hyperlink{led__array__lib_8c}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00006}00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{led__array__lib_8h}{led\_array\_lib.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00008}00008\ \textcolor{preprocessor}{\#include\ "{}cmsis\_os2.h"{}}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <string.h>}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00012}00012\ \textcolor{preprocessor}{\#define\ LED\_ARRAY\_COUNT\ \ \ \ \ \ \ \ \ \ \ \ 5U}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00013}00013\ \textcolor{preprocessor}{\#define\ LED\_ARRAY\_VALID\_MASK\ \ \ \ \ \ \ LED\_ARRAY\_LED\_ALL}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00014}00014\ \textcolor{preprocessor}{\#define\ LED\_ARRAY\_RAINBOW\_PHASE\_INC\ 8U}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00015}00015\ \textcolor{preprocessor}{\#define\ LED\_ARRAY\_PWM\_FREQ\_HZ\ \ \ \ \ \ 20000U}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00016}00016\ \textcolor{preprocessor}{\#define\ LED\_ARRAY\_PWM\_STEPS\ \ \ \ \ \ \ \ 100U}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00018}\mbox{\hyperlink{structled__array__ctx__t}{00018}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00019}00019\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00020}00020\ \ \ \ \ \textcolor{keywordtype}{bool}\ initialized;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00021}00021\ \ \ \ \ \textcolor{keywordtype}{bool}\ timer\_running;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00022}00022\ \ \ \ \ uint32\_t\ tick\_period\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00023}00023\ \ \ \ \ uint32\_t\ last\_tick\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00024}00024\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\_array\_effect\_t}}\ effect;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00025}00025\ \ \ \ \ uint8\_t\ manual\_brightness[LED\_ARRAY\_COUNT];}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00026}00026\ \ \ \ \ uint8\_t\ active\_brightness[LED\_ARRAY\_COUNT];}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00027}00027\ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00028}00028\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00029}00029\ \ \ \ \ \ \ \ \ uint8\_t\ mask;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00030}00030\ \ \ \ \ \ \ \ \ uint16\_t\ duration\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00031}00031\ \ \ \ \ \ \ \ \ uint32\_t\ elapsed\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00032}00032\ \ \ \ \ \}\ fade;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00033}00033\ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00034}00034\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00035}00035\ \ \ \ \ \ \ \ \ uint8\_t\ mask;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00036}00036\ \ \ \ \ \ \ \ \ uint16\_t\ period\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00037}00037\ \ \ \ \ \ \ \ \ uint8\_t\ min\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00038}00038\ \ \ \ \ \ \ \ \ uint8\_t\ max\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00039}00039\ \ \ \ \ \ \ \ \ uint32\_t\ elapsed\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00040}00040\ \ \ \ \ \}\ breath;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00041}00041\ \ \ \ \ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00042}00042\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00043}00043\ \ \ \ \ \ \ \ \ uint16\_t\ step\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00044}00044\ \ \ \ \ \ \ \ \ uint8\_t\ min\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00045}00045\ \ \ \ \ \ \ \ \ uint8\_t\ max\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00046}00046\ \ \ \ \ \ \ \ \ uint16\_t\ phase\_accum\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00047}00047\ \ \ \ \ \ \ \ \ uint8\_t\ phase\_base;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00048}00048\ \ \ \ \ \}\ rainbow;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00049}00049\ \}\ \mbox{\hyperlink{structled__array__ctx__t}{led\_array\_ctx\_t}};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00050}00050\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00051}00051\ \textcolor{keyword}{static}\ \mbox{\hyperlink{structled__array__ctx__t}{led\_array\_ctx\_t}}\ s\_led;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00054}\mbox{\hyperlink{led__array__lib_8c_af828652b045761d59758c0d70e0c4b52}{00054}}\ \textcolor{keyword}{static}\ uint32\_t\ \mbox{\hyperlink{led__array__lib_8c_af828652b045761d59758c0d70e0c4b52}{led\_array\_now\_ms}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00055}00055\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00056}00056\ \ \ \ \ osKernelState\_t\ state;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00057}00057\ \ \ \ \ uint32\_t\ tick\_hz;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00058}00058\ \ \ \ \ uint32\_t\ tick\_count;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00060}00060\ \ \ \ \ state\ =\ osKernelGetState();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00061}00061\ \ \ \ \ \textcolor{keywordflow}{if}\ ((state\ ==\ osKernelRunning)\ ||\ (state\ ==\ osKernelLocked))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00062}00062\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00063}00063\ \ \ \ \ \ \ \ \ tick\_hz\ =\ osKernelGetTickFreq();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00064}00064\ \ \ \ \ \ \ \ \ tick\_count\ =\ osKernelGetTickCount();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00065}00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (tick\_hz\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00066}00066\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ tick\_count;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00068}00068\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00069}00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint32\_t)(((uint64\_t)tick\_count\ *\ 1000ULL)\ /\ (uint64\_t)tick\_hz);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00070}00070\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00071}00071\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00072}00072\ \ \ \ \ \textcolor{keywordflow}{return}\ HAL\_GetTick();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00073}00073\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00076}\mbox{\hyperlink{led__array__lib_8c_aa600c42ee02c68ee98398458d2f90ff5}{00076}}\ \textcolor{keyword}{static}\ uint32\_t\ \mbox{\hyperlink{led__array__lib_8c_aa600c42ee02c68ee98398458d2f90ff5}{led\_array\_get\_tim\_clock}}(TIM\_TypeDef\ *tim)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00077}00077\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00078}00078\ \ \ \ \ uint32\_t\ pclk;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00079}00079\ \ \ \ \ uint32\_t\ timer\_clock;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00080}00080\ \ \ \ \ RCC\_ClkInitTypeDef\ clk\_cfg;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00081}00081\ \ \ \ \ uint32\_t\ flash\_latency;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00083}00083\ \ \ \ \ HAL\_RCC\_GetClockConfig(\&clk\_cfg,\ \&flash\_latency);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00085}00085\ \ \ \ \ \textcolor{keywordflow}{if}\ ((tim\ ==\ TIM2)\ ||\ (tim\ ==\ TIM3))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00086}00086\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00087}00087\ \ \ \ \ \ \ \ \ pclk\ =\ HAL\_RCC\_GetPCLK1Freq();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00088}00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (clk\_cfg.APB1CLKDivider\ ==\ RCC\_HCLK\_DIV1)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00089}00089\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ \ timer\_clock\ =\ pclk;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00091}00091\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00093}00093\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ timer\_clock\ =\ pclk\ *\ 2U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00095}00095\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00096}00096\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00097}00097\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00098}00098\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00099}00099\ \ \ \ \ \ \ \ \ pclk\ =\ HAL\_RCC\_GetPCLK2Freq();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00100}00100\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (clk\_cfg.APB2CLKDivider\ ==\ RCC\_HCLK\_DIV1)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00101}00101\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ timer\_clock\ =\ pclk;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00103}00103\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00104}00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00105}00105\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ timer\_clock\ =\ pclk\ *\ 2U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00107}00107\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00108}00108\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00109}00109\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00110}00110\ \ \ \ \ \textcolor{keywordflow}{return}\ timer\_clock;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00111}00111\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00112}00112\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00114}\mbox{\hyperlink{led__array__lib_8c_ab86515802d995ea96ca45547bff98df9}{00114}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_ab86515802d995ea96ca45547bff98df9}{led\_array\_timer\_base\_init}}(TIM\_TypeDef\ *tim)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00115}00115\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00116}00116\ \ \ \ \ uint32\_t\ tim\_clk;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00117}00117\ \ \ \ \ uint32\_t\ ticks\_per\_period;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00118}00118\ \ \ \ \ uint32\_t\ psc;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00119}00119\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00120}00120\ \ \ \ \ tim\_clk\ =\ \mbox{\hyperlink{led__array__lib_8c_aa600c42ee02c68ee98398458d2f90ff5}{led\_array\_get\_tim\_clock}}(tim);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00121}00121\ \ \ \ \ ticks\_per\_period\ =\ LED\_ARRAY\_PWM\_FREQ\_HZ\ *\ LED\_ARRAY\_PWM\_STEPS;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00122}00122\ \ \ \ \ \textcolor{keywordflow}{if}\ ((ticks\_per\_period\ ==\ 0U)\ ||\ (tim\_clk\ ==\ 0U))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00123}00123\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00124}00124\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00125}00125\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00127}00127\ \ \ \ \ psc\ =\ tim\_clk\ /\ ticks\_per\_period;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00128}00128\ \ \ \ \ \textcolor{keywordflow}{if}\ (psc\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00129}00129\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00130}00130\ \ \ \ \ \ \ \ \ psc\ =\ 1U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00131}00131\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00132}00132\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00133}00133\ \ \ \ \ tim-\/>CR1\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00134}00134\ \ \ \ \ tim-\/>PSC\ =\ (uint16\_t)(psc\ -\/\ 1U);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00135}00135\ \ \ \ \ tim-\/>ARR\ =\ (uint32\_t)(LED\_ARRAY\_PWM\_STEPS\ -\/\ 1U);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00136}00136\ \ \ \ \ tim-\/>EGR\ =\ TIM\_EGR\_UG;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00137}00137\ \ \ \ \ tim-\/>CR1\ |=\ TIM\_CR1\_ARPE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00138}00138\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00141}\mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{00141}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{led\_array\_timer\_pwm\_ch\_init}}(TIM\_TypeDef\ *tim,\ uint8\_t\ channel)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00142}00142\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00143}00143\ \ \ \ \ \textcolor{keywordflow}{if}\ (channel\ ==\ 1U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00144}00144\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00145}00145\ \ \ \ \ \ \ \ \ tim-\/>CCMR1\ \&=\ \string~(TIM\_CCMR1\_OC1M\_Msk\ |\ TIM\_CCMR1\_CC1S\_Msk);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00146}00146\ \ \ \ \ \ \ \ \ tim-\/>CCMR1\ |=\ (6U\ <<\ TIM\_CCMR1\_OC1M\_Pos)\ |\ TIM\_CCMR1\_OC1PE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00147}00147\ \ \ \ \ \ \ \ \ tim-\/>CCER\ |=\ TIM\_CCER\_CC1E;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00148}00148\ \ \ \ \ \ \ \ \ tim-\/>CCR1\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00149}00149\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00150}00150\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (channel\ ==\ 2U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00151}00151\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00152}00152\ \ \ \ \ \ \ \ \ tim-\/>CCMR1\ \&=\ \string~(TIM\_CCMR1\_OC2M\_Msk\ |\ TIM\_CCMR1\_CC2S\_Msk);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00153}00153\ \ \ \ \ \ \ \ \ tim-\/>CCMR1\ |=\ (6U\ <<\ TIM\_CCMR1\_OC2M\_Pos)\ |\ TIM\_CCMR1\_OC2PE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00154}00154\ \ \ \ \ \ \ \ \ tim-\/>CCER\ |=\ TIM\_CCER\_CC2E;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00155}00155\ \ \ \ \ \ \ \ \ tim-\/>CCR2\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00156}00156\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00157}00157\ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (channel\ ==\ 3U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00158}00158\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00159}00159\ \ \ \ \ \ \ \ \ tim-\/>CCMR2\ \&=\ \string~(TIM\_CCMR2\_OC3M\_Msk\ |\ TIM\_CCMR2\_CC3S\_Msk);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00160}00160\ \ \ \ \ \ \ \ \ tim-\/>CCMR2\ |=\ (6U\ <<\ TIM\_CCMR2\_OC3M\_Pos)\ |\ TIM\_CCMR2\_OC3PE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00161}00161\ \ \ \ \ \ \ \ \ tim-\/>CCER\ |=\ TIM\_CCER\_CC3E;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00162}00162\ \ \ \ \ \ \ \ \ tim-\/>CCR3\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00163}00163\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00164}00164\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00165}00165\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00167}\mbox{\hyperlink{led__array__lib_8c_a306655382a98525fdecd8e74e4c092fe}{00167}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a306655382a98525fdecd8e74e4c092fe}{led\_array\_hw\_init}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00168}00168\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00169}00169\ \ \ \ \ GPIO\_InitTypeDef\ gpio\ =\ \{0\};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00170}00170\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00171}00171\ \ \ \ \ \_\_HAL\_RCC\_GPIOA\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00172}00172\ \ \ \ \ \_\_HAL\_RCC\_GPIOB\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00173}00173\ \ \ \ \ \_\_HAL\_RCC\_GPIOC\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00174}00174\ \ \ \ \ \_\_HAL\_RCC\_TIM1\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00175}00175\ \ \ \ \ \_\_HAL\_RCC\_TIM2\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00176}00176\ \ \ \ \ \_\_HAL\_RCC\_TIM3\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00177}00177\ \ \ \ \ \_\_HAL\_RCC\_TIM8\_CLK\_ENABLE();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00178}00178\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00179}00179\ \ \ \ \ gpio.Mode\ =\ GPIO\_MODE\_AF\_PP;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00180}00180\ \ \ \ \ gpio.Pull\ =\ GPIO\_NOPULL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00181}00181\ \ \ \ \ gpio.Speed\ =\ GPIO\_SPEED\_FREQ\_HIGH;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00182}00182\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00183}00183\ \ \ \ \ gpio.Pin\ =\ GPIO\_PIN\_7;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00184}00184\ \ \ \ \ gpio.Alternate\ =\ GPIO\_AF3\_TIM8;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00185}00185\ \ \ \ \ HAL\_GPIO\_Init(GPIOC,\ \&gpio);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00186}00186\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00187}00187\ \ \ \ \ gpio.Pin\ =\ GPIO\_PIN\_8;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00188}00188\ \ \ \ \ gpio.Alternate\ =\ GPIO\_AF1\_TIM1;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00189}00189\ \ \ \ \ HAL\_GPIO\_Init(GPIOA,\ \&gpio);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00190}00190\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00191}00191\ \ \ \ \ gpio.Pin\ =\ GPIO\_PIN\_10;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00192}00192\ \ \ \ \ gpio.Alternate\ =\ GPIO\_AF1\_TIM2;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00193}00193\ \ \ \ \ HAL\_GPIO\_Init(GPIOB,\ \&gpio);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00194}00194\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00195}00195\ \ \ \ \ gpio.Pin\ =\ GPIO\_PIN\_4\ |\ GPIO\_PIN\_5;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00196}00196\ \ \ \ \ gpio.Alternate\ =\ GPIO\_AF2\_TIM3;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00197}00197\ \ \ \ \ HAL\_GPIO\_Init(GPIOB,\ \&gpio);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00198}00198\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00199}00199\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ab86515802d995ea96ca45547bff98df9}{led\_array\_timer\_base\_init}}(TIM1);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00200}00200\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ab86515802d995ea96ca45547bff98df9}{led\_array\_timer\_base\_init}}(TIM2);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00201}00201\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ab86515802d995ea96ca45547bff98df9}{led\_array\_timer\_base\_init}}(TIM3);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00202}00202\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ab86515802d995ea96ca45547bff98df9}{led\_array\_timer\_base\_init}}(TIM8);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00203}00203\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00204}00204\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{led\_array\_timer\_pwm\_ch\_init}}(TIM8,\ 2U);\ \textcolor{comment}{/*\ PC7\ \ */}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00205}00205\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{led\_array\_timer\_pwm\_ch\_init}}(TIM1,\ 1U);\ \textcolor{comment}{/*\ PA8\ \ */}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00206}00206\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{led\_array\_timer\_pwm\_ch\_init}}(TIM2,\ 3U);\ \textcolor{comment}{/*\ PB10\ */}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00207}00207\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{led\_array\_timer\_pwm\_ch\_init}}(TIM3,\ 1U);\ \textcolor{comment}{/*\ PB4\ \ */}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00208}00208\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_afbdde7ae555f0df160a7fd211e03da98}{led\_array\_timer\_pwm\_ch\_init}}(TIM3,\ 2U);\ \textcolor{comment}{/*\ PB5\ \ */}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00209}00209\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00210}00210\ \ \ \ \ TIM1-\/>BDTR\ |=\ TIM\_BDTR\_MOE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00211}00211\ \ \ \ \ TIM8-\/>BDTR\ |=\ TIM\_BDTR\_MOE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00212}00212\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00213}00213\ \ \ \ \ TIM1-\/>CR1\ |=\ TIM\_CR1\_CEN;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00214}00214\ \ \ \ \ TIM2-\/>CR1\ |=\ TIM\_CR1\_CEN;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00215}00215\ \ \ \ \ TIM3-\/>CR1\ |=\ TIM\_CR1\_CEN;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00216}00216\ \ \ \ \ TIM8-\/>CR1\ |=\ TIM\_CR1\_CEN;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00217}00217\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00218}00218\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00220}\mbox{\hyperlink{led__array__lib_8c_a2cd79fc279cbdd67db847cb56f19d482}{00220}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a2cd79fc279cbdd67db847cb56f19d482}{led\_array\_set\_hw\_duty}}(uint8\_t\ index,\ uint8\_t\ pct)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00221}00221\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00222}00222\ \ \ \ \ uint32\_t\ ccr;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00223}00223\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00224}00224\ \ \ \ \ \textcolor{keywordflow}{if}\ (pct\ >\ 100U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00225}00225\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00226}00226\ \ \ \ \ \ \ \ \ pct\ =\ 100U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00227}00227\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00228}00228\ \ \ \ \ ccr\ =\ ((uint32\_t)pct\ *\ (LED\_ARRAY\_PWM\_STEPS\ -\/\ 1U))\ /\ 100U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00229}00229\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00230}00230\ \ \ \ \ \textcolor{keywordflow}{switch}\ (index)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00231}00231\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00232}00232\ \ \ \ \ \textcolor{keywordflow}{case}\ 0U:\ TIM8-\/>CCR2\ =\ ccr;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00233}00233\ \ \ \ \ \textcolor{keywordflow}{case}\ 1U:\ TIM1-\/>CCR1\ =\ ccr;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00234}00234\ \ \ \ \ \textcolor{keywordflow}{case}\ 2U:\ TIM2-\/>CCR3\ =\ ccr;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00235}00235\ \ \ \ \ \textcolor{keywordflow}{case}\ 3U:\ TIM3-\/>CCR1\ =\ ccr;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00236}00236\ \ \ \ \ \textcolor{keywordflow}{case}\ 4U:\ TIM3-\/>CCR2\ =\ ccr;\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00237}00237\ \ \ \ \ \textcolor{keywordflow}{default}:\ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00238}00238\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00239}00239\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00240}00240\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00242}\mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{00242}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{led\_array\_mask\_valid}}(uint8\_t\ mask)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00243}00243\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00244}00244\ \ \ \ \ \textcolor{keywordflow}{if}\ ((mask\ ==\ 0U)\ ||\ ((mask\ \&\ (uint8\_t)(\string~LED\_ARRAY\_VALID\_MASK))\ !=\ 0U))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00245}00245\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00246}00246\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00247}00247\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00248}00248\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00249}00249\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00250}00250\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00252}\mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{00252}}\ \textcolor{keyword}{static}\ uint8\_t\ \mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{led\_array\_clamp\_pct}}(uint8\_t\ value)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00253}00253\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00254}00254\ \ \ \ \ \textcolor{keywordflow}{return}\ (value\ >\ 100U)\ ?\ 100U\ :\ value;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00255}00255\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00256}00256\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00258}\mbox{\hyperlink{led__array__lib_8c_ad553be923ababc372373d8839965e451}{00258}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_ad553be923ababc372373d8839965e451}{led\_array\_write\_pin}}(uint8\_t\ index,\ GPIO\_PinState\ state)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00259}00259\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00260}00260\ \ \ \ \ \textcolor{keywordflow}{if}\ (state\ ==\ GPIO\_PIN\_SET)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00261}00261\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00262}00262\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a2cd79fc279cbdd67db847cb56f19d482}{led\_array\_set\_hw\_duty}}(index,\ 100U);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00263}00263\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00264}00264\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00265}00265\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00266}00266\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a2cd79fc279cbdd67db847cb56f19d482}{led\_array\_set\_hw\_duty}}(index,\ 0U);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00267}00267\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00268}00268\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00269}00269\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00271}\mbox{\hyperlink{led__array__lib_8c_a0c9c55ea41793007941b1d26907c62e8}{00271}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a0c9c55ea41793007941b1d26907c62e8}{led\_array\_apply\_outputs}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00272}00272\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00273}00273\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00274}00274\ \ \ \ \ uint8\_t\ b;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00275}00275\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00276}00276\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00277}00277\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00278}00278\ \ \ \ \ \ \ \ \ b\ =\ s\_led.active\_brightness[i];}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00279}00279\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a2cd79fc279cbdd67db847cb56f19d482}{led\_array\_set\_hw\_duty}}(i,\ b);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00280}00280\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00281}00281\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00282}00282\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00284}\mbox{\hyperlink{led__array__lib_8c_a1f7453348ff3aa75662337c41354297f}{00284}}\ \textcolor{keyword}{static}\ uint8\_t\ \mbox{\hyperlink{led__array__lib_8c_a1f7453348ff3aa75662337c41354297f}{led\_array\_tri8}}(uint8\_t\ phase)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00285}00285\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00286}00286\ \ \ \ \ \textcolor{keywordflow}{if}\ (phase\ <\ 128U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00287}00287\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00288}00288\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t)(phase\ <<\ 1);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00289}00289\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00290}00290\ \ \ \ \ \textcolor{keywordflow}{return}\ (uint8\_t)((255U\ -\/\ phase)\ <<\ 1);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00291}00291\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00292}00292\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00294}\mbox{\hyperlink{led__array__lib_8c_ada6f43df770591d756ed0f91ad2c0ea6}{00294}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_ada6f43df770591d756ed0f91ad2c0ea6}{led\_array\_effect\_none}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00295}00295\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00296}00296\ \ \ \ \ memcpy(s\_led.active\_brightness,\ s\_led.manual\_brightness,\ \textcolor{keyword}{sizeof}(s\_led.active\_brightness));}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00297}00297\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00298}00298\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00300}\mbox{\hyperlink{led__array__lib_8c_a40d2a326194b61fbb53842261d7af8e1}{00300}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a40d2a326194b61fbb53842261d7af8e1}{led\_array\_effect\_fade\_update}}(uint32\_t\ delta\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00301}00301\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00302}00302\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00303}00303\ \ \ \ \ uint32\_t\ remain;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00304}00304\ \ \ \ \ uint32\_t\ level;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00305}00305\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00306}00306\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_led.fade.duration\_ms\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00307}00307\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00308}00308\ \ \ \ \ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00309}00309\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ada6f43df770591d756ed0f91ad2c0ea6}{led\_array\_effect\_none}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00310}00310\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00311}00311\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00312}00312\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00313}00313\ \ \ \ \ s\_led.fade.elapsed\_ms\ +=\ delta\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00314}00314\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_led.fade.elapsed\_ms\ >=\ s\_led.fade.duration\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00315}00315\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00316}00316\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00317}00317\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00318}00318\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((s\_led.fade.mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00319}00319\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00320}00320\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.manual\_brightness[i]\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00321}00321\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00322}00322\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00323}00323\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00324}00324\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00325}00325\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ s\_led.manual\_brightness[i];}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00326}00326\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00327}00327\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00328}00328\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00329}00329\ \ \ \ \ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00330}00330\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00331}00331\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00332}00332\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00333}00333\ \ \ \ \ remain\ =\ (uint32\_t)s\_led.fade.duration\_ms\ -\/\ s\_led.fade.elapsed\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00334}00334\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00335}00335\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00336}00336\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00337}00337\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((s\_led.fade.mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00338}00338\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00339}00339\ \ \ \ \ \ \ \ \ \ \ \ \ level\ =\ (100U\ *\ remain)\ /\ (uint32\_t)s\_led.fade.duration\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00340}00340\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ (uint8\_t)level;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00341}00341\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00342}00342\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00343}00343\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00344}00344\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ s\_led.manual\_brightness[i];}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00345}00345\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00346}00346\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00347}00347\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00348}00348\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00350}\mbox{\hyperlink{led__array__lib_8c_aa04ac7b2641932d9d5e0a10fce49b679}{00350}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_aa04ac7b2641932d9d5e0a10fce49b679}{led\_array\_effect\_breath\_update}}(uint32\_t\ delta\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00351}00351\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00352}00352\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00353}00353\ \ \ \ \ uint32\_t\ half;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00354}00354\ \ \ \ \ uint32\_t\ phase;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00355}00355\ \ \ \ \ uint32\_t\ tri;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00356}00356\ \ \ \ \ uint32\_t\ range;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00357}00357\ \ \ \ \ uint8\_t\ level;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00358}00358\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00359}00359\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_led.breath.period\_ms\ <\ 2U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00360}00360\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00361}00361\ \ \ \ \ \ \ \ \ s\_led.breath.period\_ms\ =\ 2U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00362}00362\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00363}00363\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00364}00364\ \ \ \ \ s\_led.breath.elapsed\_ms\ =\ (s\_led.breath.elapsed\_ms\ +\ delta\_ms)\ \%\ s\_led.breath.period\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00365}00365\ \ \ \ \ half\ =\ s\_led.breath.period\_ms\ /\ 2U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00366}00366\ \ \ \ \ \textcolor{keywordflow}{if}\ (half\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00367}00367\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00368}00368\ \ \ \ \ \ \ \ \ half\ =\ 1U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00369}00369\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00370}00370\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00371}00371\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_led.breath.elapsed\_ms\ <\ half)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00372}00372\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00373}00373\ \ \ \ \ \ \ \ \ phase\ =\ s\_led.breath.elapsed\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00374}00374\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00375}00375\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00376}00376\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00377}00377\ \ \ \ \ \ \ \ \ phase\ =\ (uint32\_t)s\_led.breath.period\_ms\ -\/\ s\_led.breath.elapsed\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00378}00378\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00379}00379\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00380}00380\ \ \ \ \ tri\ =\ (phase\ *\ 100U)\ /\ half;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00381}00381\ \ \ \ \ \textcolor{keywordflow}{if}\ (tri\ >\ 100U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00382}00382\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00383}00383\ \ \ \ \ \ \ \ \ tri\ =\ 100U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00384}00384\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00385}00385\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00386}00386\ \ \ \ \ range\ =\ (uint32\_t)s\_led.breath.max\_pct\ -\/\ s\_led.breath.min\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00387}00387\ \ \ \ \ level\ =\ (uint8\_t)(s\_led.breath.min\_pct\ +\ ((range\ *\ tri)\ /\ 100U));}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00388}00388\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00389}00389\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00390}00390\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00391}00391\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((s\_led.breath.mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00392}00392\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00393}00393\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ level;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00394}00394\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00395}00395\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00396}00396\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00397}00397\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ s\_led.manual\_brightness[i];}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00398}00398\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00399}00399\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00400}00400\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00401}00401\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00403}\mbox{\hyperlink{led__array__lib_8c_a170a229a8956c03e6cda7d98251bef68}{00403}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a170a229a8956c03e6cda7d98251bef68}{led\_array\_effect\_rainbow\_update}}(uint32\_t\ delta\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00404}00404\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00405}00405\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00406}00406\ \ \ \ \ uint8\_t\ phase;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00407}00407\ \ \ \ \ uint8\_t\ tri;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00408}00408\ \ \ \ \ uint32\_t\ range;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00409}00409\ \ \ \ \ uint8\_t\ level;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00410}00410\ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ phase\_step\ =\ (uint8\_t)(256U\ /\ LED\_ARRAY\_COUNT);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00411}00411\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00412}00412\ \ \ \ \ \textcolor{keywordflow}{if}\ (s\_led.rainbow.step\_ms\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00413}00413\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00414}00414\ \ \ \ \ \ \ \ \ s\_led.rainbow.step\_ms\ =\ 1U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00415}00415\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00416}00416\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00417}00417\ \ \ \ \ s\_led.rainbow.phase\_accum\_ms\ =\ (uint16\_t)(s\_led.rainbow.phase\_accum\_ms\ +\ delta\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00418}00418\ \ \ \ \ \textcolor{keywordflow}{while}\ (s\_led.rainbow.phase\_accum\_ms\ >=\ s\_led.rainbow.step\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00419}00419\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00420}00420\ \ \ \ \ \ \ \ \ s\_led.rainbow.phase\_accum\_ms\ =\ (uint16\_t)(s\_led.rainbow.phase\_accum\_ms\ -\/\ s\_led.rainbow.step\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00421}00421\ \ \ \ \ \ \ \ \ s\_led.rainbow.phase\_base\ =\ (uint8\_t)(s\_led.rainbow.phase\_base\ +\ LED\_ARRAY\_RAINBOW\_PHASE\_INC);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00422}00422\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00423}00423\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00424}00424\ \ \ \ \ range\ =\ (uint32\_t)s\_led.rainbow.max\_pct\ -\/\ s\_led.rainbow.min\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00425}00425\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00426}00426\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00427}00427\ \ \ \ \ \ \ \ \ phase\ =\ (uint8\_t)(s\_led.rainbow.phase\_base\ +\ (uint8\_t)(phase\_step\ *\ i));}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00428}00428\ \ \ \ \ \ \ \ \ tri\ =\ \mbox{\hyperlink{led__array__lib_8c_a1f7453348ff3aa75662337c41354297f}{led\_array\_tri8}}(phase);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00429}00429\ \ \ \ \ \ \ \ \ level\ =\ (uint8\_t)(s\_led.rainbow.min\_pct\ +\ ((range\ *\ tri)\ /\ 254U));}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00430}00430\ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ level;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00431}00431\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00432}00432\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00433}00433\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00435}\mbox{\hyperlink{led__array__lib_8c_a69c0dc3aab2eadce8888fb9a0dd910d0}{00435}}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a69c0dc3aab2eadce8888fb9a0dd910d0}{led\_array\_tick\_core}}(uint32\_t\ delta\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00436}00436\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00437}00437\ \ \ \ \ \textcolor{keywordflow}{switch}\ (s\_led.effect)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00438}00438\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00439}00439\ \ \ \ \ \textcolor{keywordflow}{case}\ LED\_ARRAY\_EFFECT\_FADE\_OUT:}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00440}00440\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a40d2a326194b61fbb53842261d7af8e1}{led\_array\_effect\_fade\_update}}(delta\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00441}00441\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00442}00442\ \ \ \ \ \textcolor{keywordflow}{case}\ LED\_ARRAY\_EFFECT\_BREATH:}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00443}00443\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_aa04ac7b2641932d9d5e0a10fce49b679}{led\_array\_effect\_breath\_update}}(delta\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00444}00444\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00445}00445\ \ \ \ \ \textcolor{keywordflow}{case}\ LED\_ARRAY\_EFFECT\_RAINBOW:}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00446}00446\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a170a229a8956c03e6cda7d98251bef68}{led\_array\_effect\_rainbow\_update}}(delta\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00447}00447\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00448}00448\ \ \ \ \ \textcolor{keywordflow}{case}\ LED\_ARRAY\_EFFECT\_NONE:}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00449}00449\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00450}00450\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ada6f43df770591d756ed0f91ad2c0ea6}{led\_array\_effect\_none}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00451}00451\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00452}00452\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00453}00453\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00454}00454\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a0c9c55ea41793007941b1d26907c62e8}{led\_array\_apply\_outputs}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00455}00455\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00456}00456\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00457}\mbox{\hyperlink{led__array__lib_8c_a7aedf48c103534fea85abba0f17f9012}{00457}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a7aedf48c103534fea85abba0f17f9012}{led\_array\_init}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00458}00458\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00459}00459\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a306655382a98525fdecd8e74e4c092fe}{led\_array\_hw\_init}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00460}00460\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00461}00461\ \ \ \ \ memset(\&s\_led,\ 0,\ \textcolor{keyword}{sizeof}(s\_led));}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00462}00462\ \ \ \ \ s\_led.tick\_period\_ms\ =\ \mbox{\hyperlink{led__array__lib__config_8h_a3f7f49ccbd2ef0c29c2e8e69f59c7717}{LED\_ARRAY\_LIB\_DEFAULT\_TICK\_MS}};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00463}00463\ \ \ \ \ s\_led.last\_tick\_ms\ =\ \mbox{\hyperlink{led__array__lib_8c_af828652b045761d59758c0d70e0c4b52}{led\_array\_now\_ms}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00464}00464\ \ \ \ \ s\_led.timer\_running\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00465}00465\ \ \ \ \ s\_led.initialized\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00466}00466\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00467}00467\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00468}00468\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00469}00469\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00470}00470\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00471}\mbox{\hyperlink{led__array__lib_8c_a08ff52c6cbf15a79c369af6de2d35592}{00471}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a08ff52c6cbf15a79c369af6de2d35592}{led\_array\_deinit}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00472}00472\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00473}00473\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00474}00474\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00475}00475\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00476}00476\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00477}00477\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00478}00478\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00479}00479\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00480}00480\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00481}00481\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00482}00482\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_ad553be923ababc372373d8839965e451}{led\_array\_write\_pin}}(i,\ GPIO\_PIN\_RESET);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00483}00483\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00484}00484\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00485}00485\ \ \ \ \ memset(\&s\_led,\ 0,\ \textcolor{keyword}{sizeof}(s\_led));}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00486}00486\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00487}00487\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00488}00488\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00489}\mbox{\hyperlink{led__array__lib_8c_aff750f64fbc1cad4ee19031286289115}{00489}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_aff750f64fbc1cad4ee19031286289115}{led\_array\_timer\_init}}(uint32\_t\ tick\_period\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00490}00490\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00491}00491\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00492}00492\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00493}00493\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00494}00494\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00495}00495\ \ \ \ \ \textcolor{keywordflow}{if}\ (tick\_period\_ms\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00496}00496\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00497}00497\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00498}00498\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00499}00499\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00500}00500\ \ \ \ \ s\_led.tick\_period\_ms\ =\ tick\_period\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00501}00501\ \ \ \ \ s\_led.last\_tick\_ms\ =\ \mbox{\hyperlink{led__array__lib_8c_af828652b045761d59758c0d70e0c4b52}{led\_array\_now\_ms}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00502}00502\ \ \ \ \ s\_led.timer\_running\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00503}00503\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00504}00504\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00505}00505\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00506}\mbox{\hyperlink{led__array__lib_8c_a547426579c247ad4d9fc522c16361ef3}{00506}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a547426579c247ad4d9fc522c16361ef3}{led\_array\_timer\_deinit}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00507}00507\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00508}00508\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00509}00509\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00510}00510\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00511}00511\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00512}00512\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00513}00513\ \ \ \ \ s\_led.timer\_running\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00514}00514\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00515}00515\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00516}00516\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00517}\mbox{\hyperlink{led__array__lib_8c_a4b6d7b6d2e6d8411ff06855ba14403f7}{00517}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\_array\_timer\_tick}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00518}00518\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00519}00519\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized\ ||\ !s\_led.timer\_running)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00520}00520\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00521}00521\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00522}00522\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00523}00523\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00524}00524\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a69c0dc3aab2eadce8888fb9a0dd910d0}{led\_array\_tick\_core}}(s\_led.tick\_period\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00525}00525\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00526}00526\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00527}\mbox{\hyperlink{led__array__lib_8c_ac0f4c93e8d59837943f0cefd9de4b3ed}{00527}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8c_ac0f4c93e8d59837943f0cefd9de4b3ed}{led\_array\_process}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00528}00528\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00529}00529\ \ \ \ \ uint32\_t\ now;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00530}00530\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00531}00531\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized\ ||\ !s\_led.timer\_running)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00532}00532\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00533}00533\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00534}00534\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00535}00535\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00536}00536\ \ \ \ \ now\ =\ \mbox{\hyperlink{led__array__lib_8c_af828652b045761d59758c0d70e0c4b52}{led\_array\_now\_ms}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00537}00537\ \ \ \ \ \textcolor{keywordflow}{while}\ ((now\ -\/\ s\_led.last\_tick\_ms)\ >=\ s\_led.tick\_period\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00538}00538\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00539}00539\ \ \ \ \ \ \ \ \ s\_led.last\_tick\_ms\ +=\ s\_led.tick\_period\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00540}00540\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a69c0dc3aab2eadce8888fb9a0dd910d0}{led\_array\_tick\_core}}(s\_led.tick\_period\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00541}00541\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00542}00542\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00543}00543\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00544}\mbox{\hyperlink{led__array__lib_8c_a4711eae3b0ed715ca346726e9c718de1}{00544}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a4711eae3b0ed715ca346726e9c718de1}{led\_array\_on}}(uint8\_t\ mask)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00545}00545\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00546}00546\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00547}00547\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00548}00548\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00549}00549\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00550}00550\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00551}00551\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00552}00552\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{led\_array\_mask\_valid}}(mask))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00553}00553\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00554}00554\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00555}00555\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00556}00556\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00557}00557\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00558}00558\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00559}00559\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00560}00560\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00561}00561\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00562}00562\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.manual\_brightness[i]\ =\ 100U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00563}00563\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00564}00564\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00565}00565\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00566}00566\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00567}00567\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00568}\mbox{\hyperlink{led__array__lib_8c_aa09ac980785cb4b624aed6ba93a9cb83}{00568}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_aa09ac980785cb4b624aed6ba93a9cb83}{led\_array\_off}}(uint8\_t\ mask)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00569}00569\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00570}00570\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00571}00571\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00572}00572\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00573}00573\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00574}00574\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00575}00575\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00576}00576\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{led\_array\_mask\_valid}}(mask))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00577}00577\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00578}00578\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00579}00579\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00580}00580\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00581}00581\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00582}00582\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00583}00583\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00584}00584\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00585}00585\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00586}00586\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.manual\_brightness[i]\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00587}00587\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00588}00588\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00589}00589\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00590}00590\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00591}00591\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00592}\mbox{\hyperlink{led__array__lib_8c_a24d4a7518fb38fd16c07b7476c0de974}{00592}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a24d4a7518fb38fd16c07b7476c0de974}{led\_array\_set\_brightness}}(uint8\_t\ mask,\ uint8\_t\ brightness\_pct)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00593}00593\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00594}00594\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00595}00595\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00596}00596\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00597}00597\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00598}00598\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00599}00599\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00600}00600\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{led\_array\_mask\_valid}}(mask))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00601}00601\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00602}00602\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00603}00603\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00604}00604\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00605}00605\ \ \ \ \ brightness\_pct\ =\ \mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{led\_array\_clamp\_pct}}(brightness\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00606}00606\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00607}00607\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00608}00608\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00609}00609\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00610}00610\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00611}00611\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.manual\_brightness[i]\ =\ brightness\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00612}00612\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00613}00613\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00614}00614\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00615}00615\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00616}00616\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00617}\mbox{\hyperlink{led__array__lib_8c_a42230d1ce3ff86a197a5340d8bc3cc4f}{00617}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a42230d1ce3ff86a197a5340d8bc3cc4f}{led\_array\_fire\_fade\_out}}(uint8\_t\ mask,\ uint16\_t\ fade\_ms)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00618}00618\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00619}00619\ \ \ \ \ uint8\_t\ i;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00620}00620\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00621}00621\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00622}00622\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00623}00623\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00624}00624\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00625}00625\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{led\_array\_mask\_valid}}(mask)\ ||\ (fade\_ms\ ==\ 0U))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00626}00626\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00627}00627\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00628}00628\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00629}00629\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00630}00630\ \ \ \ \ \textcolor{keywordflow}{for}\ (i\ =\ 0U;\ i\ <\ LED\_ARRAY\_COUNT;\ i++)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00631}00631\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00632}00632\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((mask\ \&\ (uint8\_t)(1U\ <<\ i))\ !=\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00633}00633\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00634}00634\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.manual\_brightness[i]\ =\ 100U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00635}00635\ \ \ \ \ \ \ \ \ \ \ \ \ s\_led.active\_brightness[i]\ =\ 100U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00636}00636\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00637}00637\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00638}00638\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00639}00639\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_FADE\_OUT;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00640}00640\ \ \ \ \ s\_led.fade.mask\ =\ (uint8\_t)(mask\ \&\ LED\_ARRAY\_VALID\_MASK);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00641}00641\ \ \ \ \ s\_led.fade.duration\_ms\ =\ fade\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00642}00642\ \ \ \ \ s\_led.fade.elapsed\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00643}00643\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00644}00644\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00645}00645\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00646}\mbox{\hyperlink{led__array__lib_8c_a6462145271d8ae8d9bcd1f5ccdf37ded}{00646}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_a6462145271d8ae8d9bcd1f5ccdf37ded}{led\_array\_start\_breath}}(uint8\_t\ mask,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00647}00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ period\_ms,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00648}00648\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ min\_pct,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00649}00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ max\_pct)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00650}00650\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00651}00651\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00652}00652\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00653}00653\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00654}00654\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00655}00655\ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{led__array__lib_8c_a5304e239aa0cd350ef646a36ded5a5bd}{led\_array\_mask\_valid}}(mask)\ ||\ (period\_ms\ <\ 2U))}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00656}00656\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00657}00657\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00658}00658\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00659}00659\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00660}00660\ \ \ \ \ min\_pct\ =\ \mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{led\_array\_clamp\_pct}}(min\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00661}00661\ \ \ \ \ max\_pct\ =\ \mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{led\_array\_clamp\_pct}}(max\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00662}00662\ \ \ \ \ \textcolor{keywordflow}{if}\ (max\_pct\ <\ min\_pct)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00663}00663\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00664}00664\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00665}00665\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00666}00666\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00667}00667\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_BREATH;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00668}00668\ \ \ \ \ s\_led.breath.mask\ =\ (uint8\_t)(mask\ \&\ LED\_ARRAY\_VALID\_MASK);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00669}00669\ \ \ \ \ s\_led.breath.period\_ms\ =\ period\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00670}00670\ \ \ \ \ s\_led.breath.min\_pct\ =\ min\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00671}00671\ \ \ \ \ s\_led.breath.max\_pct\ =\ max\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00672}00672\ \ \ \ \ s\_led.breath.elapsed\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00673}00673\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00674}00674\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00675}00675\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00676}\mbox{\hyperlink{led__array__lib_8c_ad01bd8a290236400e39c3957ea107ca0}{00676}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_ad01bd8a290236400e39c3957ea107ca0}{led\_array\_start\_rainbow}}(uint16\_t\ step\_ms,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00677}00677\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ min\_pct,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00678}00678\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ max\_pct)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00679}00679\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00680}00680\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00681}00681\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00682}00682\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00683}00683\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00684}00684\ \ \ \ \ \textcolor{keywordflow}{if}\ (step\_ms\ ==\ 0U)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00685}00685\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00686}00686\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00687}00687\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00688}00688\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00689}00689\ \ \ \ \ min\_pct\ =\ \mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{led\_array\_clamp\_pct}}(min\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00690}00690\ \ \ \ \ max\_pct\ =\ \mbox{\hyperlink{led__array__lib_8c_a22f4c10690d38309cd7d5ee4b75cf1be}{led\_array\_clamp\_pct}}(max\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00691}00691\ \ \ \ \ \textcolor{keywordflow}{if}\ (max\_pct\ <\ min\_pct)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00692}00692\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00693}00693\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EINVAL;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00694}00694\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00695}00695\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00696}00696\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_RAINBOW;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00697}00697\ \ \ \ \ s\_led.rainbow.step\_ms\ =\ step\_ms;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00698}00698\ \ \ \ \ s\_led.rainbow.min\_pct\ =\ min\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00699}00699\ \ \ \ \ s\_led.rainbow.max\_pct\ =\ max\_pct;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00700}00700\ \ \ \ \ s\_led.rainbow.phase\_accum\_ms\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00701}00701\ \ \ \ \ s\_led.rainbow.phase\_base\ =\ 0U;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00702}00702\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00703}00703\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00704}00704\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00705}\mbox{\hyperlink{led__array__lib_8c_ad1d5f7b658871d0bcdc2b05bb77ba081}{00705}}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8c_ad1d5f7b658871d0bcdc2b05bb77ba081}{led\_array\_stop\_effect}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00706}00706\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00707}00707\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00708}00708\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00709}00709\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_ESTATE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00710}00710\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00711}00711\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00712}00712\ \ \ \ \ s\_led.effect\ =\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00713}00713\ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_OK;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00714}00714\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00715}00715\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00716}\mbox{\hyperlink{led__array__lib_8c_af738fc4dc6d91ad22d52c140604a4b58}{00716}}\ \mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\_array\_effect\_t}}\ \mbox{\hyperlink{led__array__lib_8c_af738fc4dc6d91ad22d52c140604a4b58}{led\_array\_get\_effect}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00717}00717\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00718}00718\ \ \ \ \ \textcolor{keywordflow}{if}\ (!s\_led.initialized)}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00719}00719\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00720}00720\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ LED\_ARRAY\_EFFECT\_NONE;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00721}00721\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00722}00722\ \ \ \ \ \textcolor{keywordflow}{return}\ s\_led.effect;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00723}00723\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00724}00724\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00725}\mbox{\hyperlink{led__array__lib_8c_a0b3815ace1260f16636ac64ecbfc5bd0}{00725}}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{led__array__lib_8c_a0b3815ace1260f16636ac64ecbfc5bd0}{led\_array\_is\_initialized}}(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00726}00726\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00727}00727\ \ \ \ \ \textcolor{keywordflow}{return}\ s\_led.initialized;}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00728}00728\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00729}00729\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00730}00730\ \textcolor{preprocessor}{\#if\ LED\_ARRAY\_LIB\_OWNS\_HAL\_SYSTICK\_CALLBACK}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00731}00731\ \textcolor{keywordtype}{void}\ HAL\_SYSTICK\_Callback(\textcolor{keywordtype}{void})}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00732}00732\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00733}00733\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8c_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\_array\_timer\_tick}}();}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00734}00734\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8c_source_l00735}00735\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

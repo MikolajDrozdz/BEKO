@@ -1,0 +1,795 @@
+\doxysection{Dokumentacja struktury radio\+\_\+main\+\_\+ctx\+\_\+t}
+\hypertarget{structradio__main__ctx__t}{}\label{structradio__main__ctx__t}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_a87a33d66e33165f991b2c99a47a0d076}{hw}}
+\item 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_a16ccf12339eeee94790314ae2c1753d7}{backend\+\_\+cfg}}
+\item 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_a1b59d6eb816e7a41b236aebeb12c9f1b}{lora\+\_\+cfg}}
+\item 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_af47c2fb9851ed13c0e0f8386fb6ed4dd}{modulation\+\_\+id}}
+\item 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_a071efb6eab26092818811195bd62f0be}{backend\+\_\+modulation\+\_\+id}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_ab18ea21deca25ca2c8c866628328eb9b}{initialized}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a71d854b668c24102df0767fe70edda3b}{fh\+\_\+enabled}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_aaf8d91afa54f304769ea0767bf8b6f82}{fh\+\_\+period\+\_\+ms}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_afc30eecceebdef677c670262184558d6}{coding\+\_\+enabled}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a3db690cc339f7dbad00ae9ef33a3f593}{auto\+\_\+ping\+\_\+enabled}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a104809288a23a1e0cf0679046bb892c2}{auto\+\_\+ping\+\_\+period\+\_\+ms}}
+\item 
+\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_a6a897cd4122483104382f0b76d3daacc}{auto\+\_\+ping\+\_\+mode}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a310799d43395152aa91db49b0bce3058}{crypto\+\_\+ready}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a803c2206cc543c78b9a361b4e810689e}{lora\+\_\+preset}}
+\item 
+\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_a44b876bd9568df7e9f96d32c1dfaca68}{fsk\+\_\+cfg}}
+\item 
+\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_af4d3b1aa5bfe1acfa8bcd09b851de9d7}{ook\+\_\+cfg}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a62e15796a4874f2e6ca7679163a9d5bd}{hop\+\_\+idx}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a06559ce063143078d303ed988ea6d95f}{last\+\_\+hop\+\_\+ms}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_adc10eabce32814922159d651139c7801}{last\+\_\+ping\+\_\+ms}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_aa4319c59391b0933fef2edb5c29bc4e5}{node\+\_\+id}}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a34df4337fb52dd531902b88befb5c383}{next\+\_\+msg\+\_\+id}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_acb20427f0b9f57897ca907f6c20f52f8}{gateway\+\_\+rx\+\_\+counter}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_acf9c303fbb7e78654baa52161dc51912}{gateway\+\_\+tx\+\_\+counter}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a587f3ca24296880f2e5e39afc259a574}{gateway\+\_\+key\+\_\+mode\+\_\+known}}
+\item 
+\mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}} \mbox{\hyperlink{structradio__main__ctx__t_ad1a4398b662d9643cb1739ea44949dbd}{gateway\+\_\+key\+\_\+mode}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_adc7ff5bbc65903c9705f4a4656d9f1b6}{gateway\+\_\+pair\+\_\+code\+\_\+valid}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a59de29b0922be08077683e01a2b34016}{gateway\+\_\+pair\+\_\+code\+\_\+len}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_ab8072b2d0aa1d75690af0cd69122ee26}{gateway\+\_\+pair\+\_\+code}} \mbox{[}8\mbox{]}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a26f159196b81681010691c2d9d25dc84}{broadcast\+\_\+group\+\_\+key\+\_\+valid}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_aea36325a226c62f70dde345e377afbe9}{broadcast\+\_\+group\+\_\+epoch}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a1dbbf34509cd5c37f742aefd8d85ff70}{broadcast\+\_\+group\+\_\+aes\+\_\+key}} \mbox{[}16\mbox{]}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_acfba9a025f5c6daf8d500ecec29622a1}{broadcast\+\_\+group\+\_\+hmac\+\_\+key}} \mbox{[}32\mbox{]}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a631a7e7c49a127ee9800a91152ea18ea}{broadcast\+\_\+group\+\_\+pending\+\_\+valid}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_ab0ac7428cf50ed0f6b152905bfd32b13}{broadcast\+\_\+group\+\_\+pending\+\_\+epoch}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a9559ecae577237cefaa3174e6e4ab608}{broadcast\+\_\+group\+\_\+pending\+\_\+mask}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_aadeceaf1bba5435b2c0d64368fc0ce63}{broadcast\+\_\+group\+\_\+pending\+\_\+key}} \mbox{[}RADIO\+\_\+\+BCAST\+\_\+\+GROUP\+\_\+\+KEY\+\_\+\+LEN\mbox{]}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a3a7fbd8997bfe84cde41b0b4355b1d91}{pairing\+\_\+active}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_ab4c554aa3d50aac202b6499e14733d77}{pairing\+\_\+network\+\_\+mode}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_afc4b8e2af8db86cf19336964c9fdb327}{pairing\+\_\+until\+\_\+ms}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_aa051f7c2b48145f05946de914990eed3}{pairing\+\_\+pending}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_aaceab52bf105ff65a9b2830575221f76}{pairing\+\_\+pending\+\_\+node}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_ade40792a01d67f7a971cd35ddb5b009f}{pairing\+\_\+pending\+\_\+code}} \mbox{[}8\mbox{]}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_acf74d6204edd0d4ab120b691d58415c1}{pairing\+\_\+pending\+\_\+code\+\_\+len}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_ab7d4c91e7977f5e575978e9dfa6153e5}{pairing\+\_\+pending\+\_\+network}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a069840779c8d28be4b546758cabd1549}{pairing\+\_\+outgoing\+\_\+pending}}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a5961c5ce86f617e9f0cb2e3ed96ffc52}{pairing\+\_\+outgoing\+\_\+code}} \mbox{[}8\mbox{]}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_afe82cfd565804f33062a363566d81f51}{pairing\+\_\+outgoing\+\_\+code\+\_\+len}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_ad1fba146d0cef3b20d26a1a62dada948}{pairing\+\_\+outgoing\+\_\+network}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a79170df9915f11c2471ccf508e973b8d}{tx\+\_\+in\+\_\+progress}}
+\item 
+bool \mbox{\hyperlink{structradio__main__ctx__t_a77fd55b19e89b24be815f0de74783476}{tx\+\_\+silent}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__main__ctx__t_a86983db51aad2149ef2c3e9df3c257c6}{tx\+\_\+deadline\+\_\+ms}}
+\item 
+char \mbox{\hyperlink{structradio__main__ctx__t_a1d4f8950b2cb859fa36b803a41ae7097}{last\+\_\+error\+\_\+text}} \mbox{[}21\mbox{]}
+\item 
+\Hypertarget{structradio__main__ctx__t_acc1598c64cb64ec1ce7c9617cea5f4d9}\label{structradio__main__ctx__t_acc1598c64cb64ec1ce7c9617cea5f4d9} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>bool \mbox{\hyperlink{structradio__main__ctx__t_a5d2e480b37b3976c2396f24f50aa2711}{active}}\\
+\>uint16\_t \mbox{\hyperlink{structradio__main__ctx__t_a0e334dc148d30a8e6f0c1752684b1331}{peer\_id}}\\
+\>uint16\_t \mbox{\hyperlink{structradio__main__ctx__t_a1f100c6a72e1f9c12c3dedb2ff45bc12}{msg\_id}}\\
+\>uint32\_t \mbox{\hyperlink{structradio__main__ctx__t_a4a7de6c08f2922120eeb7c4ac11678d6}{counter}}\\
+\>uint8\_t \mbox{\hyperlink{structradio__main__ctx__t_a98efd6c369923f02a4591af468fb1484}{raw\_len}}\\
+\>uint8\_t \mbox{\hyperlink{structradio__main__ctx__t_afb52fb61570fbb526c052197c9c3403f}{raw}} \mbox{[}\mbox{\hyperlink{laviet__frame_8h_a03e7f14bedcd8ac8b5f3e4366d0a8d39}{LAVIET\_FRAME\_MAX\_LEN}}\mbox{]}\\
+\>uint8\_t \mbox{\hyperlink{structradio__main__ctx__t_a3abe96ee3a50f4215023f87271db1b1c}{retries\_done}}\\
+\>uint32\_t \mbox{\hyperlink{structradio__main__ctx__t_a39e8355069cc1d25726587b120730e18}{deadline\_ms}}\\
+\>uint32\_t \mbox{\hyperlink{structradio__main__ctx__t_a50cee3b91e11e709c78c51120353ed44}{wait\_ms}}\\
+\} {\bfseries ack\_pending}\\
+
+\end{tabbing}\item 
+\Hypertarget{structradio__main__ctx__t_a3f25ffc18ce3d0cb7d548933e2251aab}\label{structradio__main__ctx__t_a3f25ffc18ce3d0cb7d548933e2251aab} 
+\begin{tabbing}
+xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=xx\=\kill
+struct \{\\
+\>bool \mbox{\hyperlink{structradio__main__ctx__t_ac58e6f448e593aacc9851ad4ae114b6e}{valid}}\\
+\>bool \mbox{\hyperlink{structradio__main__ctx__t_a9be10879fea9680ca32c0c451e3f5e38}{timed\_out}}\\
+\>uint16\_t \mbox{\hyperlink{structradio__main__ctx__t_a0e334dc148d30a8e6f0c1752684b1331}{peer\_id}}\\
+\>uint16\_t \mbox{\hyperlink{structradio__main__ctx__t_a1f100c6a72e1f9c12c3dedb2ff45bc12}{msg\_id}}\\
+\>uint32\_t \mbox{\hyperlink{structradio__main__ctx__t_a4a7de6c08f2922120eeb7c4ac11678d6}{counter}}\\
+\>uint32\_t \mbox{\hyperlink{structradio__main__ctx__t_ad103f4321566d0a4b8cbb09054cd2f31}{expires\_ms}}\\
+\} {\bfseries ack\_recent}\\
+
+\end{tabbing}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00146}{146}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__main__ctx__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__main__ctx__t_a5d2e480b37b3976c2396f24f50aa2711}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!active@{active}}
+\index{active@{active}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{active}{active}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a5d2e480b37b3976c2396f24f50aa2711} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::active}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00202}{202}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a3db690cc339f7dbad00ae9ef33a3f593}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!auto\_ping\_enabled@{auto\_ping\_enabled}}
+\index{auto\_ping\_enabled@{auto\_ping\_enabled}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_enabled}{auto\_ping\_enabled}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a3db690cc339f7dbad00ae9ef33a3f593} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::auto\+\_\+ping\+\_\+enabled}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00157}{157}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a6a897cd4122483104382f0b76d3daacc}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!auto\_ping\_mode@{auto\_ping\_mode}}
+\index{auto\_ping\_mode@{auto\_ping\_mode}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_mode}{auto\_ping\_mode}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a6a897cd4122483104382f0b76d3daacc} 
+\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::auto\+\_\+ping\+\_\+mode}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00159}{159}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a104809288a23a1e0cf0679046bb892c2}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!auto\_ping\_period\_ms@{auto\_ping\_period\_ms}}
+\index{auto\_ping\_period\_ms@{auto\_ping\_period\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_period\_ms}{auto\_ping\_period\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a104809288a23a1e0cf0679046bb892c2} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::auto\+\_\+ping\+\_\+period\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00158}{158}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a16ccf12339eeee94790314ae2c1753d7}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!backend\_cfg@{backend\_cfg}}
+\index{backend\_cfg@{backend\_cfg}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{backend\_cfg}{backend\_cfg}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a16ccf12339eeee94790314ae2c1753d7} 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::backend\+\_\+cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00149}{149}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a071efb6eab26092818811195bd62f0be}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!backend\_modulation\_id@{backend\_modulation\_id}}
+\index{backend\_modulation\_id@{backend\_modulation\_id}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{backend\_modulation\_id}{backend\_modulation\_id}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a071efb6eab26092818811195bd62f0be} 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::backend\+\_\+modulation\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00152}{152}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a1dbbf34509cd5c37f742aefd8d85ff70}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_aes\_key@{broadcast\_group\_aes\_key}}
+\index{broadcast\_group\_aes\_key@{broadcast\_group\_aes\_key}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_aes\_key}{broadcast\_group\_aes\_key}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a1dbbf34509cd5c37f742aefd8d85ff70} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+aes\+\_\+key\mbox{[}16\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00178}{178}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_aea36325a226c62f70dde345e377afbe9}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_epoch@{broadcast\_group\_epoch}}
+\index{broadcast\_group\_epoch@{broadcast\_group\_epoch}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_epoch}{broadcast\_group\_epoch}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_aea36325a226c62f70dde345e377afbe9} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+epoch}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00177}{177}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_acfba9a025f5c6daf8d500ecec29622a1}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_hmac\_key@{broadcast\_group\_hmac\_key}}
+\index{broadcast\_group\_hmac\_key@{broadcast\_group\_hmac\_key}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_hmac\_key}{broadcast\_group\_hmac\_key}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_acfba9a025f5c6daf8d500ecec29622a1} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+hmac\+\_\+key\mbox{[}32\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00179}{179}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a26f159196b81681010691c2d9d25dc84}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_key\_valid@{broadcast\_group\_key\_valid}}
+\index{broadcast\_group\_key\_valid@{broadcast\_group\_key\_valid}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_key\_valid}{broadcast\_group\_key\_valid}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a26f159196b81681010691c2d9d25dc84} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+key\+\_\+valid}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00176}{176}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ab0ac7428cf50ed0f6b152905bfd32b13}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_pending\_epoch@{broadcast\_group\_pending\_epoch}}
+\index{broadcast\_group\_pending\_epoch@{broadcast\_group\_pending\_epoch}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_pending\_epoch}{broadcast\_group\_pending\_epoch}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ab0ac7428cf50ed0f6b152905bfd32b13} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+pending\+\_\+epoch}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00181}{181}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_aadeceaf1bba5435b2c0d64368fc0ce63}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_pending\_key@{broadcast\_group\_pending\_key}}
+\index{broadcast\_group\_pending\_key@{broadcast\_group\_pending\_key}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_pending\_key}{broadcast\_group\_pending\_key}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_aadeceaf1bba5435b2c0d64368fc0ce63} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+pending\+\_\+key\mbox{[}RADIO\+\_\+\+BCAST\+\_\+\+GROUP\+\_\+\+KEY\+\_\+\+LEN\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00183}{183}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a9559ecae577237cefaa3174e6e4ab608}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_pending\_mask@{broadcast\_group\_pending\_mask}}
+\index{broadcast\_group\_pending\_mask@{broadcast\_group\_pending\_mask}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_pending\_mask}{broadcast\_group\_pending\_mask}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a9559ecae577237cefaa3174e6e4ab608} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+pending\+\_\+mask}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00182}{182}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a631a7e7c49a127ee9800a91152ea18ea}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!broadcast\_group\_pending\_valid@{broadcast\_group\_pending\_valid}}
+\index{broadcast\_group\_pending\_valid@{broadcast\_group\_pending\_valid}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{broadcast\_group\_pending\_valid}{broadcast\_group\_pending\_valid}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a631a7e7c49a127ee9800a91152ea18ea} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::broadcast\+\_\+group\+\_\+pending\+\_\+valid}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00180}{180}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_afc30eecceebdef677c670262184558d6}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!coding\_enabled@{coding\_enabled}}
+\index{coding\_enabled@{coding\_enabled}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{coding\_enabled}{coding\_enabled}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_afc30eecceebdef677c670262184558d6} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::coding\+\_\+enabled}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00156}{156}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a4a7de6c08f2922120eeb7c4ac11678d6}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!counter@{counter}}
+\index{counter@{counter}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{counter}{counter}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a4a7de6c08f2922120eeb7c4ac11678d6} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::counter}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00205}{205}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a310799d43395152aa91db49b0bce3058}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!crypto\_ready@{crypto\_ready}}
+\index{crypto\_ready@{crypto\_ready}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{crypto\_ready}{crypto\_ready}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a310799d43395152aa91db49b0bce3058} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::crypto\+\_\+ready}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00160}{160}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a39e8355069cc1d25726587b120730e18}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!deadline\_ms@{deadline\_ms}}
+\index{deadline\_ms@{deadline\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{deadline\_ms}{deadline\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a39e8355069cc1d25726587b120730e18} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00209}{209}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ad103f4321566d0a4b8cbb09054cd2f31}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!expires\_ms@{expires\_ms}}
+\index{expires\_ms@{expires\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{expires\_ms}{expires\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ad103f4321566d0a4b8cbb09054cd2f31} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::expires\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00219}{219}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a71d854b668c24102df0767fe70edda3b}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!fh\_enabled@{fh\_enabled}}
+\index{fh\_enabled@{fh\_enabled}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{fh\_enabled}{fh\_enabled}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a71d854b668c24102df0767fe70edda3b} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::fh\+\_\+enabled}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00154}{154}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_aaf8d91afa54f304769ea0767bf8b6f82}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!fh\_period\_ms@{fh\_period\_ms}}
+\index{fh\_period\_ms@{fh\_period\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{fh\_period\_ms}{fh\_period\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_aaf8d91afa54f304769ea0767bf8b6f82} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::fh\+\_\+period\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00155}{155}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a44b876bd9568df7e9f96d32c1dfaca68}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!fsk\_cfg@{fsk\_cfg}}
+\index{fsk\_cfg@{fsk\_cfg}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{fsk\_cfg}{fsk\_cfg}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a44b876bd9568df7e9f96d32c1dfaca68} 
+\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::fsk\+\_\+cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00162}{162}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ad1a4398b662d9643cb1739ea44949dbd}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_key\_mode@{gateway\_key\_mode}}
+\index{gateway\_key\_mode@{gateway\_key\_mode}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_key\_mode}{gateway\_key\_mode}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ad1a4398b662d9643cb1739ea44949dbd} 
+\mbox{\hyperlink{security__main_8h_a34060fea8432016b9cd4d2912e574771}{security\+\_\+frame\+\_\+key\+\_\+mode\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+key\+\_\+mode}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00172}{172}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a587f3ca24296880f2e5e39afc259a574}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_key\_mode\_known@{gateway\_key\_mode\_known}}
+\index{gateway\_key\_mode\_known@{gateway\_key\_mode\_known}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_key\_mode\_known}{gateway\_key\_mode\_known}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a587f3ca24296880f2e5e39afc259a574} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+key\+\_\+mode\+\_\+known}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00171}{171}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ab8072b2d0aa1d75690af0cd69122ee26}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_pair\_code@{gateway\_pair\_code}}
+\index{gateway\_pair\_code@{gateway\_pair\_code}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_pair\_code}{gateway\_pair\_code}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ab8072b2d0aa1d75690af0cd69122ee26} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+pair\+\_\+code\mbox{[}8\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00175}{175}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a59de29b0922be08077683e01a2b34016}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_pair\_code\_len@{gateway\_pair\_code\_len}}
+\index{gateway\_pair\_code\_len@{gateway\_pair\_code\_len}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_pair\_code\_len}{gateway\_pair\_code\_len}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a59de29b0922be08077683e01a2b34016} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+pair\+\_\+code\+\_\+len}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00174}{174}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_adc7ff5bbc65903c9705f4a4656d9f1b6}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_pair\_code\_valid@{gateway\_pair\_code\_valid}}
+\index{gateway\_pair\_code\_valid@{gateway\_pair\_code\_valid}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_pair\_code\_valid}{gateway\_pair\_code\_valid}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_adc7ff5bbc65903c9705f4a4656d9f1b6} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+pair\+\_\+code\+\_\+valid}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00173}{173}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_acb20427f0b9f57897ca907f6c20f52f8}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_rx\_counter@{gateway\_rx\_counter}}
+\index{gateway\_rx\_counter@{gateway\_rx\_counter}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_rx\_counter}{gateway\_rx\_counter}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_acb20427f0b9f57897ca907f6c20f52f8} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+rx\+\_\+counter}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00169}{169}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_acf9c303fbb7e78654baa52161dc51912}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!gateway\_tx\_counter@{gateway\_tx\_counter}}
+\index{gateway\_tx\_counter@{gateway\_tx\_counter}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{gateway\_tx\_counter}{gateway\_tx\_counter}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_acf9c303fbb7e78654baa52161dc51912} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::gateway\+\_\+tx\+\_\+counter}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00170}{170}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a62e15796a4874f2e6ca7679163a9d5bd}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!hop\_idx@{hop\_idx}}
+\index{hop\_idx@{hop\_idx}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{hop\_idx}{hop\_idx}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a62e15796a4874f2e6ca7679163a9d5bd} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::hop\+\_\+idx}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00164}{164}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a87a33d66e33165f991b2c99a47a0d076}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!hw@{hw}}
+\index{hw@{hw}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{hw}{hw}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a87a33d66e33165f991b2c99a47a0d076} 
+\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::hw}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00148}{148}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ab18ea21deca25ca2c8c866628328eb9b}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!initialized@{initialized}}
+\index{initialized@{initialized}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{initialized}{initialized}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ab18ea21deca25ca2c8c866628328eb9b} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::initialized}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00153}{153}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a1d4f8950b2cb859fa36b803a41ae7097}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!last\_error\_text@{last\_error\_text}}
+\index{last\_error\_text@{last\_error\_text}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{last\_error\_text}{last\_error\_text}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a1d4f8950b2cb859fa36b803a41ae7097} 
+char radio\+\_\+main\+\_\+ctx\+\_\+t\+::last\+\_\+error\+\_\+text\mbox{[}21\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00199}{199}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a06559ce063143078d303ed988ea6d95f}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!last\_hop\_ms@{last\_hop\_ms}}
+\index{last\_hop\_ms@{last\_hop\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{last\_hop\_ms}{last\_hop\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a06559ce063143078d303ed988ea6d95f} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::last\+\_\+hop\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00165}{165}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_adc10eabce32814922159d651139c7801}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!last\_ping\_ms@{last\_ping\_ms}}
+\index{last\_ping\_ms@{last\_ping\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{last\_ping\_ms}{last\_ping\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_adc10eabce32814922159d651139c7801} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::last\+\_\+ping\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00166}{166}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a1b59d6eb816e7a41b236aebeb12c9f1b}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!lora\_cfg@{lora\_cfg}}
+\index{lora\_cfg@{lora\_cfg}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{lora\_cfg}{lora\_cfg}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a1b59d6eb816e7a41b236aebeb12c9f1b} 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::lora\+\_\+cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00150}{150}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a803c2206cc543c78b9a361b4e810689e}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!lora\_preset@{lora\_preset}}
+\index{lora\_preset@{lora\_preset}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{lora\_preset}{lora\_preset}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a803c2206cc543c78b9a361b4e810689e} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::lora\+\_\+preset}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00161}{161}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_af47c2fb9851ed13c0e0f8386fb6ed4dd}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!modulation\_id@{modulation\_id}}
+\index{modulation\_id@{modulation\_id}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{modulation\_id}{modulation\_id}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_af47c2fb9851ed13c0e0f8386fb6ed4dd} 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::modulation\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00151}{151}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a1f100c6a72e1f9c12c3dedb2ff45bc12}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!msg\_id@{msg\_id}}
+\index{msg\_id@{msg\_id}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{msg\_id}{msg\_id}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a1f100c6a72e1f9c12c3dedb2ff45bc12} 
+uint16\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::msg\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00204}{204}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a34df4337fb52dd531902b88befb5c383}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!next\_msg\_id@{next\_msg\_id}}
+\index{next\_msg\_id@{next\_msg\_id}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{next\_msg\_id}{next\_msg\_id}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a34df4337fb52dd531902b88befb5c383} 
+uint16\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::next\+\_\+msg\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00168}{168}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_aa4319c59391b0933fef2edb5c29bc4e5}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!node\_id@{node\_id}}
+\index{node\_id@{node\_id}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{node\_id}{node\_id}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_aa4319c59391b0933fef2edb5c29bc4e5} 
+uint16\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::node\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00167}{167}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_af4d3b1aa5bfe1acfa8bcd09b851de9d7}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!ook\_cfg@{ook\_cfg}}
+\index{ook\_cfg@{ook\_cfg}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{ook\_cfg}{ook\_cfg}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_af4d3b1aa5bfe1acfa8bcd09b851de9d7} 
+\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} radio\+\_\+main\+\_\+ctx\+\_\+t\+::ook\+\_\+cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00163}{163}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a3a7fbd8997bfe84cde41b0b4355b1d91}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_active@{pairing\_active}}
+\index{pairing\_active@{pairing\_active}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_active}{pairing\_active}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a3a7fbd8997bfe84cde41b0b4355b1d91} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+active}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00184}{184}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ab4c554aa3d50aac202b6499e14733d77}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_network\_mode@{pairing\_network\_mode}}
+\index{pairing\_network\_mode@{pairing\_network\_mode}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_network\_mode}{pairing\_network\_mode}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ab4c554aa3d50aac202b6499e14733d77} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+network\+\_\+mode}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00185}{185}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a5961c5ce86f617e9f0cb2e3ed96ffc52}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_outgoing\_code@{pairing\_outgoing\_code}}
+\index{pairing\_outgoing\_code@{pairing\_outgoing\_code}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_outgoing\_code}{pairing\_outgoing\_code}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a5961c5ce86f617e9f0cb2e3ed96ffc52} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+outgoing\+\_\+code\mbox{[}8\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00193}{193}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_afe82cfd565804f33062a363566d81f51}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_outgoing\_code\_len@{pairing\_outgoing\_code\_len}}
+\index{pairing\_outgoing\_code\_len@{pairing\_outgoing\_code\_len}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_outgoing\_code\_len}{pairing\_outgoing\_code\_len}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_afe82cfd565804f33062a363566d81f51} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+outgoing\+\_\+code\+\_\+len}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00194}{194}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ad1fba146d0cef3b20d26a1a62dada948}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_outgoing\_network@{pairing\_outgoing\_network}}
+\index{pairing\_outgoing\_network@{pairing\_outgoing\_network}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_outgoing\_network}{pairing\_outgoing\_network}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ad1fba146d0cef3b20d26a1a62dada948} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+outgoing\+\_\+network}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00195}{195}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a069840779c8d28be4b546758cabd1549}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_outgoing\_pending@{pairing\_outgoing\_pending}}
+\index{pairing\_outgoing\_pending@{pairing\_outgoing\_pending}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_outgoing\_pending}{pairing\_outgoing\_pending}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a069840779c8d28be4b546758cabd1549} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+outgoing\+\_\+pending}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00192}{192}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_aa051f7c2b48145f05946de914990eed3}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_pending@{pairing\_pending}}
+\index{pairing\_pending@{pairing\_pending}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_pending}{pairing\_pending}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_aa051f7c2b48145f05946de914990eed3} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+pending}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00187}{187}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ade40792a01d67f7a971cd35ddb5b009f}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_pending\_code@{pairing\_pending\_code}}
+\index{pairing\_pending\_code@{pairing\_pending\_code}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_pending\_code}{pairing\_pending\_code}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ade40792a01d67f7a971cd35ddb5b009f} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+pending\+\_\+code\mbox{[}8\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00189}{189}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_acf74d6204edd0d4ab120b691d58415c1}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_pending\_code\_len@{pairing\_pending\_code\_len}}
+\index{pairing\_pending\_code\_len@{pairing\_pending\_code\_len}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_pending\_code\_len}{pairing\_pending\_code\_len}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_acf74d6204edd0d4ab120b691d58415c1} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+pending\+\_\+code\+\_\+len}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00190}{190}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ab7d4c91e7977f5e575978e9dfa6153e5}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_pending\_network@{pairing\_pending\_network}}
+\index{pairing\_pending\_network@{pairing\_pending\_network}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_pending\_network}{pairing\_pending\_network}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ab7d4c91e7977f5e575978e9dfa6153e5} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+pending\+\_\+network}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00191}{191}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_aaceab52bf105ff65a9b2830575221f76}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_pending\_node@{pairing\_pending\_node}}
+\index{pairing\_pending\_node@{pairing\_pending\_node}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_pending\_node}{pairing\_pending\_node}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_aaceab52bf105ff65a9b2830575221f76} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+pending\+\_\+node}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00188}{188}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_afc4b8e2af8db86cf19336964c9fdb327}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!pairing\_until\_ms@{pairing\_until\_ms}}
+\index{pairing\_until\_ms@{pairing\_until\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{pairing\_until\_ms}{pairing\_until\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_afc4b8e2af8db86cf19336964c9fdb327} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::pairing\+\_\+until\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00186}{186}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a0e334dc148d30a8e6f0c1752684b1331}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!peer\_id@{peer\_id}}
+\index{peer\_id@{peer\_id}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{peer\_id}{peer\_id}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a0e334dc148d30a8e6f0c1752684b1331} 
+uint16\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::peer\+\_\+id}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00203}{203}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_afb52fb61570fbb526c052197c9c3403f}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!raw@{raw}}
+\index{raw@{raw}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{raw}{raw}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_afb52fb61570fbb526c052197c9c3403f} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::raw\mbox{[}\mbox{\hyperlink{laviet__frame_8h_a03e7f14bedcd8ac8b5f3e4366d0a8d39}{LAVIET\+\_\+\+FRAME\+\_\+\+MAX\+\_\+\+LEN}}\mbox{]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00207}{207}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a98efd6c369923f02a4591af468fb1484}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!raw\_len@{raw\_len}}
+\index{raw\_len@{raw\_len}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{raw\_len}{raw\_len}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a98efd6c369923f02a4591af468fb1484} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::raw\+\_\+len}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00206}{206}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a3abe96ee3a50f4215023f87271db1b1c}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!retries\_done@{retries\_done}}
+\index{retries\_done@{retries\_done}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{retries\_done}{retries\_done}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a3abe96ee3a50f4215023f87271db1b1c} 
+uint8\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::retries\+\_\+done}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00208}{208}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a9be10879fea9680ca32c0c451e3f5e38}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!timed\_out@{timed\_out}}
+\index{timed\_out@{timed\_out}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{timed\_out}{timed\_out}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a9be10879fea9680ca32c0c451e3f5e38} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::timed\+\_\+out}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00215}{215}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a86983db51aad2149ef2c3e9df3c257c6}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!tx\_deadline\_ms@{tx\_deadline\_ms}}
+\index{tx\_deadline\_ms@{tx\_deadline\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_deadline\_ms}{tx\_deadline\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a86983db51aad2149ef2c3e9df3c257c6} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::tx\+\_\+deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00198}{198}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a79170df9915f11c2471ccf508e973b8d}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!tx\_in\_progress@{tx\_in\_progress}}
+\index{tx\_in\_progress@{tx\_in\_progress}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_in\_progress}{tx\_in\_progress}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a79170df9915f11c2471ccf508e973b8d} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::tx\+\_\+in\+\_\+progress}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00196}{196}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a77fd55b19e89b24be815f0de74783476}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!tx\_silent@{tx\_silent}}
+\index{tx\_silent@{tx\_silent}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_silent}{tx\_silent}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a77fd55b19e89b24be815f0de74783476} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::tx\+\_\+silent}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00197}{197}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_ac58e6f448e593aacc9851ad4ae114b6e}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!valid@{valid}}
+\index{valid@{valid}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{valid}{valid}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_ac58e6f448e593aacc9851ad4ae114b6e} 
+bool radio\+\_\+main\+\_\+ctx\+\_\+t\+::valid}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00214}{214}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{structradio__main__ctx__t_a50cee3b91e11e709c78c51120353ed44}\index{radio\_main\_ctx\_t@{radio\_main\_ctx\_t}!wait\_ms@{wait\_ms}}
+\index{wait\_ms@{wait\_ms}!radio\_main\_ctx\_t@{radio\_main\_ctx\_t}}
+\doxysubsubsection{\texorpdfstring{wait\_ms}{wait\_ms}}
+{\footnotesize\ttfamily \label{structradio__main__ctx__t_a50cee3b91e11e709c78c51120353ed44} 
+uint32\+\_\+t radio\+\_\+main\+\_\+ctx\+\_\+t\+::wait\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00210}{210}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+main.\+c\end{DoxyCompactItemize}

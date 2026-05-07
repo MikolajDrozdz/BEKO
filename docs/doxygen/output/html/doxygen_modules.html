@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Mapa modulow</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('doxygen_modules.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Mapa modulow </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><h1 class="doxsection"><a class="anchor" id="module_app"></a>
+Core application</h1>
+<ul>
+<li><span class="tt"><a class="el" href="app_8h.html" title="Main application entry points and shared I2C bus helpers.">app.h</a></span> - inicjalizacja aplikacji, start RTOS i wrappery I2C.</li>
+<li><span class="tt"><a class="el" href="pager__config_8h.html" title="Application-level build and board configuration switches.">pager_config.h</a></span> - przelaczniki build/board.</li>
+<li><span class="tt"><a class="el" href="service_8h.html" title="Optional UART service console task entry point.">service.h</a></span> - opcjonalna konsola UART.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="module_radio"></a>
+Radio</h1>
+<ul>
+<li><span class="tt"><a class="el" href="radio__main_8h.html" title="Application radio task, runtime profile and command API.">radio_main.h</a></span> - wysokopoziomowe komendy: wysylanie, pairing, hopping, auto-ping i rekonfiguracja profili.</li>
+<li><span class="tt"><a class="el" href="radio__lib_8h.html" title="Główne API biblioteki radiowej.">radio_lib/radio_lib.h</a></span> - wspolna fasada na backendy modulacji.</li>
+<li><span class="tt"><a class="el" href="radio__lora_8h.html" title="Backend modulacji LoRa dla SX1276/RFM95.">radio_lib/modulations/lora/radio_lora.h</a></span> - backend LoRa.</li>
+<li><span class="tt"><a class="el" href="radio__fsk_8h.html" title="Interfejs backendu modulacji FSK dla SX1276.">radio_lib/modulations/fsk/radio_fsk.h</a></span> - backend FSK/GFSK/MSK/GMSK.</li>
+<li><span class="tt"><a class="el" href="radio__ook_8h.html" title="Interfejs backendu modulacji OOK dla SX1276.">radio_lib/modulations/ook/radio_ook.h</a></span> - backend OOK.</li>
+<li><span class="tt"><a class="el" href="radio__sx1276_8h.html" title="Niskopoziomowe API dostępu do rejestrów SX1276.">radio_lib/common/sx1276/radio_sx1276.h</a></span> - niskopoziomowy dostep SPI do rejestrow SX1276.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="module_protocol"></a>
+Protocol and crypto</h1>
+<ul>
+<li><span class="tt"><a class="el" href="laviet__frame_8h.html" title="LAVIET_FRAME_V1 wire protocol helpers.">laviet_frame.h</a></span> - struktura, walidacja, kodowanie i dekodowanie ramki.</li>
+<li><span class="tt"><a class="el" href="laviet__crypto_8h.html" title="Crypto helpers for LAVIET_FRAME_V1.">laviet_crypto.h</a></span> - HMAC-SHA256, AES-CTR, self-test i software fallback.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="module_security"></a>
+Security and storage</h1>
+<ul>
+<li><span class="tt"><a class="el" href="security__main_8h.html" title="Security domain task and command API.">security_main.h</a></span> - trusted devices, klucze, countery, TPM bootstrap.</li>
+<li><span class="tt"><a class="el" href="st33ktpm2x_8h.html" title="High-level and transport-level driver for ST33KTPM2X over I2C (TIS/FIFO).">st33ktpm2x_lib/st33ktpm2x.h</a></span> - sterownik TPM2/TIS/FIFO przez I2C.</li>
+<li><span class="tt"><a class="el" href="i2c__mem__store_8h.html" title="I2C NVM storage library for received messages and encrypted service codes.">i2c_mem_store_lib/i2c_mem_store.h</a></span> - EEPROM/FRAM log i encrypted secret slots.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="module_ui"></a>
+User interface</h1>
+<ul>
+<li><span class="tt"><a class="el" href="menu__main_8h.html" title="LCD menu controller task.">menu_main.h</a></span> - stan menu i notyfikacje z innych subsystemow.</li>
+<li><span class="tt"><a class="el" href="lcd__main_8h.html" title="RTOS-facing LCD rendering task API.">lcd_main.h</a></span> - kolejka renderowania ekranow.</li>
+<li><span class="tt"><a class="el" href="lcd_8h.html" title="HD44780-compatible 20x4 LCD driver over I2C expander.">lcd_library/lcd.h</a></span> - driver LCD HD44780 po ekspanderze I2C.</li>
+<li><span class="tt"><a class="el" href="button__main_8h.html" title="Polled button task (25 ms) with event queue.">button_main.h</a></span> - polling i debounce przyciskow.</li>
+<li><span class="tt"><a class="el" href="led__array__lib_8h.html" title="LED array driver for 5 LEDs (PC7, PA8, PB10, PB4, PB5).">led_array_lib/led_array_lib.h</a></span> - efekty i PWM LED.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="module_sensors"></a>
+Sensors</h1>
+<ul>
+<li><span class="tt"><a class="el" href="bmp280_8h.html" title="Low-level BMP280/BME280 driver API.">bmp280_lib/bmp280.h</a></span> - niskopoziomowy driver BMP280/BME280.</li>
+<li><span class="tt"><a class="el" href="bmp280__api_8h.html" title="Single-instance BMP280 measurement wrapper used by the application.">bmp280_lib/bmp280_api.h</a></span> - aplikacyjny wrapper single-shot.</li>
+<li><span class="tt"><a class="el" href="vl53l3cx__lib_8h.html" title="Application wrapper for the VL53L3CX time-of-flight sensor.">vl53l3cx_lib/vl53l3cx_lib.h</a></span> - aplikacyjny wrapper VL53L3CX. </li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">BEKO Pager Firmware</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

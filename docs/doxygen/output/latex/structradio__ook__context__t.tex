@@ -1,0 +1,178 @@
+\doxysection{Dokumentacja struktury radio\+\_\+ook\+\_\+context\+\_\+t}
+\hypertarget{structradio__ook__context__t}{}\label{structradio__ook__context__t}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{structradio__ook__context__t_a69f52a50fbc14762f9866e328777557c}{initialized}}
+\item 
+\mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_ae92ba4c3f6f06c5874fc47756d043d7a}{bus}}
+\item 
+\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_acd4309d8c7742c6ec061445536785ca6}{hw}}
+\item 
+\mbox{\hyperlink{structradio__ook__cfg__t}{radio\+\_\+ook\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_ad3457a925187813b7c258afa0fdc657a}{cfg}}
+\item 
+\mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_ae6668b60742d125c715acda215f06c23}{callback}}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structradio__ook__context__t_af7976bb4fbef9e5fcd360269a6422de4}{callback\+\_\+ctx}}
+\item 
+volatile uint8\+\_\+t \mbox{\hyperlink{structradio__ook__context__t_a9e323278c421f362e0322b1f73b2cc98}{dio\+\_\+pending\+\_\+mask}}
+\item 
+volatile uint32\+\_\+t \mbox{\hyperlink{structradio__ook__context__t_ad9f20b7f0341d9feca381cce0926ea3a}{event\+\_\+flags}}
+\item 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_a99deffe739cc1a8d724727af6a9da8cd}{state}}
+\item 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_a1eeab4c92cf9c0e5bb89201996f9810e}{tx\+\_\+resume\+\_\+state}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__ook__context__t_a9558b5f693b04c04f7d0d19e90bdde31}{rx\+\_\+single\+\_\+deadline\+\_\+ms}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__ook__context__t_ac5f791b14203874efd694b22b9041ba9}{tx\+\_\+deadline\+\_\+ms}}
+\item 
+\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \mbox{\hyperlink{structradio__ook__context__t_abb18f55c5246ab1858877fba269a5d94}{last\+\_\+packet}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00021}{21}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__ook__context__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__ook__context__t_ae92ba4c3f6f06c5874fc47756d043d7a}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!bus@{bus}}
+\index{bus@{bus}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{bus}{bus}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_ae92ba4c3f6f06c5874fc47756d043d7a} 
+\mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::bus}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00024}{24}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_ae6668b60742d125c715acda215f06c23}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!callback@{callback}}
+\index{callback@{callback}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{callback}{callback}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_ae6668b60742d125c715acda215f06c23} 
+\mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::callback}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00027}{27}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_af7976bb4fbef9e5fcd360269a6422de4}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!callback\_ctx@{callback\_ctx}}
+\index{callback\_ctx@{callback\_ctx}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{callback\_ctx}{callback\_ctx}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_af7976bb4fbef9e5fcd360269a6422de4} 
+void\texorpdfstring{$\ast$}{*} radio\+\_\+ook\+\_\+context\+\_\+t\+::callback\+\_\+ctx}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00028}{28}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_ad3457a925187813b7c258afa0fdc657a}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!cfg@{cfg}}
+\index{cfg@{cfg}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{cfg}{cfg}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_ad3457a925187813b7c258afa0fdc657a} 
+\mbox{\hyperlink{structradio__ook__cfg__t}{radio\+\_\+ook\+\_\+cfg\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00026}{26}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_a9e323278c421f362e0322b1f73b2cc98}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!dio\_pending\_mask@{dio\_pending\_mask}}
+\index{dio\_pending\_mask@{dio\_pending\_mask}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{dio\_pending\_mask}{dio\_pending\_mask}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_a9e323278c421f362e0322b1f73b2cc98} 
+volatile uint8\+\_\+t radio\+\_\+ook\+\_\+context\+\_\+t\+::dio\+\_\+pending\+\_\+mask}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00029}{29}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_ad9f20b7f0341d9feca381cce0926ea3a}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!event\_flags@{event\_flags}}
+\index{event\_flags@{event\_flags}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{event\_flags}{event\_flags}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_ad9f20b7f0341d9feca381cce0926ea3a} 
+volatile uint32\+\_\+t radio\+\_\+ook\+\_\+context\+\_\+t\+::event\+\_\+flags}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00030}{30}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_acd4309d8c7742c6ec061445536785ca6}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!hw@{hw}}
+\index{hw@{hw}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{hw}{hw}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_acd4309d8c7742c6ec061445536785ca6} 
+\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::hw}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00025}{25}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_a69f52a50fbc14762f9866e328777557c}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!initialized@{initialized}}
+\index{initialized@{initialized}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{initialized}{initialized}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_a69f52a50fbc14762f9866e328777557c} 
+bool radio\+\_\+ook\+\_\+context\+\_\+t\+::initialized}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00023}{23}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_abb18f55c5246ab1858877fba269a5d94}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!last\_packet@{last\_packet}}
+\index{last\_packet@{last\_packet}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{last\_packet}{last\_packet}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_abb18f55c5246ab1858877fba269a5d94} 
+\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::last\+\_\+packet}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00035}{35}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_a9558b5f693b04c04f7d0d19e90bdde31}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!rx\_single\_deadline\_ms@{rx\_single\_deadline\_ms}}
+\index{rx\_single\_deadline\_ms@{rx\_single\_deadline\_ms}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{rx\_single\_deadline\_ms}{rx\_single\_deadline\_ms}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_a9558b5f693b04c04f7d0d19e90bdde31} 
+uint32\+\_\+t radio\+\_\+ook\+\_\+context\+\_\+t\+::rx\+\_\+single\+\_\+deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00033}{33}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_a99deffe739cc1a8d724727af6a9da8cd}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!state@{state}}
+\index{state@{state}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_a99deffe739cc1a8d724727af6a9da8cd} 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::state}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00031}{31}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_ac5f791b14203874efd694b22b9041ba9}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!tx\_deadline\_ms@{tx\_deadline\_ms}}
+\index{tx\_deadline\_ms@{tx\_deadline\_ms}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_deadline\_ms}{tx\_deadline\_ms}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_ac5f791b14203874efd694b22b9041ba9} 
+uint32\+\_\+t radio\+\_\+ook\+\_\+context\+\_\+t\+::tx\+\_\+deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00034}{34}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+\Hypertarget{structradio__ook__context__t_a1eeab4c92cf9c0e5bb89201996f9810e}\index{radio\_ook\_context\_t@{radio\_ook\_context\_t}!tx\_resume\_state@{tx\_resume\_state}}
+\index{tx\_resume\_state@{tx\_resume\_state}!radio\_ook\_context\_t@{radio\_ook\_context\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_resume\_state}{tx\_resume\_state}}
+{\footnotesize\ttfamily \label{structradio__ook__context__t_a1eeab4c92cf9c0e5bb89201996f9810e} 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} radio\+\_\+ook\+\_\+context\+\_\+t\+::tx\+\_\+resume\+\_\+state}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__ook_8c_source_l00032}{32}} pliku \mbox{\hyperlink{radio__ook_8c_source}{radio\+\_\+ook.\+c}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+lib/modulations/ook/\mbox{\hyperlink{radio__ook_8c}{radio\+\_\+ook.\+c}}\end{DoxyCompactItemize}

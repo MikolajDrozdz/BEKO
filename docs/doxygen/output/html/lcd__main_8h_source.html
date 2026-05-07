@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Plik źródłowy Core/App/lcd_main.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('lcd__main_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">lcd_main.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="lcd__main_8h.html">Idź do dokumentacji tego pliku.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#ifndef APP_LCD_MAIN_H_</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define APP_LCD_MAIN_H_</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
+<div class="foldopen" id="foldopen00015" data-start="{" data-end="};">
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664">   15</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62">   17</a></span>    <a class="code hl_enumvalue" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62">LCD_MODE_MONITOR</a> = 0, </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd">   18</a></span>    <a class="code hl_enumvalue" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd">LCD_MODE_MENU</a>, </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c">   19</a></span>    <a class="code hl_enumvalue" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c">LCD_MODE_POPUP</a> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>} <a class="code hl_enumeration" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a>;</div>
+</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keywordtype">void</span> <a class="code hl_function" href="lcd__main_8h.html#abb7810060d5cef86f0e368eb7970855b">lcd_main_create_task</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a716b30672e73417a3307edaf50798e1e">lcd_main_set_line</a>(uint8_t line_index, <span class="keyword">const</span> <span class="keywordtype">char</span> *text);</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a58a60fe2a211490124107dd751cd2afa">lcd_main_set_lines</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *line0, <span class="keyword">const</span> <span class="keywordtype">char</span> *line1);</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a7a3d779c06b5c3bb826a0b76f0a65eaf">lcd_main_show_menu</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *l0, <span class="keyword">const</span> <span class="keywordtype">char</span> *l1, <span class="keyword">const</span> <span class="keywordtype">char</span> *l2, <span class="keyword">const</span> <span class="keywordtype">char</span> *l3);</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#ad082e838bff867c86118dd1f6666415c">lcd_main_push_message</a>(int16_t rssi_dbm, <span class="keyword">const</span> uint8_t *data, uint32_t length);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span></div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a365bccf7acced9705993a3ab3b8d26fb">lcd_main_push_message_from</a>(int16_t rssi_dbm, uint32_t source_id, <span class="keyword">const</span> uint8_t *data, uint32_t length);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#abfaf6e6665c4f9be69b0ff8727263475">lcd_main_set_mode</a>(<a class="code hl_enumeration" href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a> mode);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a3721122bf75b9d6bb01ab6e20390f535">lcd_main_show_popup</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *l0, <span class="keyword">const</span> <span class="keywordtype">char</span> *l1, <span class="keyword">const</span> <span class="keywordtype">char</span> *l2, <span class="keyword">const</span> <span class="keywordtype">char</span> *l3);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a5257397a3cc1538d8b18c73f2fe97d89">lcd_main_show_boot_hello</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a38cf36f376608d63b1e1b78e75a671ab">lcd_main_monitor_scroll_up</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keywordtype">bool</span> <a class="code hl_function" href="lcd__main_8h.html#a531fe799b033e4f82b83525e3c336f0f">lcd_main_monitor_scroll_down</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="preprocessor">#endif </span><span class="comment">/* APP_LCD_MAIN_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="alcd__main_8h_html_a365bccf7acced9705993a3ab3b8d26fb"><div class="ttname"><a href="lcd__main_8h.html#a365bccf7acced9705993a3ab3b8d26fb">lcd_main_push_message_from</a></div><div class="ttdeci">bool lcd_main_push_message_from(int16_t rssi_dbm, uint32_t source_id, const uint8_t *data, uint32_t length)</div><div class="ttdoc">Append an RX message with source identifier to the monitor history.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00161">lcd_main.c:161</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a3721122bf75b9d6bb01ab6e20390f535"><div class="ttname"><a href="lcd__main_8h.html#a3721122bf75b9d6bb01ab6e20390f535">lcd_main_show_popup</a></div><div class="ttdeci">bool lcd_main_show_popup(const char *l0, const char *l1, const char *l2, const char *l3)</div><div class="ttdoc">Show a four-line popup screen.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00186">lcd_main.c:186</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a38cf36f376608d63b1e1b78e75a671ab"><div class="ttname"><a href="lcd__main_8h.html#a38cf36f376608d63b1e1b78e75a671ab">lcd_main_monitor_scroll_up</a></div><div class="ttdeci">bool lcd_main_monitor_scroll_up(void)</div><div class="ttdoc">Scroll monitor history one line toward older entries.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00208">lcd_main.c:208</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a5257397a3cc1538d8b18c73f2fe97d89"><div class="ttname"><a href="lcd__main_8h.html#a5257397a3cc1538d8b18c73f2fe97d89">lcd_main_show_boot_hello</a></div><div class="ttdeci">bool lcd_main_show_boot_hello(void)</div><div class="ttdoc">Queue the boot welcome animation.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00199">lcd_main.c:199</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a531fe799b033e4f82b83525e3c336f0f"><div class="ttname"><a href="lcd__main_8h.html#a531fe799b033e4f82b83525e3c336f0f">lcd_main_monitor_scroll_down</a></div><div class="ttdeci">bool lcd_main_monitor_scroll_down(void)</div><div class="ttdoc">Scroll monitor history one line toward newer entries.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00217">lcd_main.c:217</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a58a60fe2a211490124107dd751cd2afa"><div class="ttname"><a href="lcd__main_8h.html#a58a60fe2a211490124107dd751cd2afa">lcd_main_set_lines</a></div><div class="ttdeci">bool lcd_main_set_lines(const char *line0, const char *line1)</div><div class="ttdoc">Update the first two monitor lines.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00126">lcd_main.c:126</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a716b30672e73417a3307edaf50798e1e"><div class="ttname"><a href="lcd__main_8h.html#a716b30672e73417a3307edaf50798e1e">lcd_main_set_line</a></div><div class="ttdeci">bool lcd_main_set_line(uint8_t line_index, const char *text)</div><div class="ttdoc">Update one monitor line.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00110">lcd_main.c:110</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_a7a3d779c06b5c3bb826a0b76f0a65eaf"><div class="ttname"><a href="lcd__main_8h.html#a7a3d779c06b5c3bb826a0b76f0a65eaf">lcd_main_show_menu</a></div><div class="ttdeci">bool lcd_main_show_menu(const char *l0, const char *l1, const char *l2, const char *l3)</div><div class="ttdoc">Replace the menu screen with four LCD lines.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00143">lcd_main.c:143</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_abb7810060d5cef86f0e368eb7970855b"><div class="ttname"><a href="lcd__main_8h.html#abb7810060d5cef86f0e368eb7970855b">lcd_main_create_task</a></div><div class="ttdeci">void lcd_main_create_task(void)</div><div class="ttdoc">Create the LCD task and message queue.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00088">lcd_main.c:88</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_abfaf6e6665c4f9be69b0ff8727263475"><div class="ttname"><a href="lcd__main_8h.html#abfaf6e6665c4f9be69b0ff8727263475">lcd_main_set_mode</a></div><div class="ttdeci">bool lcd_main_set_mode(lcd_main_mode_t mode)</div><div class="ttdoc">Switch LCD ownership mode.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00176">lcd_main.c:176</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_ad082e838bff867c86118dd1f6666415c"><div class="ttname"><a href="lcd__main_8h.html#ad082e838bff867c86118dd1f6666415c">lcd_main_push_message</a></div><div class="ttdeci">bool lcd_main_push_message(int16_t rssi_dbm, const uint8_t *data, uint32_t length)</div><div class="ttdoc">Append an RX message to the monitor history.</div><div class="ttdef"><b>Definicja</b> <a href="lcd__main_8c_source.html#l00156">lcd_main.c:156</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_aeb180324247f06b380f2cf8e52c4c664"><div class="ttname"><a href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664">lcd_main_mode_t</a></div><div class="ttdeci">lcd_main_mode_t</div><div class="ttdoc">High-level ownership mode for the LCD task.</div><div class="ttdef"><b>Definicja</b> <a href="#l00015">lcd_main.h:16</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd"><div class="ttname"><a href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd">LCD_MODE_MENU</a></div><div class="ttdeci">@ LCD_MODE_MENU</div><div class="ttdoc">Show menu-provided 4-line screen.</div><div class="ttdef"><b>Definicja</b> <a href="#l00018">lcd_main.h:18</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62"><div class="ttname"><a href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62">LCD_MODE_MONITOR</a></div><div class="ttdeci">@ LCD_MODE_MONITOR</div><div class="ttdoc">Show radio monitor history.</div><div class="ttdef"><b>Definicja</b> <a href="#l00017">lcd_main.h:17</a></div></div>
+<div class="ttc" id="alcd__main_8h_html_aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c"><div class="ttname"><a href="lcd__main_8h.html#aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c">LCD_MODE_POPUP</a></div><div class="ttdeci">@ LCD_MODE_POPUP</div><div class="ttdoc">Show modal/popup content.</div><div class="ttdef"><b>Definicja</b> <a href="#l00019">lcd_main.h:19</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="lcd__main_8h.html">lcd_main.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+\doxysection{Dokumentacja struktury menu\+\_\+notification\+\_\+t}
+\hypertarget{structmenu__notification__t}{}\label{structmenu__notification__t}\index{menu\_notification\_t@{menu\_notification\_t}}
+
+
+Message passed from application subsystems to the menu task.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/menu\+\_\+main.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5}{menu\+\_\+notification\+\_\+type\+\_\+t}} \mbox{\hyperlink{structmenu__notification__t_a610c43451b5f7e705d45caab8c170537}{type}}
+\begin{DoxyCompactList}\small\item\em Notification category. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structmenu__notification__t_ac6beef544269c0d4032a0b5c9286c1c1}{rssi\+\_\+dbm}}
+\begin{DoxyCompactList}\small\item\em RSSI for RX notifications. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__notification__t_a9bb956118def552e4a6024e826bf2763}{device\+\_\+code}}
+\begin{DoxyCompactList}\small\item\em Source or related device identifier. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structmenu__notification__t_a796d800a4e60745f9e9c25c41ce1ff4e}{reply\+\_\+device\+\_\+code}}
+\begin{DoxyCompactList}\small\item\em Reply destination suggested by notification. \end{DoxyCompactList}\item 
+char \mbox{\hyperlink{structmenu__notification__t_a812960a97e7d5e10b410bae2008b3d89}{text}} \mbox{[}21\mbox{]}
+\begin{DoxyCompactList}\small\item\em LCD-\/width text payload, null-\/terminated when possible. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Message passed from application subsystems to the menu task. 
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00028}{28}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structmenu__notification__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structmenu__notification__t_a9bb956118def552e4a6024e826bf2763}\index{menu\_notification\_t@{menu\_notification\_t}!device\_code@{device\_code}}
+\index{device\_code@{device\_code}!menu\_notification\_t@{menu\_notification\_t}}
+\doxysubsubsection{\texorpdfstring{device\_code}{device\_code}}
+{\footnotesize\ttfamily \label{structmenu__notification__t_a9bb956118def552e4a6024e826bf2763} 
+uint32\+\_\+t menu\+\_\+notification\+\_\+t\+::device\+\_\+code}
+
+
+
+Source or related device identifier. 
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00032}{32}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+\Hypertarget{structmenu__notification__t_a796d800a4e60745f9e9c25c41ce1ff4e}\index{menu\_notification\_t@{menu\_notification\_t}!reply\_device\_code@{reply\_device\_code}}
+\index{reply\_device\_code@{reply\_device\_code}!menu\_notification\_t@{menu\_notification\_t}}
+\doxysubsubsection{\texorpdfstring{reply\_device\_code}{reply\_device\_code}}
+{\footnotesize\ttfamily \label{structmenu__notification__t_a796d800a4e60745f9e9c25c41ce1ff4e} 
+uint32\+\_\+t menu\+\_\+notification\+\_\+t\+::reply\+\_\+device\+\_\+code}
+
+
+
+Reply destination suggested by notification. 
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00033}{33}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+\Hypertarget{structmenu__notification__t_ac6beef544269c0d4032a0b5c9286c1c1}\index{menu\_notification\_t@{menu\_notification\_t}!rssi\_dbm@{rssi\_dbm}}
+\index{rssi\_dbm@{rssi\_dbm}!menu\_notification\_t@{menu\_notification\_t}}
+\doxysubsubsection{\texorpdfstring{rssi\_dbm}{rssi\_dbm}}
+{\footnotesize\ttfamily \label{structmenu__notification__t_ac6beef544269c0d4032a0b5c9286c1c1} 
+int16\+\_\+t menu\+\_\+notification\+\_\+t\+::rssi\+\_\+dbm}
+
+
+
+RSSI for RX notifications. 
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00031}{31}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+\Hypertarget{structmenu__notification__t_a812960a97e7d5e10b410bae2008b3d89}\index{menu\_notification\_t@{menu\_notification\_t}!text@{text}}
+\index{text@{text}!menu\_notification\_t@{menu\_notification\_t}}
+\doxysubsubsection{\texorpdfstring{text}{text}}
+{\footnotesize\ttfamily \label{structmenu__notification__t_a812960a97e7d5e10b410bae2008b3d89} 
+char menu\+\_\+notification\+\_\+t\+::text\mbox{[}21\mbox{]}}
+
+
+
+LCD-\/width text payload, null-\/terminated when possible. 
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00034}{34}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+\Hypertarget{structmenu__notification__t_a610c43451b5f7e705d45caab8c170537}\index{menu\_notification\_t@{menu\_notification\_t}!type@{type}}
+\index{type@{type}!menu\_notification\_t@{menu\_notification\_t}}
+\doxysubsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily \label{structmenu__notification__t_a610c43451b5f7e705d45caab8c170537} 
+\mbox{\hyperlink{menu__main_8h_aabc9719ff8234a084c8016acdd8de0a5}{menu\+\_\+notification\+\_\+type\+\_\+t}} menu\+\_\+notification\+\_\+t\+::type}
+
+
+
+Notification category. 
+
+
+
+Definicja w linii \mbox{\hyperlink{menu__main_8h_source_l00030}{30}} pliku \mbox{\hyperlink{menu__main_8h_source}{menu\+\_\+main.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/\mbox{\hyperlink{menu__main_8h}{menu\+\_\+main.\+h}}\end{DoxyCompactItemize}

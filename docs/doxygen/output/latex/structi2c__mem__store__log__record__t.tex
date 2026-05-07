@@ -1,0 +1,131 @@
+\doxysection{Dokumentacja struktury i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t}
+\hypertarget{structi2c__mem__store__log__record__t}{}\label{structi2c__mem__store__log__record__t}\index{i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}}
+
+
+One logged message record returned to caller.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib/i2c\+\_\+mem\+\_\+store.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structi2c__mem__store__log__record__t_adceeadbe1bb5b45f2c3421a7d690cfe1}{sequence}}
+\begin{DoxyCompactList}\small\item\em Monotonic record sequence. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structi2c__mem__store__log__record__t_ab9967eb15efbb252fcca55e2f5d7211b}{timestamp\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Timestamp from HAL\+\_\+\+Get\+Tick(). \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structi2c__mem__store__log__record__t_a6e9cf39c7f9fbd2333ad119378486542}{rssi\+\_\+dbm}}
+\begin{DoxyCompactList}\small\item\em RSSI attached to message. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structi2c__mem__store__log__record__t_ab947d98d458ed1f09ab2d2707c62aa56}{length}}
+\begin{DoxyCompactList}\small\item\em Message payload length. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structi2c__mem__store__log__record__t_a2970dab04ffd2d81d284e0df3158c2fc}{payload}} \mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+PAYLOAD\+\_\+\+MAX\mbox{]}
+\begin{DoxyCompactList}\small\item\em Message payload bytes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+One logged message record returned to caller. 
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00062}{62}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structi2c__mem__store__log__record__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structi2c__mem__store__log__record__t_ab947d98d458ed1f09ab2d2707c62aa56}\index{i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}!length@{length}}
+\index{length@{length}!i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}}
+\doxysubsubsection{\texorpdfstring{length}{length}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__log__record__t_ab947d98d458ed1f09ab2d2707c62aa56} 
+uint8\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::length}
+
+
+
+Message payload length. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00067}{67}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00569}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message()}}.
+
+\Hypertarget{structi2c__mem__store__log__record__t_a2970dab04ffd2d81d284e0df3158c2fc}\index{i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}!payload@{payload}}
+\index{payload@{payload}!i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}}
+\doxysubsubsection{\texorpdfstring{payload}{payload}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__log__record__t_a2970dab04ffd2d81d284e0df3158c2fc} 
+uint8\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::payload\mbox{[}I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+PAYLOAD\+\_\+\+MAX\mbox{]}}
+
+
+
+Message payload bytes. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00068}{68}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00569}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message()}}.
+
+\Hypertarget{structi2c__mem__store__log__record__t_a6e9cf39c7f9fbd2333ad119378486542}\index{i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}!rssi\_dbm@{rssi\_dbm}}
+\index{rssi\_dbm@{rssi\_dbm}!i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}}
+\doxysubsubsection{\texorpdfstring{rssi\_dbm}{rssi\_dbm}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__log__record__t_a6e9cf39c7f9fbd2333ad119378486542} 
+int16\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::rssi\+\_\+dbm}
+
+
+
+RSSI attached to message. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00066}{66}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00569}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message()}}.
+
+\Hypertarget{structi2c__mem__store__log__record__t_adceeadbe1bb5b45f2c3421a7d690cfe1}\index{i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}!sequence@{sequence}}
+\index{sequence@{sequence}!i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}}
+\doxysubsubsection{\texorpdfstring{sequence}{sequence}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__log__record__t_adceeadbe1bb5b45f2c3421a7d690cfe1} 
+uint32\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::sequence}
+
+
+
+Monotonic record sequence. 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00064}{64}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00569}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message()}}.
+
+\Hypertarget{structi2c__mem__store__log__record__t_ab9967eb15efbb252fcca55e2f5d7211b}\index{i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}!timestamp\_ms@{timestamp\_ms}}
+\index{timestamp\_ms@{timestamp\_ms}!i2c\_mem\_store\_log\_record\_t@{i2c\_mem\_store\_log\_record\_t}}
+\doxysubsubsection{\texorpdfstring{timestamp\_ms}{timestamp\_ms}}
+{\footnotesize\ttfamily \label{structi2c__mem__store__log__record__t_ab9967eb15efbb252fcca55e2f5d7211b} 
+uint32\+\_\+t i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::timestamp\+\_\+ms}
+
+
+
+Timestamp from HAL\+\_\+\+Get\+Tick(). 
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00065}{65}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00569}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib/\mbox{\hyperlink{i2c__mem__store_8h}{i2c\+\_\+mem\+\_\+store.\+h}}\end{DoxyCompactItemize}

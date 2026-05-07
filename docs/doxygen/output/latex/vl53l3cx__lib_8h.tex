@@ -1,0 +1,99 @@
+\doxysection{Dokumentacja pliku Core/\+App/vl53l3cx\+\_\+lib/vl53l3cx\+\_\+lib.h}
+\hypertarget{vl53l3cx__lib_8h}{}\label{vl53l3cx__lib_8h}\index{Core/App/vl53l3cx\_lib/vl53l3cx\_lib.h@{Core/App/vl53l3cx\_lib/vl53l3cx\_lib.h}}
+
+
+Application wrapper for the VL53\+L3\+CX time-\/of-\/flight sensor.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{vl53l3cx__lib_8h_a6d8e38c00b44e270d5d8907cff871fc0}{tof\+\_\+init}} (void)
+\begin{DoxyCompactList}\small\item\em Initialize the onboard VL53\+L3\+CX sensor. \end{DoxyCompactList}\item 
+int32\+\_\+t \mbox{\hyperlink{vl53l3cx__lib_8h_a66e11312ac8ffc35f766e41d48362bfa}{tof\+\_\+get\+\_\+distance}} (void)
+\begin{DoxyCompactList}\small\item\em Read one distance sample in millimeters. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{vl53l3cx__lib_8h_a28ae890b94f064b79582ad2447f246af}{VL53\+L3\+CX\+\_\+\+Test\+Once}} (void)
+\begin{DoxyCompactList}\small\item\em Diagnostic helper that reads and prints one VL53\+L3\+CX sample. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Application wrapper for the VL53\+L3\+CX time-\/of-\/flight sensor. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{vl53l3cx__lib_8h_source}{vl53l3cx\+\_\+lib.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{vl53l3cx__lib_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{vl53l3cx__lib_8h_a66e11312ac8ffc35f766e41d48362bfa}\index{vl53l3cx\_lib.h@{vl53l3cx\_lib.h}!tof\_get\_distance@{tof\_get\_distance}}
+\index{tof\_get\_distance@{tof\_get\_distance}!vl53l3cx\_lib.h@{vl53l3cx\_lib.h}}
+\doxysubsubsection{\texorpdfstring{tof\_get\_distance()}{tof\_get\_distance()}}
+{\footnotesize\ttfamily \label{vl53l3cx__lib_8h_a66e11312ac8ffc35f766e41d48362bfa} 
+int32\+\_\+t tof\+\_\+get\+\_\+distance (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Read one distance sample in millimeters. 
+
+\begin{DoxyNote}{Nota}
+Funkcja jest blokujaca\+: czeka na swieza probke z czujnika. Czas blokowania zalezy od Timing\+Budget (aktualnie \texorpdfstring{$\sim$}{\string~}30 ms + narzut magistrali).
+\end{DoxyNote}
+\begin{DoxyReturn}{Zwraca}
+Distance in millimeters, or a negative value on failure. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00210}{210}} pliku \mbox{\hyperlink{vl53l3cx__lib_8c_source}{vl53l3cx\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00127}{tof\+\_\+init()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00255}{VL53\+L3\+CX\+\_\+\+Test\+Once()}}.
+
+\Hypertarget{vl53l3cx__lib_8h_a6d8e38c00b44e270d5d8907cff871fc0}\index{vl53l3cx\_lib.h@{vl53l3cx\_lib.h}!tof\_init@{tof\_init}}
+\index{tof\_init@{tof\_init}!vl53l3cx\_lib.h@{vl53l3cx\_lib.h}}
+\doxysubsubsection{\texorpdfstring{tof\_init()}{tof\_init()}}
+{\footnotesize\ttfamily \label{vl53l3cx__lib_8h_a6d8e38c00b44e270d5d8907cff871fc0} 
+bool tof\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Initialize the onboard VL53\+L3\+CX sensor. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the sensor was detected and configured. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00127}{127}} pliku \mbox{\hyperlink{vl53l3cx__lib_8c_source}{vl53l3cx\+\_\+lib.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00210}{tof\+\_\+get\+\_\+distance()}}.
+
+\Hypertarget{vl53l3cx__lib_8h_a28ae890b94f064b79582ad2447f246af}\index{vl53l3cx\_lib.h@{vl53l3cx\_lib.h}!VL53L3CX\_TestOnce@{VL53L3CX\_TestOnce}}
+\index{VL53L3CX\_TestOnce@{VL53L3CX\_TestOnce}!vl53l3cx\_lib.h@{vl53l3cx\_lib.h}}
+\doxysubsubsection{\texorpdfstring{VL53L3CX\_TestOnce()}{VL53L3CX\_TestOnce()}}
+{\footnotesize\ttfamily \label{vl53l3cx__lib_8h_a28ae890b94f064b79582ad2447f246af} 
+void VL53\+L3\+CX\+\_\+\+Test\+Once (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Diagnostic helper that reads and prints one VL53\+L3\+CX sample. 
+
+
+
+Definicja w linii \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00255}{255}} pliku \mbox{\hyperlink{vl53l3cx__lib_8c_source}{vl53l3cx\+\_\+lib.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{vl53l3cx__lib_8c_source_l00210}{tof\+\_\+get\+\_\+distance()}}.
+

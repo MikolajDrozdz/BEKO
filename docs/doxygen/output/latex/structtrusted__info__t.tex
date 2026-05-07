@@ -1,0 +1,127 @@
+\doxysection{Dokumentacja struktury trusted\+\_\+info\+\_\+t}
+\hypertarget{structtrusted__info__t}{}\label{structtrusted__info__t}\index{trusted\_info\_t@{trusted\_info\_t}}
+
+
+Public descriptor of one trusted pairing entry.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/security\+\_\+main.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{structtrusted__info__t_a5fa2415cf4f32993c965647b559b544f}{in\+\_\+use}}
+\begin{DoxyCompactList}\small\item\em Slot contains a valid trusted entry. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structtrusted__info__t_a12bd386fd523eeda642820413dcece10}{is\+\_\+master}}
+\begin{DoxyCompactList}\small\item\em Entry represents the gateway/master slot. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structtrusted__info__t_abd6923907520cb194caaf1ef43073364}{slot}}
+\begin{DoxyCompactList}\small\item\em Logical trusted-\/entry slot index. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structtrusted__info__t_aeb02690c9f9b8cdaee2d1f546263eb2b}{node\+\_\+id}}
+\begin{DoxyCompactList}\small\item\em Trusted node identifier. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structtrusted__info__t_a2fbe1761f7fe2c66b75b515f06b2f76b}{code\+\_\+len}}
+\begin{DoxyCompactList}\small\item\em Number of valid bytes in {\ttfamily \doxylink{structtrusted__info__t_af0fca81fca4f230cae5cf3db78893128}{code}}. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structtrusted__info__t_af0fca81fca4f230cae5cf3db78893128}{code}} \mbox{[}8\mbox{]}
+\begin{DoxyCompactList}\small\item\em Pairing/service code bytes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Public descriptor of one trusted pairing entry. 
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00017}{17}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structtrusted__info__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structtrusted__info__t_af0fca81fca4f230cae5cf3db78893128}\index{trusted\_info\_t@{trusted\_info\_t}!code@{code}}
+\index{code@{code}!trusted\_info\_t@{trusted\_info\_t}}
+\doxysubsubsection{\texorpdfstring{code}{code}}
+{\footnotesize\ttfamily \label{structtrusted__info__t_af0fca81fca4f230cae5cf3db78893128} 
+uint8\+\_\+t trusted\+\_\+info\+\_\+t\+::code\mbox{[}8\mbox{]}}
+
+
+
+Pairing/service code bytes. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00024}{24}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structtrusted__info__t_a2fbe1761f7fe2c66b75b515f06b2f76b}\index{trusted\_info\_t@{trusted\_info\_t}!code\_len@{code\_len}}
+\index{code\_len@{code\_len}!trusted\_info\_t@{trusted\_info\_t}}
+\doxysubsubsection{\texorpdfstring{code\_len}{code\_len}}
+{\footnotesize\ttfamily \label{structtrusted__info__t_a2fbe1761f7fe2c66b75b515f06b2f76b} 
+uint8\+\_\+t trusted\+\_\+info\+\_\+t\+::code\+\_\+len}
+
+
+
+Number of valid bytes in {\ttfamily \doxylink{structtrusted__info__t_af0fca81fca4f230cae5cf3db78893128}{code}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00023}{23}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structtrusted__info__t_a5fa2415cf4f32993c965647b559b544f}\index{trusted\_info\_t@{trusted\_info\_t}!in\_use@{in\_use}}
+\index{in\_use@{in\_use}!trusted\_info\_t@{trusted\_info\_t}}
+\doxysubsubsection{\texorpdfstring{in\_use}{in\_use}}
+{\footnotesize\ttfamily \label{structtrusted__info__t_a5fa2415cf4f32993c965647b559b544f} 
+bool trusted\+\_\+info\+\_\+t\+::in\+\_\+use}
+
+
+
+Slot contains a valid trusted entry. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00019}{19}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structtrusted__info__t_a12bd386fd523eeda642820413dcece10}\index{trusted\_info\_t@{trusted\_info\_t}!is\_master@{is\_master}}
+\index{is\_master@{is\_master}!trusted\_info\_t@{trusted\_info\_t}}
+\doxysubsubsection{\texorpdfstring{is\_master}{is\_master}}
+{\footnotesize\ttfamily \label{structtrusted__info__t_a12bd386fd523eeda642820413dcece10} 
+bool trusted\+\_\+info\+\_\+t\+::is\+\_\+master}
+
+
+
+Entry represents the gateway/master slot. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00020}{20}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structtrusted__info__t_aeb02690c9f9b8cdaee2d1f546263eb2b}\index{trusted\_info\_t@{trusted\_info\_t}!node\_id@{node\_id}}
+\index{node\_id@{node\_id}!trusted\_info\_t@{trusted\_info\_t}}
+\doxysubsubsection{\texorpdfstring{node\_id}{node\_id}}
+{\footnotesize\ttfamily \label{structtrusted__info__t_aeb02690c9f9b8cdaee2d1f546263eb2b} 
+uint32\+\_\+t trusted\+\_\+info\+\_\+t\+::node\+\_\+id}
+
+
+
+Trusted node identifier. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00022}{22}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structtrusted__info__t_abd6923907520cb194caaf1ef43073364}\index{trusted\_info\_t@{trusted\_info\_t}!slot@{slot}}
+\index{slot@{slot}!trusted\_info\_t@{trusted\_info\_t}}
+\doxysubsubsection{\texorpdfstring{slot}{slot}}
+{\footnotesize\ttfamily \label{structtrusted__info__t_abd6923907520cb194caaf1ef43073364} 
+uint8\+\_\+t trusted\+\_\+info\+\_\+t\+::slot}
+
+
+
+Logical trusted-\/entry slot index. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00021}{21}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/\mbox{\hyperlink{security__main_8h}{security\+\_\+main.\+h}}\end{DoxyCompactItemize}

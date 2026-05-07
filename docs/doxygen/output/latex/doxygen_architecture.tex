@@ -1,0 +1,30 @@
+\doxysection{Architektura firmware }
+\hypertarget{doxygen_architecture}{}\label{doxygen_architecture}\index{Architektura firmware@{Architektura firmware}}
+\hypertarget{doxygen_architecture_arch_layers}{}\doxysubsection{\texorpdfstring{Warstwy}{Warstwy}}\label{doxygen_architecture_arch_layers}
+Firmware jest podzielony na kilka warstw aplikacyjnych\+:
+
+
+\begin{DoxyItemize}
+\item warstwa startowa i wspolne zasoby\+: {\ttfamily \doxylink{app_8c_source}{app.\+c}}, {\ttfamily \doxylink{app_8h}{app.\+h}},
+\item warstwa radiowa aplikacji\+: {\ttfamily \doxylink{radio__main_8c_source}{radio\+\_\+main.\+c}}, {\ttfamily \doxylink{radio__main_8h}{radio\+\_\+main.\+h}},
+\item biblioteka radiowa i backendy modulacji\+: {\ttfamily radio\+\_\+lib/},
+\item ramka i kryptografia LAVIET\+: {\ttfamily laviet\+\_\+frame.\texorpdfstring{$\ast$}{*}}, {\ttfamily laviet\+\_\+crypto.\texorpdfstring{$\ast$}{*}},
+\item security i storage\+: {\ttfamily security\+\_\+main.\texorpdfstring{$\ast$}{*}}, {\ttfamily i2c\+\_\+mem\+\_\+store\+\_\+lib/}, {\ttfamily st33ktpm2x\+\_\+lib/},
+\item lokalny UI\+: {\ttfamily menu\+\_\+main.\texorpdfstring{$\ast$}{*}}, {\ttfamily lcd\+\_\+main.\texorpdfstring{$\ast$}{*}}, {\ttfamily button\+\_\+main.\texorpdfstring{$\ast$}{*}}, {\ttfamily lcd\+\_\+library/},
+\item sensory i sygnalizacja\+: {\ttfamily bmp280\+\_\+\texorpdfstring{$\ast$}{*}}, {\ttfamily tof\+\_\+\texorpdfstring{$\ast$}{*}}, {\ttfamily led\+\_\+array\+\_\+\texorpdfstring{$\ast$}{*}},
+\item konsola serwisowa\+: {\ttfamily service.\texorpdfstring{$\ast$}{*}}.
+\end{DoxyItemize}\hypertarget{doxygen_architecture_arch_tasks}{}\doxysubsection{\texorpdfstring{Zadania RTOS}{Zadania RTOS}}\label{doxygen_architecture_arch_tasks}
+Glowne moduly aplikacji dzialaja jako zadania CMSIS-\/\+RTOS2/\+Free\+RTOS\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{radio__main_8h_a306213035cbba7d1c6a53b0233651c71}{radio\+\_\+main\+\_\+create\+\_\+task()}} tworzy zadanie radia i kolejke komend,
+\item {\ttfamily \doxylink{security__main_8h_a5e5d1fd009639cd21d5d6a03b5b2e45e}{security\+\_\+main\+\_\+create\+\_\+task()}} tworzy zadanie security i kolejke komend,
+\item {\ttfamily \doxylink{menu__main_8h_aec03d8598b890c15095b74efd5131325}{menu\+\_\+main\+\_\+create\+\_\+task()}} obsluguje ekran menu oraz notyfikacje,
+\item {\ttfamily \doxylink{lcd__main_8h_abb7810060d5cef86f0e368eb7970855b}{lcd\+\_\+main\+\_\+create\+\_\+task()}} zarzadza fizycznym odswiezaniem LCD,
+\item {\ttfamily \doxylink{button__main_8h_a0c0a8612219f7db32c778f96b9522d1e}{button\+\_\+main\+\_\+create\+\_\+task()}} wykonuje polling/debounce przyciskow,
+\item {\ttfamily \doxylink{service_8h_ad9002873ec70472fd9aa9a7ac510bd4e}{service\+\_\+uart\+\_\+create\+\_\+task()}} tworzy opcjonalna konsole UART,
+\item {\ttfamily \doxylink{bmp280__main_8h_a3bc6ff102da579107271228ecd7e8503}{bmp280\+\_\+main\+\_\+create\+\_\+task()}}, {\ttfamily \doxylink{tof__main_8h_a47d775ca130aff0b82ff1e5ad7e12565}{tof\+\_\+main\+\_\+create\+\_\+task()}} i {\ttfamily \doxylink{led__array__main_8h_ac390ff762a9deab7592037a40a9c262d}{led\+\_\+array\+\_\+main\+\_\+create\+\_\+task()}} uruchamiaja zadania peryferyjne.
+\end{DoxyItemize}\hypertarget{doxygen_architecture_arch_shared_i2c}{}\doxysubsection{\texorpdfstring{Wspolna magistrala I2C}{Wspolna magistrala I2C}}\label{doxygen_architecture_arch_shared_i2c}
+Dostep do I2C jest serializowany przez helpery z {\ttfamily \doxylink{app_8h}{app.\+h}}. Moduly korzystaja z {\ttfamily app\+\_\+i2c\+\_\+master\+\_\+transmit()}, {\ttfamily app\+\_\+i2c\+\_\+master\+\_\+receive()}, {\ttfamily app\+\_\+i2c\+\_\+mem\+\_\+write()} i {\ttfamily app\+\_\+i2c\+\_\+mem\+\_\+read()}, zeby unikac kolizji na wspolnej magistrali oraz miec jedno miejsce odzyskiwania po bledach magistrali.\hypertarget{doxygen_architecture_arch_runtime}{}\doxysubsection{\texorpdfstring{Runtime configuration}{Runtime configuration}}\label{doxygen_architecture_arch_runtime}
+{\ttfamily \doxylink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}} opisuje pelny snapshot profili radiowych i flag runtime. {\ttfamily \doxylink{structsecurity__runtime__cfg__t}{security\+\_\+runtime\+\_\+cfg\+\_\+t}} rozszerza go o ustawienia security i dane utrwalane w magazynie. 

@@ -1,0 +1,465 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+lib/test/radio\+\_\+test.c}
+\hypertarget{radio__test_8c}{}\label{radio__test_8c}\index{Core/App/radio\_lib/test/radio\_test.c@{Core/App/radio\_lib/test/radio\_test.c}}
+
+
+Implementacja narzędzi testowych i diagnostycznych {\ttfamily radio\+\_\+lib}.  
+
+
+{\ttfamily \#include "{}radio\+\_\+test.\+h"{}}\newline
+{\ttfamily \#include "{}../common/sx1276/radio\+\_\+sx1276\+\_\+regs.\+h"{}}\newline
+{\ttfamily \#include "{}../../lcd\+\_\+main.\+h"{}}\newline
+{\ttfamily \#include "{}../../i2c\+\_\+mem\+\_\+store\+\_\+lib/i2c\+\_\+mem\+\_\+store.\+h"{}}\newline
+{\ttfamily \#include "{}cmsis\+\_\+os2.\+h"{}}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{radio\+\_\+test\+\_\+irq\+\_\+save}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{radio\+\_\+test\+\_\+irq\+\_\+save}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{radio\+\_\+test\+\_\+irq\+\_\+restore}} (uint32\+\_\+t primask)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{radio\+\_\+test\+\_\+irq\+\_\+restore}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{radio\+\_\+test\+\_\+now\+\_\+ms}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{radio\+\_\+test\+\_\+now\+\_\+ms}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_a73f24be84380df580976d9cddc725512}{radio\+\_\+test\+\_\+event\+\_\+cb}} (uint32\+\_\+t events, void \texorpdfstring{$\ast$}{*}user\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Callback zdarzeń radiowych używany w scenariuszu demo. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_ad6fd6a9e04a965fc385c2272be71cd70}{radio\+\_\+test\+\_\+print\+\_\+packet}} (const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}pkt)
+\begin{DoxyCompactList}\small\item\em Drukuje szczegóły odebranego pakietu (HEX + ASCII). \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_a5a8bae0ca1ec19fab52e484b2ad1be06}{radio\+\_\+test\+\_\+print\+\_\+packet\+\_\+text}} (const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}pkt)
+\begin{DoxyCompactList}\small\item\em Drukuje payload odebranego pakietu jako tekst terminalowy. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_acbdc55f4b469a388a7284a724652db27}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd}} (const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}pkt)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__test_8c_acbdc55f4b469a388a7284a724652db27}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory}} (const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}pkt)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd}{radio\+\_\+test\+\_\+dump\+\_\+tx\+\_\+debug}} (void)
+\begin{DoxyCompactList}\small\item\em Drukuje podstawowe rejestry diagnostyczne ścieżki TX. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__test_8c_aa0d702c40f79b6b72a67729715d3e90d}{radio\+\_\+test\+\_\+probe}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}version)
+\begin{DoxyCompactList}\small\item\em Sprawdza wersję układu i porównuje z oczekiwanym ID SX1276. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__test_8c_aefd1d85763a464e9273283134dcd90f4}{radio\+\_\+test\+\_\+dump\+\_\+basic}} (void)
+\begin{DoxyCompactList}\small\item\em Drukuje skrócony zrzut podstawowych rejestrów radiowych. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__test_8c_a80b69d1de463a0893238ced3d64aa1ad}{radio\+\_\+test\+\_\+send\+\_\+ping}} (void)
+\begin{DoxyCompactList}\small\item\em Wysyła testowy pakiet "{}\+PING"{}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__test_8c_acb8e3ae7eb6734c7a8edd90d66e761d2}{radio\+\_\+test\+\_\+demo\+\_\+init}} (SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hspi)
+\begin{DoxyCompactList}\small\item\em Inicjalizuje demonstracyjny scenariusz pracy radia. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__test_8c_ae5c770ddc69674cafeab76e370772ae1}{radio\+\_\+test\+\_\+demo\+\_\+process}} (void)
+\begin{DoxyCompactList}\small\item\em Obsługuje logikę demo\+: zdarzenia, watchdog TX i okresowe PING. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Zmienne}
+\begin{DoxyCompactItemize}
+\item 
+static volatile uint32\+\_\+t \mbox{\hyperlink{radio__test_8c_aa47c68a05c80ec82f586577c138b99b1}{s\+\_\+radio\+\_\+cb\+\_\+events}} = 0U
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__test_8c_aa00fab8408507be666df34a6efdc1966}{s\+\_\+radio\+\_\+last\+\_\+ping\+\_\+ms}} = 0U
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__test_8c_a233c90a3b06952f977a0fdf8cdc2b7ab}{s\+\_\+radio\+\_\+last\+\_\+tx\+\_\+start\+\_\+ms}} = 0U
+\item 
+static bool \mbox{\hyperlink{radio__test_8c_a480d66658d74d2b8310cfac512de7198}{s\+\_\+demo\+\_\+initialized}} = false
+\item 
+static \mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \mbox{\hyperlink{radio__test_8c_a332cc7384ceff4383534220966c1442e}{s\+\_\+msg\+\_\+store}}
+\item 
+static bool \mbox{\hyperlink{radio__test_8c_a459fd5592e55b9491dc2376401616eb2}{s\+\_\+msg\+\_\+store\+\_\+ready}} = false
+\item 
+\Hypertarget{radio__test_8c_af7b2c26e44dadaaa798a5c3d82914ba7}\label{radio__test_8c_af7b2c26e44dadaaa798a5c3d82914ba7} 
+I2\+C\+\_\+\+Handle\+Type\+Def {\bfseries hi2c1}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Implementacja narzędzi testowych i diagnostycznych {\ttfamily radio\+\_\+lib}. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{radio__test_8c_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{radio__test_8c_acb8e3ae7eb6734c7a8edd90d66e761d2}\index{radio\_test.c@{radio\_test.c}!radio\_test\_demo\_init@{radio\_test\_demo\_init}}
+\index{radio\_test\_demo\_init@{radio\_test\_demo\_init}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_demo\_init()}{radio\_test\_demo\_init()}}
+{\footnotesize\ttfamily \label{radio__test_8c_acb8e3ae7eb6734c7a8edd90d66e761d2} 
+void radio\+\_\+test\+\_\+demo\+\_\+init (\begin{DoxyParamCaption}\item[{SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hspi}{}\end{DoxyParamCaption})}
+
+
+
+Inicjalizuje demonstracyjny scenariusz pracy radia. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em hspi} & Uchwyt SPI przekazany z aplikacji. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00239}{239}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8c_source_l00440}{i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg\+\_\+m24c01r()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00457}{i2c\+\_\+mem\+\_\+store\+\_\+init()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{radio__lib_8c_source_l00029}{radio\+\_\+default\+\_\+hw\+\_\+cfg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00034}{radio\+\_\+default\+\_\+lora\+\_\+cfg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00100}{radio\+\_\+init()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__test_8c_source_l00199}{radio\+\_\+test\+\_\+dump\+\_\+basic()}}, \mbox{\hyperlink{radio__test_8c_source_l00069}{radio\+\_\+test\+\_\+event\+\_\+cb()}}, \mbox{\hyperlink{radio__test_8c_source_l00044}{radio\+\_\+test\+\_\+now\+\_\+ms()}} i \mbox{\hyperlink{radio__test_8c_source_l00179}{radio\+\_\+test\+\_\+probe()}}.
+
+\Hypertarget{radio__test_8c_ae5c770ddc69674cafeab76e370772ae1}\index{radio\_test.c@{radio\_test.c}!radio\_test\_demo\_process@{radio\_test\_demo\_process}}
+\index{radio\_test\_demo\_process@{radio\_test\_demo\_process}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_demo\_process()}{radio\_test\_demo\_process()}}
+{\footnotesize\ttfamily \label{radio__test_8c_ae5c770ddc69674cafeab76e370772ae1} 
+void radio\+\_\+test\+\_\+demo\+\_\+process (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Obsługuje logikę demo\+: zdarzenia, watchdog TX i okresowe PING. 
+
+Obsługuje pętlę demona testowego (zdarzenia, logi, cykliczny ping). 
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00303}{303}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00060}{RADIO\+\_\+\+EVENT\+\_\+\+CAD\+\_\+\+DETECTED}}, \mbox{\hyperlink{radio__lib_8h_source_l00059}{RADIO\+\_\+\+EVENT\+\_\+\+CAD\+\_\+\+DONE}}, \mbox{\hyperlink{radio__lib_8h_source_l00058}{RADIO\+\_\+\+EVENT\+\_\+\+CRC\+\_\+\+ERR}}, \mbox{\hyperlink{radio__lib_8h_source_l00061}{RADIO\+\_\+\+EVENT\+\_\+\+FIFO\+\_\+\+OVERRUN}}, \mbox{\hyperlink{radio__lib_8h_source_l00062}{RADIO\+\_\+\+EVENT\+\_\+\+HW\+\_\+\+ERROR}}, \mbox{\hyperlink{radio__lib_8h_source_l00056}{RADIO\+\_\+\+EVENT\+\_\+\+RX\+\_\+\+DONE}}, \mbox{\hyperlink{radio__lib_8h_source_l00057}{RADIO\+\_\+\+EVENT\+\_\+\+RX\+\_\+\+TIMEOUT}}, \mbox{\hyperlink{radio__lib_8h_source_l00055}{RADIO\+\_\+\+EVENT\+\_\+\+TX\+\_\+\+DONE}}, \mbox{\hyperlink{radio__lib_8c_source_l00250}{radio\+\_\+get\+\_\+last\+\_\+packet()}}, \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__lib_8c_source_l00215}{radio\+\_\+process()}}, \mbox{\hyperlink{radio__lib_8c_source_l00183}{radio\+\_\+standby()}}, \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__lib_8h_source_l00044}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+CONT}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__lib_8c_source_l00234}{radio\+\_\+take\+\_\+events()}}, \mbox{\hyperlink{radio__test_8c_source_l00157}{radio\+\_\+test\+\_\+dump\+\_\+tx\+\_\+debug()}}, \mbox{\hyperlink{radio__test_8c_source_l00035}{radio\+\_\+test\+\_\+irq\+\_\+restore()}}, \mbox{\hyperlink{radio__test_8c_source_l00027}{radio\+\_\+test\+\_\+irq\+\_\+save()}}, \mbox{\hyperlink{radio__test_8c_source_l00044}{radio\+\_\+test\+\_\+now\+\_\+ms()}}, \mbox{\hyperlink{radio__test_8c_source_l00084}{radio\+\_\+test\+\_\+print\+\_\+packet()}}, \mbox{\hyperlink{radio__test_8c_source_l00110}{radio\+\_\+test\+\_\+print\+\_\+packet\+\_\+text()}}, \mbox{\hyperlink{radio__test_8c_source_l00124}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd()}}, \mbox{\hyperlink{radio__test_8c_source_l00232}{radio\+\_\+test\+\_\+send\+\_\+ping()}} i \mbox{\hyperlink{radio__test_8c_source_l00138}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory()}}.
+
+\Hypertarget{radio__test_8c_aefd1d85763a464e9273283134dcd90f4}\index{radio\_test.c@{radio\_test.c}!radio\_test\_dump\_basic@{radio\_test\_dump\_basic}}
+\index{radio\_test\_dump\_basic@{radio\_test\_dump\_basic}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_dump\_basic()}{radio\_test\_dump\_basic()}}
+{\footnotesize\ttfamily \label{radio__test_8c_aefd1d85763a464e9273283134dcd90f4} 
+void radio\+\_\+test\+\_\+dump\+\_\+basic (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Drukuje skrócony zrzut podstawowych rejestrów radiowych. 
+
+Drukuje podstawowy zrzut rejestrów przez {\ttfamily printf}. 
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00199}{199}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00239}{radio\+\_\+test\+\_\+demo\+\_\+init()}}.
+
+\Hypertarget{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd}\index{radio\_test.c@{radio\_test.c}!radio\_test\_dump\_tx\_debug@{radio\_test\_dump\_tx\_debug}}
+\index{radio\_test\_dump\_tx\_debug@{radio\_test\_dump\_tx\_debug}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_dump\_tx\_debug()}{radio\_test\_dump\_tx\_debug()}}
+{\footnotesize\ttfamily \label{radio__test_8c_ae8b7e9aa4d5d10202671042544325bcd} 
+void radio\+\_\+test\+\_\+dump\+\_\+tx\+\_\+debug (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Drukuje podstawowe rejestry diagnostyczne ścieżki TX. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00157}{157}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+\Hypertarget{radio__test_8c_a73f24be84380df580976d9cddc725512}\index{radio\_test.c@{radio\_test.c}!radio\_test\_event\_cb@{radio\_test\_event\_cb}}
+\index{radio\_test\_event\_cb@{radio\_test\_event\_cb}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_event\_cb()}{radio\_test\_event\_cb()}}
+{\footnotesize\ttfamily \label{radio__test_8c_a73f24be84380df580976d9cddc725512} 
+void radio\+\_\+test\+\_\+event\+\_\+cb (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{events}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{user\+\_\+ctx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Callback zdarzeń radiowych używany w scenariuszu demo. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em events} & Maska zdarzeń z {\ttfamily radio\+\_\+lib}. \\
+\hline
+{\em user\+\_\+ctx} & Nieużywany kontekst użytkownika. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00069}{69}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__test_8c_source_l00035}{radio\+\_\+test\+\_\+irq\+\_\+restore()}} i \mbox{\hyperlink{radio__test_8c_source_l00027}{radio\+\_\+test\+\_\+irq\+\_\+save()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00239}{radio\+\_\+test\+\_\+demo\+\_\+init()}}.
+
+\Hypertarget{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}\index{radio\_test.c@{radio\_test.c}!radio\_test\_irq\_restore@{radio\_test\_irq\_restore}}
+\index{radio\_test\_irq\_restore@{radio\_test\_irq\_restore}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_irq\_restore()}{radio\_test\_irq\_restore()}}
+{\footnotesize\ttfamily \label{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c} 
+void radio\+\_\+test\+\_\+irq\+\_\+restore (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{primask}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__test_8c_a31cf7c2a464a042ab9042eef99b1a44c}{radio\+\_\+test\+\_\+irq\+\_\+restore}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00035}{35}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}} i \mbox{\hyperlink{radio__test_8c_source_l00069}{radio\+\_\+test\+\_\+event\+\_\+cb()}}.
+
+\Hypertarget{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}\index{radio\_test.c@{radio\_test.c}!radio\_test\_irq\_save@{radio\_test\_irq\_save}}
+\index{radio\_test\_irq\_save@{radio\_test\_irq\_save}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_irq\_save()}{radio\_test\_irq\_save()}}
+{\footnotesize\ttfamily \label{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0} 
+uint32\+\_\+t radio\+\_\+test\+\_\+irq\+\_\+save (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__test_8c_a60f0af674d5b6aaebd5be8e18d57e4a0}{radio\+\_\+test\+\_\+irq\+\_\+save}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00027}{27}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}} i \mbox{\hyperlink{radio__test_8c_source_l00069}{radio\+\_\+test\+\_\+event\+\_\+cb()}}.
+
+\Hypertarget{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}\index{radio\_test.c@{radio\_test.c}!radio\_test\_now\_ms@{radio\_test\_now\_ms}}
+\index{radio\_test\_now\_ms@{radio\_test\_now\_ms}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_now\_ms()}{radio\_test\_now\_ms()}}
+{\footnotesize\ttfamily \label{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8} 
+uint32\+\_\+t radio\+\_\+test\+\_\+now\+\_\+ms (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__test_8c_a403adee1464c5e8a3eba437b8e0120e8}{radio\+\_\+test\+\_\+now\+\_\+ms}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00044}{44}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00239}{radio\+\_\+test\+\_\+demo\+\_\+init()}} i \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+\Hypertarget{radio__test_8c_ad6fd6a9e04a965fc385c2272be71cd70}\index{radio\_test.c@{radio\_test.c}!radio\_test\_print\_packet@{radio\_test\_print\_packet}}
+\index{radio\_test\_print\_packet@{radio\_test\_print\_packet}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_print\_packet()}{radio\_test\_print\_packet()}}
+{\footnotesize\ttfamily \label{radio__test_8c_ad6fd6a9e04a965fc385c2272be71cd70} 
+void radio\+\_\+test\+\_\+print\+\_\+packet (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{pkt}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Drukuje szczegóły odebranego pakietu (HEX + ASCII). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em pkt} & Wskaźnik na pakiet do wydruku. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00084}{84}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00214}{radio\+\_\+packet\+\_\+t\+::data}}, \mbox{\hyperlink{radio__lib_8h_source_l00215}{radio\+\_\+packet\+\_\+t\+::length}}, \mbox{\hyperlink{radio__lib_8h_source_l00216}{radio\+\_\+packet\+\_\+t\+::rssi\+\_\+dbm}} i \mbox{\hyperlink{radio__lib_8h_source_l00217}{radio\+\_\+packet\+\_\+t\+::snr\+\_\+db}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+\Hypertarget{radio__test_8c_a5a8bae0ca1ec19fab52e484b2ad1be06}\index{radio\_test.c@{radio\_test.c}!radio\_test\_print\_packet\_text@{radio\_test\_print\_packet\_text}}
+\index{radio\_test\_print\_packet\_text@{radio\_test\_print\_packet\_text}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_print\_packet\_text()}{radio\_test\_print\_packet\_text()}}
+{\footnotesize\ttfamily \label{radio__test_8c_a5a8bae0ca1ec19fab52e484b2ad1be06} 
+void radio\+\_\+test\+\_\+print\+\_\+packet\+\_\+text (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{pkt}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Drukuje payload odebranego pakietu jako tekst terminalowy. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em pkt} & Wskaźnik na pakiet do wydruku. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00110}{110}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00214}{radio\+\_\+packet\+\_\+t\+::data}} i \mbox{\hyperlink{radio__lib_8h_source_l00215}{radio\+\_\+packet\+\_\+t\+::length}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+\Hypertarget{radio__test_8c_aa0d702c40f79b6b72a67729715d3e90d}\index{radio\_test.c@{radio\_test.c}!radio\_test\_probe@{radio\_test\_probe}}
+\index{radio\_test\_probe@{radio\_test\_probe}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_probe()}{radio\_test\_probe()}}
+{\footnotesize\ttfamily \label{radio__test_8c_aa0d702c40f79b6b72a67729715d3e90d} 
+bool radio\+\_\+test\+\_\+probe (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{version}{}\end{DoxyParamCaption})}
+
+
+
+Sprawdza wersję układu i porównuje z oczekiwanym ID SX1276. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em version} & \mbox{[}out\mbox{]} Opcjonalny odczyt surowego rejestru wersji. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} gdy układ odpowiada poprawnym identyfikatorem. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00179}{179}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00239}{radio\+\_\+test\+\_\+demo\+\_\+init()}}.
+
+\Hypertarget{radio__test_8c_acbdc55f4b469a388a7284a724652db27}\index{radio\_test.c@{radio\_test.c}!radio\_test\_publish\_packet\_to\_lcd@{radio\_test\_publish\_packet\_to\_lcd}}
+\index{radio\_test\_publish\_packet\_to\_lcd@{radio\_test\_publish\_packet\_to\_lcd}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_publish\_packet\_to\_lcd()}{radio\_test\_publish\_packet\_to\_lcd()}}
+{\footnotesize\ttfamily \label{radio__test_8c_acbdc55f4b469a388a7284a724652db27} 
+void radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{pkt}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__test_8c_acbdc55f4b469a388a7284a724652db27}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00124}{124}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00214}{radio\+\_\+packet\+\_\+t\+::data}}, \mbox{\hyperlink{radio__lib_8h_source_l00215}{radio\+\_\+packet\+\_\+t\+::length}} i \mbox{\hyperlink{radio__lib_8h_source_l00216}{radio\+\_\+packet\+\_\+t\+::rssi\+\_\+dbm}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+\Hypertarget{radio__test_8c_a80b69d1de463a0893238ced3d64aa1ad}\index{radio\_test.c@{radio\_test.c}!radio\_test\_send\_ping@{radio\_test\_send\_ping}}
+\index{radio\_test\_send\_ping@{radio\_test\_send\_ping}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_send\_ping()}{radio\_test\_send\_ping()}}
+{\footnotesize\ttfamily \label{radio__test_8c_a80b69d1de463a0893238ced3d64aa1ad} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+test\+\_\+send\+\_\+ping (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Wysyła testowy pakiet "{}\+PING"{}. 
+
+Wysyła krótką ramkę testową "{}\+PING"{}.
+
+\begin{DoxyReturn}{Zwraca}
+Kod statusu z {\ttfamily \doxylink{radio__lib_8c_ab8a0a3a4b9f81878fb5194e58c141a45}{radio\+\_\+send\+\_\+async}}. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00232}{232}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8c_source_l00167}{radio\+\_\+send\+\_\+async()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+\Hypertarget{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}\index{radio\_test.c@{radio\_test.c}!radio\_test\_store\_packet\_in\_i2c\_memory@{radio\_test\_store\_packet\_in\_i2c\_memory}}
+\index{radio\_test\_store\_packet\_in\_i2c\_memory@{radio\_test\_store\_packet\_in\_i2c\_memory}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{radio\_test\_store\_packet\_in\_i2c\_memory()}{radio\_test\_store\_packet\_in\_i2c\_memory()}}
+{\footnotesize\ttfamily \label{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e} 
+void radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{pkt}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__test_8c_ab4ca23c24498af664837c4ddb2f77f7e}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00138}{138}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00214}{radio\+\_\+packet\+\_\+t\+::data}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00510}{i2c\+\_\+mem\+\_\+store\+\_\+append\+\_\+message()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{radio__lib_8h_source_l00215}{radio\+\_\+packet\+\_\+t\+::length}} i \mbox{\hyperlink{radio__lib_8h_source_l00216}{radio\+\_\+packet\+\_\+t\+::rssi\+\_\+dbm}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00303}{radio\+\_\+test\+\_\+demo\+\_\+process()}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{radio__test_8c_doc-var-members}
+\doxysubsection{Dokumentacja zmiennych}
+\Hypertarget{radio__test_8c_a480d66658d74d2b8310cfac512de7198}\index{radio\_test.c@{radio\_test.c}!s\_demo\_initialized@{s\_demo\_initialized}}
+\index{s\_demo\_initialized@{s\_demo\_initialized}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{s\_demo\_initialized}{s\_demo\_initialized}}
+{\footnotesize\ttfamily \label{radio__test_8c_a480d66658d74d2b8310cfac512de7198} 
+bool s\+\_\+demo\+\_\+initialized = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00020}{20}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+\Hypertarget{radio__test_8c_a332cc7384ceff4383534220966c1442e}\index{radio\_test.c@{radio\_test.c}!s\_msg\_store@{s\_msg\_store}}
+\index{s\_msg\_store@{s\_msg\_store}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{s\_msg\_store}{s\_msg\_store}}
+{\footnotesize\ttfamily \label{radio__test_8c_a332cc7384ceff4383534220966c1442e} 
+\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} s\+\_\+msg\+\_\+store\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00021}{21}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+\Hypertarget{radio__test_8c_a459fd5592e55b9491dc2376401616eb2}\index{radio\_test.c@{radio\_test.c}!s\_msg\_store\_ready@{s\_msg\_store\_ready}}
+\index{s\_msg\_store\_ready@{s\_msg\_store\_ready}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{s\_msg\_store\_ready}{s\_msg\_store\_ready}}
+{\footnotesize\ttfamily \label{radio__test_8c_a459fd5592e55b9491dc2376401616eb2} 
+bool s\+\_\+msg\+\_\+store\+\_\+ready = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00022}{22}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+\Hypertarget{radio__test_8c_aa47c68a05c80ec82f586577c138b99b1}\index{radio\_test.c@{radio\_test.c}!s\_radio\_cb\_events@{s\_radio\_cb\_events}}
+\index{s\_radio\_cb\_events@{s\_radio\_cb\_events}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{s\_radio\_cb\_events}{s\_radio\_cb\_events}}
+{\footnotesize\ttfamily \label{radio__test_8c_aa47c68a05c80ec82f586577c138b99b1} 
+volatile uint32\+\_\+t s\+\_\+radio\+\_\+cb\+\_\+events = 0U\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00017}{17}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+\Hypertarget{radio__test_8c_aa00fab8408507be666df34a6efdc1966}\index{radio\_test.c@{radio\_test.c}!s\_radio\_last\_ping\_ms@{s\_radio\_last\_ping\_ms}}
+\index{s\_radio\_last\_ping\_ms@{s\_radio\_last\_ping\_ms}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{s\_radio\_last\_ping\_ms}{s\_radio\_last\_ping\_ms}}
+{\footnotesize\ttfamily \label{radio__test_8c_aa00fab8408507be666df34a6efdc1966} 
+uint32\+\_\+t s\+\_\+radio\+\_\+last\+\_\+ping\+\_\+ms = 0U\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00018}{18}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+
+\Hypertarget{radio__test_8c_a233c90a3b06952f977a0fdf8cdc2b7ab}\index{radio\_test.c@{radio\_test.c}!s\_radio\_last\_tx\_start\_ms@{s\_radio\_last\_tx\_start\_ms}}
+\index{s\_radio\_last\_tx\_start\_ms@{s\_radio\_last\_tx\_start\_ms}!radio\_test.c@{radio\_test.c}}
+\doxysubsubsection{\texorpdfstring{s\_radio\_last\_tx\_start\_ms}{s\_radio\_last\_tx\_start\_ms}}
+{\footnotesize\ttfamily \label{radio__test_8c_a233c90a3b06952f977a0fdf8cdc2b7ab} 
+uint32\+\_\+t s\+\_\+radio\+\_\+last\+\_\+tx\+\_\+start\+\_\+ms = 0U\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__test_8c_source_l00019}{19}} pliku \mbox{\hyperlink{radio__test_8c_source}{radio\+\_\+test.\+c}}.
+

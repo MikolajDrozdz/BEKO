@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury trusted_info_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structtrusted__info__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury trusted_info_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Public descriptor of one trusted pairing entry.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="security__main_8h_source.html">Core/App/security_main.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a5fa2415cf4f32993c965647b559b544f" id="r_a5fa2415cf4f32993c965647b559b544f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5fa2415cf4f32993c965647b559b544f">in_use</a></td></tr>
+<tr class="memdesc:a5fa2415cf4f32993c965647b559b544f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Slot contains a valid trusted entry.  <br /></td></tr>
+<tr class="memitem:a12bd386fd523eeda642820413dcece10" id="r_a12bd386fd523eeda642820413dcece10"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a12bd386fd523eeda642820413dcece10">is_master</a></td></tr>
+<tr class="memdesc:a12bd386fd523eeda642820413dcece10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entry represents the gateway/master slot.  <br /></td></tr>
+<tr class="memitem:abd6923907520cb194caaf1ef43073364" id="r_abd6923907520cb194caaf1ef43073364"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abd6923907520cb194caaf1ef43073364">slot</a></td></tr>
+<tr class="memdesc:abd6923907520cb194caaf1ef43073364"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logical trusted-entry slot index.  <br /></td></tr>
+<tr class="memitem:aeb02690c9f9b8cdaee2d1f546263eb2b" id="r_aeb02690c9f9b8cdaee2d1f546263eb2b"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb02690c9f9b8cdaee2d1f546263eb2b">node_id</a></td></tr>
+<tr class="memdesc:aeb02690c9f9b8cdaee2d1f546263eb2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trusted node identifier.  <br /></td></tr>
+<tr class="memitem:a2fbe1761f7fe2c66b75b515f06b2f76b" id="r_a2fbe1761f7fe2c66b75b515f06b2f76b"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fbe1761f7fe2c66b75b515f06b2f76b">code_len</a></td></tr>
+<tr class="memdesc:a2fbe1761f7fe2c66b75b515f06b2f76b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of valid bytes in <span class="tt"><a class="el" href="#af0fca81fca4f230cae5cf3db78893128" title="Pairing/service code bytes.">code</a></span>.  <br /></td></tr>
+<tr class="memitem:af0fca81fca4f230cae5cf3db78893128" id="r_af0fca81fca4f230cae5cf3db78893128"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0fca81fca4f230cae5cf3db78893128">code</a> [8]</td></tr>
+<tr class="memdesc:af0fca81fca4f230cae5cf3db78893128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pairing/service code bytes.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Public descriptor of one trusted pairing entry. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00017">17</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="af0fca81fca4f230cae5cf3db78893128" name="af0fca81fca4f230cae5cf3db78893128"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0fca81fca4f230cae5cf3db78893128">&#9670;&#160;</a></span>code</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t trusted_info_t::code[8]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pairing/service code bytes. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00024">24</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a2fbe1761f7fe2c66b75b515f06b2f76b" name="a2fbe1761f7fe2c66b75b515f06b2f76b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fbe1761f7fe2c66b75b515f06b2f76b">&#9670;&#160;</a></span>code_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t trusted_info_t::code_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of valid bytes in <span class="tt"><a class="el" href="#af0fca81fca4f230cae5cf3db78893128" title="Pairing/service code bytes.">code</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00023">23</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a5fa2415cf4f32993c965647b559b544f" name="a5fa2415cf4f32993c965647b559b544f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fa2415cf4f32993c965647b559b544f">&#9670;&#160;</a></span>in_use</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool trusted_info_t::in_use</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Slot contains a valid trusted entry. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00019">19</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a12bd386fd523eeda642820413dcece10" name="a12bd386fd523eeda642820413dcece10"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12bd386fd523eeda642820413dcece10">&#9670;&#160;</a></span>is_master</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool trusted_info_t::is_master</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Entry represents the gateway/master slot. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00020">20</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="aeb02690c9f9b8cdaee2d1f546263eb2b" name="aeb02690c9f9b8cdaee2d1f546263eb2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb02690c9f9b8cdaee2d1f546263eb2b">&#9670;&#160;</a></span>node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t trusted_info_t::node_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Trusted node identifier. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00022">22</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="abd6923907520cb194caaf1ef43073364" name="abd6923907520cb194caaf1ef43073364"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abd6923907520cb194caaf1ef43073364">&#9670;&#160;</a></span>slot</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t trusted_info_t::slot</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Logical trusted-entry slot index. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00021">21</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="security__main_8h_source.html">security_main.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structtrusted__info__t.html">trusted_info_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

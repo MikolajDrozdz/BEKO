@@ -1,0 +1,340 @@
+\doxysection{Dokumentacja pliku Core/\+App/lcd\+\_\+main.h}
+\hypertarget{lcd__main_8h}{}\label{lcd__main_8h}\index{Core/App/lcd\_main.h@{Core/App/lcd\_main.h}}
+
+
+RTOS-\/facing LCD rendering task API.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{lcd\+\_\+main\+\_\+mode\+\_\+t}} \{ \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62}{LCD\+\_\+\+MODE\+\_\+\+MONITOR}} = 0
+, \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd}{LCD\+\_\+\+MODE\+\_\+\+MENU}}
+, \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c}{LCD\+\_\+\+MODE\+\_\+\+POPUP}}
+ \}
+\begin{DoxyCompactList}\small\item\em High-\/level ownership mode for the LCD task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{lcd__main_8h_abb7810060d5cef86f0e368eb7970855b}{lcd\+\_\+main\+\_\+create\+\_\+task}} (void)
+\begin{DoxyCompactList}\small\item\em Create the LCD task and message queue. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a716b30672e73417a3307edaf50798e1e}{lcd\+\_\+main\+\_\+set\+\_\+line}} (uint8\+\_\+t line\+\_\+index, const char \texorpdfstring{$\ast$}{*}text)
+\begin{DoxyCompactList}\small\item\em Update one monitor line. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a58a60fe2a211490124107dd751cd2afa}{lcd\+\_\+main\+\_\+set\+\_\+lines}} (const char \texorpdfstring{$\ast$}{*}line0, const char \texorpdfstring{$\ast$}{*}line1)
+\begin{DoxyCompactList}\small\item\em Update the first two monitor lines. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a7a3d779c06b5c3bb826a0b76f0a65eaf}{lcd\+\_\+main\+\_\+show\+\_\+menu}} (const char \texorpdfstring{$\ast$}{*}l0, const char \texorpdfstring{$\ast$}{*}l1, const char \texorpdfstring{$\ast$}{*}l2, const char \texorpdfstring{$\ast$}{*}l3)
+\begin{DoxyCompactList}\small\item\em Replace the menu screen with four LCD lines. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_ad082e838bff867c86118dd1f6666415c}{lcd\+\_\+main\+\_\+push\+\_\+message}} (int16\+\_\+t rssi\+\_\+dbm, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint32\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Append an RX message to the monitor history. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a365bccf7acced9705993a3ab3b8d26fb}{lcd\+\_\+main\+\_\+push\+\_\+message\+\_\+from}} (int16\+\_\+t rssi\+\_\+dbm, uint32\+\_\+t source\+\_\+id, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint32\+\_\+t length)
+\begin{DoxyCompactList}\small\item\em Append an RX message with source identifier to the monitor history. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_abfaf6e6665c4f9be69b0ff8727263475}{lcd\+\_\+main\+\_\+set\+\_\+mode}} (\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{lcd\+\_\+main\+\_\+mode\+\_\+t}} mode)
+\begin{DoxyCompactList}\small\item\em Switch LCD ownership mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a3721122bf75b9d6bb01ab6e20390f535}{lcd\+\_\+main\+\_\+show\+\_\+popup}} (const char \texorpdfstring{$\ast$}{*}l0, const char \texorpdfstring{$\ast$}{*}l1, const char \texorpdfstring{$\ast$}{*}l2, const char \texorpdfstring{$\ast$}{*}l3)
+\begin{DoxyCompactList}\small\item\em Show a four-\/line popup screen. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a5257397a3cc1538d8b18c73f2fe97d89}{lcd\+\_\+main\+\_\+show\+\_\+boot\+\_\+hello}} (void)
+\begin{DoxyCompactList}\small\item\em Queue the boot welcome animation. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a38cf36f376608d63b1e1b78e75a671ab}{lcd\+\_\+main\+\_\+monitor\+\_\+scroll\+\_\+up}} (void)
+\begin{DoxyCompactList}\small\item\em Scroll monitor history one line toward older entries. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{lcd__main_8h_a531fe799b033e4f82b83525e3c336f0f}{lcd\+\_\+main\+\_\+monitor\+\_\+scroll\+\_\+down}} (void)
+\begin{DoxyCompactList}\small\item\em Scroll monitor history one line toward newer entries. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+RTOS-\/facing LCD rendering task API. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{lcd__main_8h_source}{lcd\+\_\+main.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{lcd__main_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_mode\_t@{lcd\_main\_mode\_t}}
+\index{lcd\_main\_mode\_t@{lcd\_main\_mode\_t}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_mode\_t}{lcd\_main\_mode\_t}}
+{\footnotesize\ttfamily \label{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664} 
+enum \mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{lcd\+\_\+main\+\_\+mode\+\_\+t}}}
+
+
+
+High-\/level ownership mode for the LCD task. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LCD\_MODE\_MONITOR@{LCD\_MODE\_MONITOR}!lcd\_main.h@{lcd\_main.h}}\index{lcd\_main.h@{lcd\_main.h}!LCD\_MODE\_MONITOR@{LCD\_MODE\_MONITOR}}}\Hypertarget{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62}\label{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a9919f48ffb11a97ab857e1dd333bfd62} 
+LCD\+\_\+\+MODE\+\_\+\+MONITOR&Show radio monitor history. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LCD\_MODE\_MENU@{LCD\_MODE\_MENU}!lcd\_main.h@{lcd\_main.h}}\index{lcd\_main.h@{lcd\_main.h}!LCD\_MODE\_MENU@{LCD\_MODE\_MENU}}}\Hypertarget{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd}\label{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664a8d4b197e71da680a09faa7d08728d0bd} 
+LCD\+\_\+\+MODE\+\_\+\+MENU&Show menu-\/provided 4-\/line screen. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{LCD\_MODE\_POPUP@{LCD\_MODE\_POPUP}!lcd\_main.h@{lcd\_main.h}}\index{lcd\_main.h@{lcd\_main.h}!LCD\_MODE\_POPUP@{LCD\_MODE\_POPUP}}}\Hypertarget{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c}\label{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664ad90a6d9085b7a75875714081e748419c} 
+LCD\+\_\+\+MODE\+\_\+\+POPUP&Show modal/popup content. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8h_source_l00015}{15}} pliku \mbox{\hyperlink{lcd__main_8h_source}{lcd\+\_\+main.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{lcd__main_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{lcd__main_8h_abb7810060d5cef86f0e368eb7970855b}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_create\_task@{lcd\_main\_create\_task}}
+\index{lcd\_main\_create\_task@{lcd\_main\_create\_task}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_create\_task()}{lcd\_main\_create\_task()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_abb7810060d5cef86f0e368eb7970855b} 
+void lcd\+\_\+main\+\_\+create\+\_\+task (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create the LCD task and message queue. 
+
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00088}{88}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00057}{app\+\_\+freertos\+\_\+init()}}.
+
+\Hypertarget{lcd__main_8h_a531fe799b033e4f82b83525e3c336f0f}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_monitor\_scroll\_down@{lcd\_main\_monitor\_scroll\_down}}
+\index{lcd\_main\_monitor\_scroll\_down@{lcd\_main\_monitor\_scroll\_down}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_monitor\_scroll\_down()}{lcd\_main\_monitor\_scroll\_down()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a531fe799b033e4f82b83525e3c336f0f} 
+bool lcd\+\_\+main\+\_\+monitor\+\_\+scroll\+\_\+down (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Scroll monitor history one line toward newer entries. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the request was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00217}{217}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a38cf36f376608d63b1e1b78e75a671ab}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_monitor\_scroll\_up@{lcd\_main\_monitor\_scroll\_up}}
+\index{lcd\_main\_monitor\_scroll\_up@{lcd\_main\_monitor\_scroll\_up}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_monitor\_scroll\_up()}{lcd\_main\_monitor\_scroll\_up()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a38cf36f376608d63b1e1b78e75a671ab} 
+bool lcd\+\_\+main\+\_\+monitor\+\_\+scroll\+\_\+up (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Scroll monitor history one line toward older entries. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the request was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00208}{208}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_ad082e838bff867c86118dd1f6666415c}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_push\_message@{lcd\_main\_push\_message}}
+\index{lcd\_main\_push\_message@{lcd\_main\_push\_message}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_push\_message()}{lcd\_main\_push\_message()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_ad082e838bff867c86118dd1f6666415c} 
+bool lcd\+\_\+main\+\_\+push\+\_\+message (\begin{DoxyParamCaption}\item[{int16\+\_\+t}]{rssi\+\_\+dbm}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint32\+\_\+t}]{length}{}\end{DoxyParamCaption})}
+
+
+
+Append an RX message to the monitor history. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em rssi\+\_\+dbm} & RSSI associated with the payload. \\
+\hline
+{\em data} & Payload bytes. \\
+\hline
+{\em length} & Payload length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the message was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00156}{156}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a365bccf7acced9705993a3ab3b8d26fb}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_push\_message\_from@{lcd\_main\_push\_message\_from}}
+\index{lcd\_main\_push\_message\_from@{lcd\_main\_push\_message\_from}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_push\_message\_from()}{lcd\_main\_push\_message\_from()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a365bccf7acced9705993a3ab3b8d26fb} 
+bool lcd\+\_\+main\+\_\+push\+\_\+message\+\_\+from (\begin{DoxyParamCaption}\item[{int16\+\_\+t}]{rssi\+\_\+dbm}{, }\item[{uint32\+\_\+t}]{source\+\_\+id}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint32\+\_\+t}]{length}{}\end{DoxyParamCaption})}
+
+
+
+Append an RX message with source identifier to the monitor history. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em rssi\+\_\+dbm} & RSSI associated with the payload. \\
+\hline
+{\em source\+\_\+id} & Source node/device identifier. \\
+\hline
+{\em data} & Payload bytes. \\
+\hline
+{\em length} & Payload length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the message was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00161}{161}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a716b30672e73417a3307edaf50798e1e}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_set\_line@{lcd\_main\_set\_line}}
+\index{lcd\_main\_set\_line@{lcd\_main\_set\_line}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_set\_line()}{lcd\_main\_set\_line()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a716b30672e73417a3307edaf50798e1e} 
+bool lcd\+\_\+main\+\_\+set\+\_\+line (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{line\+\_\+index}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{text}{}\end{DoxyParamCaption})}
+
+
+
+Update one monitor line. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em line\+\_\+index} & Zero-\/based LCD line index. \\
+\hline
+{\em text} & Text copied and padded to display width. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the update request was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00110}{110}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a58a60fe2a211490124107dd751cd2afa}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_set\_lines@{lcd\_main\_set\_lines}}
+\index{lcd\_main\_set\_lines@{lcd\_main\_set\_lines}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_set\_lines()}{lcd\_main\_set\_lines()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a58a60fe2a211490124107dd751cd2afa} 
+bool lcd\+\_\+main\+\_\+set\+\_\+lines (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{line0}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{line1}{}\end{DoxyParamCaption})}
+
+
+
+Update the first two monitor lines. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em line0} & First line text. \\
+\hline
+{\em line1} & Second line text. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the update request was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00126}{126}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_abfaf6e6665c4f9be69b0ff8727263475}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_set\_mode@{lcd\_main\_set\_mode}}
+\index{lcd\_main\_set\_mode@{lcd\_main\_set\_mode}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_set\_mode()}{lcd\_main\_set\_mode()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_abfaf6e6665c4f9be69b0ff8727263475} 
+bool lcd\+\_\+main\+\_\+set\+\_\+mode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{lcd__main_8h_aeb180324247f06b380f2cf8e52c4c664}{lcd\+\_\+main\+\_\+mode\+\_\+t}}}]{mode}{}\end{DoxyParamCaption})}
+
+
+
+Switch LCD ownership mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mode} & New LCD mode. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the mode change was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00176}{176}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a5257397a3cc1538d8b18c73f2fe97d89}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_show\_boot\_hello@{lcd\_main\_show\_boot\_hello}}
+\index{lcd\_main\_show\_boot\_hello@{lcd\_main\_show\_boot\_hello}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_show\_boot\_hello()}{lcd\_main\_show\_boot\_hello()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a5257397a3cc1538d8b18c73f2fe97d89} 
+bool lcd\+\_\+main\+\_\+show\+\_\+boot\+\_\+hello (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Queue the boot welcome animation. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the request was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00199}{199}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a7a3d779c06b5c3bb826a0b76f0a65eaf}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_show\_menu@{lcd\_main\_show\_menu}}
+\index{lcd\_main\_show\_menu@{lcd\_main\_show\_menu}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_show\_menu()}{lcd\_main\_show\_menu()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a7a3d779c06b5c3bb826a0b76f0a65eaf} 
+bool lcd\+\_\+main\+\_\+show\+\_\+menu (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{l0}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{l1}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{l2}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{l3}{}\end{DoxyParamCaption})}
+
+
+
+Replace the menu screen with four LCD lines. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em l0} & First line. \\
+\hline
+{\em l1} & Second line. \\
+\hline
+{\em l2} & Third line. \\
+\hline
+{\em l3} & Fourth line. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the screen was queued.
+\end{DoxyReturn}
+Replace the menu screen with four LCD lines.
+
+Menu navigation used to enqueue each line separately, which could leave stale rows on screen when the LCD queue was busy. Sending the whole frame atomically keeps the UI coherent. 
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00143}{143}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+
+\Hypertarget{lcd__main_8h_a3721122bf75b9d6bb01ab6e20390f535}\index{lcd\_main.h@{lcd\_main.h}!lcd\_main\_show\_popup@{lcd\_main\_show\_popup}}
+\index{lcd\_main\_show\_popup@{lcd\_main\_show\_popup}!lcd\_main.h@{lcd\_main.h}}
+\doxysubsubsection{\texorpdfstring{lcd\_main\_show\_popup()}{lcd\_main\_show\_popup()}}
+{\footnotesize\ttfamily \label{lcd__main_8h_a3721122bf75b9d6bb01ab6e20390f535} 
+bool lcd\+\_\+main\+\_\+show\+\_\+popup (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{l0}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{l1}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{l2}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{l3}{}\end{DoxyParamCaption})}
+
+
+
+Show a four-\/line popup screen. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em l0} & First line. \\
+\hline
+{\em l1} & Second line. \\
+\hline
+{\em l2} & Third line. \\
+\hline
+{\em l3} & Fourth line. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the popup was queued. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{lcd__main_8c_source_l00186}{186}} pliku \mbox{\hyperlink{lcd__main_8c_source}{lcd\+\_\+main.\+c}}.
+

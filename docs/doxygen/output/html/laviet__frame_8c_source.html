@@ -1,0 +1,637 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Plik źródłowy Core/App/laviet_frame.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('laviet__frame_8c_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">laviet_frame.c</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="laviet__frame_8c.html">Idź do dokumentacji tego pliku.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="laviet__frame_8h.html">laviet_frame.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;stm32u5xx_hal.h&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span></div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">   13</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(uint8_t *dst, uint16_t value)</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    dst[0] = (uint8_t)(value &gt;&gt; 8);</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    dst[1] = (uint8_t)value;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>}</div>
+</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span></div>
+<div class="foldopen" id="foldopen00020" data-start="{" data-end="}">
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#ac02cf8c0fe2ea0df90ecec7690c7fa86">   20</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="laviet__frame_8c.html#ac02cf8c0fe2ea0df90ecec7690c7fa86">laviet_be32_write</a>(uint8_t *dst, uint32_t value)</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    dst[0] = (uint8_t)(value &gt;&gt; 24);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    dst[1] = (uint8_t)(value &gt;&gt; 16);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    dst[2] = (uint8_t)(value &gt;&gt; 8);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    dst[3] = (uint8_t)value;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>}</div>
+</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span></div>
+<div class="foldopen" id="foldopen00029" data-start="{" data-end="}">
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">   29</a></span><span class="keyword">static</span> uint16_t <a class="code hl_function" href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a>(<span class="keyword">const</span> uint8_t *src)</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">return</span> (uint16_t)(((uint16_t)src[0] &lt;&lt; 8) | src[1]);</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
+</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span></div>
+<div class="foldopen" id="foldopen00035" data-start="{" data-end="}">
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a9f62c3d8335b3991ade03916c951e234">   35</a></span><span class="keyword">static</span> uint32_t <a class="code hl_function" href="laviet__frame_8c.html#a9f62c3d8335b3991ade03916c951e234">laviet_be32_read</a>(<span class="keyword">const</span> uint8_t *src)</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>{</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">return</span> ((uint32_t)src[0] &lt;&lt; 24) |</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>           ((uint32_t)src[1] &lt;&lt; 16) |</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>           ((uint32_t)src[2] &lt;&lt; 8) |</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>           (uint32_t)src[3];</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
+</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span></div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#aa2ee0153820cb3d03e711936dae0926e">   44</a></span><span class="keyword">static</span> uint8_t <a class="code hl_function" href="laviet__frame_8c.html#aa2ee0153820cb3d03e711936dae0926e">laviet_frame_version_from_ver_type</a>(uint8_t ver_type)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordflow">return</span> (uint8_t)((ver_type &gt;&gt; 4) &amp; 0x0FU);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>}</div>
+</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span></div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="}">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#aeeebecb22f3195149752e27549634ad9">   50</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="laviet__frame_8c.html#aeeebecb22f3195149752e27549634ad9">laviet_frame_type_known</a>(<a class="code hl_enumeration" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> type)</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>{</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keywordflow">return</span> (type &gt;= <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4">LAVIET_TYPE_DATA</a>) &amp;&amp; (type &lt;= <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da85b0e219269d1d11ffddb4126f89e23c">LAVIET_TYPE_ERROR</a>);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>}</div>
+</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="foldopen" id="foldopen00055" data-start="{" data-end="}">
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#ac3ba36c6c1790bf1a5e8a3624be46201">   55</a></span>uint8_t <a class="code hl_function" href="laviet__frame_8c.html#ac3ba36c6c1790bf1a5e8a3624be46201">laviet_frame_ver_type</a>(<a class="code hl_enumeration" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> type)</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> (uint8_t)(((uint8_t)<a class="code hl_define" href="laviet__frame_8h.html#a3368b6bf0d03fd777b5e092fbfb4e208">LAVIET_FRAME_VERSION</a> &lt;&lt; 4) | ((uint8_t)type &amp; 0x0FU));</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a0c4799d9ab27acb8e329da925fa382bd">   60</a></span><a class="code hl_enumeration" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> <a class="code hl_function" href="laviet__frame_8c.html#a0c4799d9ab27acb8e329da925fa382bd">laviet_frame_type</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>{</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">if</span> (frame == NULL)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e">LAVIET_TYPE_NONE</a>;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordflow">return</span> (<a class="code hl_enumeration" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a>)(frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a5f2e5456d7a8afad23ccc25ccf7e8814">ver_type</a> &amp; 0x0FU);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>}</div>
+</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
+<div class="foldopen" id="foldopen00070" data-start="{" data-end="}">
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a48545bbdd416df64d1880430fe61498e">   70</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="laviet__frame_8c.html#a48545bbdd416df64d1880430fe61498e">laviet_frame_is_broadcast</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>{</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordflow">if</span> (frame == NULL)</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    }</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    <span class="keywordflow">return</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">dst_id</a> == <a class="code hl_define" href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4">LAVIET_BROADCAST_ID</a>);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>}</div>
+</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="foldopen" id="foldopen00080" data-start="{" data-end="}">
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a58d0b229430a6d71b5f09e953192db3d">   80</a></span>uint16_t <a class="code hl_function" href="laviet__frame_8c.html#a58d0b229430a6d71b5f09e953192db3d">laviet_local_node_id</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>{</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    uint32_t uid0 = HAL_GetUIDw0();</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    uint32_t uid1 = HAL_GetUIDw1();</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    uint32_t uid2 = HAL_GetUIDw2();</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    uint32_t hash = 2166136261UL;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    uint8_t i;</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">const</span> uint8_t *uid_bytes = (<span class="keyword">const</span> uint8_t *)&amp;uid0;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">for</span> (i = 0U; i &lt; 4U; i++)</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        hash ^= uid_bytes[i];</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        hash *= 16777619UL;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    }</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    uid_bytes = (<span class="keyword">const</span> uint8_t *)&amp;uid1;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordflow">for</span> (i = 0U; i &lt; 4U; i++)</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        hash ^= uid_bytes[i];</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        hash *= 16777619UL;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    }</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    uid_bytes = (<span class="keyword">const</span> uint8_t *)&amp;uid2;</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordflow">for</span> (i = 0U; i &lt; 4U; i++)</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    {</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        hash ^= uid_bytes[i];</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        hash *= 16777619UL;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    }</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    hash = (hash ^ (hash &gt;&gt; 16)) &amp; 0xFFFFUL;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">if</span> ((hash == 0U) || (hash == <a class="code hl_define" href="laviet__frame_8h.html#a3b0b0723fb3e6750e0359ccb3dc0ecf4">LAVIET_GATEWAY_ID</a>) || (hash == <a class="code hl_define" href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4">LAVIET_BROADCAST_ID</a>))</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    {</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        hash = (uint32_t)(0x1000U | (hash &amp; 0x0FFFU));</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        <span class="keywordflow">if</span> ((hash == 0U) || (hash == <a class="code hl_define" href="laviet__frame_8h.html#a3b0b0723fb3e6750e0359ccb3dc0ecf4">LAVIET_GATEWAY_ID</a>) || (hash == <a class="code hl_define" href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4">LAVIET_BROADCAST_ID</a>))</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        {</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            hash = 0x1002U;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        }</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    }</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">return</span> (uint16_t)hash;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>}</div>
+</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="foldopen" id="foldopen00120" data-start="{" data-end="}">
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a9df225dfc1501016db4186285f38f71e">  120</a></span><a class="code hl_enumeration" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> <a class="code hl_function" href="laviet__frame_8c.html#a9df225dfc1501016db4186285f38f71e">laviet_frame_validate_plain</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>{</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <a class="code hl_enumeration" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> type;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordtype">bool</span> broadcast;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    <span class="keywordflow">if</span> (frame == NULL)</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f">LAVIET_STATUS_NULL</a>;</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    }</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="laviet__frame_8c.html#aa2ee0153820cb3d03e711936dae0926e">laviet_frame_version_from_ver_type</a>(frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a5f2e5456d7a8afad23ccc25ccf7e8814">ver_type</a>) != <a class="code hl_define" href="laviet__frame_8h.html#a3368b6bf0d03fd777b5e092fbfb4e208">LAVIET_FRAME_VERSION</a>)</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    {</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7af3e22eb39b7693432972bd337a31a699">LAVIET_STATUS_VERSION</a>;</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    }</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    type = <a class="code hl_function" href="laviet__frame_8c.html#a0c4799d9ab27acb8e329da925fa382bd">laviet_frame_type</a>(frame);</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="laviet__frame_8c.html#aeeebecb22f3195149752e27549634ad9">laviet_frame_type_known</a>(type))</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    {</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7aedb14e8308df25c8ec30e664f4a27c02">LAVIET_STATUS_TYPE</a>;</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    }</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a> == 0U) ||</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a> == <a class="code hl_define" href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4">LAVIET_BROADCAST_ID</a>) ||</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">dst_id</a> == 0U) ||</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a0a374341e2508761490a6e35c14a6a74">msg_id</a> == 0U))</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    {</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a1593d57b3a7ede05e55d152d2db441cd">LAVIET_STATUS_ID</a>;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    }</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; <a class="code hl_define" href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a>)</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    }</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span> </div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    broadcast = (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">dst_id</a> == <a class="code hl_define" href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4">LAVIET_BROADCAST_ID</a>);</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    <span class="keywordflow">if</span> (broadcast)</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    {</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#acfa727632c301e5a1d78e52049fdba16">LAVIET_FLAG_BROADCAST</a>) == 0U) ||</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ac51e9cda67f88a956f8d2b9673ffffc2">LAVIET_FLAG_ACK_REQUIRED</a>) != 0U))</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>        {</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>            <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        }</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a> != <a class="code hl_define" href="laviet__frame_8h.html#a3b0b0723fb3e6750e0359ccb3dc0ecf4">LAVIET_GATEWAY_ID</a>) &amp;&amp;</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            (type != <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4">LAVIET_TYPE_DATA</a>) &amp;&amp;</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>            (type != <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da4902bee85a1c5e34566f4d662df3fbe1">LAVIET_TYPE_RESP</a>) &amp;&amp;</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>            (type != <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da97a644d5c60102721a44a844bd1769e8">LAVIET_TYPE_PAIR_REQ</a>))</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        {</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>            <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        }</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    }</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#acfa727632c301e5a1d78e52049fdba16">LAVIET_FLAG_BROADCAST</a>) != 0U)</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    {</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    }</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span> </div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    <span class="keywordflow">switch</span> (type)</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    {</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4">LAVIET_TYPE_DATA</a>:</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>            <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> == 0U) || (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; <a class="code hl_define" href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a>))</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>            {</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>            }</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>            <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a>) != 0U) ||</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#a4a32a93e604cd44ec3934be167a56093">LAVIET_FLAG_PAIRING</a>) != 0U) ||</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ab795f548f456f3aa088c9ffc7a2a9cc9">LAVIET_FLAG_CONFIG_ACCESS</a>) != 0U) ||</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#a2c0cda29cfc3623806478e00b60f6ac5">LAVIET_FLAG_COUNTER_OVERRIDE</a>) != 0U) ||</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ac6dd84b784e26d598a7599de31d5fda2">LAVIET_FLAG_KEY_UPDATE</a>) != 0U))</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            {</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            }</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7">LAVIET_TYPE_ACK</a>:</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>            <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> != <a class="code hl_define" href="laviet__frame_8h.html#afad0b33d1c1fe2b9810ba02be7f7c498">LAVIET_ACK_PAYLOAD_LEN</a>)</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            {</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            }</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>            <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a>) == 0U) ||</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ac51e9cda67f88a956f8d2b9673ffffc2">LAVIET_FLAG_ACK_REQUIRED</a>) != 0U) ||</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#aa9bc9965d96968efadad6239e59ea1ff">LAVIET_FLAG_ENCRYPTED</a>) != 0U))</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            {</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>            }</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da4902bee85a1c5e34566f4d662df3fbe1">LAVIET_TYPE_RESP</a>:</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; (<a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a> |</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                                 <a class="code hl_define" href="laviet__frame_8h.html#a4a32a93e604cd44ec3934be167a56093">LAVIET_FLAG_PAIRING</a> |</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                                 <a class="code hl_define" href="laviet__frame_8h.html#ab795f548f456f3aa088c9ffc7a2a9cc9">LAVIET_FLAG_CONFIG_ACCESS</a> |</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                                 <a class="code hl_define" href="laviet__frame_8h.html#a2c0cda29cfc3623806478e00b60f6ac5">LAVIET_FLAG_COUNTER_OVERRIDE</a> |</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                                 <a class="code hl_define" href="laviet__frame_8h.html#ac6dd84b784e26d598a7599de31d5fda2">LAVIET_FLAG_KEY_UPDATE</a>)) != 0U)</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>            {</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>            }</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da97a644d5c60102721a44a844bd1769e8">LAVIET_TYPE_PAIR_REQ</a>:</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da08e4f1cd190044f20c071e71840d6e7d">LAVIET_TYPE_PAIR_RESP</a>:</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>            <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> != <a class="code hl_define" href="laviet__frame_8h.html#ac33212e0985b84b77829050bb15409d7">LAVIET_PAIR_PAYLOAD_LEN</a>)</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>            {</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            }</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#a4a32a93e604cd44ec3934be167a56093">LAVIET_FLAG_PAIRING</a>) == 0U) ||</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ab795f548f456f3aa088c9ffc7a2a9cc9">LAVIET_FLAG_CONFIG_ACCESS</a>) != 0U) ||</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#a2c0cda29cfc3623806478e00b60f6ac5">LAVIET_FLAG_COUNTER_OVERRIDE</a>) != 0U) ||</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ac6dd84b784e26d598a7599de31d5fda2">LAVIET_FLAG_KEY_UPDATE</a>) != 0U))</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            {</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            }</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da039e38e63a2e70c0833f0829f57ec5e1">LAVIET_TYPE_CFG</a>:</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>            <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &lt; 2U) || (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; <a class="code hl_define" href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a>))</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            {</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            }</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ab795f548f456f3aa088c9ffc7a2a9cc9">LAVIET_FLAG_CONFIG_ACCESS</a>) == 0U) ||</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a>) != 0U) ||</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#a4a32a93e604cd44ec3934be167a56093">LAVIET_FLAG_PAIRING</a>) != 0U))</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>            {</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            }</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span> </div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da32dac1cacf10dd8f227167dfb99706c2">LAVIET_TYPE_COUNTER_SYNC</a>:</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>            <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> != <a class="code hl_define" href="laviet__frame_8h.html#add7af305cf11b92fbdf8c3df4c461d28">LAVIET_COUNTER_SYNC_PAYLOAD_LEN</a>)</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            {</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>            }</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>            <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#a2c0cda29cfc3623806478e00b60f6ac5">LAVIET_FLAG_COUNTER_OVERRIDE</a>) == 0U) ||</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a>) != 0U) ||</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>                (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a> != <a class="code hl_define" href="laviet__frame_8h.html#a3b0b0723fb3e6750e0359ccb3dc0ecf4">LAVIET_GATEWAY_ID</a>))</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>            {</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>            }</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da9fbeccf148693b02adf381be43728482">LAVIET_TYPE_KEY_ROTATE</a>:</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>            <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> == 0U) || (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; <a class="code hl_define" href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a>))</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>            {</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>            }</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            <span class="keywordflow">if</span> (((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ac6dd84b784e26d598a7599de31d5fda2">LAVIET_FLAG_KEY_UPDATE</a>) == 0U) ||</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a>) != 0U))</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            {</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>            }</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span> </div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da85b0e219269d1d11ffddb4126f89e23c">LAVIET_TYPE_ERROR</a>:</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> != <a class="code hl_define" href="laviet__frame_8h.html#afb90f3a12fd3366bc31f130238a15d56">LAVIET_ERROR_PAYLOAD_LEN</a>)</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            {</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            }</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            <span class="keywordflow">if</span> ((frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> &amp; <a class="code hl_define" href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a>) != 0U)</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            {</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>                <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a>;</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>            }</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>            <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7aedb14e8308df25c8ec30e664f4a27c02">LAVIET_STATUS_TYPE</a>;</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    }</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd">LAVIET_STATUS_OK</a>;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>}</div>
+</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
+<div class="foldopen" id="foldopen00287" data-start="{" data-end="}">
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#adbb7c581bf1ab54461d5a7ba3595a9b6">  287</a></span><a class="code hl_enumeration" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> <a class="code hl_function" href="laviet__frame_8c.html#adbb7c581bf1ab54461d5a7ba3595a9b6">laviet_frame_encode</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame,</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>                                          uint8_t *out,</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                                          uint8_t out_capacity,</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                                          uint8_t *out_len)</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>{</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    <a class="code hl_enumeration" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> status;</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    uint8_t total_len;</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>    <span class="keywordflow">if</span> ((frame == NULL) || (out == NULL) || (out_len == NULL))</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>    {</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f">LAVIET_STATUS_NULL</a>;</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    }</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    status = <a class="code hl_function" href="laviet__frame_8c.html#a9df225dfc1501016db4186285f38f71e">laviet_frame_validate_plain</a>(frame);</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    <span class="keywordflow">if</span> (status != <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd">LAVIET_STATUS_OK</a>)</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    {</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        <span class="keywordflow">return</span> status;</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    }</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    total_len = (uint8_t)(<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a> + frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> + <a class="code hl_define" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>);</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>    <span class="keywordflow">if</span> (out_capacity &lt; total_len)</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    {</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6">LAVIET_STATUS_LENGTH</a>;</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    }</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span> </div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    out[0] = frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a5f2e5456d7a8afad23ccc25ccf7e8814">ver_type</a>;</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>    out[1] = frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a>;</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[2], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a>);</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[4], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">dst_id</a>);</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[6], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a0a374341e2508761490a6e35c14a6a74">msg_id</a>);</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>    <a class="code hl_function" href="laviet__frame_8c.html#ac02cf8c0fe2ea0df90ecec7690c7fa86">laviet_be32_write</a>(&amp;out[8], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a603f30cb3c798f7a28c199780cc7ee19">counter</a>);</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>    out[12] = frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a>;</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; 0U)</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    {</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        memcpy(&amp;out[<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a>], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#adb820f1f644d1070706f3834ec31b887">payload</a>, frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a>);</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    }</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>    memcpy(&amp;out[<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a> + frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a>], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#ac421f101d139175775284d97630a68b1">mac_tag</a>, <a class="code hl_define" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>);</div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    *out_len = total_len;</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd">LAVIET_STATUS_OK</a>;</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>}</div>
+</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span> </div>
+<div class="foldopen" id="foldopen00328" data-start="{" data-end="}">
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a0cbbd31fc9d8057a33552174c8ca7b07">  328</a></span><a class="code hl_enumeration" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> <a class="code hl_function" href="laviet__frame_8c.html#a0cbbd31fc9d8057a33552174c8ca7b07">laviet_frame_decode</a>(<span class="keyword">const</span> uint8_t *in,</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                                          uint8_t in_len,</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                                          <a class="code hl_struct" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame_out)</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>{</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    uint8_t payload_len;</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    uint8_t expected_len;</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>    <a class="code hl_enumeration" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> status;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    <span class="keywordflow">if</span> ((in == NULL) || (frame_out == NULL))</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    {</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f">LAVIET_STATUS_NULL</a>;</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    }</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    <span class="keywordflow">if</span> ((in_len &lt; <a class="code hl_define" href="laviet__frame_8h.html#aecc762b53b7324776b55aa2e0ce94e1a">LAVIET_FRAME_MIN_LEN</a>) || (in_len &gt; <a class="code hl_define" href="laviet__frame_8h.html#a03e7f14bedcd8ac8b5f3e4366d0a8d39">LAVIET_FRAME_MAX_LEN</a>))</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    {</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6">LAVIET_STATUS_LENGTH</a>;</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    }</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span> </div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>    payload_len = in[12];</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>    <span class="keywordflow">if</span> (payload_len &gt; <a class="code hl_define" href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a>)</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    {</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a>;</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    }</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    expected_len = (uint8_t)(<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a> + payload_len + <a class="code hl_define" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>);</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    <span class="keywordflow">if</span> (expected_len != in_len)</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    {</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6">LAVIET_STATUS_LENGTH</a>;</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    }</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>    memset(frame_out, 0, <span class="keyword">sizeof</span>(*frame_out));</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a5f2e5456d7a8afad23ccc25ccf7e8814">ver_type</a> = in[0];</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a> = in[1];</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a> = <a class="code hl_function" href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a>(&amp;in[2]);</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">dst_id</a> = <a class="code hl_function" href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a>(&amp;in[4]);</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a0a374341e2508761490a6e35c14a6a74">msg_id</a> = <a class="code hl_function" href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a>(&amp;in[6]);</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a603f30cb3c798f7a28c199780cc7ee19">counter</a> = <a class="code hl_function" href="laviet__frame_8c.html#a9f62c3d8335b3991ade03916c951e234">laviet_be32_read</a>(&amp;in[8]);</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> = payload_len;</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    <span class="keywordflow">if</span> (payload_len &gt; 0U)</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    {</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>        memcpy(frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#adb820f1f644d1070706f3834ec31b887">payload</a>, &amp;in[<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a>], payload_len);</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    }</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>    memcpy(frame_out-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#ac421f101d139175775284d97630a68b1">mac_tag</a>, &amp;in[<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a> + payload_len], <a class="code hl_define" href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a>);</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span> </div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>    status = <a class="code hl_function" href="laviet__frame_8c.html#a9df225dfc1501016db4186285f38f71e">laviet_frame_validate_plain</a>(frame_out);</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>    <span class="keywordflow">if</span> (status != <a class="code hl_enumvalue" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd">LAVIET_STATUS_OK</a>)</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>    {</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>        memset(frame_out, 0, <span class="keyword">sizeof</span>(*frame_out));</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>    }</div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    <span class="keywordflow">return</span> status;</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>}</div>
+</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span> </div>
+<div class="foldopen" id="foldopen00378" data-start="{" data-end="}">
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#af39d27eb077be2b724a9b89e172ea79c">  378</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="laviet__frame_8c.html#af39d27eb077be2b724a9b89e172ea79c">laviet_frame_build_mac_input</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame,</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>                                  uint8_t *out,</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>                                  uint8_t out_capacity,</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                                  uint8_t *out_len)</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>{</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    uint8_t len;</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span> </div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    <span class="keywordflow">if</span> ((frame == NULL) || (out == NULL) || (out_len == NULL))</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    {</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    }</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; <a class="code hl_define" href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a>)</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    {</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    }</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    len = (uint8_t)(<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a> + frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a>);</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    <span class="keywordflow">if</span> (out_capacity &lt; len)</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    {</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>    }</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span> </div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    out[0] = frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a5f2e5456d7a8afad23ccc25ccf7e8814">ver_type</a>;</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>    out[1] = frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">flags</a>;</div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[2], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">src_id</a>);</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[4], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">dst_id</a>);</div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[6], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a0a374341e2508761490a6e35c14a6a74">msg_id</a>);</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>    <a class="code hl_function" href="laviet__frame_8c.html#ac02cf8c0fe2ea0df90ecec7690c7fa86">laviet_be32_write</a>(&amp;out[8], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a603f30cb3c798f7a28c199780cc7ee19">counter</a>);</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>    out[12] = frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a>;</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    <span class="keywordflow">if</span> (frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a> &gt; 0U)</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>    {</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>        memcpy(&amp;out[<a class="code hl_define" href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a>], frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#adb820f1f644d1070706f3834ec31b887">payload</a>, frame-&gt;<a class="code hl_variable" href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">payload_len</a>);</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>    }</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>    *out_len = len;</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>}</div>
+</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span> </div>
+<div class="foldopen" id="foldopen00415" data-start="{" data-end="}">
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a24b2cd573fc3274f8a92b86b3433b3b0">  415</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="laviet__frame_8c.html#a24b2cd573fc3274f8a92b86b3433b3b0">laviet_frame_write_ack_payload</a>(uint16_t acked_msg_id,</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span>                                    uint32_t acked_counter,</div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span>                                    uint8_t out[<a class="code hl_define" href="laviet__frame_8h.html#afad0b33d1c1fe2b9810ba02be7f7c498">LAVIET_ACK_PAYLOAD_LEN</a>])</div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>{</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>    <span class="keywordflow">if</span> ((out == NULL) || (acked_msg_id == 0U))</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    {</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    }</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span> </div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    <a class="code hl_function" href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a>(&amp;out[0], acked_msg_id);</div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>    <a class="code hl_function" href="laviet__frame_8c.html#ac02cf8c0fe2ea0df90ecec7690c7fa86">laviet_be32_write</a>(&amp;out[2], acked_counter);</div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>}</div>
+</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span> </div>
+<div class="foldopen" id="foldopen00429" data-start="{" data-end="}">
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno"><a class="line" href="laviet__frame_8c.html#a2870d34c9f2c9274fd637a115a977b64">  429</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="laviet__frame_8c.html#a2870d34c9f2c9274fd637a115a977b64">laviet_frame_read_ack_payload</a>(<span class="keyword">const</span> uint8_t payload[<a class="code hl_define" href="laviet__frame_8h.html#afad0b33d1c1fe2b9810ba02be7f7c498">LAVIET_ACK_PAYLOAD_LEN</a>],</div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>                                   uint16_t *acked_msg_id,</div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>                                   uint32_t *acked_counter)</div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span>{</div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>    <span class="keywordflow">if</span> ((payload == NULL) || (acked_msg_id == NULL) || (acked_counter == NULL))</div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>    {</div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>    }</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span> </div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>    *acked_msg_id = <a class="code hl_function" href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a>(&amp;payload[0]);</div>
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>    *acked_counter = <a class="code hl_function" href="laviet__frame_8c.html#a9f62c3d8335b3991ade03916c951e234">laviet_be32_read</a>(&amp;payload[2]);</div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>    <span class="keywordflow">return</span> (*acked_msg_id != 0U);</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>}</div>
+</div>
+<div class="ttc" id="alaviet__frame_8c_html_a0c4799d9ab27acb8e329da925fa382bd"><div class="ttname"><a href="laviet__frame_8c.html#a0c4799d9ab27acb8e329da925fa382bd">laviet_frame_type</a></div><div class="ttdeci">laviet_frame_type_t laviet_frame_type(const laviet_frame_t *frame)</div><div class="ttdoc">Extract the low-nibble frame type from a parsed frame.</div><div class="ttdef"><b>Definicja</b> <a href="#l00060">laviet_frame.c:60</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a0cbbd31fc9d8057a33552174c8ca7b07"><div class="ttname"><a href="laviet__frame_8c.html#a0cbbd31fc9d8057a33552174c8ca7b07">laviet_frame_decode</a></div><div class="ttdeci">laviet_frame_status_t laviet_frame_decode(const uint8_t *in, uint8_t in_len, laviet_frame_t *frame_out)</div><div class="ttdoc">Parse a serialized wire frame into a frame structure.</div><div class="ttdef"><b>Definicja</b> <a href="#l00328">laviet_frame.c:328</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a24b2cd573fc3274f8a92b86b3433b3b0"><div class="ttname"><a href="laviet__frame_8c.html#a24b2cd573fc3274f8a92b86b3433b3b0">laviet_frame_write_ack_payload</a></div><div class="ttdeci">bool laviet_frame_write_ack_payload(uint16_t acked_msg_id, uint32_t acked_counter, uint8_t out[LAVIET_ACK_PAYLOAD_LEN])</div><div class="ttdoc">Encode an ACK payload.</div><div class="ttdef"><b>Definicja</b> <a href="#l00415">laviet_frame.c:415</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a2870d34c9f2c9274fd637a115a977b64"><div class="ttname"><a href="laviet__frame_8c.html#a2870d34c9f2c9274fd637a115a977b64">laviet_frame_read_ack_payload</a></div><div class="ttdeci">bool laviet_frame_read_ack_payload(const uint8_t payload[LAVIET_ACK_PAYLOAD_LEN], uint16_t *acked_msg_id, uint32_t *acked_counter)</div><div class="ttdoc">Decode an ACK payload.</div><div class="ttdef"><b>Definicja</b> <a href="#l00429">laviet_frame.c:429</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a48545bbdd416df64d1880430fe61498e"><div class="ttname"><a href="laviet__frame_8c.html#a48545bbdd416df64d1880430fe61498e">laviet_frame_is_broadcast</a></div><div class="ttdeci">bool laviet_frame_is_broadcast(const laviet_frame_t *frame)</div><div class="ttdoc">Check whether a frame targets the broadcast address.</div><div class="ttdef"><b>Definicja</b> <a href="#l00070">laviet_frame.c:70</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a55687296aee50be46a5516fbe450a75b"><div class="ttname"><a href="laviet__frame_8c.html#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a></div><div class="ttdeci">static uint16_t laviet_be16_read(const uint8_t *src)</div><div class="ttdoc">Internal helper: laviet_be16_read.</div><div class="ttdef"><b>Definicja</b> <a href="#l00029">laviet_frame.c:29</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a58d0b229430a6d71b5f09e953192db3d"><div class="ttname"><a href="laviet__frame_8c.html#a58d0b229430a6d71b5f09e953192db3d">laviet_local_node_id</a></div><div class="ttdeci">uint16_t laviet_local_node_id(void)</div><div class="ttdoc">Derive a stable local node identifier from STM32 unique ID words.</div><div class="ttdef"><b>Definicja</b> <a href="#l00080">laviet_frame.c:80</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a9df225dfc1501016db4186285f38f71e"><div class="ttname"><a href="laviet__frame_8c.html#a9df225dfc1501016db4186285f38f71e">laviet_frame_validate_plain</a></div><div class="ttdeci">laviet_frame_status_t laviet_frame_validate_plain(const laviet_frame_t *frame)</div><div class="ttdoc">Validate parsed frame fields before encryption/MAC checks.</div><div class="ttdef"><b>Definicja</b> <a href="#l00120">laviet_frame.c:120</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_a9f62c3d8335b3991ade03916c951e234"><div class="ttname"><a href="laviet__frame_8c.html#a9f62c3d8335b3991ade03916c951e234">laviet_be32_read</a></div><div class="ttdeci">static uint32_t laviet_be32_read(const uint8_t *src)</div><div class="ttdoc">Internal helper: laviet_be32_read.</div><div class="ttdef"><b>Definicja</b> <a href="#l00035">laviet_frame.c:35</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_aa2ee0153820cb3d03e711936dae0926e"><div class="ttname"><a href="laviet__frame_8c.html#aa2ee0153820cb3d03e711936dae0926e">laviet_frame_version_from_ver_type</a></div><div class="ttdeci">static uint8_t laviet_frame_version_from_ver_type(uint8_t ver_type)</div><div class="ttdoc">Internal helper: laviet_frame_version_from_ver_type.</div><div class="ttdef"><b>Definicja</b> <a href="#l00044">laviet_frame.c:44</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_ac02cf8c0fe2ea0df90ecec7690c7fa86"><div class="ttname"><a href="laviet__frame_8c.html#ac02cf8c0fe2ea0df90ecec7690c7fa86">laviet_be32_write</a></div><div class="ttdeci">static void laviet_be32_write(uint8_t *dst, uint32_t value)</div><div class="ttdoc">Internal helper: laviet_be32_write.</div><div class="ttdef"><b>Definicja</b> <a href="#l00020">laviet_frame.c:20</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_ac3ba36c6c1790bf1a5e8a3624be46201"><div class="ttname"><a href="laviet__frame_8c.html#ac3ba36c6c1790bf1a5e8a3624be46201">laviet_frame_ver_type</a></div><div class="ttdeci">uint8_t laviet_frame_ver_type(laviet_frame_type_t type)</div><div class="ttdoc">Compose the version/type byte for a frame type.</div><div class="ttdef"><b>Definicja</b> <a href="#l00055">laviet_frame.c:55</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_adbb7c581bf1ab54461d5a7ba3595a9b6"><div class="ttname"><a href="laviet__frame_8c.html#adbb7c581bf1ab54461d5a7ba3595a9b6">laviet_frame_encode</a></div><div class="ttdeci">laviet_frame_status_t laviet_frame_encode(const laviet_frame_t *frame, uint8_t *out, uint8_t out_capacity, uint8_t *out_len)</div><div class="ttdoc">Serialize a parsed frame into wire format.</div><div class="ttdef"><b>Definicja</b> <a href="#l00287">laviet_frame.c:287</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_aeeebecb22f3195149752e27549634ad9"><div class="ttname"><a href="laviet__frame_8c.html#aeeebecb22f3195149752e27549634ad9">laviet_frame_type_known</a></div><div class="ttdeci">static bool laviet_frame_type_known(laviet_frame_type_t type)</div><div class="ttdoc">Internal helper: laviet_frame_type_known.</div><div class="ttdef"><b>Definicja</b> <a href="#l00050">laviet_frame.c:50</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_af2b4e39297b09f5e4846836e2c22a829"><div class="ttname"><a href="laviet__frame_8c.html#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a></div><div class="ttdeci">static void laviet_be16_write(uint8_t *dst, uint16_t value)</div><div class="ttdoc">Internal helper: laviet_be16_write.</div><div class="ttdef"><b>Definicja</b> <a href="#l00013">laviet_frame.c:13</a></div></div>
+<div class="ttc" id="alaviet__frame_8c_html_af39d27eb077be2b724a9b89e172ea79c"><div class="ttname"><a href="laviet__frame_8c.html#af39d27eb077be2b724a9b89e172ea79c">laviet_frame_build_mac_input</a></div><div class="ttdeci">bool laviet_frame_build_mac_input(const laviet_frame_t *frame, uint8_t *out, uint8_t out_capacity, uint8_t *out_len)</div><div class="ttdoc">Build the canonical byte sequence covered by the frame MAC.</div><div class="ttdef"><b>Definicja</b> <a href="#l00378">laviet_frame.c:378</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html"><div class="ttname"><a href="laviet__frame_8h.html">laviet_frame.h</a></div><div class="ttdoc">LAVIET_FRAME_V1 wire protocol helpers.</div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a03e7f14bedcd8ac8b5f3e4366d0a8d39"><div class="ttname"><a href="laviet__frame_8h.html#a03e7f14bedcd8ac8b5f3e4366d0a8d39">LAVIET_FRAME_MAX_LEN</a></div><div class="ttdeci">#define LAVIET_FRAME_MAX_LEN</div><div class="ttdoc">Maximum serialized frame length.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00027">laviet_frame.h:27</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a2c0cda29cfc3623806478e00b60f6ac5"><div class="ttname"><a href="laviet__frame_8h.html#a2c0cda29cfc3623806478e00b60f6ac5">LAVIET_FLAG_COUNTER_OVERRIDE</a></div><div class="ttdeci">#define LAVIET_FLAG_COUNTER_OVERRIDE</div><div class="ttdoc">Payload carries a counter synchronization override.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00047">laviet_frame.h:47</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a3368b6bf0d03fd777b5e092fbfb4e208"><div class="ttname"><a href="laviet__frame_8h.html#a3368b6bf0d03fd777b5e092fbfb4e208">LAVIET_FRAME_VERSION</a></div><div class="ttdeci">#define LAVIET_FRAME_VERSION</div><div class="ttdoc">Wire format version encoded in the high nibble of ver_type.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00017">laviet_frame.h:17</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a340f56ba04216b9995f4ef4da36b68b4"><div class="ttname"><a href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4">LAVIET_BROADCAST_ID</a></div><div class="ttdeci">#define LAVIET_BROADCAST_ID</div><div class="ttdoc">Broadcast destination identifier.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00032">laviet_frame.h:32</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a3b0b0723fb3e6750e0359ccb3dc0ecf4"><div class="ttname"><a href="laviet__frame_8h.html#a3b0b0723fb3e6750e0359ccb3dc0ecf4">LAVIET_GATEWAY_ID</a></div><div class="ttdeci">#define LAVIET_GATEWAY_ID</div><div class="ttdoc">Reserved node identifier of the gateway.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00030">laviet_frame.h:30</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a4a32a93e604cd44ec3934be167a56093"><div class="ttname"><a href="laviet__frame_8h.html#a4a32a93e604cd44ec3934be167a56093">LAVIET_FLAG_PAIRING</a></div><div class="ttdeci">#define LAVIET_FLAG_PAIRING</div><div class="ttdoc">Frame belongs to pairing flow.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00041">laviet_frame.h:41</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a6bf6d0643f24e5398518a15871a57ae0"><div class="ttname"><a href="laviet__frame_8h.html#a6bf6d0643f24e5398518a15871a57ae0">LAVIET_MAX_PAYLOAD</a></div><div class="ttdeci">#define LAVIET_MAX_PAYLOAD</div><div class="ttdoc">Maximum payload bytes carried by one LAVIET frame.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00019">laviet_frame.h:19</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a72233f24b4fcb25ff914a443eabb4a62"><div class="ttname"><a href="laviet__frame_8h.html#a72233f24b4fcb25ff914a443eabb4a62">LAVIET_MAC_TAG_LEN</a></div><div class="ttdeci">#define LAVIET_MAC_TAG_LEN</div><div class="ttdoc">Full HMAC-SHA256 tag length stored on the wire.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00021">laviet_frame.h:21</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165d"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a></div><div class="ttdeci">laviet_frame_type_t</div><div class="ttdoc">LAVIET frame type stored in the low nibble of ver_type.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00063">laviet_frame.h:64</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da039e38e63a2e70c0833f0829f57ec5e1"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da039e38e63a2e70c0833f0829f57ec5e1">LAVIET_TYPE_CFG</a></div><div class="ttdeci">@ LAVIET_TYPE_CFG</div><div class="ttdoc">Configuration/control payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00071">laviet_frame.h:71</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da08e4f1cd190044f20c071e71840d6e7d"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da08e4f1cd190044f20c071e71840d6e7d">LAVIET_TYPE_PAIR_RESP</a></div><div class="ttdeci">@ LAVIET_TYPE_PAIR_RESP</div><div class="ttdoc">Pairing response.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00070">laviet_frame.h:70</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da32dac1cacf10dd8f227167dfb99706c2"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da32dac1cacf10dd8f227167dfb99706c2">LAVIET_TYPE_COUNTER_SYNC</a></div><div class="ttdeci">@ LAVIET_TYPE_COUNTER_SYNC</div><div class="ttdoc">Gateway counter synchronization.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00072">laviet_frame.h:72</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da4902bee85a1c5e34566f4d662df3fbe1"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da4902bee85a1c5e34566f4d662df3fbe1">LAVIET_TYPE_RESP</a></div><div class="ttdeci">@ LAVIET_TYPE_RESP</div><div class="ttdoc">Response/status payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00068">laviet_frame.h:68</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e">LAVIET_TYPE_NONE</a></div><div class="ttdeci">@ LAVIET_TYPE_NONE</div><div class="ttdoc">Invalid/empty type sentinel.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00065">laviet_frame.h:65</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7">LAVIET_TYPE_ACK</a></div><div class="ttdeci">@ LAVIET_TYPE_ACK</div><div class="ttdoc">Acknowledgement payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00067">laviet_frame.h:67</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da85b0e219269d1d11ffddb4126f89e23c"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da85b0e219269d1d11ffddb4126f89e23c">LAVIET_TYPE_ERROR</a></div><div class="ttdeci">@ LAVIET_TYPE_ERROR</div><div class="ttdoc">Error/status payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00074">laviet_frame.h:74</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da97a644d5c60102721a44a844bd1769e8"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da97a644d5c60102721a44a844bd1769e8">LAVIET_TYPE_PAIR_REQ</a></div><div class="ttdeci">@ LAVIET_TYPE_PAIR_REQ</div><div class="ttdoc">Pairing request.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00069">laviet_frame.h:69</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165da9fbeccf148693b02adf381be43728482"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da9fbeccf148693b02adf381be43728482">LAVIET_TYPE_KEY_ROTATE</a></div><div class="ttdeci">@ LAVIET_TYPE_KEY_ROTATE</div><div class="ttdoc">Key rotation payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00073">laviet_frame.h:73</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4"><div class="ttname"><a href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165dac00b4b5c5141db43f773a1def8e491d4">LAVIET_TYPE_DATA</a></div><div class="ttdeci">@ LAVIET_TYPE_DATA</div><div class="ttdoc">User/application payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00066">laviet_frame.h:66</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a></div><div class="ttdeci">laviet_frame_status_t</div><div class="ttdoc">Validation, encode and decode result codes.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00080">laviet_frame.h:81</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7a1593d57b3a7ede05e55d152d2db441cd"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a1593d57b3a7ede05e55d152d2db441cd">LAVIET_STATUS_ID</a></div><div class="ttdeci">@ LAVIET_STATUS_ID</div><div class="ttdoc">Invalid source, destination or message identifier.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00087">laviet_frame.h:87</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a56d8f3dca13979daff87212583093cfd">LAVIET_STATUS_OK</a></div><div class="ttdeci">@ LAVIET_STATUS_OK</div><div class="ttdoc">Operation completed successfully.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00082">laviet_frame.h:82</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7a6c42c51b3cf15ef5dc8cb2cf4c4741d6">LAVIET_STATUS_LENGTH</a></div><div class="ttdeci">@ LAVIET_STATUS_LENGTH</div><div class="ttdoc">Invalid serialized length or buffer capacity.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00084">laviet_frame.h:84</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ac0be34106d600315654fc32340ca6448">LAVIET_STATUS_PAYLOAD</a></div><div class="ttdeci">@ LAVIET_STATUS_PAYLOAD</div><div class="ttdoc">Payload length or shape is invalid.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00089">laviet_frame.h:89</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7ad32bacc6425fa9d092e273234588964f">LAVIET_STATUS_NULL</a></div><div class="ttdeci">@ LAVIET_STATUS_NULL</div><div class="ttdoc">Null pointer argument.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00083">laviet_frame.h:83</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7aedb14e8308df25c8ec30e664f4a27c02"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7aedb14e8308df25c8ec30e664f4a27c02">LAVIET_STATUS_TYPE</a></div><div class="ttdeci">@ LAVIET_STATUS_TYPE</div><div class="ttdoc">Unknown or invalid frame type.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00086">laviet_frame.h:86</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7af3e22eb39b7693432972bd337a31a699"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7af3e22eb39b7693432972bd337a31a699">LAVIET_STATUS_VERSION</a></div><div class="ttdeci">@ LAVIET_STATUS_VERSION</div><div class="ttdoc">Unsupported frame version.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00085">laviet_frame.h:85</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b"><div class="ttname"><a href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7afdad0024fcd63a345708bb6be436535b">LAVIET_STATUS_FLAGS</a></div><div class="ttdeci">@ LAVIET_STATUS_FLAGS</div><div class="ttdoc">Flag combination is invalid for the frame type.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00088">laviet_frame.h:88</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_aa9bc9965d96968efadad6239e59ea1ff"><div class="ttname"><a href="laviet__frame_8h.html#aa9bc9965d96968efadad6239e59ea1ff">LAVIET_FLAG_ENCRYPTED</a></div><div class="ttdeci">#define LAVIET_FLAG_ENCRYPTED</div><div class="ttdoc">Payload is encrypted with the current frame key.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00035">laviet_frame.h:35</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_ab795f548f456f3aa088c9ffc7a2a9cc9"><div class="ttname"><a href="laviet__frame_8h.html#ab795f548f456f3aa088c9ffc7a2a9cc9">LAVIET_FLAG_CONFIG_ACCESS</a></div><div class="ttdeci">#define LAVIET_FLAG_CONFIG_ACCESS</div><div class="ttdoc">Frame contains configuration/control payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00043">laviet_frame.h:43</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_abba2c58850cf4e57de78accae9f16b69"><div class="ttname"><a href="laviet__frame_8h.html#abba2c58850cf4e57de78accae9f16b69">LAVIET_FRAME_HEADER_LEN</a></div><div class="ttdeci">#define LAVIET_FRAME_HEADER_LEN</div><div class="ttdoc">Serialized header length before payload and MAC.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00023">laviet_frame.h:23</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_ac33212e0985b84b77829050bb15409d7"><div class="ttname"><a href="laviet__frame_8h.html#ac33212e0985b84b77829050bb15409d7">LAVIET_PAIR_PAYLOAD_LEN</a></div><div class="ttdeci">#define LAVIET_PAIR_PAYLOAD_LEN</div><div class="ttdoc">Fixed payload length of pair request/response frames.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00052">laviet_frame.h:52</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_ac51e9cda67f88a956f8d2b9673ffffc2"><div class="ttname"><a href="laviet__frame_8h.html#ac51e9cda67f88a956f8d2b9673ffffc2">LAVIET_FLAG_ACK_REQUIRED</a></div><div class="ttdeci">#define LAVIET_FLAG_ACK_REQUIRED</div><div class="ttdoc">Sender requests an ACK frame.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00037">laviet_frame.h:37</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_ac6dd84b784e26d598a7599de31d5fda2"><div class="ttname"><a href="laviet__frame_8h.html#ac6dd84b784e26d598a7599de31d5fda2">LAVIET_FLAG_KEY_UPDATE</a></div><div class="ttdeci">#define LAVIET_FLAG_KEY_UPDATE</div><div class="ttdoc">Payload carries key rotation material.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00049">laviet_frame.h:49</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_acfa727632c301e5a1d78e52049fdba16"><div class="ttname"><a href="laviet__frame_8h.html#acfa727632c301e5a1d78e52049fdba16">LAVIET_FLAG_BROADCAST</a></div><div class="ttdeci">#define LAVIET_FLAG_BROADCAST</div><div class="ttdoc">Destination is the broadcast address.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00045">laviet_frame.h:45</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_add7af305cf11b92fbdf8c3df4c461d28"><div class="ttname"><a href="laviet__frame_8h.html#add7af305cf11b92fbdf8c3df4c461d28">LAVIET_COUNTER_SYNC_PAYLOAD_LEN</a></div><div class="ttdeci">#define LAVIET_COUNTER_SYNC_PAYLOAD_LEN</div><div class="ttdoc">Fixed payload length of counter synchronization frames.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00056">laviet_frame.h:56</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_ade0fe486e6aa4c795b62189ab0f69e0b"><div class="ttname"><a href="laviet__frame_8h.html#ade0fe486e6aa4c795b62189ab0f69e0b">LAVIET_FLAG_IS_ACK</a></div><div class="ttdeci">#define LAVIET_FLAG_IS_ACK</div><div class="ttdoc">Frame itself is an ACK.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00039">laviet_frame.h:39</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_aecc762b53b7324776b55aa2e0ce94e1a"><div class="ttname"><a href="laviet__frame_8h.html#aecc762b53b7324776b55aa2e0ce94e1a">LAVIET_FRAME_MIN_LEN</a></div><div class="ttdeci">#define LAVIET_FRAME_MIN_LEN</div><div class="ttdoc">Minimum serialized frame length.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00025">laviet_frame.h:25</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_afad0b33d1c1fe2b9810ba02be7f7c498"><div class="ttname"><a href="laviet__frame_8h.html#afad0b33d1c1fe2b9810ba02be7f7c498">LAVIET_ACK_PAYLOAD_LEN</a></div><div class="ttdeci">#define LAVIET_ACK_PAYLOAD_LEN</div><div class="ttdoc">Fixed payload length of ACK frames.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00054">laviet_frame.h:54</a></div></div>
+<div class="ttc" id="alaviet__frame_8h_html_afb90f3a12fd3366bc31f130238a15d56"><div class="ttname"><a href="laviet__frame_8h.html#afb90f3a12fd3366bc31f130238a15d56">LAVIET_ERROR_PAYLOAD_LEN</a></div><div class="ttdeci">#define LAVIET_ERROR_PAYLOAD_LEN</div><div class="ttdoc">Fixed payload length reserved for error frames.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00058">laviet_frame.h:58</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html"><div class="ttname"><a href="structlaviet__frame__t.html">laviet_frame_t</a></div><div class="ttdoc">Parsed LAVIET frame representation.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00095">laviet_frame.h:96</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_a0a374341e2508761490a6e35c14a6a74"><div class="ttname"><a href="structlaviet__frame__t.html#a0a374341e2508761490a6e35c14a6a74">laviet_frame_t::msg_id</a></div><div class="ttdeci">uint16_t msg_id</div><div class="ttdoc">Message identifier used by ACK tracking.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00101">laviet_frame.h:101</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_a29e271372638b97bd14de7e10a6c23bf"><div class="ttname"><a href="structlaviet__frame__t.html#a29e271372638b97bd14de7e10a6c23bf">laviet_frame_t::src_id</a></div><div class="ttdeci">uint16_t src_id</div><div class="ttdoc">Source node identifier.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00099">laviet_frame.h:99</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_a5f2e5456d7a8afad23ccc25ccf7e8814"><div class="ttname"><a href="structlaviet__frame__t.html#a5f2e5456d7a8afad23ccc25ccf7e8814">laviet_frame_t::ver_type</a></div><div class="ttdeci">uint8_t ver_type</div><div class="ttdoc">Version/type byte: high nibble version, low nibble type.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00097">laviet_frame.h:97</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_a603f30cb3c798f7a28c199780cc7ee19"><div class="ttname"><a href="structlaviet__frame__t.html#a603f30cb3c798f7a28c199780cc7ee19">laviet_frame_t::counter</a></div><div class="ttdeci">uint32_t counter</div><div class="ttdoc">Monotonic frame counter.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00102">laviet_frame.h:102</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_a70f5f2f4a3d82240fc11f6904f2cfdc8"><div class="ttname"><a href="structlaviet__frame__t.html#a70f5f2f4a3d82240fc11f6904f2cfdc8">laviet_frame_t::dst_id</a></div><div class="ttdeci">uint16_t dst_id</div><div class="ttdoc">Destination node identifier.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00100">laviet_frame.h:100</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_a9aaa6bb1f5a70b79e6249b1318d1bb98"><div class="ttname"><a href="structlaviet__frame__t.html#a9aaa6bb1f5a70b79e6249b1318d1bb98">laviet_frame_t::payload_len</a></div><div class="ttdeci">uint8_t payload_len</div><div class="ttdoc">Number of valid bytes in payload.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00103">laviet_frame.h:103</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_aa8b634d74fde261ea09d0840fcd71c4b"><div class="ttname"><a href="structlaviet__frame__t.html#aa8b634d74fde261ea09d0840fcd71c4b">laviet_frame_t::flags</a></div><div class="ttdeci">uint8_t flags</div><div class="ttdoc">Bitmask of LAVIET_FLAG_* values.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00098">laviet_frame.h:98</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_ac421f101d139175775284d97630a68b1"><div class="ttname"><a href="structlaviet__frame__t.html#ac421f101d139175775284d97630a68b1">laviet_frame_t::mac_tag</a></div><div class="ttdeci">uint8_t mac_tag[LAVIET_MAC_TAG_LEN]</div><div class="ttdoc">Authentication tag stored on the wire.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00105">laviet_frame.h:105</a></div></div>
+<div class="ttc" id="astructlaviet__frame__t_html_adb820f1f644d1070706f3834ec31b887"><div class="ttname"><a href="structlaviet__frame__t.html#adb820f1f644d1070706f3834ec31b887">laviet_frame_t::payload</a></div><div class="ttdeci">uint8_t payload[LAVIET_MAX_PAYLOAD]</div><div class="ttdoc">Frame payload buffer.</div><div class="ttdef"><b>Definicja</b> <a href="laviet__frame_8h_source.html#l00104">laviet_frame.h:104</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="laviet__frame_8c.html">laviet_frame.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,64 @@
+\doxysection{Dokumentacja pliku Core/\+App/tof\+\_\+main.h}
+\hypertarget{tof__main_8h}{}\label{tof__main_8h}\index{Core/App/tof\_main.h@{Core/App/tof\_main.h}}
+
+
+RTOS task facade for the VL53\+L3\+CX time-\/of-\/flight sensor.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{tof__main_8h_a47d775ca130aff0b82ff1e5ad7e12565}{tof\+\_\+main\+\_\+create\+\_\+task}} (void)
+\begin{DoxyCompactList}\small\item\em Create the ToF periodic sampling task. \end{DoxyCompactList}\item 
+int32\+\_\+t \mbox{\hyperlink{tof__main_8h_af81e73efcef1c5a8b99b69d8a002b2a1}{tof\+\_\+main\+\_\+get\+\_\+last\+\_\+distance}} (void)
+\begin{DoxyCompactList}\small\item\em Return the last cached distance measurement. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+RTOS task facade for the VL53\+L3\+CX time-\/of-\/flight sensor. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{tof__main_8h_source}{tof\+\_\+main.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{tof__main_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{tof__main_8h_a47d775ca130aff0b82ff1e5ad7e12565}\index{tof\_main.h@{tof\_main.h}!tof\_main\_create\_task@{tof\_main\_create\_task}}
+\index{tof\_main\_create\_task@{tof\_main\_create\_task}!tof\_main.h@{tof\_main.h}}
+\doxysubsubsection{\texorpdfstring{tof\_main\_create\_task()}{tof\_main\_create\_task()}}
+{\footnotesize\ttfamily \label{tof__main_8h_a47d775ca130aff0b82ff1e5ad7e12565} 
+void tof\+\_\+main\+\_\+create\+\_\+task (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create the ToF periodic sampling task. 
+
+
+
+Definicja w linii \mbox{\hyperlink{tof__main_8c_source_l00030}{30}} pliku \mbox{\hyperlink{tof__main_8c_source}{tof\+\_\+main.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00057}{app\+\_\+freertos\+\_\+init()}}.
+
+\Hypertarget{tof__main_8h_af81e73efcef1c5a8b99b69d8a002b2a1}\index{tof\_main.h@{tof\_main.h}!tof\_main\_get\_last\_distance@{tof\_main\_get\_last\_distance}}
+\index{tof\_main\_get\_last\_distance@{tof\_main\_get\_last\_distance}!tof\_main.h@{tof\_main.h}}
+\doxysubsubsection{\texorpdfstring{tof\_main\_get\_last\_distance()}{tof\_main\_get\_last\_distance()}}
+{\footnotesize\ttfamily \label{tof__main_8h_af81e73efcef1c5a8b99b69d8a002b2a1} 
+int32\+\_\+t tof\+\_\+main\+\_\+get\+\_\+last\+\_\+distance (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Return the last cached distance measurement. 
+
+\begin{DoxyReturn}{Zwraca}
+Distance in millimeters, or a negative value when unavailable. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{tof__main_8c_source_l00038}{38}} pliku \mbox{\hyperlink{tof__main_8c_source}{tof\+\_\+main.\+c}}.
+

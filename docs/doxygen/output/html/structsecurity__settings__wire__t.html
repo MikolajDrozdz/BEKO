@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury security_settings_wire_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structsecurity__settings__wire__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury security_settings_wire_t</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a54012b8109794ab36c0732330a805e3e" id="r_a54012b8109794ab36c0732330a805e3e"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a54012b8109794ab36c0732330a805e3e">magic</a></td></tr>
+<tr class="memitem:a61686faf5e213d3e8317bba260dac696" id="r_a61686faf5e213d3e8317bba260dac696"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61686faf5e213d3e8317bba260dac696">version</a></td></tr>
+<tr class="memitem:a35ec8d8770ed47ef83de7463e5fca6c6" id="r_a35ec8d8770ed47ef83de7463e5fca6c6"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35ec8d8770ed47ef83de7463e5fca6c6">flags</a></td></tr>
+<tr class="memitem:a7dd6d0b372259bc9b1e1f5a33ebe3a23" id="r_a7dd6d0b372259bc9b1e1f5a33ebe3a23"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7dd6d0b372259bc9b1e1f5a33ebe3a23">notify_mode</a></td></tr>
+<tr class="memitem:a7fa395127d013fe0b59430b47a5ca59d" id="r_a7fa395127d013fe0b59430b47a5ca59d"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7fa395127d013fe0b59430b47a5ca59d">lora_preset</a></td></tr>
+<tr class="memitem:a6be53e5197bbd447d7b4bbf1bb3db315" id="r_a6be53e5197bbd447d7b4bbf1bb3db315"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6be53e5197bbd447d7b4bbf1bb3db315">reserved0</a></td></tr>
+<tr class="memitem:aabe7a4daa85d92d2394edba58a3fd377" id="r_aabe7a4daa85d92d2394edba58a3fd377"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aabe7a4daa85d92d2394edba58a3fd377">reserved1</a></td></tr>
+<tr class="memitem:a6e3c7714946466571e2cd9486e7e8633" id="r_a6e3c7714946466571e2cd9486e7e8633"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e3c7714946466571e2cd9486e7e8633">crc</a></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock">
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00177">177</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a6e3c7714946466571e2cd9486e7e8633" name="a6e3c7714946466571e2cd9486e7e8633"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e3c7714946466571e2cd9486e7e8633">&#9670;&#160;</a></span>crc</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t security_settings_wire_t::crc</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00186">186</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a35ec8d8770ed47ef83de7463e5fca6c6" name="a35ec8d8770ed47ef83de7463e5fca6c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a35ec8d8770ed47ef83de7463e5fca6c6">&#9670;&#160;</a></span>flags</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_settings_wire_t::flags</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00181">181</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a7fa395127d013fe0b59430b47a5ca59d" name="a7fa395127d013fe0b59430b47a5ca59d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7fa395127d013fe0b59430b47a5ca59d">&#9670;&#160;</a></span>lora_preset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_settings_wire_t::lora_preset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00183">183</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a54012b8109794ab36c0732330a805e3e" name="a54012b8109794ab36c0732330a805e3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54012b8109794ab36c0732330a805e3e">&#9670;&#160;</a></span>magic</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t security_settings_wire_t::magic</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00179">179</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a7dd6d0b372259bc9b1e1f5a33ebe3a23" name="a7dd6d0b372259bc9b1e1f5a33ebe3a23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7dd6d0b372259bc9b1e1f5a33ebe3a23">&#9670;&#160;</a></span>notify_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_settings_wire_t::notify_mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00182">182</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a6be53e5197bbd447d7b4bbf1bb3db315" name="a6be53e5197bbd447d7b4bbf1bb3db315"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6be53e5197bbd447d7b4bbf1bb3db315">&#9670;&#160;</a></span>reserved0</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_settings_wire_t::reserved0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00184">184</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aabe7a4daa85d92d2394edba58a3fd377" name="aabe7a4daa85d92d2394edba58a3fd377"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabe7a4daa85d92d2394edba58a3fd377">&#9670;&#160;</a></span>reserved1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_settings_wire_t::reserved1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00185">185</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a61686faf5e213d3e8317bba260dac696" name="a61686faf5e213d3e8317bba260dac696"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61686faf5e213d3e8317bba260dac696">&#9670;&#160;</a></span>version</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_settings_wire_t::version</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00180">180</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="security__main_8c_source.html">security_main.c</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structsecurity__settings__wire__t.html">security_settings_wire_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

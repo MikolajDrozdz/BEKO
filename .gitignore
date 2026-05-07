@@ -12,5 +12,5 @@ Debug/
 *makefile
 *.launch
 gateway_docs/
+.venv/
 .metadata/
-

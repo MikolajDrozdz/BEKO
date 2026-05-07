@@ -1,0 +1,574 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury BMP280_HandleTypedef</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structBMP280__HandleTypedef.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury BMP280_HandleTypedef</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Driver handle with calibration constants and active configuration.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="bmp280_8h_source.html">Core/App/bmp280_lib/bmp280.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:aa735e953e421f132626e79aa2684520a" id="r_aa735e953e421f132626e79aa2684520a"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa735e953e421f132626e79aa2684520a">dig_T1</a></td></tr>
+<tr class="memdesc:aa735e953e421f132626e79aa2684520a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature calibration coefficient T1.  <br /></td></tr>
+<tr class="memitem:ada3917c530c0a64c31c513d3b9864ad4" id="r_ada3917c530c0a64c31c513d3b9864ad4"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada3917c530c0a64c31c513d3b9864ad4">dig_T2</a></td></tr>
+<tr class="memdesc:ada3917c530c0a64c31c513d3b9864ad4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature calibration coefficient T2.  <br /></td></tr>
+<tr class="memitem:a16dab86ac5f369d9a471b6587b77174d" id="r_a16dab86ac5f369d9a471b6587b77174d"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a16dab86ac5f369d9a471b6587b77174d">dig_T3</a></td></tr>
+<tr class="memdesc:a16dab86ac5f369d9a471b6587b77174d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temperature calibration coefficient T3.  <br /></td></tr>
+<tr class="memitem:afaff3914b7f61b145317eb9e649c7f1e" id="r_afaff3914b7f61b145317eb9e649c7f1e"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afaff3914b7f61b145317eb9e649c7f1e">dig_P1</a></td></tr>
+<tr class="memdesc:afaff3914b7f61b145317eb9e649c7f1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P1.  <br /></td></tr>
+<tr class="memitem:a651bf87ea766cde80fa5af5696a16f4f" id="r_a651bf87ea766cde80fa5af5696a16f4f"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a651bf87ea766cde80fa5af5696a16f4f">dig_P2</a></td></tr>
+<tr class="memdesc:a651bf87ea766cde80fa5af5696a16f4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P2.  <br /></td></tr>
+<tr class="memitem:adf58ccc1046135b97c8a30437d46c81b" id="r_adf58ccc1046135b97c8a30437d46c81b"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf58ccc1046135b97c8a30437d46c81b">dig_P3</a></td></tr>
+<tr class="memdesc:adf58ccc1046135b97c8a30437d46c81b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P3.  <br /></td></tr>
+<tr class="memitem:a46b61ba5a191b29bd2dc9bd86cb64b82" id="r_a46b61ba5a191b29bd2dc9bd86cb64b82"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46b61ba5a191b29bd2dc9bd86cb64b82">dig_P4</a></td></tr>
+<tr class="memdesc:a46b61ba5a191b29bd2dc9bd86cb64b82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P4.  <br /></td></tr>
+<tr class="memitem:a22d0714f2ece491c537b2b46555a5d03" id="r_a22d0714f2ece491c537b2b46555a5d03"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22d0714f2ece491c537b2b46555a5d03">dig_P5</a></td></tr>
+<tr class="memdesc:a22d0714f2ece491c537b2b46555a5d03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P5.  <br /></td></tr>
+<tr class="memitem:a3dc59e1a609668cc67d419d1bde5e69b" id="r_a3dc59e1a609668cc67d419d1bde5e69b"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3dc59e1a609668cc67d419d1bde5e69b">dig_P6</a></td></tr>
+<tr class="memdesc:a3dc59e1a609668cc67d419d1bde5e69b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P6.  <br /></td></tr>
+<tr class="memitem:a89e3935a76d5439c8bf94cdce70fbfb9" id="r_a89e3935a76d5439c8bf94cdce70fbfb9"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a89e3935a76d5439c8bf94cdce70fbfb9">dig_P7</a></td></tr>
+<tr class="memdesc:a89e3935a76d5439c8bf94cdce70fbfb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P7.  <br /></td></tr>
+<tr class="memitem:a46130401d002ca6b2c7b8c8e7578c133" id="r_a46130401d002ca6b2c7b8c8e7578c133"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46130401d002ca6b2c7b8c8e7578c133">dig_P8</a></td></tr>
+<tr class="memdesc:a46130401d002ca6b2c7b8c8e7578c133"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P8.  <br /></td></tr>
+<tr class="memitem:a5029020906a77d5b04cc0e87b8fe8336" id="r_a5029020906a77d5b04cc0e87b8fe8336"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5029020906a77d5b04cc0e87b8fe8336">dig_P9</a></td></tr>
+<tr class="memdesc:a5029020906a77d5b04cc0e87b8fe8336"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure calibration coefficient P9.  <br /></td></tr>
+<tr class="memitem:a7ce8a2720f39a4da4822e7ae2888a3ec" id="r_a7ce8a2720f39a4da4822e7ae2888a3ec"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ce8a2720f39a4da4822e7ae2888a3ec">dig_H1</a></td></tr>
+<tr class="memdesc:a7ce8a2720f39a4da4822e7ae2888a3ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity calibration coefficient H1.  <br /></td></tr>
+<tr class="memitem:a0293059efde2ae1d209deeaf93a47a51" id="r_a0293059efde2ae1d209deeaf93a47a51"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0293059efde2ae1d209deeaf93a47a51">dig_H2</a></td></tr>
+<tr class="memdesc:a0293059efde2ae1d209deeaf93a47a51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity calibration coefficient H2.  <br /></td></tr>
+<tr class="memitem:ab8e9f5400b0f79c74020c1165c72e7d8" id="r_ab8e9f5400b0f79c74020c1165c72e7d8"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab8e9f5400b0f79c74020c1165c72e7d8">dig_H3</a></td></tr>
+<tr class="memdesc:ab8e9f5400b0f79c74020c1165c72e7d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity calibration coefficient H3.  <br /></td></tr>
+<tr class="memitem:a47e5f4db5c0382ee26b0200f2ae031c0" id="r_a47e5f4db5c0382ee26b0200f2ae031c0"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47e5f4db5c0382ee26b0200f2ae031c0">dig_H4</a></td></tr>
+<tr class="memdesc:a47e5f4db5c0382ee26b0200f2ae031c0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity calibration coefficient H4.  <br /></td></tr>
+<tr class="memitem:a4678a18ab6eab1c593bf5851b2bc2e6a" id="r_a4678a18ab6eab1c593bf5851b2bc2e6a"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4678a18ab6eab1c593bf5851b2bc2e6a">dig_H5</a></td></tr>
+<tr class="memdesc:a4678a18ab6eab1c593bf5851b2bc2e6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity calibration coefficient H5.  <br /></td></tr>
+<tr class="memitem:aae054671ec66e31d0591d7813b24e629" id="r_aae054671ec66e31d0591d7813b24e629"><td class="memItemLeft" align="right" valign="top">int8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aae054671ec66e31d0591d7813b24e629">dig_H6</a></td></tr>
+<tr class="memdesc:aae054671ec66e31d0591d7813b24e629"><td class="mdescLeft">&#160;</td><td class="mdescRight">Humidity calibration coefficient H6.  <br /></td></tr>
+<tr class="memitem:abe76b8a4d2dad35dabbd1e8f43d58987" id="r_abe76b8a4d2dad35dabbd1e8f43d58987"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe76b8a4d2dad35dabbd1e8f43d58987">addr</a></td></tr>
+<tr class="memdesc:abe76b8a4d2dad35dabbd1e8f43d58987"><td class="mdescLeft">&#160;</td><td class="mdescRight">7-bit I2C device address.  <br /></td></tr>
+<tr class="memitem:adb2060477f3ab7378a1886e03edb7ca4" id="r_adb2060477f3ab7378a1886e03edb7ca4"><td class="memItemLeft" align="right" valign="top">I2C_HandleTypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb2060477f3ab7378a1886e03edb7ca4">i2c</a></td></tr>
+<tr class="memdesc:adb2060477f3ab7378a1886e03edb7ca4"><td class="mdescLeft">&#160;</td><td class="mdescRight">I2C peripheral handle.  <br /></td></tr>
+<tr class="memitem:a101ee64667bccd172bf4a9fb00fb10df" id="r_a101ee64667bccd172bf4a9fb00fb10df"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structbmp280__params__t.html">bmp280_params_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a101ee64667bccd172bf4a9fb00fb10df">params</a></td></tr>
+<tr class="memdesc:a101ee64667bccd172bf4a9fb00fb10df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active sensor configuration.  <br /></td></tr>
+<tr class="memitem:afeb0f26d38b725f2bbc2e67e17b0b671" id="r_afeb0f26d38b725f2bbc2e67e17b0b671"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afeb0f26d38b725f2bbc2e67e17b0b671">id</a></td></tr>
+<tr class="memdesc:afeb0f26d38b725f2bbc2e67e17b0b671"><td class="mdescLeft">&#160;</td><td class="mdescRight">Chip ID read from the sensor.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Driver handle with calibration constants and active configuration. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00097">97</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="abe76b8a4d2dad35dabbd1e8f43d58987" name="abe76b8a4d2dad35dabbd1e8f43d58987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe76b8a4d2dad35dabbd1e8f43d58987">&#9670;&#160;</a></span>addr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t BMP280_HandleTypedef::addr</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>7-bit I2C device address. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00119">119</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="bmp280_8c_source.html#l00146">bmp280_init()</a>.</p>
+
+</div>
+</div>
+<a id="a7ce8a2720f39a4da4822e7ae2888a3ec" name="a7ce8a2720f39a4da4822e7ae2888a3ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ce8a2720f39a4da4822e7ae2888a3ec">&#9670;&#160;</a></span>dig_H1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t BMP280_HandleTypedef::dig_H1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Humidity calibration coefficient H1. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00112">112</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a0293059efde2ae1d209deeaf93a47a51" name="a0293059efde2ae1d209deeaf93a47a51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0293059efde2ae1d209deeaf93a47a51">&#9670;&#160;</a></span>dig_H2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_H2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Humidity calibration coefficient H2. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00113">113</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="ab8e9f5400b0f79c74020c1165c72e7d8" name="ab8e9f5400b0f79c74020c1165c72e7d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8e9f5400b0f79c74020c1165c72e7d8">&#9670;&#160;</a></span>dig_H3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t BMP280_HandleTypedef::dig_H3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Humidity calibration coefficient H3. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00114">114</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a47e5f4db5c0382ee26b0200f2ae031c0" name="a47e5f4db5c0382ee26b0200f2ae031c0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47e5f4db5c0382ee26b0200f2ae031c0">&#9670;&#160;</a></span>dig_H4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_H4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Humidity calibration coefficient H4. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00115">115</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a4678a18ab6eab1c593bf5851b2bc2e6a" name="a4678a18ab6eab1c593bf5851b2bc2e6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4678a18ab6eab1c593bf5851b2bc2e6a">&#9670;&#160;</a></span>dig_H5</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_H5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Humidity calibration coefficient H5. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00116">116</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="aae054671ec66e31d0591d7813b24e629" name="aae054671ec66e31d0591d7813b24e629"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae054671ec66e31d0591d7813b24e629">&#9670;&#160;</a></span>dig_H6</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int8_t BMP280_HandleTypedef::dig_H6</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Humidity calibration coefficient H6. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00117">117</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="afaff3914b7f61b145317eb9e649c7f1e" name="afaff3914b7f61b145317eb9e649c7f1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaff3914b7f61b145317eb9e649c7f1e">&#9670;&#160;</a></span>dig_P1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t BMP280_HandleTypedef::dig_P1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P1. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00101">101</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a651bf87ea766cde80fa5af5696a16f4f" name="a651bf87ea766cde80fa5af5696a16f4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a651bf87ea766cde80fa5af5696a16f4f">&#9670;&#160;</a></span>dig_P2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P2. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00102">102</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="adf58ccc1046135b97c8a30437d46c81b" name="adf58ccc1046135b97c8a30437d46c81b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf58ccc1046135b97c8a30437d46c81b">&#9670;&#160;</a></span>dig_P3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P3. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00103">103</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a46b61ba5a191b29bd2dc9bd86cb64b82" name="a46b61ba5a191b29bd2dc9bd86cb64b82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46b61ba5a191b29bd2dc9bd86cb64b82">&#9670;&#160;</a></span>dig_P4</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P4. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00104">104</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a22d0714f2ece491c537b2b46555a5d03" name="a22d0714f2ece491c537b2b46555a5d03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22d0714f2ece491c537b2b46555a5d03">&#9670;&#160;</a></span>dig_P5</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P5</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P5. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00105">105</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a3dc59e1a609668cc67d419d1bde5e69b" name="a3dc59e1a609668cc67d419d1bde5e69b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dc59e1a609668cc67d419d1bde5e69b">&#9670;&#160;</a></span>dig_P6</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P6</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P6. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00106">106</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a89e3935a76d5439c8bf94cdce70fbfb9" name="a89e3935a76d5439c8bf94cdce70fbfb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89e3935a76d5439c8bf94cdce70fbfb9">&#9670;&#160;</a></span>dig_P7</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P7</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P7. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00107">107</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a46130401d002ca6b2c7b8c8e7578c133" name="a46130401d002ca6b2c7b8c8e7578c133"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46130401d002ca6b2c7b8c8e7578c133">&#9670;&#160;</a></span>dig_P8</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P8</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P8. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00108">108</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a5029020906a77d5b04cc0e87b8fe8336" name="a5029020906a77d5b04cc0e87b8fe8336"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5029020906a77d5b04cc0e87b8fe8336">&#9670;&#160;</a></span>dig_P9</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_P9</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure calibration coefficient P9. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00109">109</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="aa735e953e421f132626e79aa2684520a" name="aa735e953e421f132626e79aa2684520a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa735e953e421f132626e79aa2684520a">&#9670;&#160;</a></span>dig_T1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t BMP280_HandleTypedef::dig_T1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Temperature calibration coefficient T1. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00098">98</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="ada3917c530c0a64c31c513d3b9864ad4" name="ada3917c530c0a64c31c513d3b9864ad4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada3917c530c0a64c31c513d3b9864ad4">&#9670;&#160;</a></span>dig_T2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_T2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Temperature calibration coefficient T2. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00099">99</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a16dab86ac5f369d9a471b6587b77174d" name="a16dab86ac5f369d9a471b6587b77174d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16dab86ac5f369d9a471b6587b77174d">&#9670;&#160;</a></span>dig_T3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t BMP280_HandleTypedef::dig_T3</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Temperature calibration coefficient T3. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00100">100</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="adb2060477f3ab7378a1886e03edb7ca4" name="adb2060477f3ab7378a1886e03edb7ca4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb2060477f3ab7378a1886e03edb7ca4">&#9670;&#160;</a></span>i2c</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">I2C_HandleTypeDef* BMP280_HandleTypedef::i2c</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>I2C peripheral handle. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00121">121</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="afeb0f26d38b725f2bbc2e67e17b0b671" name="afeb0f26d38b725f2bbc2e67e17b0b671"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afeb0f26d38b725f2bbc2e67e17b0b671">&#9670;&#160;</a></span>id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t BMP280_HandleTypedef::id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Chip ID read from the sensor. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00125">125</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="bmp280_8c_source.html#l00146">bmp280_init()</a> i <a class="el" href="bmp280_8c_source.html#l00306">bmp280_read_fixed()</a>.</p>
+
+</div>
+</div>
+<a id="a101ee64667bccd172bf4a9fb00fb10df" name="a101ee64667bccd172bf4a9fb00fb10df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a101ee64667bccd172bf4a9fb00fb10df">&#9670;&#160;</a></span>params</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structbmp280__params__t.html">bmp280_params_t</a> BMP280_HandleTypedef::params</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Active sensor configuration. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00123">123</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/bmp280_lib/<a class="el" href="bmp280_8h_source.html">bmp280.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

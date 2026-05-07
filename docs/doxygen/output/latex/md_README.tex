@@ -1,0 +1,451 @@
+\chapter{BEKO Pager Network ({\ttfamily pager-\/rtos}) }
+\hypertarget{md_README}{}\label{md_README}\index{BEKO Pager Network ($<$tt$>$pager-\/rtos$<$/tt$>$)@{BEKO Pager Network ($<$tt$>$pager-\/rtos$<$/tt$>$)}}
+\label{md_README_autotoc_md0}%
+\Hypertarget{md_README_autotoc_md0}%
+\hypertarget{md_README_autotoc_md1}{}\doxysection{\texorpdfstring{1. Opis systemu}{1. Opis systemu}}\label{md_README_autotoc_md1}
+BEKO to bezprzewodowy system pagerowy pracujący w topologii {\bfseries{gwiazdy}}. ~\newline
+ W systemie występuje\+:
+
+
+\begin{DoxyItemize}
+\item jeden węzeł centralny\+: {\bfseries{Raspberry Pi Gateway}},
+\item adresy node’ów STM32 w zakresie {\ttfamily 0x0002..0x\+FFFE},
+\item komunikacja radiowa przez obecny backend {\bfseries{SX1276/\+RFM95}}.
+\end{DoxyItemize}
+
+Firmware noda przechowuje obecnie do {\bfseries{15 zaufanych urządzeń}} w lokalnych slotach trusted storage. Nie jest to limit adresacji radiowej.
+
+Gateway wysyła wiadomości do wybranego node’a albo do całej sieci. ~\newline
+ Każda poprawnie odebrana wiadomość z gatewaya musi zostać potwierdzona przez node ramką {\ttfamily ACK}.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md3}{}\doxysection{\texorpdfstring{2. Adresacja}{2. Adresacja}}\label{md_README_autotoc_md3}
+Adresacja w ramce {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1} jest 16-\/bitowa\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily 0x0000} – wartość nieważna,
+\item {\ttfamily 0x0001} – Raspberry Pi Gateway,
+\item {\ttfamily 0x0002..0x\+FFFE} – adresy node’ów,
+\item {\ttfamily 0x\+FFFF} – broadcast.
+\end{DoxyItemize}
+
+W systemie może działać\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{1 gateway}},
+\item wiele urządzeń końcowych w zakresie adresów {\ttfamily 0x0002..0x\+FFFE},
+\item aktualnie do {\bfseries{15 sparowanych wpisów trusted}} na jednym nodzie.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md5}{}\doxysection{\texorpdfstring{3. Role użytkowników}{3. Role użytkowników}}\label{md_README_autotoc_md5}
+W systemie przewidziane są cztery role\+:\hypertarget{md_README_autotoc_md6}{}\doxysubsection{\texorpdfstring{Administrator}{Administrator}}\label{md_README_autotoc_md6}
+Ma pełny dostęp do systemu. ~\newline
+ Może zmieniać konfigurację gatewaya i node’ów, zarządzać parowaniem, licznikami bezpieczeństwa, kluczami i ustawieniami krytycznymi. ~\newline
+ Dostęp wymaga podania odpowiedniego PIN-\/u administratora.\hypertarget{md_README_autotoc_md7}{}\doxysubsection{\texorpdfstring{Operator}{Operator}}\label{md_README_autotoc_md7}
+Ma ograniczony dostęp administracyjny. ~\newline
+ Może wykonywać działania, które nie naruszają integralności całego systemu, np. wysyłać wiadomości, zmieniać wybrane ustawienia użytkowe i obsługiwać system operacyjnie.\hypertarget{md_README_autotoc_md8}{}\doxysubsection{\texorpdfstring{Użytkownik}{Użytkownik}}\label{md_README_autotoc_md8}
+Ma dostęp tylko do podstawowych funkcji node’a. ~\newline
+ Może odczytać wiadomość, wysłać odpowiedź przyciskami i korzystać z urządzenia w normalnym trybie pracy.\hypertarget{md_README_autotoc_md9}{}\doxysubsection{\texorpdfstring{Serwisant}{Serwisant}}\label{md_README_autotoc_md9}
+Ma fizyczny dostęp do urządzenia. ~\newline
+ Może podłączyć się do node’a lub gatewaya w celu diagnostyki, odczytu logów, testów i czynności serwisowych. ~\newline
+ Dostęp serwisowy powinien być kontrolowany i logowany.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md11}{}\doxysection{\texorpdfstring{4. Ochrona ustawień lokalnych}{4. Ochrona ustawień lokalnych}}\label{md_README_autotoc_md11}
+Każdy node posiada lokalny tryb konfiguracji. ~\newline
+ Dostęp do ustawień wymaga podania {\bfseries{4-\/cyfrowego PIN-\/u}}.
+
+PIN\+:
+
+
+\begin{DoxyItemize}
+\item chroni lokalną konfigurację,
+\item może zostać zmieniony,
+\item nie może być przechowywany w postaci jawnej.
+\end{DoxyItemize}
+
+Powinien być przechowywany w postaci zabezpieczonej, np. jako wartość chroniona z użyciem HMAC lub materiału powiązanego z TPM.
+
+PIN służy do kontroli dostępu, a nie jako główny sekret kryptograficzny systemu.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md13}{}\doxysection{\texorpdfstring{5. Ramka {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}}{5. Ramka {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}}}\label{md_README_autotoc_md13}
+System wykorzystuje zwartą ramkę aplikacyjną {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}.\hypertarget{md_README_autotoc_md14}{}\doxysubsection{\texorpdfstring{Struktura ramki}{Struktura ramki}}\label{md_README_autotoc_md14}
+
+\begin{DoxyItemize}
+\item {\ttfamily ver\+\_\+type} – 1 B
+\item {\ttfamily flags} – 1 B
+\item {\ttfamily src\+\_\+id} – 2 B
+\item {\ttfamily dst\+\_\+id} – 2 B
+\item {\ttfamily msg\+\_\+id} – 2 B
+\item {\ttfamily counter} – 4 B
+\item {\ttfamily payload\+\_\+len} – 1 B
+\item {\ttfamily payload} – 0–16 B
+\item {\ttfamily mac\+\_\+tag} – 32 B
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md15}{}\doxysubsection{\texorpdfstring{Rozmiar ramki}{Rozmiar ramki}}\label{md_README_autotoc_md15}
+Część stała zajmuje\+:
+
+
+\begin{DoxyItemize}
+\item 1 + 1 + 2 + 2 + 2 + 4 + 1 + 32 = {\bfseries{45 B}}
+\end{DoxyItemize}
+
+Całkowity rozmiar ramki\+:
+
+
+\begin{DoxyItemize}
+\item minimum\+: {\bfseries{45 B}}
+\item maksimum\+: {\bfseries{61 B}}
+\end{DoxyItemize}
+
+Ramka mieści się w limicie 64 B i zostawia {\bfseries{3 B rezerwy}}.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md17}{}\doxysection{\texorpdfstring{6. Znaczenie pól {\ttfamily ver\+\_\+type} i {\ttfamily flags}}{6. Znaczenie pól {\ttfamily ver\+\_\+type} i {\ttfamily flags}}}\label{md_README_autotoc_md17}
+\hypertarget{md_README_autotoc_md18}{}\doxysubsection{\texorpdfstring{{\ttfamily ver\+\_\+type}}{{\ttfamily ver\+\_\+type}}}\label{md_README_autotoc_md18}
+Pole 1-\/bajtowe\+:
+
+
+\begin{DoxyItemize}
+\item starsze 4 bity – wersja protokołu,
+\item młodsze 4 bity – typ wiadomości.
+\end{DoxyItemize}
+
+Przykładowe typy\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily 0x1} – {\ttfamily DATA}
+\item {\ttfamily 0x2} – {\ttfamily ACK}
+\item {\ttfamily 0x3} – {\ttfamily RESP}
+\item {\ttfamily 0x4} – {\ttfamily PAIR\+\_\+\+REQ}
+\item {\ttfamily 0x5} – {\ttfamily PAIR\+\_\+\+RESP}
+\item {\ttfamily 0x6} – {\ttfamily CFG}
+\item {\ttfamily 0x7} – {\ttfamily COUNTER\+\_\+\+SYNC}
+\item {\ttfamily 0x8} – {\ttfamily KEY\+\_\+\+ROTATE}
+\item {\ttfamily 0x9} – {\ttfamily ERROR}
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md19}{}\doxysubsection{\texorpdfstring{{\ttfamily flags}}{{\ttfamily flags}}}\label{md_README_autotoc_md19}
+Pole 1-\/bajtowe\+:
+
+
+\begin{DoxyItemize}
+\item bit 0 – {\ttfamily ENCRYPTED}
+\item bit 1 – {\ttfamily ACK\+\_\+\+REQUIRED}
+\item bit 2 – {\ttfamily IS\+\_\+\+ACK}
+\item bit 3 – {\ttfamily PAIRING}
+\item bit 4 – {\ttfamily CONFIG\+\_\+\+ACCESS}
+\item bit 5 – {\ttfamily BROADCAST}
+\item bit 6 – {\ttfamily COUNTER\+\_\+\+OVERRIDE}
+\item bit 7 – {\ttfamily KEY\+\_\+\+UPDATE}
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md21}{}\doxysection{\texorpdfstring{7. Zabezpieczenia}{7. Zabezpieczenia}}\label{md_README_autotoc_md21}
+Szczegółowy opis mechanizmów kryptografii, TPM, EEPROM, pairingu, gatewaya i znanych ograniczeń jest w {\ttfamily gateway\+\_\+docs/\+SECURITY\+\_\+\+CRYPTO\+\_\+\+OVERVIEW.\+md}.
+
+System chroni\+:
+
+
+\begin{DoxyItemize}
+\item poufność wiadomości,
+\item integralność ramek,
+\item autentyczność nadawcy,
+\item licznik anti-\/replay,
+\item konfigurację urządzenia,
+\item klucze kryptograficzne.
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md22}{}\doxysubsection{\texorpdfstring{HMAC-\/\+SHA256}{HMAC-\/\+SHA256}}\label{md_README_autotoc_md22}
+Każda ramka zawiera {\ttfamily mac\+\_\+tag} o długości {\bfseries{32 B}}. ~\newline
+ Do uwierzytelniania i kontroli integralności używany jest {\bfseries{HMAC-\/\+SHA256}}.
+
+HMAC liczony jest po\+:
+
+{\ttfamily ver\+\_\+type \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} flags \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} src\+\_\+id \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} dst\+\_\+id \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} msg\+\_\+id \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} counter \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} payload\+\_\+len \texorpdfstring{$\vert$}{|}\texorpdfstring{$\vert$}{|} payload}
+
+Firmware wykonuje self-\/test backendu {\bfseries{CRYP/\+HASH}} STM32\+U545. Jeżeli test przejdzie, używany jest backend sprzętowy; jeżeli nie, {\ttfamily laviet\+\_\+crypto} przechodzi na programowy fallback, zachowując ten sam kontrakt {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}.\hypertarget{md_README_autotoc_md23}{}\doxysubsection{\texorpdfstring{Szyfrowanie wiadomości}{Szyfrowanie wiadomości}}\label{md_README_autotoc_md23}
+Payload wiadomości szyfrowany jest w trybie\+:
+\begin{DoxyItemize}
+\item {\bfseries{AES-\/\+CTR}}
+\end{DoxyItemize}
+
+Zalety\+:
+
+
+\begin{DoxyItemize}
+\item brak paddingu,
+\item ciphertext ma taką samą długość jak plaintext,
+\item dobrze pasuje do krótkiego payloadu 0–16 B.
+\end{DoxyItemize}
+
+Jeżeli flaga {\ttfamily ENCRYPTED} jest ustawiona, odbiornik musi\+:
+
+
+\begin{DoxyEnumerate}
+\item zweryfikować HMAC,
+\item sprawdzić licznik {\ttfamily counter},
+\item dopiero wtedy odszyfrować payload.
+\end{DoxyEnumerate}
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md25}{}\doxysection{\texorpdfstring{8. TPM i klucze}{8. TPM i klucze}}\label{md_README_autotoc_md25}
+TPM jest głównym punktem zaufania w systemie.
+
+Wszystkie operacje bezpieczeństwa, które mogą być wykonane w TPM i które są wspierane w przyjętej architekturze, powinny być wykonywane właśnie tam.
+
+TPM jest używany do\+:
+
+
+\begin{DoxyItemize}
+\item przechowywania sekretu głównego urządzenia,
+\item ochrony kluczy,
+\item generowania danych losowych,
+\item ochrony sekretów EEPROM,
+\item wsparcia lokalnej rotacji root seeda.
+\end{DoxyItemize}
+
+Aktualny lifecycle sekretu\+:
+
+
+\begin{DoxyEnumerate}
+\item Przy starcie firmware inicjalizuje TPM przed storage.
+\item Root seed jest odczytywany z TPM NV.
+\item Główny, PP-\/protected index to {\ttfamily 0x01\+C10101}.
+\item Starszy index {\ttfamily 0x01\+C10100} jest odczytywany tylko jako ścieżka migracyjna.
+\item Jeśli seed musi zostać utworzony albo nadpisany, zapis do TPM NV wymaga aktywnego pinu {\bfseries{TPM PP}}.
+\item Pin PP jest podłączony do samego TPM, pin {\ttfamily 7}, aktywny stanem {\ttfamily VDD}; nie jest odczytywany jako GPIO STM32.
+\item Klucz szyfrowania sekretów EEPROM jest wyprowadzany z TPM-\/backed root seeda.
+\end{DoxyEnumerate}
+
+Index {\ttfamily 0x01\+C10101} jest definiowany z {\ttfamily PPWRITE}, {\ttfamily OWNERREAD} i {\ttfamily NO\+\_\+\+DA}. W praktyce rotacja klucza z menu {\ttfamily Security -\/\texorpdfstring{$>$}{>} Keys} wymaga trzymania przycisku TPM PP; bez tego UI pokaże {\ttfamily Hold TPM PP button}.
+
+Klucze nie mogą być przechowywane w firmware w postaci jawnej. ~\newline
+ Są wyprowadzane lub ładowane bezpiecznie przy starcie, a następnie używane tylko tymczasowo.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md27}{}\doxysection{\texorpdfstring{9. Anti-\/replay i synchronizacja licznika}{9. Anti-\/replay i synchronizacja licznika}}\label{md_README_autotoc_md27}
+Każda ramka zawiera pole {\ttfamily counter} o długości 4 B.
+
+Licznik\+:
+
+
+\begin{DoxyItemize}
+\item rośnie monotonicznie,
+\item służy do ochrony przed replay,
+\item jest sprawdzany po stronie odbiorcy.
+\end{DoxyItemize}
+
+Gateway może wysłać specjalną wiadomość {\ttfamily COUNTER\+\_\+\+SYNC}, aby nadpisać licznik node’a. ~\newline
+ Do tego celu używana jest flaga {\ttfamily COUNTER\+\_\+\+OVERRIDE}.
+
+Taka operacja\+:
+
+
+\begin{DoxyItemize}
+\item jest dostępna tylko dla gatewaya,
+\item musi być zabezpieczona HMAC,
+\item powinna być logowana.
+\end{DoxyItemize}
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md29}{}\doxysection{\texorpdfstring{10. Parowanie i rotacja kluczy}{10. Parowanie i rotacja kluczy}}\label{md_README_autotoc_md29}
+\hypertarget{md_README_autotoc_md30}{}\doxysubsection{\texorpdfstring{Parowanie}{Parowanie}}\label{md_README_autotoc_md30}
+Parowanie odbywa się wyłącznie z gatewayem. Próg RSSI {\ttfamily -\/20 d\+Bm} jest traktowany jako ostrzeżenie diagnostyczne do walidacji praktycznej, a nie jako twarda blokada w pierwszym wdrożeniu.
+
+Przebieg\+:
+
+
+\begin{DoxyEnumerate}
+\item Gateway wysyła {\ttfamily PAIR\+\_\+\+REQ}.
+\item Node przechodzi w tryb parowania.
+\item Użytkownik lokalnie potwierdza operację.
+\item TPM wspiera ustanowienie materiału kryptograficznego.
+\item Zapisywana jest relacja zaufania.
+\item Wyprowadzane są klucze robocze.
+\end{DoxyEnumerate}\hypertarget{md_README_autotoc_md31}{}\doxysubsection{\texorpdfstring{Rotacja kluczy}{Rotacja kluczy}}\label{md_README_autotoc_md31}
+System powinien wspierać rotację kluczy z użyciem {\bfseries{Diffie–\+Hellman}}.
+
+Rotacja może być uruchamiana\+:
+
+
+\begin{DoxyItemize}
+\item okresowo,
+\item po określonej liczbie wiadomości,
+\item na żądanie administratora,
+\item po incydencie bezpieczeństwa.
+\end{DoxyItemize}
+
+Lokalna rotacja root seeda na nodzie jest już zabezpieczona TPM PP. Radiowy protokół {\ttfamily KEY\+\_\+\+ROTATE} i docelowa wymiana DH/\+ECDH nadal wymagają dokończenia jako osobny przepływ.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md33}{}\doxysection{\texorpdfstring{11. Logi UART i kontrola startu}{11. Logi UART i kontrola startu}}\label{md_README_autotoc_md33}
+Podczas uruchamiania urządzenia przez UART powinny być wypisywane informacje o inicjalizacji\+:
+
+
+\begin{DoxyItemize}
+\item MCU,
+\item TPM,
+\item SX1276/\+RFM95,
+\item wyświetlacza,
+\item przycisków,
+\item LED,
+\item EEPROM,
+\item materiału kluczowego,
+\item konfiguracji bezpieczeństwa,
+\item zgodności firmware.
+\end{DoxyItemize}
+
+Dodatkowo czasy inicjalizacji ważnych modułów powinny być mierzone. ~\newline
+ Jeżeli któryś element uruchamia się poza oczekiwanym zakresem czasowym, system powinien zgłosić anomalię na UART.
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md35}{}\doxysection{\texorpdfstring{12. Główny graf systemu}{12. Główny graf systemu}}\label{md_README_autotoc_md35}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{graph\ TD}
+\DoxyCodeLine{\ \ \ \ A["{}Administrator"{}]\ -\/-\/>\ WEB["{}Panel\ /\ interfejs\ systemu"{}]}
+\DoxyCodeLine{\ \ \ \ O["{}Operator"{}]\ -\/-\/>\ WEB}
+\DoxyCodeLine{\ \ \ \ U["{}Użytkownik"{}]\ -\/-\/>\ NODE["{}Node\ STM32"{}]}
+\DoxyCodeLine{\ \ \ \ A\ -\/-\/>\ NODE}
+\DoxyCodeLine{\ \ \ \ S["{}Serwisant"{}]\ -\/-\/>\ DEV["{}Dostęp\ fizyczny\ /\ UART\ /\ serwis"{}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ WEB\ -\/-\/>\ GW["{}Raspberry\ Pi\ Gateway"{}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ GW\ -\/-\/>\ N1["{}Node\ STM32\ \#1"{}]}
+\DoxyCodeLine{\ \ \ \ GW\ -\/-\/>\ N2["{}Node\ STM32\ \#X"{}]}
+\DoxyCodeLine{\ \ \ \ GW\ -\/-\/>\ N3["{}Node\ STM32\ \#15\ trusted"{}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ N1\ -\/-\/>\ UI1["{}Wyświetlacz"{}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ N2\ -\/-\/>\ UI2["{}Wyświetlacz"{}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ N3\ -\/-\/>\ UI3["{}Wyświetlacz"{}]}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ DEV\ -\/-\/>\ GW}
+\DoxyCodeLine{\ \ \ \ DEV\ -\/-\/>\ N2}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md37}{}\doxysection{\texorpdfstring{13. Główne przepływy komunikacji}{13. Główne przepływy komunikacji}}\label{md_README_autotoc_md37}
+\hypertarget{md_README_autotoc_md38}{}\doxysubsection{\texorpdfstring{Zwykła wiadomość z ACK}{Zwykła wiadomość z ACK}}\label{md_README_autotoc_md38}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sequenceDiagram}
+\DoxyCodeLine{\ \ \ \ participant\ O\ as\ Operator\ /\ Administrator}
+\DoxyCodeLine{\ \ \ \ participant\ GW\ as\ Raspberry\ Pi\ Gateway}
+\DoxyCodeLine{\ \ \ \ participant\ N\ as\ Node\ STM32}
+\DoxyCodeLine{\ \ \ \ participant\ U\ as\ Użytkownik}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ O-\/>>GW:\ Wysłanie\ wiadomości}
+\DoxyCodeLine{\ \ \ \ GW-\/>>GW:\ Budowa\ ramki}
+\DoxyCodeLine{\ \ \ \ GW-\/>>GW:\ AES-\/CTR\ payload}
+\DoxyCodeLine{\ \ \ \ GW-\/>>GW:\ HMAC-\/SHA256}
+\DoxyCodeLine{\ \ \ \ GW-\/>>N:\ DATA}
+\DoxyCodeLine{\ \ \ \ N-\/>>N:\ Weryfikacja\ HMAC\ i\ counter}
+\DoxyCodeLine{\ \ \ \ N-\/>>N:\ Odszyfrowanie\ payloadu}
+\DoxyCodeLine{\ \ \ \ N-\/>>U:\ Wyświetlenie\ wiadomości}
+\DoxyCodeLine{\ \ \ \ N-\/>>GW:\ ACK}
+\DoxyCodeLine{\ \ \ \ GW-\/>>O:\ Wynik\ operacji}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md39}{}\doxysubsection{\texorpdfstring{Parowanie}{Parowanie}}\label{md_README_autotoc_md39}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sequenceDiagram}
+\DoxyCodeLine{\ \ \ \ participant\ A\ as\ Administrator}
+\DoxyCodeLine{\ \ \ \ participant\ GW\ as\ Raspberry\ Pi\ Gateway}
+\DoxyCodeLine{\ \ \ \ participant\ N\ as\ Node\ STM32}
+\DoxyCodeLine{\ \ \ \ participant\ TPM\ as\ TPM}
+\DoxyCodeLine{\ \ \ \ participant\ U\ as\ Użytkownik}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ A-\/>>GW:\ Uruchomienie\ parowania}
+\DoxyCodeLine{\ \ \ \ GW-\/>>N:\ PAIR\_REQ}
+\DoxyCodeLine{\ \ \ \ N-\/>>U:\ Prośba\ o\ potwierdzenie}
+\DoxyCodeLine{\ \ \ \ U-\/>>N:\ Potwierdzenie\ lokalne}
+\DoxyCodeLine{\ \ \ \ GW-\/>>TPM:\ Operacje\ bezpieczeństwa}
+\DoxyCodeLine{\ \ \ \ N-\/>>TPM:\ Operacje\ bezpieczeństwa}
+\DoxyCodeLine{\ \ \ \ GW-\/>>N:\ Wymiana\ danych\ parowania}
+\DoxyCodeLine{\ \ \ \ N-\/>>GW:\ PAIR\_RESP}
+\DoxyCodeLine{\ \ \ \ GW-\/>>A:\ Wynik\ operacji}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md40}{}\doxysubsection{\texorpdfstring{Synchronizacja licznika}{Synchronizacja licznika}}\label{md_README_autotoc_md40}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sequenceDiagram}
+\DoxyCodeLine{\ \ \ \ participant\ A\ as\ Administrator}
+\DoxyCodeLine{\ \ \ \ participant\ GW\ as\ Raspberry\ Pi\ Gateway}
+\DoxyCodeLine{\ \ \ \ participant\ N\ as\ Node\ STM32}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ A-\/>>GW:\ Żądanie\ synchronizacji\ licznika}
+\DoxyCodeLine{\ \ \ \ GW-\/>>N:\ COUNTER\_SYNC}
+\DoxyCodeLine{\ \ \ \ N-\/>>N:\ Weryfikacja\ HMAC}
+\DoxyCodeLine{\ \ \ \ N-\/>>N:\ Aktualizacja\ counter}
+\DoxyCodeLine{\ \ \ \ N-\/>>GW:\ ACK}
+\DoxyCodeLine{\ \ \ \ GW-\/>>A:\ Wynik\ operacji}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md41}{}\doxysubsection{\texorpdfstring{Rotacja kluczy}{Rotacja kluczy}}\label{md_README_autotoc_md41}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{sequenceDiagram}
+\DoxyCodeLine{\ \ \ \ participant\ A\ as\ Administrator}
+\DoxyCodeLine{\ \ \ \ participant\ GW\ as\ Raspberry\ Pi\ Gateway}
+\DoxyCodeLine{\ \ \ \ participant\ N\ as\ Node\ STM32}
+\DoxyCodeLine{\ \ \ \ participant\ TPM\ as\ TPM}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ A-\/>>GW:\ Uruchomienie\ rotacji\ kluczy}
+\DoxyCodeLine{\ \ \ \ GW-\/>>N:\ KEY\_ROTATE}
+\DoxyCodeLine{\ \ \ \ N-\/>>TPM:\ Wymagana\ aktywna\ linia\ PP\ dla\ zapisu\ root\ seeda}
+\DoxyCodeLine{\ \ \ \ GW-\/>>TPM:\ Operacje\ DH\ /\ materiał\ kluczowy}
+\DoxyCodeLine{\ \ \ \ N-\/>>TPM:\ Operacje\ DH\ /\ materiał\ kluczowy}
+\DoxyCodeLine{\ \ \ \ GW-\/>>N:\ Wymiana\ danych}
+\DoxyCodeLine{\ \ \ \ N-\/>>GW:\ Odpowiedź}
+\DoxyCodeLine{\ \ \ \ N-\/>>GW:\ ACK}
+\DoxyCodeLine{\ \ \ \ GW-\/>>A:\ Wynik\ operacji}
+
+\end{DoxyCode}
+
+
+\DoxyHorRuler{0}
+\hypertarget{md_README_autotoc_md43}{}\doxysection{\texorpdfstring{14. Dokumentacja Doxygen}{14. Dokumentacja Doxygen}}\label{md_README_autotoc_md43}
+Projekt zawiera konfigurację Doxygen w pliku {\ttfamily Doxyfile}.
+
+Generowanie dokumentacji\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{doxygen\ Doxyfile}
+
+\end{DoxyCode}
+
+
+Wynik HTML\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{docs/doxygen/output/html/index.html}
+
+\end{DoxyCode}
+
+
+Wynik PDF\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make\ -\/C\ docs/doxygen/output/latex}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{docs/doxygen/output/latex/refman.pdf}
+
+\end{DoxyCode}
+
+
+Zakres dokumentacji obejmuje {\ttfamily README.\+md}, {\ttfamily Core/\+App} oraz strony opisowe w {\ttfamily docs/doxygen}. Katalogi wygenerowane i zewnętrzne ({\ttfamily Debug}, {\ttfamily Drivers}, {\ttfamily Middlewares}) są celowo wykluczone. 

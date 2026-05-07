@@ -1,0 +1,43 @@
+\chapter{Security }
+\hypertarget{md_Core_2App_2security_2TODO}{}\label{md_Core_2App_2security_2TODO}\index{Security@{Security}}
+\label{md_Core_2App_2security_2TODO_autotoc_md151}%
+\Hypertarget{md_Core_2App_2security_2TODO_autotoc_md151}%
+\hypertarget{md_Core_2App_2security_2TODO_autotoc_md152}{}\doxysection{\texorpdfstring{Pytania}{Pytania}}\label{md_Core_2App_2security_2TODO_autotoc_md152}
+
+\begin{DoxyItemize}
+\item Jakie są wymagania dla odporności na replay?
+\item Czy każda ramka {\ttfamily OPERATOR} ma wymagać auth i szyfrowania?
+\item Jak wygląda odzyskiwanie zaufania po rotacji klucza?
+\item Czy tryb serwisowy ma mieć osobne uprawnienia i osobny klucz?
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2TODO_autotoc_md153}{}\doxysection{\texorpdfstring{Obszary}{Obszary}}\label{md_Core_2App_2security_2TODO_autotoc_md153}
+
+\begin{DoxyItemize}
+\item Radio link Lo\+Ra/\+FSK/\+OOK
+\item Pairing nowych urządzeń
+\item Magazyn EEPROM
+\item Integracja z TPM i TPM PP
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2TODO_autotoc_md154}{}\doxysection{\texorpdfstring{Security TODO}{Security TODO}}\label{md_Core_2App_2security_2TODO_autotoc_md154}
+
+\begin{DoxyItemize}
+\item Spisać aktorów i poziomy zaufania.
+\item Zmapować dane wrażliwe i ich cykl życia.
+\item Zdefiniować minimalny zestaw testów bezpieczeństwa.
+\item Opisać dokładny threat model dla komunikacji lokalnej i radiowej.
+\item Rozdzielić warstwę policy/security od aktualnej logiki runtime w {\ttfamily security\+\_\+main}.
+\item Dokończyć testy migracji EEPROM po przejściu na klucz wyprowadzany z TPM.
+\item Zdefiniować wersjonowanie protokołu secure frame.
+\item Rozszerzyć dokumentację pairing i trust removal.
+\item Dodać testy regresyjne dla auth tag, coding i migracji EEPROM.
+\item Przetestować restart z root seedem w TPM NV {\ttfamily 0x01\+C10101}.
+\item Przetestować ścieżkę migracji z legacy TPM NV {\ttfamily 0x01\+C10100}.
+\item Rozszerzyć TPM PP/policy z lokalnej rotacji root seeda na pairing i operacje admin.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2TODO_autotoc_md155}{}\doxysubsection{\texorpdfstring{DoS / Replay}{DoS / Replay}}\label{md_Core_2App_2security_2TODO_autotoc_md155}
+{\itshape Co można dodać}
+\begin{DoxyItemize}
+\item Dodać per-\/source rate limiting dla {\ttfamily OPERATOR}.
+\item Dodać osobny rate limiting dla ramek control/pairing.
+\item Dodać globalny budżet TX niezależny od local TX.
+\item Dodać licznik nadużyć ({\ttfamily replay}, {\ttfamily bad auth}, {\ttfamily unknown src}) i czasowy cooldown.
+\item Agregować alerty security zamiast popupu dla każdego zdarzenia flood.
+\item Rozważyć telemetrykę security\+: liczba replay drop, duplicate drop, throttle hit. 
+\end{DoxyItemize}

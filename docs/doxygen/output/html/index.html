@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: BEKO Pager Firmware</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('index.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">BEKO Pager Firmware </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><h1 class="doxsection"><a class="anchor" id="intro"></a>
+Wprowadzenie</h1>
+<p>BEKO Pager Firmware to aplikacja STM32 dla bezprzewodowego noda systemu pagerowego. Kod aplikacyjny znajduje sie w <span class="tt">Core/App</span> i obejmuje:</p>
+<ul>
+<li>warstwe radiowa SX1276/RFM95 z backendami LoRa, FSK i OOK,</li>
+<li>protokol ramki <span class="tt">LAVIET_FRAME_V1</span>,</li>
+<li>kryptografie AES-CTR oraz HMAC-SHA256,</li>
+<li>zadanie security z TPM ST33KTPM2X i magazynem I2C EEPROM/FRAM,</li>
+<li>lokalny interfejs LCD, menu, przyciski i LED,</li>
+<li>sensory BMP280 oraz VL53L3CX,</li>
+<li>opcjonalna konsole serwisowa UART.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="start"></a>
+Punkty startowe</h1>
+<p>Najwazniejsze pliki publicznego API:</p>
+<ul>
+<li><span class="tt"><a class="el" href="app_8h.html" title="Main application entry points and shared I2C bus helpers.">Core/App/app.h</a></span> - inicjalizacja aplikacji i wspolne wrappery I2C,</li>
+<li><span class="tt"><a class="el" href="radio__main_8h.html" title="Application radio task, runtime profile and command API.">Core/App/radio_main.h</a></span> - zadanie radiowe i komendy runtime,</li>
+<li><span class="tt"><a class="el" href="security__main_8h.html" title="Security domain task and command API.">Core/App/security_main.h</a></span> - zadanie security, klucze i trusted storage,</li>
+<li><span class="tt"><a class="el" href="laviet__frame_8h.html" title="LAVIET_FRAME_V1 wire protocol helpers.">Core/App/laviet_frame.h</a></span> - parser i serializer ramki LAVIET,</li>
+<li><span class="tt"><a class="el" href="laviet__crypto_8h.html" title="Crypto helpers for LAVIET_FRAME_V1.">Core/App/laviet_crypto.h</a></span> - HMAC-SHA256, AES-CTR i porownanie MAC,</li>
+<li><span class="tt"><a class="el" href="menu__main_8h.html" title="LCD menu controller task.">Core/App/menu_main.h</a></span> oraz <span class="tt"><a class="el" href="lcd__main_8h.html" title="RTOS-facing LCD rendering task API.">Core/App/lcd_main.h</a></span> - lokalny UI.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="pages"></a>
+Strony opisowe</h1>
+<ul>
+<li><a class="el" href="doxygen_build.html">Generowanie dokumentacji</a></li>
+<li><a class="el" href="doxygen_architecture.html">Architektura firmware</a></li>
+<li><a class="el" href="doxygen_modules.html">Mapa modulow</a></li>
+<li><a class="el" href="doxygen_security.html">Bezpieczenstwo</a></li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="generation"></a>
+Generowanie dokumentacji</h1>
+<p>Z katalogu glownego projektu:</p>
+<div class="fragment"><div class="line">doxygen Doxyfile</div>
+</div><!-- fragment --><p>Plik startowy HTML powstaje w:</p>
+<div class="fragment"><div class="line">docs/doxygen/output/html/index.html</div>
+</div><!-- fragment --> </div></div><!-- PageDoc -->
+<a href="doxygen_crawl.html"></a>
+</div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

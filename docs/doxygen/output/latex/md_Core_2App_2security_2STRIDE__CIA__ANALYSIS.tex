@@ -1,0 +1,65 @@
+\chapter{STRIDE / CIA Analysis }
+\hypertarget{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS}{}\label{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS}\index{STRIDE / CIA Analysis@{STRIDE / CIA Analysis}}
+\label{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md142}%
+\Hypertarget{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md142}%
+
+
+Ten dokument porządkuje źródła ataku na system BEKO według dwóch perspektyw\+:
+\begin{DoxyItemize}
+\item {\ttfamily STRIDE}\+: klasy ataków na tożsamość, integralność, dostępność i kontrolę systemu,
+\item {\ttfamily CIA}\+: wpływ na poufność, integralność i dostępność.
+\end{DoxyItemize}
+
+Tabela ma trzy cele\+:
+\begin{DoxyItemize}
+\item pokazać, jakie klasy ataków są już częściowo adresowane,
+\item zaznaczyć, czego jeszcze brakuje w obecnym kodzie,
+\item dać listę praktycznych kierunków wdrożenia.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md143}{}\doxysection{\texorpdfstring{STRIDE}{STRIDE}}\label{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md143}
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Typ ataku  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Wdrożone rozwiązanie  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Możliwy sposób rozwiązania / dalsze utwardzenie  \\
+{\ttfamily S} Spoofing\+: podszycie się pod inny węzeł przez fałszywy {\ttfamily src\+\_\+id}  &HMAC-\/\+SHA256 dla {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}, lokalny {\ttfamily node\+\_\+id}, pairing/trust lista, root seed w TPM NV  &Dodać policy dla operacji administracyjnych i pełny flow admin/service  \\
+{\ttfamily S} Spoofing\+: podszycie się pod zaufane urządzenie podczas pairingu  &{\ttfamily PAIR\+\_\+\+REQ / PAIR\+\_\+\+RESP}, zapis trusted devices, lokalna zgoda użytkownika  &Uwierzytelnić pairing challenge-\/response, generować pair code z TPM RNG, dodać policy TPM dla zgody fizycznej  \\
+{\ttfamily T} Tampering\+: modyfikacja payloadu w locie  &HMAC-\/\+SHA256 dla każdej ramki i AES-\/\+CTR dla payloadu szyfrowanego  &Podmienić portable crypto backend na sprzętowy HAL CRYP/\+HASH/\+RNG  \\
+{\ttfamily T} Tampering\+: zmiana pól adresacji ({\ttfamily dst\+\_\+id}, {\ttfamily msg\+\_\+id}, {\ttfamily counter})  &Pola nagłówka są w HMAC, a parser waliduje typy/flagi/długości  &Dodać pełną trwałość counterów i diagnostykę przyczyn odrzucenia  \\
+{\ttfamily T} Tampering\+: manipulacja stanem EEPROM / listą trusted  &Częściowe formaty z CRC i wersjonowaniem danych, klucz EEPROM wyprowadzany z TPM-\/backed root seeda  &Dodać integralność rekordów security, licznik wersji i odporność na rollback  \\
+{\ttfamily R} Repudiation\+: brak możliwości wykazania, kto wysłał wiadomość  &{\ttfamily src\+\_\+id}, {\ttfamily msg\+\_\+id}, log RX do store, logi terminala  &Dodać trwalszy audit log security, powód odrzucenia, liczniki replay/bad-\/auth, znaczniki czasu lub monotoniczne liczniki  \\
+{\ttfamily R} Repudiation\+: brak dowodu akceptacji pairingu lub rotacji klucza  &Logi runtime i menu popup  &Zapisywać zdarzenia security w trwałym logu z typem operacji, {\ttfamily src\+\_\+id}, wynikiem i przyczyną  \\
+{\ttfamily I} Information Disclosure\+: podsłuch payloadu {\ttfamily OPERATOR}  &{\ttfamily coding} dla secure frames  &Domyślnie wymusić secure mode dla ruchu operatora, rotować klucz sieciowy, użyć mocniejszej prymitywy niż obecny software cipher  \\
+{\ttfamily I} Information Disclosure\+: wyciek klucza z EEPROM/firmware  &Root seed jest trzymany w TPM NV {\ttfamily 0x01\+C10101}, zapis wymaga TPM PP, EEPROM key jest wyprowadzany z root seeda  &Ograniczyć obecność klucza w RAM, wyczyścić bufory po użyciu, rozważyć sealing/policy sessions  \\
+{\ttfamily I} Information Disclosure\+: podgląd pair code lub danych trusted  &Trusted store i menu urządzenia  &Ukryć lub skrócić ekspozycję pair code na UI, nie logować pełnych sekretów na UART, ograniczyć odczyt danych trusted do trybu serwisowego  \\
+{\ttfamily D} Denial of Service\+: replay powodujący lokalne akcje  &Drop ramek gateway-\/\texorpdfstring{$>$}{>}node ze starym {\ttfamily counter}  &Dodać abuse score per source, cooldown, agregację alertów security i liczniki replay drop  \\
+{\ttfamily D} Denial of Service\+: flood {\ttfamily DATA} i broadcastów  &Broadcast tylko od gatewaya, brak ACK dla broadcastu, duty-\/cycle dla auto ping  &Per-\/source rate limiting, globalny budżet TX i limity dla ruchu control  \\
+{\ttfamily D} Denial of Service\+: flood ruchem control / pairing  &Pairing jest rozdzielony typami ramek  &Dodać osobny rate limiting dla {\ttfamily PAIR\+\_\+\texorpdfstring{$\ast$}{*}}, krótkie okno serwisowe, lokalną zgodę TPM/\+PP dla akceptacji  \\
+{\ttfamily D} Denial of Service\+: zapchanie UI i kolejek komunikatami security  &Częściowa ochrona kolejek UI/\+LCD, ograniczenie popupów w menu  &Osobna kolejka security, agregowanie zdarzeń flood, nie generować popupu dla każdego błędu/replay  \\
+{\ttfamily D} Denial of Service\+: zawieszanie backendu radiowego przez nietypowe TX/\+FSK  &Watchdog TX, recovery ścieżki radiowej, limity payload dla FSK/\+OOK  &Dodać licznik recoveries, auto-\/disable wadliwego trybu po serii błędów, twarde ograniczenia konfiguracji backendu  \\
+{\ttfamily E} Elevation of Privilege\+: zdalne wykonanie operacji administracyjnej  &Część operacji wymaga wejścia do odpowiedniego menu/flow; lokalna rotacja root seeda wymaga TPM PP  &Rozdzielić role\+: operator/admin/service, chronić więcej operacji security przez TPM policy/local presence i osobne komendy admin  \\
+{\ttfamily E} Elevation of Privilege\+: przejęcie pairingu bez fizycznej obecności  &Pairing nadal wymaga lokalnego flow UI, ale TPM PP chroni obecnie tylko zapis root seeda  &Wdrożyć TPM {\ttfamily Policy\+Physical\+Presence}, policy session i ograniczenie pairingu do lokalnie autoryzowanego okna  \\
+{\ttfamily E} Elevation of Privilege\+: użycie starych ramek sterujących do wymuszenia stanu  &Replay protection na {\ttfamily counter}  &Dodać pełną trwałość counterów oraz oddzielne polityki dla {\ttfamily CFG}, {\ttfamily COUNTER\+\_\+\+SYNC} i {\ttfamily KEY\+\_\+\+ROTATE}  \\
+\end{DoxyTable}
+\hypertarget{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md144}{}\doxysection{\texorpdfstring{CIA}{CIA}}\label{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md144}
+
+\begin{DoxyTable}{4}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Obszar CIA  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Źródło ataku  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Wdrożone rozwiązanie  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Możliwy sposób rozwiązania / dalsze utwardzenie  \\
+{\ttfamily C} Confidentiality  &Podsłuch radiowy {\ttfamily OPERATOR}  &{\ttfamily coding} dla secure ramek  &Wymusić secure-\/by-\/default, mocniejsza kryptografia, regularna rotacja klucza sieciowego  \\
+{\ttfamily C} Confidentiality  &Odczyt sekretów z pamięci trwałej  &Root seed w TPM NV, EEPROM key z TPM-\/backed root seeda, migracja legacy EEPROM key  &Sealed storage z TPM, policy sessions, ograniczenie debug/logów sekretów  \\
+{\ttfamily C} Confidentiality  &Wyciek przez UART/logi  &Terminal pokazuje szczegóły TX/\+RX  &Dodać tryb produkcyjny bez pełnych dumpów, maskować wrażliwe dane i pair code  \\
+{\ttfamily I} Integrity  &Modyfikacja ramek w locie  &HMAC-\/\+SHA256 dla {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}  &Sprzętowy HASH i dokładniejsza telemetryka bad-\/auth  \\
+{\ttfamily I} Integrity  &Replay starych ramek  &Monotoniczny {\ttfamily counter} gateway-\/node  &Trwały zapis odporny na rollback i telemetryka security  \\
+{\ttfamily I} Integrity  &Fałszywe trusted device / nieautoryzowane parowanie  &Pairing flow i trusted list  &Pairing challenge-\/response, TPM RNG, lokalna zgoda fizyczna przez TPM policy  \\
+{\ttfamily I} Integrity  &Fałszywa konfiguracja security po restarcie  &Store versioning i częściowe CRC  &Ochrona integralności rekordów security, monotoniczny counter, binding do TPM  \\
+{\ttfamily A} Availability  &Flood radiowy  &Brak mesh relay, replay drop, broadcast bez ACK  &Token bucket per source, globalny budżet TX, adaptive backoff  \\
+{\ttfamily A} Availability  &Zużycie duty-\/cycle / baterii  &Auto ping respektuje duty-\/cycle  &Budżet TX dla control traffic i automatyczne obniżanie priorytetu flood sources  \\
+{\ttfamily A} Availability  &Zawieszenie toru radiowego lub backendu  &Recovery watchdog i reset ścieżki radiowej  &Eskalacja recovery, licznik awarii per modulacja, bezpieczny fallback do Lo\+Ra preset  \\
+{\ttfamily A} Availability  &Zablokowanie UI/obsługi operatora przez spam zdarzeń  &Częściowe utwardzenie UI i kolejek  &Osobna ścieżka alertów security, status zbiorczy zamiast popup spam  \\
+\end{DoxyTable}
+\hypertarget{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md145}{}\doxysection{\texorpdfstring{Najważniejsze priorytety}{Najważniejsze priorytety}}\label{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS_autotoc_md145}
+
+\begin{DoxyEnumerate}
+\item Przenieść crypto backend na sprzętowy HAL CRYP/\+HASH/\+RNG.
+\item Dodać per-\/source rate limiting i globalny budżet TX.
+\item Rozszerzyć ochronę TPM PP/policy z root seeda na pairing i operacje administracyjne.
+\item Dalej ograniczać ekspozycję sekretów w RAM i logach UART.
+\item Dodać trwałą telemetrykę security\+: {\ttfamily replay\+\_\+drop}, {\ttfamily bad\+\_\+auth}, {\ttfamily duplicate\+\_\+drop}, {\ttfamily recovery\+\_\+count}. 
+\end{DoxyEnumerate}

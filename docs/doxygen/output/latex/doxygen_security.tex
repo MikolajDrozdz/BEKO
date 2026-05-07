@@ -1,0 +1,38 @@
+\doxysection{Bezpieczenstwo }
+\hypertarget{doxygen_security}{}\label{doxygen_security}\index{Bezpieczenstwo@{Bezpieczenstwo}}
+\hypertarget{doxygen_security_security_frame}{}\doxysubsection{\texorpdfstring{LAVIET\+\_\+\+FRAME\+\_\+\+V1}{LAVIET\+\_\+\+FRAME\+\_\+\+V1}}\label{doxygen_security_security_frame}
+Ramka LAVIET zawiera\+:
+
+
+\begin{DoxyItemize}
+\item wersje i typ,
+\item flagi,
+\item identyfikatory zrodla i celu,
+\item {\ttfamily msg\+\_\+id},
+\item licznik anti-\/replay,
+\item payload do 16 bajtow,
+\item 32-\/bajtowy {\ttfamily mac\+\_\+tag}.
+\end{DoxyItemize}
+
+Szczegoly API sa w {\ttfamily \doxylink{laviet__frame_8h}{laviet\+\_\+frame.\+h}}.\hypertarget{doxygen_security_security_crypto}{}\doxysubsection{\texorpdfstring{Kryptografia}{Kryptografia}}\label{doxygen_security_security_crypto}
+{\ttfamily laviet\+\_\+crypto} udostepnia\+:
+
+
+\begin{DoxyItemize}
+\item HMAC-\/\+SHA256 dla integralnosci i autentycznosci ramek,
+\item AES-\/\+CTR dla szyfrowania payloadu bez paddingu,
+\item staly czas porownania MAC przez {\ttfamily \doxylink{laviet__crypto_8c_aa31879cc3e98740ffee1f73912c6c88a}{laviet\+\_\+mac\+\_\+equal()}},
+\item bezpieczne czyszczenie buforow przez {\ttfamily \doxylink{laviet__crypto_8c_ad8181b01dd76111b6f493f92d9a8f2b4}{laviet\+\_\+secure\+\_\+zero()}}.
+\end{DoxyItemize}
+
+Modul probuje uzyc sprzetowych blokow HASH/\+CRYP, ale zachowuje software fallback, gdy sprzetowy self-\/test nie przejdzie.\hypertarget{doxygen_security_security_tpm}{}\doxysubsection{\texorpdfstring{TPM}{TPM}}\label{doxygen_security_security_tpm}
+{\ttfamily st33ktpm2x} implementuje transport ST33\+KTPM2X przez I2\+C/\+TIS/\+FIFO i podstawowe komendy TPM2. {\ttfamily security\+\_\+main} uzywa TPM jako punktu zaufania dla root seed, materialu kluczowego i operacji wymagajacych Physical Presence.\hypertarget{doxygen_security_security_storage}{}\doxysubsection{\texorpdfstring{Storage}{Storage}}\label{doxygen_security_security_storage}
+{\ttfamily i2c\+\_\+mem\+\_\+store} dzieli zewnetrzna pamiec I2C na\+:
+
+
+\begin{DoxyItemize}
+\item ring log odebranych wiadomosci,
+\item szyfrowane sloty sekretow/trusted devices.
+\end{DoxyItemize}
+
+Sekretne payloady sa chronione przez XTEA-\/\+CTR i CRC w warstwie storage. 

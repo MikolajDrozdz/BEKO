@@ -1,0 +1,1739 @@
+\chapter{BEKO Security Architecture }
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE}{}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE}\index{BEKO Security Architecture@{BEKO Security Architecture}}
+\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md80}%
+\Hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md80}%
+
+
+Ten dokument opisuje, jak firmware BEKO chroni komunikację radiową, sekrety lokalne, TPM, AES/\+HMAC, EEPROM, liczniki anti-\/replay i dostęp lokalny przez menu.
+
+Dokument jest pisany z perspektywy aktualnego kodu firmware STM32 w katalogu {\ttfamily Core/\+App}. Jeżeli backend gatewaya albo frontend RPi zmieni protokół, ten plik należy zaktualizować razem z kodem.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md81}{}\doxysection{\texorpdfstring{1. Skrót}{1. Skrót}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md81}
+Najważniejsze decyzje bezpieczeństwa\+:
+
+
+\begin{DoxyItemize}
+\item TPM jest lokalnym root-\/of-\/trust dla noda.
+\item Root seed urządzenia jest przechowywany w TPM NV index {\ttfamily 0x01\+C10101}.
+\item Zapis root seeda do głównego indexu wymaga TPM Physical Presence ({\ttfamily PPWRITE}).
+\item TPM PP jest podłączony bezpośrednio do TPM, pin {\ttfamily 7}, aktywny stanem {\ttfamily VDD}.
+\item TPM komunikuje się z MCU przez {\ttfamily I2\+C3}, {\ttfamily PC0=SCL}, {\ttfamily PC1=SDA}.
+\item {\ttfamily TPM\+\_\+\+RESET\#} jest na {\ttfamily PB0}, aktywny niskim stanem.
+\item {\ttfamily TPM\+\_\+\+DAVINT\#} / {\ttfamily PIRQ} jest na {\ttfamily PH0}, aktywny niskim stanem.
+\item Sekrety w EEPROM są szyfrowane kluczem wyprowadzonym z root seeda TPM.
+\item Payload radiowy jest szyfrowany {\ttfamily AES-\/\+CTR}.
+\item Integralność i autentyczność ramki zapewnia {\ttfamily HMAC-\/\+SHA256}.
+\item HMAC obejmuje nagłówek i payload, czyli także {\ttfamily src\+\_\+id}, {\ttfamily dst\+\_\+id}, {\ttfamily msg\+\_\+id} i {\ttfamily counter}.
+\item Odbiornik weryfikuje HMAC przed odszyfrowaniem payloadu.
+\item Porównanie MAC jest stałoczasowe względem długości tagu.
+\item Backend crypto używa sprzętowego AES/\+HASH STM32, jeżeli self-\/test przejdzie.
+\item Jeżeli hardware crypto nie przejdzie self-\/testu, firmware używa software fallback.
+\item Klucze i bufory tymczasowe są zerowane po użyciu przez {\ttfamily \doxylink{laviet__crypto_8c_ad8181b01dd76111b6f493f92d9a8f2b4}{laviet\+\_\+secure\+\_\+zero()}}.
+\item Dostęp do menu chronią role lokalne i PIN operator/admin.
+\item Logi TPM TIS można włączyć przez {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG}; domyślnie verbose TPM init jest schowany.
+\item Logowanie wrażliwych payloadów na UART jest kontrolowane przez {\ttfamily \doxylink{pager__config_8h_a6176f7b270798f1eb48d2d02c68dc4f3}{PAGER\+\_\+\+CONFIG\+\_\+\+UART\+\_\+\+SENSITIVE\+\_\+\+LOGS}}.
+\end{DoxyItemize}
+
+W uproszczeniu\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{TPM\ NV\ root\ seed}
+\DoxyCodeLine{\ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ +-\/-\/\ HMAC(seed,\ "{}SEC:NET:ROOT"{})\ \ \ -\/>\ lokalny\ network\ key}
+\DoxyCodeLine{\ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ +-\/-\/\ HMAC(seed,\ "{}SEC:EEPROM:KEY"{})\ -\/>\ klucz\ szyfrowania\ sekretów\ EEPROM}
+\DoxyCodeLine{}
+\DoxyCodeLine{Pair\ code\ +\ local\_id\ +\ peer\_id}
+\DoxyCodeLine{\ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ +-\/-\/\ peer\ link\ base\ key}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ +-\/-\/\ HMAC(base,\ "{}LV1K"{}\ +\ domain\ +\ 0x01)\ -\/>\ AES-\/CTR\ enc\ key}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ |}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ +-\/-\/\ HMAC(base,\ "{}LV1K"{}\ +\ domain\ +\ 0x02)\ -\/>\ HMAC-\/SHA256\ key}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md82}{}\doxysection{\texorpdfstring{2. Cele bezpieczeństwa}{2. Cele bezpieczeństwa}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md82}
+System chroni cztery główne obszary\+:
+
+
+\begin{DoxyEnumerate}
+\item Poufność wiadomości radiowych.
+\item Integralność i autentyczność ramek.
+\item Trwałe sekrety noda\+: root seed, trusted devices, pair code, countery.
+\item Lokalny dostęp operatora/administratora.
+\end{DoxyEnumerate}
+
+System nie zakłada, że radio jest zaufane. Kanał radiowy jest traktowany jako publiczny\+:
+
+
+\begin{DoxyItemize}
+\item każdy może podsłuchać,
+\item każdy może wysłać bajty,
+\item każdy może powtórzyć starą transmisję,
+\item każdy może próbować floodować,
+\item pakiety mogą zginąć albo przyjść po czasie.
+\end{DoxyItemize}
+
+Dlatego bezpieczeństwo nie opiera się na Lo\+Ra/\+FSK/\+OOK jako takich. Radio jest tylko transportem. Ochrona jest w warstwie aplikacyjnej {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md83}{}\doxysection{\texorpdfstring{3. Model atakującego}{3. Model atakującego}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md83}
+Zakładany atakujący może\+:
+
+
+\begin{DoxyItemize}
+\item słuchać kanału radiowego,
+\item wysyłać własne pakiety SX1276/\+RFM95,
+\item powtarzać stare ramki,
+\item próbować zgadnąć {\ttfamily src\+\_\+id},
+\item próbować podszyć się pod gateway albo node,
+\item odczytać zewnętrzny EEPROM po fizycznym dostępie do płytki,
+\item obserwować UART, jeżeli ma dostęp serwisowy,
+\item zresetować zasilanie w niekorzystnym momencie.
+\end{DoxyItemize}
+
+Zakładany atakujący nie powinien móc\+:
+
+
+\begin{DoxyItemize}
+\item odczytać sekretów z TPM bez obejścia zabezpieczeń TPM,
+\item zapisać nowego root seeda bez fizycznej obecności TPM PP,
+\item wygenerować poprawnego HMAC bez właściwego klucza,
+\item zmodyfikować zaszyfrowanej wiadomości tak, żeby przeszła HMAC,
+\item udawać sparowanego peer-\/a po zakończonym pairingu bez pair code.
+\end{DoxyItemize}
+
+Ważne\+: jeżeli atakujący ma pełny dostęp debug/\+SWD do działającego MCU i może czytać RAM, może próbować odczytywać klucze w czasie użycia. Ten projekt ogranicza czas życia sekretów w RAM, ale nie zastępuje pełnej ochrony debug portu, secure boot ani Trust\+Zone policy.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md84}{}\doxysection{\texorpdfstring{4. Granice bezpieczeństwa}{4. Granice bezpieczeństwa}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md84}
+System ma kilka granic zaufania\+:
+
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Granica  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Co jest zaufane  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Co jest niezaufane  \\
+MCU firmware  &kod firmware, jeśli flash/debug są kontrolowane  &radio RX, payloady, zewnętrzny świat  \\
+TPM  &root seed i operacje NV/\+PP  &I2C jako transport, dopóki komenda nie przejdzie TPM  \\
+EEPROM  &nośnik danych  &zawartość EEPROM bez weryfikacji CRC i deszyfrowania  \\
+Radio  &nic samo z siebie  &każda ramka przed HMAC  \\
+Menu lokalne  &świadoma interakcja użytkownika  &przypadkowe naciśnięcia i nieuprawniony operator  \\
+\end{DoxyTable}
+
+
+Najważniejsza zasada\+: żadna ramka radiowa nie powinna dostać się do logiki aplikacji jako zaufana, dopóki\+:
+
+
+\begin{DoxyEnumerate}
+\item parser nie potwierdzi formatu,
+\item HMAC nie pasuje,
+\item polityka adresacji i typu nie jest poprawna,
+\item counter/replay policy nie jest spełniona,
+\item payload, jeżeli zaszyfrowany, nie zostanie odszyfrowany poprawnym kluczem.
+\end{DoxyEnumerate}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md85}{}\doxysection{\texorpdfstring{5. Komponenty implementacji}{5. Komponenty implementacji}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md85}
+Główne pliki\+:
+
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Plik  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Rola  \\
+{\ttfamily \doxylink{security__main_8c_source}{Core/\+App/security\+\_\+main.\+c}}  &TPM bootstrap, root seed, storage key, trusted devices, runtime security config  \\
+{\ttfamily \doxylink{st33ktpm2x_8c}{Core/\+App/st33ktpm2x\+\_\+lib/st33ktpm2x.\+c}}  &driver ST33\+KTPM2\+X/\+TIS over I2C, komendy TPM2  \\
+{\ttfamily \doxylink{laviet__crypto_8c}{Core/\+App/laviet\+\_\+crypto.\+c}}  &AES-\/\+CTR, HMAC-\/\+SHA256, hardware backend, fallback software, self-\/test  \\
+{\ttfamily \doxylink{laviet__frame_8c}{Core/\+App/laviet\+\_\+frame.\+c}}  &parser, serializer, walidacja {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}, input do HMAC  \\
+{\ttfamily \doxylink{radio__main_8c_source}{Core/\+App/radio\+\_\+main.\+c}}  &TX/\+RX ramek, ACK, pairing, countery, szyfrowanie i MAC  \\
+{\ttfamily \doxylink{i2c__mem__store_8c}{Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib/i2c\+\_\+mem\+\_\+store.\+c}}  &EEPROM storage, CRC, secret slots, XTEA-\/\+CTR dla małych rekordów  \\
+{\ttfamily \doxylink{menu__main_8c_source}{Core/\+App/menu\+\_\+main.\+c}}  &role lokalne, PIN operator/admin, dostęp do menu Security  \\
+{\ttfamily \doxylink{pager__config_8h}{Core/\+App/pager\+\_\+config.\+h}}  &flagi produkcyjne/logowania  \\
+\end{DoxyTable}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md86}{}\doxysection{\texorpdfstring{6. TPM jako root-\/of-\/trust}{6. TPM jako root-\/of-\/trust}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md86}
+TPM jest używany po to, żeby główny sekret urządzenia nie był stałą w firmware ani zwykłym bajtem w EEPROM.
+
+Obecny TPM\+:
+
+
+\begin{DoxyItemize}
+\item model/rodzina\+: ST33\+KTPM2X,
+\item adres I2C 7-\/bit\+: {\ttfamily 0x2E},
+\item magistrala\+: {\ttfamily I2\+C3},
+\item linie\+: {\ttfamily PC0=SCL}, {\ttfamily PC1=SDA},
+\item reset\+: {\ttfamily TPM\+\_\+\+RESET\#} na {\ttfamily PB0}, aktywny {\ttfamily GND},
+\item interrupt/data available\+: {\ttfamily TPM\+\_\+\+DAVINT\#} na {\ttfamily PH0}, aktywny {\ttfamily GND},
+\item physical presence\+: TPM pin {\ttfamily 7}, aktywny {\ttfamily VDD}, podłączony do TPM, nie do GPIO MCU.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md87}{}\doxysubsection{\texorpdfstring{6.\+1. Dlaczego TPM jest bezpieczniejszy niż EEPROM}{6.\+1. Dlaczego TPM jest bezpieczniejszy niż EEPROM}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md87}
+EEPROM jest tylko pamięcią. Jeśli ktoś fizycznie odczyta EEPROM, dostaje zapisane bajty.
+
+TPM jest układem bezpieczeństwa\+:
+
+
+\begin{DoxyItemize}
+\item ma własne komendy i polityki autoryzacji,
+\item może wymagać platform auth albo physical presence,
+\item nie udostępnia NV write bez spełnienia atrybutów indexu,
+\item wykonuje {\ttfamily TPM2\+\_\+\+Get\+Random},
+\item separuje trwały sekret od zwykłej pamięci aplikacji,
+\item pozwala przechowywać root seed poza firmware.
+\end{DoxyItemize}
+
+W tym projekcie TPM nie jest używany jako “magiczne szyfrowanie wszystkiego”. TPM jest korzeniem hierarchii kluczy. To oznacza, że z niego pochodzi materiał, który potem zasila klucze robocze.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md88}{}\doxysection{\texorpdfstring{7. TPM init}{7. TPM init}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md88}
+Podczas startu {\ttfamily security\+\_\+main} wykonuje\+:
+
+
+\begin{DoxyEnumerate}
+\item Konfigurację drivera TPM przez {\ttfamily \doxylink{st33ktpm2x_8c_a4395b053468eaa84de32315c833c9a2e}{st33ktpm2x\+\_\+default\+\_\+cfg}(\&cfg, \&hi2c3)}.
+\item Hard reset TPM przez {\ttfamily TPM\+\_\+\+RESET\#}.
+\item Opcjonalny odczyt {\ttfamily DAVINT\#}.
+\item Skan/probe I2\+C3, jeśli {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG} jest aktywny.
+\item Odczyt identyfikacji TPM ({\ttfamily DID\+\_\+\+VID}, {\ttfamily RID}).
+\item {\ttfamily TPM2\+\_\+\+Startup(\+ST\+\_\+\+CLEAR)}.
+\item {\ttfamily TPM2\+\_\+\+Self\+Test(full\+\_\+test=false)}.
+\item Ustawienie {\ttfamily s\+\_\+tpm\+\_\+ready=true}, jeśli transport i podstawowe komendy działają.
+\end{DoxyEnumerate}
+
+Przykładowe logi poprawnego startu\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SEC:\ TPM\ ready\ DIDVID=0x0003104A\ RID=0x01\ self\_test\_tpm\_rc=0x0000090A}
+\DoxyCodeLine{SEC:\ TPM\ NV\ read\ idx=0x01C10101\ rc=0(OK)\ tpm\_rc=0x00000000\ len=8\ nonzero=1}
+\DoxyCodeLine{SEC:\ root\ seed\ loaded\ from\ TPM}
+\DoxyCodeLine{SEC:\ MEM\ secret\ key\ derived\ from\ TPM\ root\ seed}
+
+\end{DoxyCode}
+
+
+{\ttfamily self\+\_\+test\+\_\+tpm\+\_\+rc=0x0000090A} oznacza odpowiedź TPM na self-\/test. Firmware traktuje transport TPM jako gotowy, jeżeli komendy krytyczne, np. NV read, działają poprawnie. To dlatego root seed może zostać odczytany mimo diagnostycznego kodu z self-\/testu.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md89}{}\doxysubsection{\texorpdfstring{7.\+1. Verbose logi TPM}{7.\+1. Verbose logi TPM}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md89}
+Pełne logi TIS/\+FIFO są ukryte za {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG}.
+
+Domyślnie nie są wypisywane\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{TPM\ TIS\ transceive\ start\ ...}
+\DoxyCodeLine{TPM\ TIS\ request\ locality\ ...}
+\DoxyCodeLine{TPM\ TIS\ data\_avail\ ...}
+\DoxyCodeLine{SEC:\ TPM\ reg8\ DIDVID\ ...}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest dobre\+:
+
+
+\begin{DoxyItemize}
+\item normalny UART nie jest zalewany danymi,
+\item mniej ryzyka przypadkowego wypisania informacji serwisowej,
+\item debug magistrali można włączyć tylko świadomie podczas diagnostyki.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md90}{}\doxysection{\texorpdfstring{8. Root seed}{8. Root seed}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md90}
+Root seed jest głównym trwałym sekretem noda.
+
+Parametry\+:
+
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Parametr  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Wartość  \\
+Rozmiar  &{\ttfamily 8 B} ({\ttfamily SECURITY\+\_\+\+KEY\+\_\+\+SEED\+\_\+\+BYTES})  \\
+Główny TPM NV index  &{\ttfamily 0x01\+C10101}  \\
+Legacy TPM NV index  &{\ttfamily 0x01\+C10100}  \\
+Atrybuty głównego indexu  &{\ttfamily PPWRITE}, {\ttfamily OWNERREAD}, {\ttfamily NO\+\_\+\+DA}  \\
+Zapis  &wymaga TPM Physical Presence  \\
+Odczyt  &owner read  \\
+\end{DoxyTable}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md91}{}\doxysubsection{\texorpdfstring{8.\+1. Dlaczego seed nie jest w firmware}{8.\+1. Dlaczego seed nie jest w firmware}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md91}
+Gdyby klucz był wpisany jako stała w kodzie\+:
+
+
+\begin{DoxyItemize}
+\item każdy egzemplarz miałby ten sam sekret,
+\item wyciek firmware ujawniłby sekret,
+\item nie byłoby sensownej rotacji,
+\item nie dałoby się związać sekretu z konkretną płytką.
+\end{DoxyItemize}
+
+W obecnym modelu firmware zna tylko algorytm\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{root\ seed\ -\/>\ HMAC\ labels\ -\/>\ klucze\ robocze}
+
+\end{DoxyCode}
+
+
+Sam root seed jest ładowany z TPM podczas startu.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md92}{}\doxysubsection{\texorpdfstring{8.\+2. Lifecycle root seeda}{8.\+2. Lifecycle root seeda}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md92}
+Przy starcie firmware wykonuje\+:
+
+
+\begin{DoxyEnumerate}
+\item Próbuje odczytać {\ttfamily 0x01\+C10101}.
+\item Jeśli główny index nie ma danych, próbuje legacy index {\ttfamily 0x01\+C10100}.
+\item Jeśli legacy seed istnieje, firmware próbuje migrować go do PP-\/protected index.
+\item Jeśli nie ma żadnego seeda, firmware generuje nowy seed.
+\item Jeśli TPM jest gotowy, nowy seed jest zapisywany do TPM NV.
+\item Zapis do {\ttfamily 0x01\+C10101} wymaga aktywnego TPM PP.
+\item Seed jest używany do wyprowadzenia kluczy.
+\item Bufory tymczasowe z seedem są zerowane.
+\end{DoxyEnumerate}
+
+Przykład\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SEC:\ TPM\ NV\ read\ idx=0x01C10101\ rc=0(OK)\ tpm\_rc=0x00000000\ len=8\ nonzero=1}
+\DoxyCodeLine{SEC:\ root\ seed\ loaded\ from\ TPM}
+\DoxyCodeLine{SEC:\ MEM\ secret\ key\ derived\ from\ TPM\ root\ seed}
+
+\end{DoxyCode}
+
+
+Przykład, gdy zapis wymaga fizycznej obecności\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SEC:\ TPM\ NV\ write\ PP\ idx=0x01C10101\ rc=7(ETPM\_RC)\ tpm\_rc=...}
+\DoxyCodeLine{SEC:\ root\ seed\ write\ requires\ TPM\ PP\ button}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md93}{}\doxysubsection{\texorpdfstring{8.\+3. Physical Presence}{8.\+3. Physical Presence}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md93}
+Physical Presence ({\ttfamily PP}) jest ważne, bo chroni operacje, które zmieniają root seeda.
+
+W obecnym hardware\+:
+
+
+\begin{DoxyItemize}
+\item przycisk PP jest podłączony do TPM pin {\ttfamily 7},
+\item aktywny poziom to {\ttfamily VDD},
+\item STM32 nie odczytuje PP jako GPIO,
+\item TPM sam egzekwuje warunek dla operacji {\ttfamily PPWRITE}.
+\end{DoxyItemize}
+
+To oznacza\+:
+
+
+\begin{DoxyItemize}
+\item firmware nie może “udawać” fizycznej obecności przez samo ustawienie GPIO,
+\item zdalny atak radiowy nie powinien móc nadpisać root seeda,
+\item operator musi fizycznie nacisnąć/aktywować PP podczas rotacji wymagającej zapisu.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md94}{}\doxysubsection{\texorpdfstring{8.\+4. Ograniczenie\+: seed ma 8 bajtów}{8.\+4. Ograniczenie\+: seed ma 8 bajtów}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md94}
+Aktualny root seed ma {\ttfamily 8 B}, czyli 64 bity.
+
+To jest istotne ograniczenie. Architektura hierarchii kluczy jest poprawna, ale dla długoterminowego bezpieczeństwa produkcyjnego lepiej zwiększyć seed do {\ttfamily 16 B} albo {\ttfamily 32 B}.
+
+Dlaczego mimo tego obecny model jest lepszy niż stały klucz\+:
+
+
+\begin{DoxyItemize}
+\item seed nie jest stałą firmware,
+\item seed może być inny per urządzenie,
+\item seed jest w TPM,
+\item zapis wymaga PP,
+\item klucze robocze są separowane labelami HMAC.
+\end{DoxyItemize}
+
+Co poprawić docelowo\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SECURITY\_KEY\_SEED\_BYTES:\ 8\ -\/>\ 16\ albo\ 32}
+\DoxyCodeLine{TPM\ NV\ data\_size:\ \ \ \ \ \ \ \ 8\ -\/>\ 16\ albo\ 32}
+\DoxyCodeLine{test\ migracji\ EEPROM\ i\ TPM\ NV}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md95}{}\doxysection{\texorpdfstring{9. Entropia i generowanie seeda}{9. Entropia i generowanie seeda}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md95}
+Firmware używa dwóch źródeł entropii\+:
+
+
+\begin{DoxyEnumerate}
+\item Preferowane\+: {\ttfamily TPM2\+\_\+\+Get\+Random}.
+\item Fallback\+: STM32 HAL RNG ({\ttfamily HAL\+\_\+\+RNG\+\_\+\+Generate\+Random\+Number}).
+\end{DoxyEnumerate}
+
+Przepływ\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{security\_get\_entropy\_bytes()}
+\DoxyCodeLine{\ \ \ \ if\ TPM\ ready:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ TPM2\_GetRandom(len)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ if\ OK:\ return}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ else:\ log,\ disable\ TPM\ ready\ for\ entropy\ path}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ HAL\_RNG\_GenerateRandomNumber()}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item TPM RNG jest niezależny od MCU,
+\item HAL RNG daje fallback, gdy TPM random nie jest dostępny,
+\item seed nie jest deterministyczny,
+\item brak RNG powoduje błąd init/rotacji, a nie użycie stałego seeda.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md96}{}\doxysection{\texorpdfstring{10. Hierarchia kluczy}{10. Hierarchia kluczy}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md96}
+Firmware nie używa jednego klucza do wszystkiego.
+
+Z root seeda powstają oddzielne domeny\+:
+
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Domena  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Funkcja  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Label  \\
+Network/root key  &lokalny klucz sieciowy noda  &{\ttfamily SEC\+:\+NET\+:ROOT}  \\
+EEPROM secret key  &szyfrowanie secret slots EEPROM  &{\ttfamily SEC\+:\+EEPROM\+:KEY}  \\
+\end{DoxyTable}
+
+
+Implementacyjnie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{network\_key\ =\ HMAC-\/SHA256(seed,\ "{}SEC:NET:ROOT"{})[0..15]}
+\DoxyCodeLine{store\_key\ \ \ =\ HMAC-\/SHA256(seed,\ "{}SEC:EEPROM:KEY"{})[0..15]}
+
+\end{DoxyCode}
+
+
+Dlaczego labelowanie jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item ten sam root seed nie jest używany bezpośrednio jako klucz AES,
+\item różne zastosowania dostają różne klucze,
+\item wyciek jednego klucza roboczego nie musi ujawniać drugiego,
+\item label utrudnia przypadkowe reuse materiału między protokołami.
+\end{DoxyItemize}
+
+Przykład\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{seed\ =\ 8\ losowych\ bajtów\ z\ TPM}
+\DoxyCodeLine{}
+\DoxyCodeLine{HMAC(seed,\ "{}SEC:NET:ROOT"{})}
+\DoxyCodeLine{\ \ -\/>\ digest\ 32\ B}
+\DoxyCodeLine{\ \ -\/>\ pierwsze\ 16\ B\ jako\ network\_key}
+\DoxyCodeLine{}
+\DoxyCodeLine{HMAC(seed,\ "{}SEC:EEPROM:KEY"{})}
+\DoxyCodeLine{\ \ -\/>\ digest\ 32\ B}
+\DoxyCodeLine{\ \ -\/>\ pierwsze\ 16\ B\ jako\ EEPROM\ secret\ key}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md97}{}\doxysection{\texorpdfstring{11. Klucze ramek radiowych}{11. Klucze ramek radiowych}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md97}
+Ramki radiowe nie używają bezpośrednio root seeda TPM. Używają kluczy ramek wyprowadzanych z trybu relacji peer.
+
+Są dwa główne tryby\+:
+
+
+\begin{DoxyTable}{3}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Tryb  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Kiedy  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Materiał bazowy  \\
+{\ttfamily \doxylink{security__main_8h_a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+PAIR\+\_\+\+V1\+\_\+32}}  &zwykła komunikacja sparowany peer \texorpdfstring{$<$}{<}-\/\texorpdfstring{$>$}{>} node  &pair code / trusted entry  \\
+{\ttfamily \doxylink{security__main_8h_a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+SHARED}}  &pairing, error, broadcast/control fallback  &stały shared frame root key  \\
+\end{DoxyTable}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md98}{}\doxysubsection{\texorpdfstring{11.\+1. Pair link key}{11.\+1. Pair link key}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md98}
+Dla sparowanego urządzenia firmware pobiera zapisany {\ttfamily pair code} z trusted storage i wyprowadza z niego klucz relacji\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{lo\ =\ min(local\_node\_id,\ peer\_node\_id)}
+\DoxyCodeLine{hi\ =\ max(local\_node\_id,\ peer\_node\_id)}
+\DoxyCodeLine{base\_key\ =\ HMAC-\/SHA256(pair\_code,\ "{}SEC:PAIR:V1"{}\ ||\ lo\ ||\ hi)[0..15]}
+
+\end{DoxyCode}
+
+
+Relacja jest zależna od\+:
+
+
+\begin{DoxyItemize}
+\item lokalnego {\ttfamily node\+\_\+id},
+\item {\ttfamily peer\+\_\+id},
+\item pair code,
+\item trybu derivation.
+\end{DoxyItemize}
+
+Następnie powstają dwa oddzielne klucze\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{info\ =\ "{}LV1K"{}\ ||\ domain\_id\ ||\ 0x00\ ||\ purpose}
+\DoxyCodeLine{}
+\DoxyCodeLine{purpose=0x01\ -\/>\ AES-\/CTR\ enc\_key\ 16\ B}
+\DoxyCodeLine{purpose=0x02\ -\/>\ HMAC-\/SHA256\ hmac\_key\ 32\ B}
+
+\end{DoxyCode}
+
+
+{\ttfamily domain\+\_\+id}\+:
+
+
+\begin{DoxyItemize}
+\item dla broadcastu\+: {\ttfamily 0x\+FFFF},
+\item dla unicastu\+: mniejszy z {\ttfamily local\+\_\+id} i {\ttfamily peer\+\_\+id}.
+\end{DoxyItemize}
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item AES i HMAC nie używają tego samego klucza,
+\item klucze zależą od pary urządzeń,
+\item ten sam pair code nie daje identycznych kluczy dla każdej relacji, jeśli identyfikatory są inne,
+\item HMAC jako KDF daje separację domen.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md99}{}\doxysubsection{\texorpdfstring{11.\+2. Shared mode}{11.\+2. Shared mode}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md99}
+{\ttfamily \doxylink{security__main_8h_a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5}{SECURITY\+\_\+\+FRAME\+\_\+\+KEY\+\_\+\+MODE\+\_\+\+SHARED}} używa stałego root key\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{"{}LAVIET\_SHARED\_V1"{}}
+
+\end{DoxyCode}
+
+
+Ten tryb jest używany dla ramek, które muszą istnieć przed pełnym zaufaniem albo poza relacją pair\+:
+
+
+\begin{DoxyItemize}
+\item pairing,
+\item część ramek control/error,
+\item broadcast.
+\end{DoxyItemize}
+
+To nie daje tej samej siły co pair-\/specific key. Shared mode należy traktować jako tryb bootstrap/compatibility, a nie docelową ochronę poufnych danych użytkownika.
+
+Bezpieczna zasada\+:
+
+
+\begin{DoxyItemize}
+\item zwykłe wiadomości i odpowiedzi powinny używać pair-\/derived keys,
+\item broadcast powinien nie przenosić sekretów,
+\item pairing powinien mieć lokalne potwierdzenie użytkownika,
+\item docelowo pairing powinien dostać challenge-\/response lub TPM policy.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md100}{}\doxysection{\texorpdfstring{12. Ramka {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}}{12. Ramka {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1}}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md100}
+Struktura\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ver\_type\ \ \ \ 1\ B}
+\DoxyCodeLine{flags\ \ \ \ \ \ \ 1\ B}
+\DoxyCodeLine{src\_id\ \ \ \ \ \ 2\ B}
+\DoxyCodeLine{dst\_id\ \ \ \ \ \ 2\ B}
+\DoxyCodeLine{msg\_id\ \ \ \ \ \ 2\ B}
+\DoxyCodeLine{counter\ \ \ \ \ 4\ B}
+\DoxyCodeLine{payload\_len\ 1\ B}
+\DoxyCodeLine{payload\ \ \ \ \ 0..16\ B}
+\DoxyCodeLine{mac\_tag\ \ \ \ \ 32\ B}
+
+\end{DoxyCode}
+
+
+Rozmiar\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{min\ =\ 45\ B}
+\DoxyCodeLine{max\ =\ 61\ B}
+
+\end{DoxyCode}
+
+
+Adresacja\+:
+
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Adres  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Znaczenie  \\
+{\ttfamily 0x0000}  &nieważny  \\
+{\ttfamily 0x0001}  &gateway  \\
+{\ttfamily 0x0002..0x\+FFFE}  &node  \\
+{\ttfamily 0x\+FFFF}  &broadcast  \\
+\end{DoxyTable}
+
+
+Typy\+:
+
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Typ  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Znaczenie  \\
+{\ttfamily DATA}  &zwykła wiadomość  \\
+{\ttfamily ACK}  &potwierdzenie dostarczenia  \\
+{\ttfamily RESP}  &odpowiedź  \\
+{\ttfamily PAIR\+\_\+\+REQ}  &żądanie parowania  \\
+{\ttfamily PAIR\+\_\+\+RESP}  &odpowiedź parowania  \\
+{\ttfamily CFG}  &konfiguracja  \\
+{\ttfamily COUNTER\+\_\+\+SYNC}  &synchronizacja countera  \\
+{\ttfamily KEY\+\_\+\+ROTATE}  &rotacja klucza  \\
+{\ttfamily ERROR}  &błąd/protokół  \\
+\end{DoxyTable}
+
+
+Flagi\+:
+
+
+\begin{DoxyTable}{2}{}{}{1}
+\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Flaga  &\SetCell{c,bg=\tableheadbgcolor,font=\bfseries}Znaczenie  \\
+{\ttfamily ENCRYPTED}  &payload jest szyfrowany AES-\/\+CTR  \\
+{\ttfamily ACK\+\_\+\+REQUIRED}  &odbiorca ma odesłać ACK  \\
+{\ttfamily IS\+\_\+\+ACK}  &ramka jest ACK  \\
+{\ttfamily PAIRING}  &ramka należy do pairingu  \\
+{\ttfamily CONFIG\+\_\+\+ACCESS}  &ramka konfiguracyjna  \\
+{\ttfamily BROADCAST}  &dst to broadcast  \\
+{\ttfamily COUNTER\+\_\+\+OVERRIDE}  &specjalna zmiana countera  \\
+{\ttfamily KEY\+\_\+\+UPDATE}  &rotacja klucza  \\
+\end{DoxyTable}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md101}{}\doxysection{\texorpdfstring{13. Walidacja ramek}{13. Walidacja ramek}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md101}
+{\ttfamily \doxylink{laviet__frame_8c_a9df225dfc1501016db4186285f38f71e}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}} odrzuca\+:
+
+
+\begin{DoxyItemize}
+\item złą wersję protokołu,
+\item nieznany typ,
+\item {\ttfamily src\+\_\+id=0},
+\item {\ttfamily src\+\_\+id=0x\+FFFF},
+\item {\ttfamily dst\+\_\+id=0},
+\item {\ttfamily msg\+\_\+id=0},
+\item payload dłuższy niż 16 B,
+\item broadcast bez flagi {\ttfamily BROADCAST},
+\item broadcast z {\ttfamily ACK\+\_\+\+REQUIRED},
+\item niepoprawne kombinacje flag dla typu.
+\end{DoxyItemize}
+
+Przykład\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{DATA\ +\ IS\_ACK\ -\/>\ błąd\ flag}
+\DoxyCodeLine{ACK\ +\ payload\_len\ !=\ 6\ -\/>\ błąd\ payload}
+\DoxyCodeLine{COUNTER\_SYNC\ bez\ COUNTER\_OVERRIDE\ -\/>\ błąd\ flag}
+\DoxyCodeLine{BROADCAST\ +\ ACK\_REQUIRED\ -\/>\ błąd\ flag}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item tanie błędy są odrzucane przed kosztowną logiką,
+\item niepoprawne typy nie trafiają do handlerów,
+\item broadcast nie może wymusić ACK,
+\item {\ttfamily src\+\_\+id} i {\ttfamily dst\+\_\+id} mają ścisłą semantykę,
+\item payload ma twardy limit 16 B.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md102}{}\doxysection{\texorpdfstring{14. HMAC-\/\+SHA256}{14. HMAC-\/\+SHA256}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md102}
+Każda ramka ma {\ttfamily mac\+\_\+tag} 32 B.
+
+MAC liczony jest po\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ver\_type\ ||}
+\DoxyCodeLine{flags\ ||}
+\DoxyCodeLine{src\_id\ ||}
+\DoxyCodeLine{dst\_id\ ||}
+\DoxyCodeLine{msg\_id\ ||}
+\DoxyCodeLine{counter\ ||}
+\DoxyCodeLine{payload\_len\ ||}
+\DoxyCodeLine{payload}
+
+\end{DoxyCode}
+
+
+{\ttfamily mac\+\_\+tag} nie jest częścią inputu do HMAC.
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item zmiana payloadu zmienia HMAC,
+\item zmiana adresu nadawcy zmienia HMAC,
+\item zmiana adresu odbiorcy zmienia HMAC,
+\item zmiana {\ttfamily msg\+\_\+id} zmienia HMAC,
+\item zmiana {\ttfamily counter} zmienia HMAC,
+\item zmiana flag, np. dopisanie {\ttfamily ENCRYPTED}, zmienia HMAC.
+\end{DoxyItemize}
+
+Atakujący może wysłać losową ramkę, ale bez {\ttfamily hmac\+\_\+key} nie powinien być w stanie policzyć poprawnego {\ttfamily mac\+\_\+tag}.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md103}{}\doxysubsection{\texorpdfstring{14.\+1. Kolejność RX}{14.\+1. Kolejność RX}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md103}
+W RX kolejność jest krytyczna\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{decode\ bytes\ -\/>\ validate\ plain\ -\/>\ derive\ keys\ -\/>\ verify\ HMAC\ -\/>\ decrypt\ -\/>\ handle}
+
+\end{DoxyCode}
+
+
+Payload jest odszyfrowywany dopiero po HMAC.
+
+Dlaczego\+:
+
+
+\begin{DoxyItemize}
+\item AES-\/\+CTR jest strumieniowy i sam nie daje integralności,
+\item odszyfrowywanie losowych danych nie powinno sterować logiką,
+\item HMAC chroni ciphertext i nagłówek.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md104}{}\doxysubsection{\texorpdfstring{14.\+2. Stałoczasowe porównanie MAC}{14.\+2. Stałoczasowe porównanie MAC}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md104}
+{\ttfamily \doxylink{laviet__crypto_8c_aa31879cc3e98740ffee1f73912c6c88a}{laviet\+\_\+mac\+\_\+equal()}} porównuje wszystkie 32 bajty i akumuluje różnice\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{diff\ |=\ a[i]\ \string^\ b[i];}
+
+\end{DoxyCode}
+
+
+Nie kończy po pierwszej różnicy.
+
+Dlaczego\+:
+
+
+\begin{DoxyItemize}
+\item ogranicza leak timingowy mówiący, ile bajtów MAC było poprawnych,
+\item jest prostą i właściwą praktyką przy tagach MAC.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md105}{}\doxysection{\texorpdfstring{15. AES-\/\+CTR}{15. AES-\/\+CTR}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md105}
+Payload jest szyfrowany AES-\/\+CTR, gdy flaga {\ttfamily ENCRYPTED} jest ustawiona.
+
+Właściwości AES-\/\+CTR\+:
+
+
+\begin{DoxyItemize}
+\item nie wymaga paddingu,
+\item działa dla payloadów 1..16 B,
+\item ten sam algorytm szyfruje i deszyfruje,
+\item ciphertext ma tę samą długość co plaintext,
+\item wymaga unikalnego counter block dla danego klucza.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md106}{}\doxysubsection{\texorpdfstring{15.\+1. Counter block AES-\/\+CTR}{15.\+1. Counter block AES-\/\+CTR}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md106}
+Counter block ma 16 B\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{0..2\ \ \ "{}LV1"{}}
+\DoxyCodeLine{3\ \ \ \ \ \ 0x00}
+\DoxyCodeLine{4..5\ \ \ src\_id}
+\DoxyCodeLine{6..7\ \ \ dst\_id}
+\DoxyCodeLine{8..9\ \ \ msg\_id}
+\DoxyCodeLine{10..13\ frame.counter}
+\DoxyCodeLine{14..15\ block\_index}
+
+\end{DoxyCode}
+
+
+Dla obecnego payloadu max 16 B {\ttfamily block\+\_\+index} zwykle wynosi {\ttfamily 0}.
+
+Przykład\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{src\_id\ \ =\ 0x1234}
+\DoxyCodeLine{dst\_id\ \ =\ 0x0001}
+\DoxyCodeLine{msg\_id\ \ =\ 0x4567}
+\DoxyCodeLine{counter\ =\ 0x89ABCDEF}
+\DoxyCodeLine{block\ \ \ =\ 0}
+\DoxyCodeLine{}
+\DoxyCodeLine{counter\ block:}
+\DoxyCodeLine{4C\ 56\ 31\ 00\ 12\ 34\ 00\ 01\ 45\ 67\ 89\ AB\ CD\ EF\ 00\ 00}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item nonce/counter zależy od nadawcy, odbiorcy, msg\+\_\+id i countera,
+\item powtórzenie tego samego counter block przy tym samym kluczu jest utrudnione przez monotoniczny counter i msg\+\_\+id,
+\item HMAC obejmuje te same pola, więc atakujący nie może zmienić nonce bez uszkodzenia MAC.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md107}{}\doxysubsection{\texorpdfstring{15.\+2. AES-\/\+CTR nie jest autentykacją}{15.\+2. AES-\/\+CTR nie jest autentykacją}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md107}
+AES-\/\+CTR sam nie chroni przed modyfikacją bitów.
+
+Przykład problemu bez HMAC\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{plaintext\ \ =\ "{}OK"{}}
+\DoxyCodeLine{ciphertext\ =\ AES\_CTR(plaintext)}
+\DoxyCodeLine{atakujący\ zmienia\ bit\ ciphertextu}
+\DoxyCodeLine{odbiorca\ dostaje\ zmieniony\ plaintext}
+
+\end{DoxyCode}
+
+
+W BEKO ten atak nie powinien przejść, bo HMAC jest liczony po zaszyfrowanym payloadzie i nagłówku. Zmieniony ciphertext da inny HMAC.
+
+Dlatego bezpieczeństwo wiadomości to\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Poufność:\ \ \ \ \ \ \ AES-\/CTR}
+\DoxyCodeLine{Integralność:\ \ \ HMAC-\/SHA256}
+\DoxyCodeLine{Autentyczność:\ \ HMAC-\/SHA256\ z\ kluczem\ relacji}
+\DoxyCodeLine{Anti-\/replay:\ \ \ \ counter\ policy}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md108}{}\doxysection{\texorpdfstring{16. Hardware crypto STM32}{16. Hardware crypto STM32}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md108}
+{\ttfamily \doxylink{laviet__crypto_8c_a7e6b5382044df5bf7b529c89360ac21b}{laviet\+\_\+crypto\+\_\+init()}} sprawdza, czy\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily hcryp.\+Instance == AES},
+\item AES HAL jest {\ttfamily READY},
+\item HASH HAL jest {\ttfamily READY}.
+\end{DoxyItemize}
+
+Potem wykonuje self-\/test\+:
+
+
+\begin{DoxyEnumerate}
+\item HMAC software.
+\item HMAC hardware.
+\item Porównanie HMAC.
+\item AES-\/\+CTR software dla 0 B.
+\item AES-\/\+CTR hardware dla 0 B.
+\item AES-\/\+CTR software dla 1 B.
+\item AES-\/\+CTR hardware dla 1 B.
+\item Porównanie 1 B.
+\item AES-\/\+CTR software dla 16 B.
+\item AES-\/\+CTR hardware dla 16 B.
+\item Porównanie 16 B.
+\item Roundtrip encrypt/decrypt.
+\end{DoxyEnumerate}
+
+Poprawny log\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CRYPTO:\ AES\ pre\_self\_test\ inst=0x420c0000\ state=1(READY)\ err=0x00000000\ ...}
+\DoxyCodeLine{CRYPTO:\ HASH\ pre\_self\_test\ state=1(READY)\ err=0x00000000\ ...}
+\DoxyCodeLine{CRYPTO:\ hardware\ backend\ ready}
+
+\end{DoxyCode}
+
+
+Jeżeli test nie przejdzie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CRYPTO:\ self-\/test\ mismatch\ stage=aes\_1B\_compare\ index=0\ expected=0xAE\ actual=0x41\ len=1}
+\DoxyCodeLine{CRYPTO:\ hardware\ self-\/test\ failed,\ using\ software\ fallback}
+
+\end{DoxyCode}
+
+
+Firmware wtedy nadal działa, ale używa software fallback.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md109}{}\doxysubsection{\texorpdfstring{16.\+1. Dlaczego self-\/test jest ważny}{16.\+1. Dlaczego self-\/test jest ważny}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md109}
+AES/\+HASH HAL może być {\ttfamily READY}, ale wynik może być zły, np. przez\+:
+
+
+\begin{DoxyItemize}
+\item błędny {\ttfamily Data\+Type},
+\item złą endianowość key/\+IV/input,
+\item złą długość jednostki danych,
+\item błąd konfiguracji {\ttfamily .ioc}.
+\end{DoxyItemize}
+
+Self-\/test porównuje hardware z implementacją software i dopiero wtedy włącza {\ttfamily s\+\_\+crypto\+\_\+hw\+\_\+ready}.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md110}{}\doxysubsection{\texorpdfstring{16.\+2. Pakowanie big-\/endian do AES}{16.\+2. Pakowanie big-\/endian do AES}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md110}
+STM32 AES przyjmuje key/\+IV/data jako {\ttfamily uint32\+\_\+t \texorpdfstring{$\ast$}{*}}.
+
+Firmware jawnie pakuje bajty protokołu do słów big-\/endian\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{bytes[0..3]\ -\/>\ word\ =\ b0<<24\ |\ b1<<16\ |\ b2<<8\ |\ b3}
+
+\end{DoxyCode}
+
+
+Po AES wynik jest rozpakowywany z powrotem do bajtów.
+
+Dlaczego\+:
+
+
+\begin{DoxyItemize}
+\item ramka LAVIET jest big-\/endian,
+\item AES test vector software działa na kolejności bajtowej protokołu,
+\item rzutowanie {\ttfamily uint8\+\_\+t\mbox{[}16\mbox{]}} na {\ttfamily uint32\+\_\+t \texorpdfstring{$\ast$}{*}} dawało odwrócenie bajtów na little-\/endian MCU,
+\item jawne pakowanie usuwa niejednoznaczność.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md111}{}\doxysection{\texorpdfstring{17. Software fallback}{17. Software fallback}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md111}
+Software fallback istnieje jako zabezpieczenie dostępności.
+
+Jeżeli hardware AES/\+HASH\+:
+
+
+\begin{DoxyItemize}
+\item nie jest gotowy,
+\item nie przejdzie self-\/testu,
+\item zwróci błąd HAL,
+\item nie da się zablokować mutexa,
+\end{DoxyItemize}
+
+to firmware używa implementacji software.
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item system nie przechodzi na “brak crypto”,
+\item nadal liczy HMAC,
+\item nadal szyfruje AES-\/\+CTR,
+\item hardware path jest tylko akceleratorem, nie jedynym źródłem poprawności.
+\end{DoxyItemize}
+
+Ograniczenie\+:
+
+
+\begin{DoxyItemize}
+\item software AES/\+HMAC działa w RAM MCU i może być wolniejszy,
+\item przy pełnym modelu produkcyjnym trzeba też chronić debug/\+SWD i pamięć.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md112}{}\doxysection{\texorpdfstring{18. EEPROM secret storage}{18. EEPROM secret storage}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md112}
+Zewnętrzny EEPROM jest traktowany jako niezaufany nośnik.
+
+Przechowywane tam dane\+:
+
+
+\begin{DoxyItemize}
+\item metadata store,
+\item trusted devices,
+\item pair code,
+\item gateway counters,
+\item opcjonalne logi,
+\item runtime config.
+\end{DoxyItemize}
+
+Na M24\+C01-\/R pamięć ma tylko 128 B, więc obecnie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{secret\_area\_bytes\ =\ 72\ B}
+\DoxyCodeLine{secret\ slot\ size\ \ =\ 24\ B}
+\DoxyCodeLine{secret\ slots\ \ \ \ \ \ =\ 3}
+\DoxyCodeLine{log\ slots\ \ \ \ \ \ \ \ \ =\ 0}
+
+\end{DoxyCode}
+
+
+Przy tym układzie slot {\ttfamily 2} jest zarezerwowany na gateway counters, więc trwałe trusted devices mają pojemność\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{trusted\ slot\ 0\ =\ gateway}
+\DoxyCodeLine{trusted\ slot\ 1\ =\ dodatkowy\ node}
+
+\end{DoxyCode}
+
+
+Firmware nie powinien akceptować trusted device jako zapisanego, jeżeli wpis nie został rzeczywiście utrwalony. Zapis trusted wykonuje write -\/\texorpdfstring{$>$}{>} read-\/back -\/\texorpdfstring{$>$}{>} compare; dopiero po poprawnej weryfikacji wpis trafia do RAM jako zaufany.
+
+Log\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SEC:\ MEM\ store\ ready\ log\_slots=0\ secret\_slots=3}
+\DoxyCodeLine{SEC:\ MEM\ log\ disabled,\ storage\ reserved\ for\ trusted\ devices}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md113}{}\doxysubsection{\texorpdfstring{18.\+1. Szyfrowanie secret slots}{18.\+1. Szyfrowanie secret slots}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md113}
+{\ttfamily i2c\+\_\+mem\+\_\+store} używa XTEA-\/\+CTR dla secret slots.
+
+Klucz\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{store\_key\ =\ HMAC(root\_seed,\ "{}SEC:EEPROM:KEY"{})[0..15]}
+
+\end{DoxyCode}
+
+
+Slot zawiera\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{magic\ \ \ \ \ \ 2\ B}
+\DoxyCodeLine{length\ \ \ \ \ 1\ B}
+\DoxyCodeLine{slot\_id\ \ \ \ 1\ B}
+\DoxyCodeLine{nonce\ \ \ \ \ \ 4\ B}
+\DoxyCodeLine{ciphertext\ 14\ B}
+\DoxyCodeLine{crc16\ \ \ \ \ \ 2\ B}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest bezpieczniejsze niż plaintext EEPROM\+:
+
+
+\begin{DoxyItemize}
+\item odczyt EEPROM nie ujawnia pair code bez store key,
+\item store key nie jest w EEPROM,
+\item store key pochodzi z TPM root seed,
+\item każdy zapis dostaje nonce z {\ttfamily secret\+\_\+counter},
+\item CRC wykrywa przypadkowe uszkodzenia i proste manipulacje formatu.
+\end{DoxyItemize}
+
+Ważne ograniczenie\+:
+
+
+\begin{DoxyItemize}
+\item CRC nie jest MAC.
+\item Integralność kryptograficzna EEPROM secret slots nie jest tak mocna jak HMAC.
+\item Docelowo warto dodać HMAC/\+AEAD dla rekordów EEPROM albo rozszerzyć format.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md114}{}\doxysection{\texorpdfstring{19. Trusted devices}{19. Trusted devices}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md114}
+Trusted entry zawiera\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{node\_id}
+\DoxyCodeLine{code\_len}
+\DoxyCodeLine{pair\ code}
+\DoxyCodeLine{is\_master}
+\DoxyCodeLine{in\_use}
+
+\end{DoxyCode}
+
+
+Slot {\ttfamily 0} jest traktowany jako gateway/master slot.
+
+Po sparowaniu\+:
+
+
+\begin{DoxyEnumerate}
+\item pair code jest zapisany w trusted storage,
+\item trusted storage trafia do encrypted secret slot EEPROM,
+\item późniejsze ramki unicast używają pair-\/derived keys,
+\item RX od nieznanego źródła jest odrzucany dla {\ttfamily DATA} i {\ttfamily RESP}.
+\end{DoxyEnumerate}
+
+Wyjątek\+: gateway ({\ttfamily src\+\_\+id=0x0001}) może wysłać {\ttfamily DATA/\+RESP} jako broadcast ({\ttfamily dst\+\_\+id=0x\+FFFF}) po poprawnym HMAC w domenie broadcast/shared. Taka ramka nie wymaga wpisu w trusted slotach, ale nie dostaje ACK i nie powinna przenosić sekretów. Unicast {\ttfamily DATA/\+RESP} nadal wymaga sparowanego źródła.
+
+Przykład RX spoza sieci\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{RADIO\ RX\ outside-\/network\ drop\ src=0x1234\ dst=0x77CD\ type=DATA}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item samo zgadnięcie {\ttfamily src\+\_\+id} nie wystarczy,
+\item trzeba mieć pair code, żeby wyprowadzić poprawny HMAC key,
+\item nawet po HMAC dodatkowo sprawdzana jest lista trusted dla zwykłych wiadomości.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md115}{}\doxysection{\texorpdfstring{20. Pairing}{20. Pairing}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md115}
+Pairing ma dwa warianty\+:
+
+
+\begin{DoxyItemize}
+\item zwykły pairing node-\/device,
+\item network pairing z gatewayem.
+\end{DoxyItemize}
+
+Ogólny przepływ\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1.\ Lokalnie\ uruchamiasz\ tryb\ parowania.}
+\DoxyCodeLine{2.\ Node\ otwiera\ okno\ czasowe.}
+\DoxyCodeLine{3.\ Druga\ strona\ wysyła\ PAIR\_REQ\ albo\ PAIR\_RESP.}
+\DoxyCodeLine{4.\ Firmware\ parsuje\ pair\ payload.}
+\DoxyCodeLine{5.\ Użytkownik\ lokalnie\ akceptuje.}
+\DoxyCodeLine{6.\ Pair\ code\ trafia\ do\ trusted\ storage.}
+\DoxyCodeLine{7.\ Kolejne\ ramki\ używają\ pair-\/derived\ keys.}
+
+\end{DoxyCode}
+
+
+Dlaczego pairing nie jest tylko radiowy\+:
+
+
+\begin{DoxyItemize}
+\item wymaga aktywnego lokalnego okna,
+\item wymaga lokalnej akceptacji,
+\item dla gatewaya slot może być zablokowany po zapisaniu,
+\item RX spoza okna parowania jest ignorowany.
+\end{DoxyItemize}
+
+Ograniczenie\+:
+
+
+\begin{DoxyItemize}
+\item shared pairing key jest statyczny,
+\item pair code ma ograniczoną długość,
+\item docelowo pairing powinien dostać challenge-\/response i/lub TPM policy session.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md116}{}\doxysection{\texorpdfstring{21. ACK}{21. ACK}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md116}
+ACK jest osobną ramką {\ttfamily \doxylink{laviet__frame_8h_a7acce13de228087ca80104996d64165da72f74b4b45942535922aeb0a99e41ec7}{LAVIET\+\_\+\+TYPE\+\_\+\+ACK}}.
+
+Payload ACK\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{acked\_msg\_id\ \ 2\ B}
+\DoxyCodeLine{acked\_counter\ 4\ B}
+
+\end{DoxyCode}
+
+
+Nadawca akceptuje ACK tylko, jeśli pasują\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily src\+\_\+id},
+\item {\ttfamily msg\+\_\+id},
+\item {\ttfamily counter}.
+\end{DoxyItemize}
+
+Tu {\ttfamily msg\+\_\+id} i {\ttfamily counter} oznaczają pola z payloadu ACK, czyli {\ttfamily acked\+\_\+msg\+\_\+id} i {\ttfamily acked\+\_\+counter}. Zewnętrzne pole {\ttfamily counter} samej ramki ACK jest osobnym licznikiem TX nadawcy ACK i nie musi być równe {\ttfamily acked\+\_\+counter}.
+
+Przykład\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{RADIO\ ACK\ wait\ dst=0x0001\ msg=0x0042\ counter=123\ timeout=6000\ ms}
+\DoxyCodeLine{RADIO\ RX\ OK\ type=ACK\ src=0x0001\ dst=0x77CD\ msg=0x2F5E\ counter=456\ flags=0x04\ len=6}
+\DoxyCodeLine{RADIO\ RX\ ACK\ src=0x0001\ ack\_msg=0x0042\ ack\_counter=123}
+\DoxyCodeLine{RADIO\ ACK\ delivered\ src=0x0001\ msg=0x0042\ counter=123\ retries=0}
+
+\end{DoxyCode}
+
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item przypadkowy ACK nie zamyka pending TX,
+\item opóźniony ACK jest rozpoznawany jako late/duplicate,
+\item ACK nie jest generowany dla broadcastu,
+\item ACK nie jest szyfrowany, ale jest MACowany jak każda ramka.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md117}{}\doxysection{\texorpdfstring{22. Counter i anti-\/replay}{22. Counter i anti-\/replay}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md117}
+Ramka ma 32-\/bitowy {\ttfamily counter}.
+
+Firmware przechowuje\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{s\_gateway\_rx\_counter}
+\DoxyCodeLine{s\_gateway\_tx\_counter}
+
+\end{DoxyCode}
+
+
+Gateway/backend powinien przechowywać analogiczne, rozdzielone wartości\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{gateway\_tx\_counter\ \ \ \ \ \ \ \ \ \ ostatni\ counter\ użyty\ przez\ gateway\ w\ ramce\ do\ noda}
+\DoxyCodeLine{node\_rx\_counter[node\_id]\ \ \ \ ostatni\ counter\ zaakceptowany\ od\ danego\ noda}
+
+\end{DoxyCode}
+
+
+{\ttfamily gateway\+\_\+tx\+\_\+counter} musi być trwały i monotoniczny. Backend nie powinien zerować go przy restarcie procesu. Dla każdej ramki gateway -\/\texorpdfstring{$>$}{>} node\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{counter\ =\ gateway\_tx\_counter\ +\ 1}
+\DoxyCodeLine{persist\ gateway\_tx\_counter\ =\ counter}
+\DoxyCodeLine{zbuduj\ nonce/AES/HMAC\ z\ tym\ counterem}
+\DoxyCodeLine{wyślij\ ramkę}
+
+\end{DoxyCode}
+
+
+Dla ACK wysyłanego przez gateway zewnętrzny {\ttfamily frame.\+counter} też pochodzi z {\ttfamily gateway\+\_\+tx\+\_\+counter}, natomiast payload ACK musi zawierać {\ttfamily msg\+\_\+id} i {\ttfamily counter} oryginalnej ramki noda\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ack\_payload\ =\ acked\_msg\_id\ ||\ acked\_counter}
+
+\end{DoxyCode}
+
+
+Przy odbiorze ACK od noda backend musi dopasowywać potwierdzenie po payloadzie ACK ({\ttfamily acked\+\_\+msg\+\_\+id}, {\ttfamily acked\+\_\+counter}), a nie po zewnętrznym {\ttfamily frame.\+counter} ramki ACK.
+
+W EEPROM slot counter ma\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{magic\ \ \ 0xC7}
+\DoxyCodeLine{version\ 1}
+\DoxyCodeLine{rx\ \ \ \ \ \ 4\ B}
+\DoxyCodeLine{tx\ \ \ \ \ \ 4\ B}
+
+\end{DoxyCode}
+
+
+Dlaczego counter jest potrzebny\+:
+
+
+\begin{DoxyItemize}
+\item AES-\/\+CTR wymaga unikalnego counter block,
+\item HMAC chroni counter przed modyfikacją,
+\item odbiornik może wykryć stare ramki,
+\item ACK może być dopasowany do konkretnej transmisji.
+\end{DoxyItemize}
+
+Przykład replay\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{last\ gateway\ counter\ =\ 100}
+\DoxyCodeLine{przychodzi\ ramka\ DATA\ z\ counter\ =\ 95}
+\DoxyCodeLine{odbiornik\ wykrywa\ replay/stary\ counter}
+
+\end{DoxyCode}
+
+
+W obecnym kodzie istnieje diagnostyczna ścieżka {\ttfamily RADIO RX REPLAY bypass}, co jest zaznaczone w {\ttfamily todo.\+md} jako zadanie do przywrócenia finalnej polityki anti-\/replay. Docelowo ramki z {\ttfamily counter \texorpdfstring{$<$}{<}= last\+\_\+counter} powinny być odrzucane po poprawnym HMAC, przed wykonaniem akcji aplikacyjnej.
+
+Bezpieczna docelowa polityka\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{if\ src\ ==\ gateway\ and\ type\ !=\ COUNTER\_SYNC:}
+\DoxyCodeLine{\ \ \ \ if\ counter\ <=\ stored\_rx\_counter:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ drop\ as\ replay}
+\DoxyCodeLine{\ \ \ \ else:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ process}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ persist\ new\ counter}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md118}{}\doxysection{\texorpdfstring{23. {\ttfamily COUNTER\+\_\+\+SYNC}}{23. {\ttfamily COUNTER\+\_\+\+SYNC}}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md118}
+{\ttfamily COUNTER\+\_\+\+SYNC} jest specjalną ramką gateway -\/\texorpdfstring{$>$}{>} node.
+
+Wymagania\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily src\+\_\+id == 0x0001},
+\item typ {\ttfamily COUNTER\+\_\+\+SYNC},
+\item flaga {\ttfamily COUNTER\+\_\+\+OVERRIDE},
+\item payload 4 B,
+\item poprawny HMAC,
+\item payload zaszyfrowany.
+\end{DoxyItemize}
+
+Użycie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{payload\ =\ new\_counter\_be32}
+
+\end{DoxyCode}
+
+
+Jeżeli backend utracił trwały {\ttfamily gateway\+\_\+tx\+\_\+counter} albo node zapamiętał wyższy licznik niż backend, nie trzeba restartować firmware noda. Backend powinien wysłać kontrolną ramkę {\ttfamily COUNTER\+\_\+\+SYNC}\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ver\_type\ =\ 0x17\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ v1\ +\ COUNTER\_SYNC}
+\DoxyCodeLine{flags\ \ \ \ =\ 0x41\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ ENCRYPTED\ |\ COUNTER\_OVERRIDE}
+\DoxyCodeLine{flags\ \ \ \ =\ 0x43\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \#\ ENCRYPTED\ |\ ACK\_REQUIRED\ |\ COUNTER\_OVERRIDE,\ gdy\ backend\ chce\ ACK}
+\DoxyCodeLine{src\_id\ \ \ =\ 0x0001}
+\DoxyCodeLine{dst\_id\ \ \ =\ node\_id}
+\DoxyCodeLine{payload\ \ =\ AES\_CTR(new\_counter\_be32)}
+\DoxyCodeLine{mac\ \ \ \ \ \ =\ HMAC(header\ ||\ encrypted\_payload)}
+
+\end{DoxyCode}
+
+
+Po wysłaniu {\ttfamily COUNTER\+\_\+\+SYNC} backend ustawia swój {\ttfamily gateway\+\_\+tx\+\_\+counter} na co najmniej {\ttfamily new\+\_\+counter}, a następna zwykła ramka gateway -\/\texorpdfstring{$>$}{>} node musi mieć {\ttfamily counter \texorpdfstring{$>$}{>} new\+\_\+counter}. {\ttfamily new\+\_\+counter} nie powinien być mniejszy od wartości, którą node mógł już zapamiętać; w praktyce wybiera się aktualny trwały licznik backendu albo większą wartość z zapasem.
+
+Dlaczego to jest bezpieczne\+:
+
+
+\begin{DoxyItemize}
+\item tylko gateway może wysłać poprawnie uwierzytelnioną synchronizację,
+\item counter sync nie jest zwykłą wiadomością,
+\item flaga {\ttfamily COUNTER\+\_\+\+OVERRIDE} odróżnia operację od zwykłego DATA,
+\item HMAC chroni nową wartość countera.
+\end{DoxyItemize}
+
+Ryzyko\+:
+
+
+\begin{DoxyItemize}
+\item jeżeli gateway zostanie przejęty, może zsynchronizować counter.
+\item to jest akceptowany model\+: gateway jest centralnym zaufanym węzłem topologii gwiazdy.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md119}{}\doxysection{\texorpdfstring{24. Broadcast}{24. Broadcast}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md119}
+Broadcast ma adres {\ttfamily 0x\+FFFF}.
+
+Zasady\+:
+
+
+\begin{DoxyItemize}
+\item broadcast nie wymaga ACK,
+\item broadcast nie może mieć {\ttfamily ACK\+\_\+\+REQUIRED},
+\item node nie wysyła zwykłych wiadomości na broadcast,
+\item broadcast może być używany przez gateway,
+\item gateway broadcast {\ttfamily DATA/\+RESP} jest akceptowany po poprawnym HMAC shared/broadcast nawet przed trusted-\/list,
+\item broadcast nie powinien przenosić sekretów.
+\end{DoxyItemize}
+
+Gateway z branchu {\ttfamily gateway} dla {\ttfamily coded=true} broadcast używa {\ttfamily broadcast\+\_\+group\+\_\+key}, nie samego {\ttfamily LAVIET\+\_\+\+SHARED\+\_\+\+V1}. Node musi najpierw odebrać unicastowe {\ttfamily KEY\+\_\+\+ROTATE} od gatewaya\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{B7\ 01\ epoch\_be32\ fragment\_index\ fragment\_count\ fragment[8]}
+\DoxyCodeLine{B7\ 01\ epoch\_be32\ fragment\_index\ fragment\_count\ fragment[8]}
+\DoxyCodeLine{B7\ 02\ epoch\_be32\ 00\ 00\ 00\ 00\ 00\ 00\ 00\ 00\ 00\ 00}
+
+\end{DoxyCode}
+
+
+Po aktywacji node wyprowadza\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{broadcast\_base\_key\ =\ HMAC\_SHA256(}
+\DoxyCodeLine{\ \ \ \ key\ \ =\ broadcast\_group\_key[16],}
+\DoxyCodeLine{\ \ \ \ data\ =\ "{}LAVIET:BCAST:GROUP:V1"{}\ ||\ epoch\_be32\ ||\ 0xFFFF}
+\DoxyCodeLine{)[0..15]}
+\DoxyCodeLine{}
+\DoxyCodeLine{broadcast\_aes\_key\ \ =\ HMAC\_SHA256(broadcast\_base\_key,\ "{}LV1K"{}\ ||\ 0xFFFF\ ||\ 00\ ||\ 01)[0..15]}
+\DoxyCodeLine{broadcast\_hmac\_key\ =\ HMAC\_SHA256(broadcast\_base\_key,\ "{}LV1K"{}\ ||\ 0xFFFF\ ||\ 00\ ||\ 02)}
+
+\end{DoxyCode}
+
+
+Dla zaszyfrowanego broadcastu RX próbuje najpierw aktywny group key, a potem fallback {\ttfamily SHARED}. Jeśli {\ttfamily KEY\+\_\+\+ROTATE} nie dotarł albo nie został aktywowany, {\ttfamily flags=0x21} ({\ttfamily ENCRYPTED \texorpdfstring{$\vert$}{|} BROADCAST}) zakończy się {\ttfamily HMAC drop}.
+
+Dlaczego broadcast jest słabszy\+:
+
+
+\begin{DoxyItemize}
+\item wiele urządzeń odbiera tę samą ramkę,
+\item nie ma per-\/node ACK,
+\item w praktyce używa shared/broadcast key domain,
+\item nie daje takiego samego potwierdzenia dostarczenia jak unicast.
+\end{DoxyItemize}
+
+Bezpieczne użycie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{broadcast:\ krótkie\ komunikaty,\ wezwania,\ prośby\ o\ odpowiedź}
+\DoxyCodeLine{unicast:\ dane\ wrażliwe,\ konfiguracja,\ ACK,\ odpowiedzi}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md120}{}\doxysection{\texorpdfstring{25. Lokalny PIN i role}{25. Lokalny PIN i role}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md120}
+Menu ma role\+:
+
+
+\begin{DoxyItemize}
+\item operator,
+\item admin.
+\end{DoxyItemize}
+
+Domyślne PIN-\/y w kodzie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{operator:\ 0000}
+\DoxyCodeLine{admin:\ \ \ \ 9999}
+
+\end{DoxyCode}
+
+
+PIN\+:
+
+
+\begin{DoxyItemize}
+\item ma 4 cyfry,
+\item może być włączony/wyłączony,
+\item może zostać zmieniony w {\ttfamily Security -\/\texorpdfstring{$>$}{>} PIN settings},
+\item unlock trwa {\ttfamily 60000 ms},
+\item admin unlock odblokowuje też poziom operatora.
+\end{DoxyItemize}
+
+Dlaczego PIN jest użyteczny\+:
+
+
+\begin{DoxyItemize}
+\item ogranicza przypadkowe albo nieuprawnione wejście w menu,
+\item oddziela normalny tryb użytkownika od konfiguracji,
+\item wymaga świadomej lokalnej interakcji.
+\end{DoxyItemize}
+
+Ograniczenie\+:
+
+
+\begin{DoxyItemize}
+\item PIN w obecnym kodzie jest runtime/static, nie jest jeszcze trwale zapisany jako HMAC/\+TPM-\/protected secret.
+\item PIN nie jest głównym sekretem kryptograficznym.
+\item PIN nie zastępuje TPM PP.
+\end{DoxyItemize}
+
+Docelowo PIN powinien być zapisany jako\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{pin\_hash\ =\ HMAC(TPM-\/derived\ local\ auth\ key,\ salt\ ||\ pin)}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md121}{}\doxysection{\texorpdfstring{26. Logi UART}{26. Logi UART}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md121}
+Logi są potrzebne do uruchamiania embedded, ale mogą ujawniać za dużo.
+
+Bezpieczne zasady\+:
+
+
+\begin{DoxyItemize}
+\item nie logować root seeda,
+\item nie logować pełnych kluczy,
+\item nie logować pair code w trybie produkcyjnym,
+\item debug HMAC/payload trzymać za flagą produkcyjną,
+\item TPM verbose logi tylko z {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG}.
+\end{DoxyItemize}
+
+Aktualne mechanizmy\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG} ukrywa szczegółowe logi TPM TIS,
+\item {\ttfamily \doxylink{pager__config_8h_a6176f7b270798f1eb48d2d02c68dc4f3}{PAGER\+\_\+\+CONFIG\+\_\+\+UART\+\_\+\+SENSITIVE\+\_\+\+LOGS}} kontroluje wrażliwe logi UART,
+\item startup pokazuje statusy, ale nie powinien drukować sekretów.
+\end{DoxyItemize}
+
+Przykład dobrego startupu\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{APP:\ FreeRTOS\ bootstrap}
+\DoxyCodeLine{CRYPTO:\ hardware\ backend\ ready}
+\DoxyCodeLine{SEC:\ TPM\ ready\ DIDVID=0x0003104A\ RID=0x01\ self\_test\_tpm\_rc=0x0000090A}
+\DoxyCodeLine{SEC:\ TPM\ NV\ read\ idx=0x01C10101\ rc=0(OK)\ tpm\_rc=0x00000000\ len=8\ nonzero=1}
+\DoxyCodeLine{SEC:\ root\ seed\ loaded\ from\ TPM}
+\DoxyCodeLine{SEC:\ MEM\ secret\ key\ derived\ from\ TPM\ root\ seed}
+\DoxyCodeLine{SEC:\ task\ ready}
+\DoxyCodeLine{MENU:\ task\ ready}
+\DoxyCodeLine{RADIO:\ init\ OK\ laviet\_node=0x77CD}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md122}{}\doxysection{\texorpdfstring{27. Dlaczego ta architektura jest bezpieczna}{27. Dlaczego ta architektura jest bezpieczna}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md122}
+Bezpieczeństwo wynika z warstw, a nie z jednego mechanizmu.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md123}{}\doxysubsection{\texorpdfstring{27.\+1. Atak\+: podsłuch radiowy}{27.\+1. Atak\+: podsłuch radiowy}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md123}
+Atakujący słyszy ciphertext.
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item payload jest szyfrowany AES-\/\+CTR,
+\item klucz AES jest pair-\/derived,
+\item counter block zawiera pola ramki,
+\item HMAC chroni nagłówek i ciphertext.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item podsłuch nie daje plaintextu,
+\item modyfikacja ciphertextu psuje HMAC.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md124}{}\doxysubsection{\texorpdfstring{27.\+2. Atak\+: zmiana payloadu}{27.\+2. Atak\+: zmiana payloadu}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md124}
+Atakujący zmienia bajt payloadu.
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item HMAC obejmuje payload,
+\item porównanie MAC wykrywa zmianę.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{RADIO\ RX\ HMAC\ drop\ src=...}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md125}{}\doxysubsection{\texorpdfstring{27.\+3. Atak\+: zmiana adresu docelowego}{27.\+3. Atak\+: zmiana adresu docelowego}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md125}
+Atakujący próbuje zmienić {\ttfamily dst\+\_\+id}.
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily dst\+\_\+id} jest w HMAC input,
+\item zmiana {\ttfamily dst\+\_\+id} psuje HMAC,
+\item parser sprawdza poprawność adresacji.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item ramka zostaje odrzucona.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md126}{}\doxysubsection{\texorpdfstring{27.\+4. Atak\+: fałszywy ACK}{27.\+4. Atak\+: fałszywy ACK}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md126}
+Atakujący wysyła ACK.
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item ACK też jest ramką z HMAC,
+\item ACK payload zawiera {\ttfamily acked\+\_\+msg\+\_\+id} i {\ttfamily acked\+\_\+counter},
+\item tracker wymaga zgodności {\ttfamily src\+\_\+id}, {\ttfamily msg\+\_\+id}, {\ttfamily counter}.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item losowy ACK nie zamyka transmisji.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md127}{}\doxysubsection{\texorpdfstring{27.\+5. Atak\+: odczyt EEPROM}{27.\+5. Atak\+: odczyt EEPROM}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md127}
+Atakujący odczytuje zewnętrzny EEPROM.
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item secret slots są szyfrowane,
+\item klucz EEPROM pochodzi z TPM root seed,
+\item root seed nie jest w EEPROM,
+\item rekordy mają CRC.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item attacker widzi ciphertext i metadata, nie pair code wprost.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md128}{}\doxysubsection{\texorpdfstring{27.\+6. Atak\+: zdalna rotacja root seeda}{27.\+6. Atak\+: zdalna rotacja root seeda}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md128}
+Atakujący próbuje zdalnie wymusić zmianę root seeda.
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item zapis do TPM NV index {\ttfamily 0x01\+C10101} wymaga {\ttfamily PPWRITE},
+\item PP jest egzekwowane przez TPM,
+\item PP jest fizyczne, pin TPM {\ttfamily 7}, aktywny {\ttfamily VDD},
+\item STM32 nie może tego zastąpić zwykłą zmienną.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item bez fizycznej obecności zapis seeda powinien się nie udać.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md129}{}\doxysubsection{\texorpdfstring{27.\+7. Atak\+: błąd hardware AES/\+HASH}{27.\+7. Atak\+: błąd hardware AES/\+HASH}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md129}
+Problem\+:
+
+
+\begin{DoxyItemize}
+\item HAL może być {\ttfamily READY}, ale wynik AES może być błędny przez endianowość.
+\end{DoxyItemize}
+
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item self-\/test porównuje hardware i software,
+\item niezgodność wyłącza hardware backend,
+\item fallback nadal wykonuje crypto.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item system nie używa cichego, błędnego AES.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md130}{}\doxysubsection{\texorpdfstring{27.\+8. Atak\+: przypadkowe wejście w menu admin}{27.\+8. Atak\+: przypadkowe wejście w menu admin}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md130}
+Ochrona\+:
+
+
+\begin{DoxyItemize}
+\item strony menu mają wymagany poziom auth,
+\item PIN operator/admin,
+\item unlock wygasa po czasie,
+\item użytkownik bez PIN może czytać/odpowiadać, ale nie konfigurować.
+\end{DoxyItemize}
+
+Efekt\+:
+
+
+\begin{DoxyItemize}
+\item konfiguracja nie jest dostępna z normalnego ekranu pracy.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md131}{}\doxysection{\texorpdfstring{28. Ograniczenia obecnego wdrożenia}{28. Ograniczenia obecnego wdrożenia}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md131}
+To są punkty, których nie wolno ukrywać\+:
+
+
+\begin{DoxyEnumerate}
+\item Root seed ma obecnie 8 B. Dla produkcji lepiej zwiększyć do 16/32 B.
+\item Shared mode używa stałego firmware key i jest słabszy niż pair-\/specific mode.
+\item Secret slots EEPROM używają CRC, nie kryptograficznego MAC.
+\item Finalna polityka replay-\/drop jest oznaczona w TODO jako praca do domknięcia.
+\item PIN nie jest jeszcze trwale zapisany jako TPM/\+HMAC-\/protected secret.
+\item Brakuje pełnego secure boot / debug lock / Trust\+Zone policy.
+\item Pairing powinien docelowo dostać challenge-\/response albo TPM policy session.
+\item {\ttfamily KEY\+\_\+\+ROTATE} jako pełny radiowy protokół rotacji nie jest jeszcze domknięty.
+\item Brakuje per-\/source rate limiting i abuse scoring dla flood/replay.
+\item Broadcast ma niższy poziom pewności niż unicast.
+\end{DoxyEnumerate}
+
+Te ograniczenia nie unieważniają architektury. One pokazują, gdzie są granice obecnego poziomu bezpieczeństwa.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md132}{}\doxysection{\texorpdfstring{29. Zalecane utwardzenia}{29. Zalecane utwardzenia}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md132}
+Najważniejsze następne kroki\+:
+
+
+\begin{DoxyEnumerate}
+\item Zwiększyć {\ttfamily SECURITY\+\_\+\+KEY\+\_\+\+SEED\+\_\+\+BYTES} do 16 albo 32.
+\item Dodać HMAC/\+AEAD dla EEPROM secret slots.
+\item Przywrócić finalny drop dla replay ramek gatewaya.
+\item Dodać test replay attack.
+\item Dodać test odtwarzania sekretów po reboocie.
+\item Dodać test migracji {\ttfamily 0x01\+C10100 -\/\texorpdfstring{$>$}{>} 0x01\+C10101}.
+\item Przenieść PIN do trwałego TPM-\/derived hash.
+\item Dodać rate limiting per {\ttfamily src\+\_\+id}.
+\item Dodać abuse counters\+: bad HMAC, replay, malformed frame.
+\item Domknąć {\ttfamily KEY\+\_\+\+ROTATE} jako protokół radiowy.
+\item Dodać policy/session TPM dla pairingu lub operacji admin.
+\item Wyłączyć/maskować wrażliwe UART logi w buildzie produkcyjnym.
+\item Zablokować debug/\+SWD w urządzeniach produkcyjnych.
+\end{DoxyEnumerate}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md133}{}\doxysection{\texorpdfstring{30. Przykłady}{30. Przykłady}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md133}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md134}{}\doxysubsection{\texorpdfstring{30.\+1. Przykład\+: budowa zaszyfrowanej ramki DATA}{30.\+1. Przykład\+: budowa zaszyfrowanej ramki DATA}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md134}
+Założenia\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{src\_id\ \ =\ 0x77CD}
+\DoxyCodeLine{dst\_id\ \ =\ 0x0001}
+\DoxyCodeLine{msg\_id\ \ =\ 0x0042}
+\DoxyCodeLine{counter\ =\ 0x00000010}
+\DoxyCodeLine{payload\ =\ "{}STS:OK"{}}
+
+\end{DoxyCode}
+
+
+Kroki\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1.\ frame.payload\ =\ "{}STS:OK"{}}
+\DoxyCodeLine{2.\ frame.flags\ =\ ACK\_REQUIRED\ |\ ENCRYPTED}
+\DoxyCodeLine{3.\ enc\_key,\ hmac\_key\ =\ derive\_pair\_keys(0x77CD,\ 0x0001,\ pair\_code)}
+\DoxyCodeLine{4.\ AES-\/CTR\ encrypt\ payload}
+\DoxyCodeLine{5.\ HMAC(header\ ||\ encrypted\_payload)}
+\DoxyCodeLine{6.\ encode\ frame}
+\DoxyCodeLine{7.\ send\ raw\ bytes}
+\DoxyCodeLine{8.\ wait\ for\ ACK(msg\_id=0x0042,\ counter=0x00000010)}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md135}{}\doxysubsection{\texorpdfstring{30.\+2. Przykład\+: odbiór zaszyfrowanej ramki}{30.\+2. Przykład\+: odbiór zaszyfrowanej ramki}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md135}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1.\ radio\ RX\ bytes}
+\DoxyCodeLine{2.\ laviet\_frame\_decode()}
+\DoxyCodeLine{3.\ derive\ expected\ HMAC\ key}
+\DoxyCodeLine{4.\ calculate\ HMAC\ over\ header\ ||\ payload}
+\DoxyCodeLine{5.\ constant-\/time\ compare\ with\ mac\_tag}
+\DoxyCodeLine{6.\ if\ HMAC\ OK:\ AES-\/CTR\ decrypt\ payload}
+\DoxyCodeLine{7.\ if\ dst\_id\ ==\ local\ or\ broadcast:\ handle}
+\DoxyCodeLine{8.\ if\ ACK\_REQUIRED\ and\ unicast:\ send\ ACK}
+\DoxyCodeLine{9.\ persist\ latest\ counter}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md136}{}\doxysubsection{\texorpdfstring{30.\+3. Przykład\+: odrzucenie zmienionej ramki}{30.\+3. Przykład\+: odrzucenie zmienionej ramki}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md136}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Atakujący\ zmienia\ dst\_id:}
+\DoxyCodeLine{}
+\DoxyCodeLine{original\ dst\_id\ =\ 0x77CD}
+\DoxyCodeLine{tampered\ dst\_id\ =\ 0x1234}
+\DoxyCodeLine{}
+\DoxyCodeLine{HMAC\ input\ zmienił\ się,\ ale\ mac\_tag\ został\ stary.}
+\DoxyCodeLine{Odbiornik\ liczy\ expected\ MAC\ i\ dostaje\ inną\ wartość.}
+\DoxyCodeLine{}
+\DoxyCodeLine{Wynik:}
+\DoxyCodeLine{RADIO\ RX\ HMAC\ drop\ src=...}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md137}{}\doxysubsection{\texorpdfstring{30.\+4. Przykład\+: rotacja root seeda}{30.\+4. Przykład\+: rotacja root seeda}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md137}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1.\ Admin\ wchodzi\ do\ Security\ -\/>\ Keys.}
+\DoxyCodeLine{2.\ Firmware\ prosi\ o\ aktywne\ TPM\ PP.}
+\DoxyCodeLine{3.\ Użytkownik\ trzyma\ przycisk\ PP.}
+\DoxyCodeLine{4.\ Firmware\ generuje\ seed\ z\ TPM\ RNG\ albo\ HAL\ RNG.}
+\DoxyCodeLine{5.\ Firmware\ zapisuje\ seed\ do\ NV\ index\ 0x01C10101.}
+\DoxyCodeLine{6.\ TPM\ egzekwuje\ PPWRITE.}
+\DoxyCodeLine{7.\ Firmware\ wyprowadza\ network\_key\ i\ EEPROM\ key.}
+\DoxyCodeLine{8.\ EEPROM\ secret\ store\ dostaje\ nowy\ klucz.}
+
+\end{DoxyCode}
+
+
+Bez PP\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{SEC:\ root\ seed\ write\ requires\ TPM\ PP\ button}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md138}{}\doxysubsection{\texorpdfstring{30.\+5. Przykład\+: hardware crypto self-\/test}{30.\+5. Przykład\+: hardware crypto self-\/test}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md138}
+Poprawny\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CRYPTO:\ AES\ pre\_self\_test\ inst=0x420c0000\ state=1(READY)\ err=0x00000000}
+\DoxyCodeLine{CRYPTO:\ HASH\ pre\_self\_test\ state=1(READY)\ err=0x00000000}
+\DoxyCodeLine{CRYPTO:\ hardware\ backend\ ready}
+
+\end{DoxyCode}
+
+
+Błędna endianowość AES\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CRYPTO:\ self-\/test\ mismatch\ stage=aes\_1B\_compare\ index=0\ expected=0xAE\ actual=0x41\ len=1}
+\DoxyCodeLine{CRYPTO:\ hardware\ self-\/test\ failed,\ using\ software\ fallback}
+
+\end{DoxyCode}
+
+
+Po poprawce pakowania big-\/endian\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{CRYPTO:\ hardware\ backend\ ready}
+
+\end{DoxyCode}
+\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md139}{}\doxysubsection{\texorpdfstring{30.\+6. Przykład\+: EEPROM secret slot}{30.\+6. Przykład\+: EEPROM secret slot}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md139}
+Plain trusted payload\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{id\_len\ \ \ =\ 4}
+\DoxyCodeLine{code\_len\ =\ 8}
+\DoxyCodeLine{id\ \ \ \ \ \ \ =\ node\_id\ as\ 4\ B}
+\DoxyCodeLine{code\ \ \ \ \ =\ pair\ code\ 8\ B}
+
+\end{DoxyCode}
+
+
+Po zapisie\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{magic\ \ \ \ \ \ =\ C0\ DE}
+\DoxyCodeLine{len\ \ \ \ \ \ \ \ =\ 14}
+\DoxyCodeLine{slot\ \ \ \ \ \ \ =\ 0}
+\DoxyCodeLine{nonce\ \ \ \ \ \ =\ monotonic\ secret\_counter}
+\DoxyCodeLine{ciphertext\ =\ XTEA-\/CTR(plain,\ store\_key,\ nonce)}
+\DoxyCodeLine{crc16\ \ \ \ \ \ =\ CRC\ rekordu}
+
+\end{DoxyCode}
+
+
+Atakujący z EEPROM widzi ciphertext, nie pair code.\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md140}{}\doxysection{\texorpdfstring{31. Checklist dla testów}{31. Checklist dla testów}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md140}
+Po zmianie security trzeba wykonać\+:
+
+
+\begin{DoxyItemize}
+\item boot z TPM podłączonym,
+\item boot bez aktywnego {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG},
+\item boot z {\ttfamily TPM\+\_\+\+INIT\+\_\+\+LOG}, jeśli diagnozujemy I2C,
+\item potwierdzenie {\ttfamily CRYPTO\+: hardware backend ready},
+\item odczyt root seed z {\ttfamily 0x01\+C10101},
+\item reboot i ponowny odczyt tego samego stanu trusted/counter,
+\item re-\/pair gateway,
+\item {\ttfamily DATA -\/\texorpdfstring{$>$}{>} ACK} gateway -\/\texorpdfstring{$>$}{>} node,
+\item {\ttfamily RESP -\/\texorpdfstring{$>$}{>} ACK} node -\/\texorpdfstring{$>$}{>} gateway,
+\item broadcast RX bez ACK,
+\item próba ramki spoza trusted network,
+\item próba starego countera,
+\item próba złego HMAC,
+\item rotacja root seeda z PP,
+\item rotacja root seeda bez PP, oczekiwany błąd,
+\item test zaniku zasilania podczas zapisu EEPROM.
+\end{DoxyItemize}\hypertarget{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md141}{}\doxysection{\texorpdfstring{32. Najkrótsza odpowiedź “dlaczego to jest bezpieczne”}{32. Najkrótsza odpowiedź “dlaczego to jest bezpieczne”}}\label{md_Core_2App_2security_2SECURITY__ARCHITECTURE_autotoc_md141}
+Bo sekret główny nie jest w firmware ani w EEPROM, tylko w TPM; zapis sekretu wymaga fizycznej obecności; klucze robocze są wyprowadzane z separacją domen; każda ramka jest uwierzytelniana HMAC po nagłówku i payloadzie; payload jest szyfrowany AES-\/\+CTR z nonce/counter zależnym od ramki; błędny hardware crypto jest wykrywany self-\/testem; EEPROM trzyma sekrety zaszyfrowane kluczem wyprowadzonym z TPM; a lokalne operacje konfiguracyjne są chronione PIN-\/em i menu role.
+
+Nie jest to jednak koniec prac. Największe produkcyjne utwardzenia to\+: seed 16/32 B, replay-\/drop bez bypassu diagnostycznego, MAC/\+AEAD dla EEPROM secret slots, TPM policy dla pairingu/admin i trwały TPM-\/derived PIN hash. 

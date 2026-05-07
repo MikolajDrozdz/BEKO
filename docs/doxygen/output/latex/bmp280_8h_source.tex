@@ -1,0 +1,113 @@
+\doxysection{bmp280.\+h}
+\hypertarget{bmp280_8h_source}{}\label{bmp280_8h_source}\index{Core/App/bmp280\_lib/bmp280.h@{Core/App/bmp280\_lib/bmp280.h}}
+\mbox{\hyperlink{bmp280_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00013}00013\ \textcolor{preprocessor}{\#ifndef\ \_\_BMP280\_H\_\_}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00014}00014\ \textcolor{preprocessor}{\#define\ \_\_BMP280\_H\_\_}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00016}00016\ \textcolor{preprocessor}{\#include\ "{}stm32u5xx\_hal.h"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00017}00017\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00018}00018\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00026}\mbox{\hyperlink{bmp280_8h_aa11b925ebf4b81cf1b62232196ac1d8f}{00026}}\ \textcolor{preprocessor}{\#define\ BMP280\_I2C\_ADDRESS\_0\ \ 0x76}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00028}\mbox{\hyperlink{bmp280_8h_a0b9ffea4fca103b7edef727777596909}{00028}}\ \textcolor{preprocessor}{\#define\ BMP280\_I2C\_ADDRESS\_1\ \ 0x77}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00031}\mbox{\hyperlink{bmp280_8h_aa29aaafdd798a1593a4b536f0ed7c9c2}{00031}}\ \textcolor{preprocessor}{\#define\ BMP280\_CHIP\_ID\ \ 0x58}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00033}\mbox{\hyperlink{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}{00033}}\ \textcolor{preprocessor}{\#define\ BME280\_CHIP\_ID\ \ 0x60}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00040}\mbox{\hyperlink{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1}{00040}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00041}00041\ \ \ \ \ BMP280\_MODE\_SLEEP\ =\ 0,}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00042}00042\ \ \ \ \ BMP280\_MODE\_FORCED\ =\ 1,}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00043}00043\ \ \ \ \ BMP280\_MODE\_NORMAL\ =\ 3}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00044}00044\ \}\ \mbox{\hyperlink{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1}{BMP280\_Mode}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00046}\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ce}{00046}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00047}\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2}{00047}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2}{BMP280\_FILTER\_OFF}}\ =\ 0,\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00048}\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b}{00048}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b}{BMP280\_FILTER\_2}}\ =\ 1,\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00049}\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de}{00049}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de}{BMP280\_FILTER\_4}}\ =\ 2,\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00050}\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609}{00050}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609}{BMP280\_FILTER\_8}}\ =\ 3,\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00051}\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e}{00051}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e}{BMP280\_FILTER\_16}}\ =\ 4\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00052}00052\ \}\ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ce}{BMP280\_Filter}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00057}\mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{00057}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00058}00058\ \ \ \ \ BMP280\_SKIPPED\ =\ 0,\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ no\ measurement\ \ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00059}00059\ \ \ \ \ BMP280\_ULTRA\_LOW\_POWER\ =\ 1,\ \ \textcolor{comment}{/*\ oversampling\ x1\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00060}00060\ \ \ \ \ BMP280\_LOW\_POWER\ =\ 2,\ \ \ \ \ \ \ \ \textcolor{comment}{/*\ oversampling\ x2\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00061}00061\ \ \ \ \ BMP280\_STANDARD\ =\ 3,\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ oversampling\ x4\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00062}00062\ \ \ \ \ BMP280\_HIGH\_RES\ =\ 4,\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*\ oversampling\ x8\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00063}00063\ \ \ \ \ BMP280\_ULTRA\_HIGH\_RES\ =\ 5\ \ \ \ \textcolor{comment}{/*\ oversampling\ x16\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00064}00064\ \}\ \mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{BMP280\_Oversampling}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00069}\mbox{\hyperlink{bmp280_8h_a23ebf5aa69d883165e230c488833b109}{00069}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00070}00070\ \ \ \ \ BMP280\_STANDBY\_05\ =\ 0,\ \ \ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 0.5ms\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00071}00071\ \ \ \ \ BMP280\_STANDBY\_62\ =\ 1,\ \ \ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 62.5ms\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00072}00072\ \ \ \ \ BMP280\_STANDBY\_125\ =\ 2,\ \ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 125ms\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00073}00073\ \ \ \ \ BMP280\_STANDBY\_250\ =\ 3,\ \ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 250ms\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00074}00074\ \ \ \ \ BMP280\_STANDBY\_500\ =\ 4,\ \ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 500ms\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00075}00075\ \ \ \ \ BMP280\_STANDBY\_1000\ =\ 5,\ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 1s\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00076}00076\ \ \ \ \ BMP280\_STANDBY\_2000\ =\ 6,\ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 2s\ BMP280,\ 10ms\ BME280\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00077}00077\ \ \ \ \ BMP280\_STANDBY\_4000\ =\ 7,\ \ \ \ \textcolor{comment}{/*\ stand\ by\ time\ 4s\ BMP280,\ 20ms\ BME280\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00078}00078\ \}\ \mbox{\hyperlink{bmp280_8h_a23ebf5aa69d883165e230c488833b109}{BMP280\_StandbyTime}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00084}\mbox{\hyperlink{structbmp280__params__t}{00084}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00085}\mbox{\hyperlink{structbmp280__params__t_ac06d0db65979eb36175db959e78141b4}{00085}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1}{BMP280\_Mode}}\ \mbox{\hyperlink{structbmp280__params__t_ac06d0db65979eb36175db959e78141b4}{mode}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00086}\mbox{\hyperlink{structbmp280__params__t_ac26115a927fb56b2a5f4186153719725}{00086}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ce}{BMP280\_Filter}}\ \mbox{\hyperlink{structbmp280__params__t_ac26115a927fb56b2a5f4186153719725}{filter}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00087}\mbox{\hyperlink{structbmp280__params__t_a0b0116893e93832a6f19b9f5e696bd1a}{00087}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{BMP280\_Oversampling}}\ \mbox{\hyperlink{structbmp280__params__t_a0b0116893e93832a6f19b9f5e696bd1a}{oversampling\_pressure}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00088}\mbox{\hyperlink{structbmp280__params__t_aeefcc1ea563c503308a34574701b9098}{00088}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{BMP280\_Oversampling}}\ \mbox{\hyperlink{structbmp280__params__t_aeefcc1ea563c503308a34574701b9098}{oversampling\_temperature}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00089}\mbox{\hyperlink{structbmp280__params__t_ab1ad856af1e4cbd91f16cd03ac5e5090}{00089}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{BMP280\_Oversampling}}\ \mbox{\hyperlink{structbmp280__params__t_ab1ad856af1e4cbd91f16cd03ac5e5090}{oversampling\_humidity}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00090}\mbox{\hyperlink{structbmp280__params__t_a7b0b31ec38932019a846e162d3829c04}{00090}}\ \ \ \ \ \mbox{\hyperlink{bmp280_8h_a23ebf5aa69d883165e230c488833b109}{BMP280\_StandbyTime}}\ \mbox{\hyperlink{structbmp280__params__t_a7b0b31ec38932019a846e162d3829c04}{standby}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00091}00091\ \}\ \mbox{\hyperlink{structbmp280__params__t}{bmp280\_params\_t}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00092}00092\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00093}00093\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00097}\mbox{\hyperlink{structBMP280__HandleTypedef}{00097}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\{}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00098}\mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{00098}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{dig\_T1}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00099}\mbox{\hyperlink{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4}{00099}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4}{dig\_T2}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00100}\mbox{\hyperlink{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d}{00100}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d}{dig\_T3}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00101}\mbox{\hyperlink{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e}{00101}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e}{dig\_P1}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00102}\mbox{\hyperlink{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f}{00102}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f}{dig\_P2}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00103}\mbox{\hyperlink{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b}{00103}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b}{dig\_P3}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00104}\mbox{\hyperlink{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82}{00104}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82}{dig\_P4}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00105}\mbox{\hyperlink{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03}{00105}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03}{dig\_P5}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00106}\mbox{\hyperlink{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b}{00106}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b}{dig\_P6}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00107}\mbox{\hyperlink{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9}{00107}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9}{dig\_P7}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00108}\mbox{\hyperlink{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133}{00108}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133}{dig\_P8}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00109}\mbox{\hyperlink{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336}{00109}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336}{dig\_P9}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00111}00111\ \ \ \ \ \textcolor{comment}{/*\ Humidity\ compensation\ for\ BME280\ */}}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00112}\mbox{\hyperlink{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec}{00112}}\ \ \ \ \ uint8\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec}{dig\_H1}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00113}\mbox{\hyperlink{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51}{00113}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51}{dig\_H2}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00114}\mbox{\hyperlink{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8}{00114}}\ \ \ \ \ uint8\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8}{dig\_H3}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00115}\mbox{\hyperlink{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0}{00115}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0}{dig\_H4}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00116}\mbox{\hyperlink{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a}{00116}}\ \ \ \ \ int16\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a}{dig\_H5}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00117}\mbox{\hyperlink{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629}{00117}}\ \ \ \ \ int8\_t\ \ \ \mbox{\hyperlink{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629}{dig\_H6}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00118}00118\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00119}\mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{00119}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00120}00120\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00121}\mbox{\hyperlink{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}{00121}}\ \ \ \ \ I2C\_HandleTypeDef*\ \mbox{\hyperlink{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}{i2c}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00122}00122\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00123}\mbox{\hyperlink{structBMP280__HandleTypedef_a101ee64667bccd172bf4a9fb00fb10df}{00123}}\ \ \ \ \ \mbox{\hyperlink{structbmp280__params__t}{bmp280\_params\_t}}\ \mbox{\hyperlink{structBMP280__HandleTypedef_a101ee64667bccd172bf4a9fb00fb10df}{params}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00124}00124\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00125}\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{00125}}\ \ \ \ \ uint8\_t\ \ \mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}};\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00126}00126\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00127}00127\ \}\ \mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00128}00128\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00140}00140\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{bmp280_8h_ae36e8912e8a4ad47a5b6bcd4939db6aa}{bmp280\_init\_default\_params}}(\mbox{\hyperlink{structbmp280__params__t}{bmp280\_params\_t}}\ *params);}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00141}00141\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00159}00159\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{bmp280_8h_ac86eef708d9f6c8a797d45cbbc360bd9}{bmp280\_init}}(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ \mbox{\hyperlink{structbmp280__params__t}{bmp280\_params\_t}}\ *params);}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00160}00160\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00170}00170\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{bmp280_8h_a5bcdb981b95481059526976c23fb295e}{bmp280\_force\_measurement}}(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev);}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00171}00171\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00177}00177\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{bmp280_8h_aefa90b756a2bbd97ea580ff6527bca53}{bmp280\_is\_measuring}}(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev);}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00178}00178\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00195}00195\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{bmp280_8h_a648fe1b52d4a2ed15023d5efb1702256}{bmp280\_read\_fixed}}(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ int32\_t\ *temperature,}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00196}00196\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ *pressure,\ uint32\_t\ *humidity);}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00197}00197\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00212}00212\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{bmp280_8h_a7150453ab8fb9ae57ed7b89d0a4fa4d9}{bmp280\_read\_float}}(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ \textcolor{keywordtype}{float}\ *temperature,}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00213}00213\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ *pressure,\ \textcolor{keywordtype}{float}\ *humidity);}
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00214}00214\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00215}00215\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8h_source_l00216}00216\ \textcolor{preprocessor}{\#endif\ \ }\textcolor{comment}{//\ \_\_BMP280\_H\_\_}}
+
+\end{DoxyCode}

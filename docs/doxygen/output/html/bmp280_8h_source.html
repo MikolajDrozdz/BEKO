@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Plik źródłowy Core/App/bmp280_lib/bmp280.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('bmp280_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">bmp280.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="bmp280_8h.html">Idź do dokumentacji tego pliku.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#ifndef __BMP280_H__</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#define __BMP280_H__</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;stm32u5xx_hal.h&quot;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="bmp280_8h.html#aa11b925ebf4b81cf1b62232196ac1d8f">   26</a></span><span class="preprocessor">#define BMP280_I2C_ADDRESS_0  0x76</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a0b9ffea4fca103b7edef727777596909">   28</a></span><span class="preprocessor">#define BMP280_I2C_ADDRESS_1  0x77</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="bmp280_8h.html#aa29aaafdd798a1593a4b536f0ed7c9c2">   31</a></span><span class="preprocessor">#define BMP280_CHIP_ID  0x58</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="bmp280_8h.html#aa9471d8f9c99880c3b85360017908e6b">   33</a></span><span class="preprocessor">#define BME280_CHIP_ID  0x60</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span></div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="};">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a271e5e83e42a13012a3b8dbab9050af1">   40</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span> {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    BMP280_MODE_SLEEP = 0,</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    BMP280_MODE_FORCED = 1,</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    BMP280_MODE_NORMAL = 3</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>} <a class="code hl_enumeration" href="bmp280_8h.html#a271e5e83e42a13012a3b8dbab9050af1">BMP280_Mode</a>;</div>
+</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="foldopen" id="foldopen00046" data-start="{" data-end="};">
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ce">   46</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span> {</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2">   47</a></span>    <a class="code hl_enumvalue" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2">BMP280_FILTER_OFF</a> = 0, </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b">   48</a></span>    <a class="code hl_enumvalue" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b">BMP280_FILTER_2</a> = 1, </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de">   49</a></span>    <a class="code hl_enumvalue" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de">BMP280_FILTER_4</a> = 2, </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609">   50</a></span>    <a class="code hl_enumvalue" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609">BMP280_FILTER_8</a> = 3, </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e">   51</a></span>    <a class="code hl_enumvalue" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e">BMP280_FILTER_16</a> = 4 </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>} <a class="code hl_enumeration" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ce">BMP280_Filter</a>;</div>
+</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span></div>
+<div class="foldopen" id="foldopen00057" data-start="{" data-end="};">
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a17d17863e5caf335d19a58c4ca964e1f">   57</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span> {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    BMP280_SKIPPED = 0,          <span class="comment">/* no measurement  */</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    BMP280_ULTRA_LOW_POWER = 1,  <span class="comment">/* oversampling x1 */</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    BMP280_LOW_POWER = 2,        <span class="comment">/* oversampling x2 */</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    BMP280_STANDARD = 3,         <span class="comment">/* oversampling x4 */</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    BMP280_HIGH_RES = 4,         <span class="comment">/* oversampling x8 */</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    BMP280_ULTRA_HIGH_RES = 5    <span class="comment">/* oversampling x16 */</span></div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>} <a class="code hl_enumeration" href="bmp280_8h.html#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a>;</div>
+</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span></div>
+<div class="foldopen" id="foldopen00069" data-start="{" data-end="};">
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="bmp280_8h.html#a23ebf5aa69d883165e230c488833b109">   69</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span> {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    BMP280_STANDBY_05 = 0,      <span class="comment">/* stand by time 0.5ms */</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    BMP280_STANDBY_62 = 1,      <span class="comment">/* stand by time 62.5ms */</span></div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    BMP280_STANDBY_125 = 2,     <span class="comment">/* stand by time 125ms */</span></div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    BMP280_STANDBY_250 = 3,     <span class="comment">/* stand by time 250ms */</span></div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    BMP280_STANDBY_500 = 4,     <span class="comment">/* stand by time 500ms */</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    BMP280_STANDBY_1000 = 5,    <span class="comment">/* stand by time 1s */</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    BMP280_STANDBY_2000 = 6,    <span class="comment">/* stand by time 2s BMP280, 10ms BME280 */</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    BMP280_STANDBY_4000 = 7,    <span class="comment">/* stand by time 4s BMP280, 20ms BME280 */</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>} <a class="code hl_enumeration" href="bmp280_8h.html#a23ebf5aa69d883165e230c488833b109">BMP280_StandbyTime</a>;</div>
+</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span></div>
+<div class="foldopen" id="foldopen00084" data-start="{" data-end="};">
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html">   84</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html#ac06d0db65979eb36175db959e78141b4">   85</a></span>    <a class="code hl_enumeration" href="bmp280_8h.html#a271e5e83e42a13012a3b8dbab9050af1">BMP280_Mode</a> <a class="code hl_variable" href="structbmp280__params__t.html#ac06d0db65979eb36175db959e78141b4">mode</a>; </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html#ac26115a927fb56b2a5f4186153719725">   86</a></span>    <a class="code hl_enumeration" href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ce">BMP280_Filter</a> <a class="code hl_variable" href="structbmp280__params__t.html#ac26115a927fb56b2a5f4186153719725">filter</a>; </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html#a0b0116893e93832a6f19b9f5e696bd1a">   87</a></span>    <a class="code hl_enumeration" href="bmp280_8h.html#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a> <a class="code hl_variable" href="structbmp280__params__t.html#a0b0116893e93832a6f19b9f5e696bd1a">oversampling_pressure</a>; </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html#aeefcc1ea563c503308a34574701b9098">   88</a></span>    <a class="code hl_enumeration" href="bmp280_8h.html#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a> <a class="code hl_variable" href="structbmp280__params__t.html#aeefcc1ea563c503308a34574701b9098">oversampling_temperature</a>; </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html#ab1ad856af1e4cbd91f16cd03ac5e5090">   89</a></span>    <a class="code hl_enumeration" href="bmp280_8h.html#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a> <a class="code hl_variable" href="structbmp280__params__t.html#ab1ad856af1e4cbd91f16cd03ac5e5090">oversampling_humidity</a>; </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="structbmp280__params__t.html#a7b0b31ec38932019a846e162d3829c04">   90</a></span>    <a class="code hl_enumeration" href="bmp280_8h.html#a23ebf5aa69d883165e230c488833b109">BMP280_StandbyTime</a> <a class="code hl_variable" href="structbmp280__params__t.html#a7b0b31ec38932019a846e162d3829c04">standby</a>; </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>} <a class="code hl_struct" href="structbmp280__params__t.html">bmp280_params_t</a>;</div>
+</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span></div>
+<div class="foldopen" id="foldopen00097" data-start="{" data-end="};">
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html">   97</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#aa735e953e421f132626e79aa2684520a">   98</a></span>    uint16_t <a class="code hl_variable" href="structBMP280__HandleTypedef.html#aa735e953e421f132626e79aa2684520a">dig_T1</a>; </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#ada3917c530c0a64c31c513d3b9864ad4">   99</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#ada3917c530c0a64c31c513d3b9864ad4">dig_T2</a>; </div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a16dab86ac5f369d9a471b6587b77174d">  100</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a16dab86ac5f369d9a471b6587b77174d">dig_T3</a>; </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#afaff3914b7f61b145317eb9e649c7f1e">  101</a></span>    uint16_t <a class="code hl_variable" href="structBMP280__HandleTypedef.html#afaff3914b7f61b145317eb9e649c7f1e">dig_P1</a>; </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a651bf87ea766cde80fa5af5696a16f4f">  102</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a651bf87ea766cde80fa5af5696a16f4f">dig_P2</a>; </div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#adf58ccc1046135b97c8a30437d46c81b">  103</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#adf58ccc1046135b97c8a30437d46c81b">dig_P3</a>; </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a46b61ba5a191b29bd2dc9bd86cb64b82">  104</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a46b61ba5a191b29bd2dc9bd86cb64b82">dig_P4</a>; </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a22d0714f2ece491c537b2b46555a5d03">  105</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a22d0714f2ece491c537b2b46555a5d03">dig_P5</a>; </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a3dc59e1a609668cc67d419d1bde5e69b">  106</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a3dc59e1a609668cc67d419d1bde5e69b">dig_P6</a>; </div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a89e3935a76d5439c8bf94cdce70fbfb9">  107</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a89e3935a76d5439c8bf94cdce70fbfb9">dig_P7</a>; </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a46130401d002ca6b2c7b8c8e7578c133">  108</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a46130401d002ca6b2c7b8c8e7578c133">dig_P8</a>; </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a5029020906a77d5b04cc0e87b8fe8336">  109</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a5029020906a77d5b04cc0e87b8fe8336">dig_P9</a>; </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="comment">/* Humidity compensation for BME280 */</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a7ce8a2720f39a4da4822e7ae2888a3ec">  112</a></span>    uint8_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a7ce8a2720f39a4da4822e7ae2888a3ec">dig_H1</a>; </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a0293059efde2ae1d209deeaf93a47a51">  113</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a0293059efde2ae1d209deeaf93a47a51">dig_H2</a>; </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#ab8e9f5400b0f79c74020c1165c72e7d8">  114</a></span>    uint8_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#ab8e9f5400b0f79c74020c1165c72e7d8">dig_H3</a>; </div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a47e5f4db5c0382ee26b0200f2ae031c0">  115</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a47e5f4db5c0382ee26b0200f2ae031c0">dig_H4</a>; </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a4678a18ab6eab1c593bf5851b2bc2e6a">  116</a></span>    int16_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a4678a18ab6eab1c593bf5851b2bc2e6a">dig_H5</a>; </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#aae054671ec66e31d0591d7813b24e629">  117</a></span>    int8_t   <a class="code hl_variable" href="structBMP280__HandleTypedef.html#aae054671ec66e31d0591d7813b24e629">dig_H6</a>; </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#abe76b8a4d2dad35dabbd1e8f43d58987">  119</a></span>    uint16_t <a class="code hl_variable" href="structBMP280__HandleTypedef.html#abe76b8a4d2dad35dabbd1e8f43d58987">addr</a>; </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#adb2060477f3ab7378a1886e03edb7ca4">  121</a></span>    I2C_HandleTypeDef* <a class="code hl_variable" href="structBMP280__HandleTypedef.html#adb2060477f3ab7378a1886e03edb7ca4">i2c</a>; </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#a101ee64667bccd172bf4a9fb00fb10df">  123</a></span>    <a class="code hl_struct" href="structbmp280__params__t.html">bmp280_params_t</a> <a class="code hl_variable" href="structBMP280__HandleTypedef.html#a101ee64667bccd172bf4a9fb00fb10df">params</a>; </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno"><a class="line" href="structBMP280__HandleTypedef.html#afeb0f26d38b725f2bbc2e67e17b0b671">  125</a></span>    uint8_t  <a class="code hl_variable" href="structBMP280__HandleTypedef.html#afeb0f26d38b725f2bbc2e67e17b0b671">id</a>; </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>} <a class="code hl_struct" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a>;</div>
+</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span></div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span><span class="keywordtype">void</span> <a class="code hl_function" href="bmp280_8h.html#ae36e8912e8a4ad47a5b6bcd4939db6aa">bmp280_init_default_params</a>(<a class="code hl_struct" href="structbmp280__params__t.html">bmp280_params_t</a> *params);</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="keywordtype">bool</span> <a class="code hl_function" href="bmp280_8h.html#ac86eef708d9f6c8a797d45cbbc360bd9">bmp280_init</a>(<a class="code hl_struct" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev, <a class="code hl_struct" href="structbmp280__params__t.html">bmp280_params_t</a> *params);</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span></div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="keywordtype">bool</span> <a class="code hl_function" href="bmp280_8h.html#a5bcdb981b95481059526976c23fb295e">bmp280_force_measurement</a>(<a class="code hl_struct" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span></div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="keywordtype">bool</span> <a class="code hl_function" href="bmp280_8h.html#aefa90b756a2bbd97ea580ff6527bca53">bmp280_is_measuring</a>(<a class="code hl_struct" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span></div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="keywordtype">bool</span> <a class="code hl_function" href="bmp280_8h.html#a648fe1b52d4a2ed15023d5efb1702256">bmp280_read_fixed</a>(<a class="code hl_struct" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev, int32_t *temperature,</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>                       uint32_t *pressure, uint32_t *humidity);</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span></div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span><span class="keywordtype">bool</span> <a class="code hl_function" href="bmp280_8h.html#a7150453ab8fb9ae57ed7b89d0a4fa4d9">bmp280_read_float</a>(<a class="code hl_struct" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev, <span class="keywordtype">float</span> *temperature,</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>                       <span class="keywordtype">float</span> *pressure, <span class="keywordtype">float</span> *humidity);</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="preprocessor">#endif  </span><span class="comment">// __BMP280_H__</span></div>
+<div class="ttc" id="abmp280_8h_html_a17d17863e5caf335d19a58c4ca964e1f"><div class="ttname"><a href="bmp280_8h.html#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a></div><div class="ttdeci">BMP280_Oversampling</div><div class="ttdoc">Pressure oversampling settings.</div><div class="ttdef"><b>Definicja</b> <a href="#l00057">bmp280.h:57</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a23ebf5aa69d883165e230c488833b109"><div class="ttname"><a href="bmp280_8h.html#a23ebf5aa69d883165e230c488833b109">BMP280_StandbyTime</a></div><div class="ttdeci">BMP280_StandbyTime</div><div class="ttdoc">Stand by time between measurements in normal mode.</div><div class="ttdef"><b>Definicja</b> <a href="#l00069">bmp280.h:69</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a271e5e83e42a13012a3b8dbab9050af1"><div class="ttname"><a href="bmp280_8h.html#a271e5e83e42a13012a3b8dbab9050af1">BMP280_Mode</a></div><div class="ttdeci">BMP280_Mode</div><div class="ttdoc">Mode of BMP280 module operation.</div><div class="ttdef"><b>Definicja</b> <a href="#l00040">bmp280.h:40</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a5bcdb981b95481059526976c23fb295e"><div class="ttname"><a href="bmp280_8h.html#a5bcdb981b95481059526976c23fb295e">bmp280_force_measurement</a></div><div class="ttdeci">bool bmp280_force_measurement(BMP280_HandleTypedef *dev)</div><div class="ttdoc">Start one measurement in forced mode.</div><div class="ttdef"><b>Definicja</b> <a href="bmp280_8c_source.html#l00211">bmp280.c:211</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a648fe1b52d4a2ed15023d5efb1702256"><div class="ttname"><a href="bmp280_8h.html#a648fe1b52d4a2ed15023d5efb1702256">bmp280_read_fixed</a></div><div class="ttdeci">bool bmp280_read_fixed(BMP280_HandleTypedef *dev, int32_t *temperature, uint32_t *pressure, uint32_t *humidity)</div><div class="ttdoc">Read compensated fixed-point temperature, pressure and optional humidity.</div><div class="ttdef"><b>Definicja</b> <a href="bmp280_8c_source.html#l00306">bmp280.c:306</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a7150453ab8fb9ae57ed7b89d0a4fa4d9"><div class="ttname"><a href="bmp280_8h.html#a7150453ab8fb9ae57ed7b89d0a4fa4d9">bmp280_read_float</a></div><div class="ttdeci">bool bmp280_read_float(BMP280_HandleTypedef *dev, float *temperature, float *pressure, float *humidity)</div><div class="ttdoc">Read compensated floating-point temperature, pressure and optional humidity.</div><div class="ttdef"><b>Definicja</b> <a href="bmp280_8c_source.html#l00340">bmp280.c:340</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a806a38733a5f185f636208781ee9d6ce"><div class="ttname"><a href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ce">BMP280_Filter</a></div><div class="ttdeci">BMP280_Filter</div><div class="ttdef"><b>Definicja</b> <a href="#l00046">bmp280.h:46</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de"><div class="ttname"><a href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de">BMP280_FILTER_4</a></div><div class="ttdeci">@ BMP280_FILTER_4</div><div class="ttdoc">IIR filter coefficient 4.</div><div class="ttdef"><b>Definicja</b> <a href="#l00049">bmp280.h:49</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b"><div class="ttname"><a href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b">BMP280_FILTER_2</a></div><div class="ttdeci">@ BMP280_FILTER_2</div><div class="ttdoc">IIR filter coefficient 2.</div><div class="ttdef"><b>Definicja</b> <a href="#l00048">bmp280.h:48</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e"><div class="ttname"><a href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e">BMP280_FILTER_16</a></div><div class="ttdeci">@ BMP280_FILTER_16</div><div class="ttdoc">IIR filter coefficient 16.</div><div class="ttdef"><b>Definicja</b> <a href="#l00051">bmp280.h:51</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2"><div class="ttname"><a href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2">BMP280_FILTER_OFF</a></div><div class="ttdeci">@ BMP280_FILTER_OFF</div><div class="ttdoc">IIR filter disabled.</div><div class="ttdef"><b>Definicja</b> <a href="#l00047">bmp280.h:47</a></div></div>
+<div class="ttc" id="abmp280_8h_html_a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609"><div class="ttname"><a href="bmp280_8h.html#a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609">BMP280_FILTER_8</a></div><div class="ttdeci">@ BMP280_FILTER_8</div><div class="ttdoc">IIR filter coefficient 8.</div><div class="ttdef"><b>Definicja</b> <a href="#l00050">bmp280.h:50</a></div></div>
+<div class="ttc" id="abmp280_8h_html_ac86eef708d9f6c8a797d45cbbc360bd9"><div class="ttname"><a href="bmp280_8h.html#ac86eef708d9f6c8a797d45cbbc360bd9">bmp280_init</a></div><div class="ttdeci">bool bmp280_init(BMP280_HandleTypedef *dev, bmp280_params_t *params)</div><div class="ttdoc">Initialize BMP280/BME280 module.</div><div class="ttdef"><b>Definicja</b> <a href="bmp280_8c_source.html#l00146">bmp280.c:146</a></div></div>
+<div class="ttc" id="abmp280_8h_html_ae36e8912e8a4ad47a5b6bcd4939db6aa"><div class="ttname"><a href="bmp280_8h.html#ae36e8912e8a4ad47a5b6bcd4939db6aa">bmp280_init_default_params</a></div><div class="ttdeci">void bmp280_init_default_params(bmp280_params_t *params)</div><div class="ttdoc">Initialize default BMP280 parameters.</div><div class="ttdef"><b>Definicja</b> <a href="bmp280_8c_source.html#l00056">bmp280.c:56</a></div></div>
+<div class="ttc" id="abmp280_8h_html_aefa90b756a2bbd97ea580ff6527bca53"><div class="ttname"><a href="bmp280_8h.html#aefa90b756a2bbd97ea580ff6527bca53">bmp280_is_measuring</a></div><div class="ttdeci">bool bmp280_is_measuring(BMP280_HandleTypedef *dev)</div><div class="ttdoc">Check whether BMP280 is busy measuring temperature or pressure.</div><div class="ttdef"><b>Definicja</b> <a href="bmp280_8c_source.html#l00223">bmp280.c:223</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html"><div class="ttname"><a href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a></div><div class="ttdoc">Driver handle with calibration constants and active configuration.</div><div class="ttdef"><b>Definicja</b> <a href="#l00097">bmp280.h:97</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a0293059efde2ae1d209deeaf93a47a51"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a0293059efde2ae1d209deeaf93a47a51">BMP280_HandleTypedef::dig_H2</a></div><div class="ttdeci">int16_t dig_H2</div><div class="ttdoc">Humidity calibration coefficient H2.</div><div class="ttdef"><b>Definicja</b> <a href="#l00113">bmp280.h:113</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a101ee64667bccd172bf4a9fb00fb10df"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a101ee64667bccd172bf4a9fb00fb10df">BMP280_HandleTypedef::params</a></div><div class="ttdeci">bmp280_params_t params</div><div class="ttdoc">Active sensor configuration.</div><div class="ttdef"><b>Definicja</b> <a href="#l00123">bmp280.h:123</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a16dab86ac5f369d9a471b6587b77174d"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a16dab86ac5f369d9a471b6587b77174d">BMP280_HandleTypedef::dig_T3</a></div><div class="ttdeci">int16_t dig_T3</div><div class="ttdoc">Temperature calibration coefficient T3.</div><div class="ttdef"><b>Definicja</b> <a href="#l00100">bmp280.h:100</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a22d0714f2ece491c537b2b46555a5d03"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a22d0714f2ece491c537b2b46555a5d03">BMP280_HandleTypedef::dig_P5</a></div><div class="ttdeci">int16_t dig_P5</div><div class="ttdoc">Pressure calibration coefficient P5.</div><div class="ttdef"><b>Definicja</b> <a href="#l00105">bmp280.h:105</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a3dc59e1a609668cc67d419d1bde5e69b"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a3dc59e1a609668cc67d419d1bde5e69b">BMP280_HandleTypedef::dig_P6</a></div><div class="ttdeci">int16_t dig_P6</div><div class="ttdoc">Pressure calibration coefficient P6.</div><div class="ttdef"><b>Definicja</b> <a href="#l00106">bmp280.h:106</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a46130401d002ca6b2c7b8c8e7578c133"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a46130401d002ca6b2c7b8c8e7578c133">BMP280_HandleTypedef::dig_P8</a></div><div class="ttdeci">int16_t dig_P8</div><div class="ttdoc">Pressure calibration coefficient P8.</div><div class="ttdef"><b>Definicja</b> <a href="#l00108">bmp280.h:108</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a4678a18ab6eab1c593bf5851b2bc2e6a"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a4678a18ab6eab1c593bf5851b2bc2e6a">BMP280_HandleTypedef::dig_H5</a></div><div class="ttdeci">int16_t dig_H5</div><div class="ttdoc">Humidity calibration coefficient H5.</div><div class="ttdef"><b>Definicja</b> <a href="#l00116">bmp280.h:116</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a46b61ba5a191b29bd2dc9bd86cb64b82"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a46b61ba5a191b29bd2dc9bd86cb64b82">BMP280_HandleTypedef::dig_P4</a></div><div class="ttdeci">int16_t dig_P4</div><div class="ttdoc">Pressure calibration coefficient P4.</div><div class="ttdef"><b>Definicja</b> <a href="#l00104">bmp280.h:104</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a47e5f4db5c0382ee26b0200f2ae031c0"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a47e5f4db5c0382ee26b0200f2ae031c0">BMP280_HandleTypedef::dig_H4</a></div><div class="ttdeci">int16_t dig_H4</div><div class="ttdoc">Humidity calibration coefficient H4.</div><div class="ttdef"><b>Definicja</b> <a href="#l00115">bmp280.h:115</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a5029020906a77d5b04cc0e87b8fe8336"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a5029020906a77d5b04cc0e87b8fe8336">BMP280_HandleTypedef::dig_P9</a></div><div class="ttdeci">int16_t dig_P9</div><div class="ttdoc">Pressure calibration coefficient P9.</div><div class="ttdef"><b>Definicja</b> <a href="#l00109">bmp280.h:109</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a651bf87ea766cde80fa5af5696a16f4f"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a651bf87ea766cde80fa5af5696a16f4f">BMP280_HandleTypedef::dig_P2</a></div><div class="ttdeci">int16_t dig_P2</div><div class="ttdoc">Pressure calibration coefficient P2.</div><div class="ttdef"><b>Definicja</b> <a href="#l00102">bmp280.h:102</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a7ce8a2720f39a4da4822e7ae2888a3ec"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a7ce8a2720f39a4da4822e7ae2888a3ec">BMP280_HandleTypedef::dig_H1</a></div><div class="ttdeci">uint8_t dig_H1</div><div class="ttdoc">Humidity calibration coefficient H1.</div><div class="ttdef"><b>Definicja</b> <a href="#l00112">bmp280.h:112</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_a89e3935a76d5439c8bf94cdce70fbfb9"><div class="ttname"><a href="structBMP280__HandleTypedef.html#a89e3935a76d5439c8bf94cdce70fbfb9">BMP280_HandleTypedef::dig_P7</a></div><div class="ttdeci">int16_t dig_P7</div><div class="ttdoc">Pressure calibration coefficient P7.</div><div class="ttdef"><b>Definicja</b> <a href="#l00107">bmp280.h:107</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_aa735e953e421f132626e79aa2684520a"><div class="ttname"><a href="structBMP280__HandleTypedef.html#aa735e953e421f132626e79aa2684520a">BMP280_HandleTypedef::dig_T1</a></div><div class="ttdeci">uint16_t dig_T1</div><div class="ttdoc">Temperature calibration coefficient T1.</div><div class="ttdef"><b>Definicja</b> <a href="#l00098">bmp280.h:98</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_aae054671ec66e31d0591d7813b24e629"><div class="ttname"><a href="structBMP280__HandleTypedef.html#aae054671ec66e31d0591d7813b24e629">BMP280_HandleTypedef::dig_H6</a></div><div class="ttdeci">int8_t dig_H6</div><div class="ttdoc">Humidity calibration coefficient H6.</div><div class="ttdef"><b>Definicja</b> <a href="#l00117">bmp280.h:117</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_ab8e9f5400b0f79c74020c1165c72e7d8"><div class="ttname"><a href="structBMP280__HandleTypedef.html#ab8e9f5400b0f79c74020c1165c72e7d8">BMP280_HandleTypedef::dig_H3</a></div><div class="ttdeci">uint8_t dig_H3</div><div class="ttdoc">Humidity calibration coefficient H3.</div><div class="ttdef"><b>Definicja</b> <a href="#l00114">bmp280.h:114</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_abe76b8a4d2dad35dabbd1e8f43d58987"><div class="ttname"><a href="structBMP280__HandleTypedef.html#abe76b8a4d2dad35dabbd1e8f43d58987">BMP280_HandleTypedef::addr</a></div><div class="ttdeci">uint16_t addr</div><div class="ttdoc">7-bit I2C device address.</div><div class="ttdef"><b>Definicja</b> <a href="#l00119">bmp280.h:119</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_ada3917c530c0a64c31c513d3b9864ad4"><div class="ttname"><a href="structBMP280__HandleTypedef.html#ada3917c530c0a64c31c513d3b9864ad4">BMP280_HandleTypedef::dig_T2</a></div><div class="ttdeci">int16_t dig_T2</div><div class="ttdoc">Temperature calibration coefficient T2.</div><div class="ttdef"><b>Definicja</b> <a href="#l00099">bmp280.h:99</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_adb2060477f3ab7378a1886e03edb7ca4"><div class="ttname"><a href="structBMP280__HandleTypedef.html#adb2060477f3ab7378a1886e03edb7ca4">BMP280_HandleTypedef::i2c</a></div><div class="ttdeci">I2C_HandleTypeDef * i2c</div><div class="ttdoc">I2C peripheral handle.</div><div class="ttdef"><b>Definicja</b> <a href="#l00121">bmp280.h:121</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_adf58ccc1046135b97c8a30437d46c81b"><div class="ttname"><a href="structBMP280__HandleTypedef.html#adf58ccc1046135b97c8a30437d46c81b">BMP280_HandleTypedef::dig_P3</a></div><div class="ttdeci">int16_t dig_P3</div><div class="ttdoc">Pressure calibration coefficient P3.</div><div class="ttdef"><b>Definicja</b> <a href="#l00103">bmp280.h:103</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_afaff3914b7f61b145317eb9e649c7f1e"><div class="ttname"><a href="structBMP280__HandleTypedef.html#afaff3914b7f61b145317eb9e649c7f1e">BMP280_HandleTypedef::dig_P1</a></div><div class="ttdeci">uint16_t dig_P1</div><div class="ttdoc">Pressure calibration coefficient P1.</div><div class="ttdef"><b>Definicja</b> <a href="#l00101">bmp280.h:101</a></div></div>
+<div class="ttc" id="astructBMP280__HandleTypedef_html_afeb0f26d38b725f2bbc2e67e17b0b671"><div class="ttname"><a href="structBMP280__HandleTypedef.html#afeb0f26d38b725f2bbc2e67e17b0b671">BMP280_HandleTypedef::id</a></div><div class="ttdeci">uint8_t id</div><div class="ttdoc">Chip ID read from the sensor.</div><div class="ttdef"><b>Definicja</b> <a href="#l00125">bmp280.h:125</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html"><div class="ttname"><a href="structbmp280__params__t.html">bmp280_params_t</a></div><div class="ttdoc">Configuration parameters for BMP280 module.</div><div class="ttdef"><b>Definicja</b> <a href="#l00084">bmp280.h:84</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html_a0b0116893e93832a6f19b9f5e696bd1a"><div class="ttname"><a href="structbmp280__params__t.html#a0b0116893e93832a6f19b9f5e696bd1a">bmp280_params_t::oversampling_pressure</a></div><div class="ttdeci">BMP280_Oversampling oversampling_pressure</div><div class="ttdoc">Pressure oversampling setting.</div><div class="ttdef"><b>Definicja</b> <a href="#l00087">bmp280.h:87</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html_a7b0b31ec38932019a846e162d3829c04"><div class="ttname"><a href="structbmp280__params__t.html#a7b0b31ec38932019a846e162d3829c04">bmp280_params_t::standby</a></div><div class="ttdeci">BMP280_StandbyTime standby</div><div class="ttdoc">Standby period in normal mode.</div><div class="ttdef"><b>Definicja</b> <a href="#l00090">bmp280.h:90</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html_ab1ad856af1e4cbd91f16cd03ac5e5090"><div class="ttname"><a href="structbmp280__params__t.html#ab1ad856af1e4cbd91f16cd03ac5e5090">bmp280_params_t::oversampling_humidity</a></div><div class="ttdeci">BMP280_Oversampling oversampling_humidity</div><div class="ttdoc">Humidity oversampling setting for BME280.</div><div class="ttdef"><b>Definicja</b> <a href="#l00089">bmp280.h:89</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html_ac06d0db65979eb36175db959e78141b4"><div class="ttname"><a href="structbmp280__params__t.html#ac06d0db65979eb36175db959e78141b4">bmp280_params_t::mode</a></div><div class="ttdeci">BMP280_Mode mode</div><div class="ttdoc">Sensor operating mode.</div><div class="ttdef"><b>Definicja</b> <a href="#l00085">bmp280.h:85</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html_ac26115a927fb56b2a5f4186153719725"><div class="ttname"><a href="structbmp280__params__t.html#ac26115a927fb56b2a5f4186153719725">bmp280_params_t::filter</a></div><div class="ttdeci">BMP280_Filter filter</div><div class="ttdoc">IIR filter setting.</div><div class="ttdef"><b>Definicja</b> <a href="#l00086">bmp280.h:86</a></div></div>
+<div class="ttc" id="astructbmp280__params__t_html_aeefcc1ea563c503308a34574701b9098"><div class="ttname"><a href="structbmp280__params__t.html#aeefcc1ea563c503308a34574701b9098">bmp280_params_t::oversampling_temperature</a></div><div class="ttdeci">BMP280_Oversampling oversampling_temperature</div><div class="ttdoc">Temperature oversampling setting.</div><div class="ttdef"><b>Definicja</b> <a href="#l00088">bmp280.h:88</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><b>bmp280_lib</b></li><li class="navelem"><a href="bmp280_8h.html">bmp280.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

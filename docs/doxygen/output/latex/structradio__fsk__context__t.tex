@@ -1,0 +1,178 @@
+\doxysection{Dokumentacja struktury radio\+\_\+fsk\+\_\+context\+\_\+t}
+\hypertarget{structradio__fsk__context__t}{}\label{structradio__fsk__context__t}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{structradio__fsk__context__t_ac2bb273cc1b083cd28c962461fd1bd79}{initialized}}
+\item 
+\mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_ad1b2167d5c1b2f177d3de5adc71ed234}{bus}}
+\item 
+\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_a5bdaed1c11c20e99cc8f567654927494}{hw}}
+\item 
+\mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_a94a9785360afa08669f471b037e24eec}{cfg}}
+\item 
+\mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_acde214738f94399eaf6d0d6e3af8fdf9}{callback}}
+\item 
+void \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structradio__fsk__context__t_a15d82b82c654a454e089a5dbace4ceed}{callback\+\_\+ctx}}
+\item 
+volatile uint8\+\_\+t \mbox{\hyperlink{structradio__fsk__context__t_a63021427ab319cd1774dd24070636776}{dio\+\_\+pending\+\_\+mask}}
+\item 
+volatile uint32\+\_\+t \mbox{\hyperlink{structradio__fsk__context__t_a11de31b4ea9781b0b2b759984989961c}{event\+\_\+flags}}
+\item 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_a2a4f7de32f2b43b2f357b262150b0ae6}{state}}
+\item 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_acd8d29e24235c48e881dd5a3b213f50a}{tx\+\_\+resume\+\_\+state}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__fsk__context__t_aacf92a559cb38bfd5ba0256ac84939fc}{rx\+\_\+single\+\_\+deadline\+\_\+ms}}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__fsk__context__t_a34686c103d9b3eb97a6a69ea1cb99e8d}{tx\+\_\+deadline\+\_\+ms}}
+\item 
+\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \mbox{\hyperlink{structradio__fsk__context__t_a84888d992978aead21106ce167c04c8e}{last\+\_\+packet}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00024}{24}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__fsk__context__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__fsk__context__t_ad1b2167d5c1b2f177d3de5adc71ed234}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!bus@{bus}}
+\index{bus@{bus}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{bus}{bus}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_ad1b2167d5c1b2f177d3de5adc71ed234} 
+\mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::bus}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00027}{27}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_acde214738f94399eaf6d0d6e3af8fdf9}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!callback@{callback}}
+\index{callback@{callback}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{callback}{callback}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_acde214738f94399eaf6d0d6e3af8fdf9} 
+\mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::callback}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00030}{30}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a15d82b82c654a454e089a5dbace4ceed}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!callback\_ctx@{callback\_ctx}}
+\index{callback\_ctx@{callback\_ctx}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{callback\_ctx}{callback\_ctx}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a15d82b82c654a454e089a5dbace4ceed} 
+void\texorpdfstring{$\ast$}{*} radio\+\_\+fsk\+\_\+context\+\_\+t\+::callback\+\_\+ctx}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00031}{31}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a94a9785360afa08669f471b037e24eec}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!cfg@{cfg}}
+\index{cfg@{cfg}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{cfg}{cfg}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a94a9785360afa08669f471b037e24eec} 
+\mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::cfg}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00029}{29}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a63021427ab319cd1774dd24070636776}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!dio\_pending\_mask@{dio\_pending\_mask}}
+\index{dio\_pending\_mask@{dio\_pending\_mask}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{dio\_pending\_mask}{dio\_pending\_mask}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a63021427ab319cd1774dd24070636776} 
+volatile uint8\+\_\+t radio\+\_\+fsk\+\_\+context\+\_\+t\+::dio\+\_\+pending\+\_\+mask}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00032}{32}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a11de31b4ea9781b0b2b759984989961c}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!event\_flags@{event\_flags}}
+\index{event\_flags@{event\_flags}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{event\_flags}{event\_flags}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a11de31b4ea9781b0b2b759984989961c} 
+volatile uint32\+\_\+t radio\+\_\+fsk\+\_\+context\+\_\+t\+::event\+\_\+flags}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00033}{33}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a5bdaed1c11c20e99cc8f567654927494}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!hw@{hw}}
+\index{hw@{hw}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{hw}{hw}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a5bdaed1c11c20e99cc8f567654927494} 
+\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::hw}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00028}{28}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_ac2bb273cc1b083cd28c962461fd1bd79}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!initialized@{initialized}}
+\index{initialized@{initialized}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{initialized}{initialized}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_ac2bb273cc1b083cd28c962461fd1bd79} 
+bool radio\+\_\+fsk\+\_\+context\+\_\+t\+::initialized}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00026}{26}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a84888d992978aead21106ce167c04c8e}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!last\_packet@{last\_packet}}
+\index{last\_packet@{last\_packet}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{last\_packet}{last\_packet}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a84888d992978aead21106ce167c04c8e} 
+\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::last\+\_\+packet}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00038}{38}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_aacf92a559cb38bfd5ba0256ac84939fc}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!rx\_single\_deadline\_ms@{rx\_single\_deadline\_ms}}
+\index{rx\_single\_deadline\_ms@{rx\_single\_deadline\_ms}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{rx\_single\_deadline\_ms}{rx\_single\_deadline\_ms}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_aacf92a559cb38bfd5ba0256ac84939fc} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+context\+\_\+t\+::rx\+\_\+single\+\_\+deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00036}{36}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a2a4f7de32f2b43b2f357b262150b0ae6}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!state@{state}}
+\index{state@{state}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a2a4f7de32f2b43b2f357b262150b0ae6} 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::state}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00034}{34}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_a34686c103d9b3eb97a6a69ea1cb99e8d}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!tx\_deadline\_ms@{tx\_deadline\_ms}}
+\index{tx\_deadline\_ms@{tx\_deadline\_ms}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_deadline\_ms}{tx\_deadline\_ms}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_a34686c103d9b3eb97a6a69ea1cb99e8d} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+context\+\_\+t\+::tx\+\_\+deadline\+\_\+ms}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00037}{37}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{structradio__fsk__context__t_acd8d29e24235c48e881dd5a3b213f50a}\index{radio\_fsk\_context\_t@{radio\_fsk\_context\_t}!tx\_resume\_state@{tx\_resume\_state}}
+\index{tx\_resume\_state@{tx\_resume\_state}!radio\_fsk\_context\_t@{radio\_fsk\_context\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_resume\_state}{tx\_resume\_state}}
+{\footnotesize\ttfamily \label{structradio__fsk__context__t_acd8d29e24235c48e881dd5a3b213f50a} 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} radio\+\_\+fsk\+\_\+context\+\_\+t\+::tx\+\_\+resume\+\_\+state}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00035}{35}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+lib/modulations/fsk/\mbox{\hyperlink{radio__fsk_8c}{radio\+\_\+fsk.\+c}}\end{DoxyCompactItemize}

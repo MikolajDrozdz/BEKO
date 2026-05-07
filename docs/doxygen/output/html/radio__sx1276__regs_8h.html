@@ -1,0 +1,2541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/radio_lib/common/sx1276/radio_sx1276_regs.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('radio__sx1276__regs_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku radio_sx1276_regs.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Mapa rejestrów SX1276 i definicje bitów używane w bibliotece.  
+<a href="#details">Więcej...</a></p>
+
+<p><a href="radio__sx1276__regs_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Definicje</h2></td></tr>
+<tr class="memitem:a197daf1173f5058b442df27639ff5dc2" id="r_a197daf1173f5058b442df27639ff5dc2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a197daf1173f5058b442df27639ff5dc2">SX1276_REG_FIFO</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a69c0f732512b573a09dfe43bd30c66a6" id="r_a69c0f732512b573a09dfe43bd30c66a6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69c0f732512b573a09dfe43bd30c66a6">SX1276_REG_OP_MODE</a>&#160;&#160;&#160;0x01U</td></tr>
+<tr class="memitem:a09f8d24c65861b3910c85ee3c5a68fe1" id="r_a09f8d24c65861b3910c85ee3c5a68fe1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09f8d24c65861b3910c85ee3c5a68fe1">SX1276_REG_BITRATE_MSB</a>&#160;&#160;&#160;0x02U</td></tr>
+<tr class="memitem:aeb3e0c01ece23c32ca19f2dfe1b9790e" id="r_aeb3e0c01ece23c32ca19f2dfe1b9790e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb3e0c01ece23c32ca19f2dfe1b9790e">SX1276_REG_BITRATE_LSB</a>&#160;&#160;&#160;0x03U</td></tr>
+<tr class="memitem:a4e592bf3ea2ef3f89fb29ebfbbda29fd" id="r_a4e592bf3ea2ef3f89fb29ebfbbda29fd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4e592bf3ea2ef3f89fb29ebfbbda29fd">SX1276_REG_FDEV_MSB</a>&#160;&#160;&#160;0x04U</td></tr>
+<tr class="memitem:a514331635527b55009f5fbe631799d34" id="r_a514331635527b55009f5fbe631799d34"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a514331635527b55009f5fbe631799d34">SX1276_REG_FDEV_LSB</a>&#160;&#160;&#160;0x05U</td></tr>
+<tr class="memitem:ab0a9d78cc4b75af2dc3269d2402be6ad" id="r_ab0a9d78cc4b75af2dc3269d2402be6ad"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab0a9d78cc4b75af2dc3269d2402be6ad">SX1276_REG_FRF_MSB</a>&#160;&#160;&#160;0x06U</td></tr>
+<tr class="memitem:a10dbc8577c9c208e5578e9536452c873" id="r_a10dbc8577c9c208e5578e9536452c873"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10dbc8577c9c208e5578e9536452c873">SX1276_REG_FRF_MID</a>&#160;&#160;&#160;0x07U</td></tr>
+<tr class="memitem:a87e2dae1189c733261c5187812de0105" id="r_a87e2dae1189c733261c5187812de0105"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87e2dae1189c733261c5187812de0105">SX1276_REG_FRF_LSB</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:a34c16f8ebdc6f416cb37e92e7f9a6dd0" id="r_a34c16f8ebdc6f416cb37e92e7f9a6dd0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34c16f8ebdc6f416cb37e92e7f9a6dd0">SX1276_REG_PA_CONFIG</a>&#160;&#160;&#160;0x09U</td></tr>
+<tr class="memitem:a728679957d90c599061990dc03033315" id="r_a728679957d90c599061990dc03033315"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a728679957d90c599061990dc03033315">SX1276_REG_LNA</a>&#160;&#160;&#160;0x0CU</td></tr>
+<tr class="memitem:aa8afbbd417b764665465507474a8dd6c" id="r_aa8afbbd417b764665465507474a8dd6c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa8afbbd417b764665465507474a8dd6c">SX1276_REG_RX_CONFIG</a>&#160;&#160;&#160;0x0DU</td></tr>
+<tr class="memitem:ac24dd517d581b1c0595bf5d56ac146f6" id="r_ac24dd517d581b1c0595bf5d56ac146f6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac24dd517d581b1c0595bf5d56ac146f6">SX1276_REG_RSSI_CONFIG</a>&#160;&#160;&#160;0x0EU</td></tr>
+<tr class="memitem:ab6a9a8408e7a5bfa042558ec07250b46" id="r_ab6a9a8408e7a5bfa042558ec07250b46"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6a9a8408e7a5bfa042558ec07250b46">SX1276_REG_RSSI_VALUE_FSK</a>&#160;&#160;&#160;0x11U</td></tr>
+<tr class="memitem:a2e07891c3bf6661af5d5f22649a10781" id="r_a2e07891c3bf6661af5d5f22649a10781"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e07891c3bf6661af5d5f22649a10781">SX1276_REG_RX_BW</a>&#160;&#160;&#160;0x12U</td></tr>
+<tr class="memitem:a2cd0ee3d05272f40793e5b4ad3d568b1" id="r_a2cd0ee3d05272f40793e5b4ad3d568b1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cd0ee3d05272f40793e5b4ad3d568b1">SX1276_REG_AFC_BW</a>&#160;&#160;&#160;0x13U</td></tr>
+<tr class="memitem:a03b66bcc5c36ea36a7b9c2badc1ae824" id="r_a03b66bcc5c36ea36a7b9c2badc1ae824"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a03b66bcc5c36ea36a7b9c2badc1ae824">SX1276_REG_OOK_PEAK</a>&#160;&#160;&#160;0x14U</td></tr>
+<tr class="memitem:a6e7163ee29d52edb7288724572e23ca1" id="r_a6e7163ee29d52edb7288724572e23ca1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e7163ee29d52edb7288724572e23ca1">SX1276_REG_OOK_FIX</a>&#160;&#160;&#160;0x15U</td></tr>
+<tr class="memitem:ac82856dad04b9d26d7260540144ac48d" id="r_ac82856dad04b9d26d7260540144ac48d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac82856dad04b9d26d7260540144ac48d">SX1276_REG_OOK_AVG</a>&#160;&#160;&#160;0x16U</td></tr>
+<tr class="memitem:a5bd9596ecd31541aa53cc9670a640017" id="r_a5bd9596ecd31541aa53cc9670a640017"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bd9596ecd31541aa53cc9670a640017">SX1276_REG_FIFO_ADDR_PTR</a>&#160;&#160;&#160;0x0DU</td></tr>
+<tr class="memitem:a19aca47fa2915b5fb1cb382e3288e14a" id="r_a19aca47fa2915b5fb1cb382e3288e14a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a19aca47fa2915b5fb1cb382e3288e14a">SX1276_REG_FIFO_TX_BASE_ADDR</a>&#160;&#160;&#160;0x0EU</td></tr>
+<tr class="memitem:ac371d2ff579a340177fd004b8647cdc0" id="r_ac371d2ff579a340177fd004b8647cdc0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac371d2ff579a340177fd004b8647cdc0">SX1276_REG_FIFO_RX_BASE_ADDR</a>&#160;&#160;&#160;0x0FU</td></tr>
+<tr class="memitem:a380c4b9415d3a70e9ff1eff9091835e4" id="r_a380c4b9415d3a70e9ff1eff9091835e4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a380c4b9415d3a70e9ff1eff9091835e4">SX1276_REG_FIFO_RX_CURRENT_ADDR</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:aa955ad200a53923f9c785c51f4a81d00" id="r_aa955ad200a53923f9c785c51f4a81d00"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa955ad200a53923f9c785c51f4a81d00">SX1276_REG_IRQ_FLAGS_MASK</a>&#160;&#160;&#160;0x11U</td></tr>
+<tr class="memitem:a6ddf0378bad2ab21ffae2d1c7e3828f0" id="r_a6ddf0378bad2ab21ffae2d1c7e3828f0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ddf0378bad2ab21ffae2d1c7e3828f0">SX1276_REG_IRQ_FLAGS</a>&#160;&#160;&#160;0x12U</td></tr>
+<tr class="memitem:ab016a04625461bc5cdedcd615239f1bf" id="r_ab016a04625461bc5cdedcd615239f1bf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab016a04625461bc5cdedcd615239f1bf">SX1276_REG_RX_NB_BYTES</a>&#160;&#160;&#160;0x13U</td></tr>
+<tr class="memitem:ab9178f72a1e5ca435104a74c8c0166b7" id="r_ab9178f72a1e5ca435104a74c8c0166b7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9178f72a1e5ca435104a74c8c0166b7">SX1276_REG_PKT_SNR_VALUE</a>&#160;&#160;&#160;0x19U</td></tr>
+<tr class="memitem:a77f951cd01aeed0d43ea715fd55fdfbd" id="r_a77f951cd01aeed0d43ea715fd55fdfbd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a77f951cd01aeed0d43ea715fd55fdfbd">SX1276_REG_PKT_RSSI_VALUE</a>&#160;&#160;&#160;0x1AU</td></tr>
+<tr class="memitem:a5dcc0e802d590db68abb629efbd16e1d" id="r_a5dcc0e802d590db68abb629efbd16e1d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5dcc0e802d590db68abb629efbd16e1d">SX1276_REG_PREAMBLE_DETECT</a>&#160;&#160;&#160;0x1FU</td></tr>
+<tr class="memitem:a64940ab11fa01837f964631e180f9104" id="r_a64940ab11fa01837f964631e180f9104"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a64940ab11fa01837f964631e180f9104">SX1276_REG_MODEM_CONFIG_1</a>&#160;&#160;&#160;0x1DU</td></tr>
+<tr class="memitem:a17421691cc61dadd5d6fdc6f8acab9de" id="r_a17421691cc61dadd5d6fdc6f8acab9de"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17421691cc61dadd5d6fdc6f8acab9de">SX1276_REG_MODEM_CONFIG_2</a>&#160;&#160;&#160;0x1EU</td></tr>
+<tr class="memitem:a5f324f0c491c57c3426b483142697714" id="r_a5f324f0c491c57c3426b483142697714"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f324f0c491c57c3426b483142697714">SX1276_REG_SYMB_TIMEOUT_LSB</a>&#160;&#160;&#160;0x1FU</td></tr>
+<tr class="memitem:a762dcf817391c74a6a7f7c1bed4da3bb" id="r_a762dcf817391c74a6a7f7c1bed4da3bb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a762dcf817391c74a6a7f7c1bed4da3bb">SX1276_REG_PREAMBLE_MSB</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a99c76515a1bda1b9cd38d5df6e1ab481" id="r_a99c76515a1bda1b9cd38d5df6e1ab481"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99c76515a1bda1b9cd38d5df6e1ab481">SX1276_REG_PREAMBLE_LSB</a>&#160;&#160;&#160;0x21U</td></tr>
+<tr class="memitem:ae79732e3dc6e692772b67cc7f6d84e74" id="r_ae79732e3dc6e692772b67cc7f6d84e74"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae79732e3dc6e692772b67cc7f6d84e74">SX1276_REG_PAYLOAD_LENGTH</a>&#160;&#160;&#160;0x22U</td></tr>
+<tr class="memitem:a6f07ab86f4ea434b72b6645474bbab18" id="r_a6f07ab86f4ea434b72b6645474bbab18"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6f07ab86f4ea434b72b6645474bbab18">SX1276_REG_PREAMBLE_MSB_FSK</a>&#160;&#160;&#160;0x25U</td></tr>
+<tr class="memitem:afb6ef591e5c0dd9b47c88782ba14554d" id="r_afb6ef591e5c0dd9b47c88782ba14554d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb6ef591e5c0dd9b47c88782ba14554d">SX1276_REG_PREAMBLE_LSB_FSK</a>&#160;&#160;&#160;0x26U</td></tr>
+<tr class="memitem:ad259467013560a7a240386f601faeabe" id="r_ad259467013560a7a240386f601faeabe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad259467013560a7a240386f601faeabe">SX1276_REG_SYNC_CONFIG</a>&#160;&#160;&#160;0x27U</td></tr>
+<tr class="memitem:a166ac4acac1667e626be8221b52110f5" id="r_a166ac4acac1667e626be8221b52110f5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a166ac4acac1667e626be8221b52110f5">SX1276_REG_SYNC_VALUE_1</a>&#160;&#160;&#160;0x28U</td></tr>
+<tr class="memitem:ae2baad239b355bd736d3476eb4f0d803" id="r_ae2baad239b355bd736d3476eb4f0d803"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae2baad239b355bd736d3476eb4f0d803">SX1276_REG_MODEM_CONFIG_3</a>&#160;&#160;&#160;0x26U</td></tr>
+<tr class="memitem:a18591134b18fcead9d52d18f0fd71a87" id="r_a18591134b18fcead9d52d18f0fd71a87"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18591134b18fcead9d52d18f0fd71a87">SX1276_REG_PACKET_CONFIG_1</a>&#160;&#160;&#160;0x30U</td></tr>
+<tr class="memitem:a4b78315f77e35ac9bf0bc67e6bd5ea28" id="r_a4b78315f77e35ac9bf0bc67e6bd5ea28"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b78315f77e35ac9bf0bc67e6bd5ea28">SX1276_REG_PACKET_CONFIG_2</a>&#160;&#160;&#160;0x31U</td></tr>
+<tr class="memitem:a154a07d4ba364dc3731ea64797a7d6e5" id="r_a154a07d4ba364dc3731ea64797a7d6e5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a154a07d4ba364dc3731ea64797a7d6e5">SX1276_REG_PAYLOAD_LENGTH_FSK</a>&#160;&#160;&#160;0x32U</td></tr>
+<tr class="memitem:a2902a72404916bf9c9165d261759fa1a" id="r_a2902a72404916bf9c9165d261759fa1a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2902a72404916bf9c9165d261759fa1a">SX1276_REG_NODE_ADDRESS</a>&#160;&#160;&#160;0x33U</td></tr>
+<tr class="memitem:a5332ef909cb280e7d7aa54e520446537" id="r_a5332ef909cb280e7d7aa54e520446537"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5332ef909cb280e7d7aa54e520446537">SX1276_REG_BROADCAST_ADDRESS</a>&#160;&#160;&#160;0x34U</td></tr>
+<tr class="memitem:aca5b4090d6524f460b0ddf691dcbc632" id="r_aca5b4090d6524f460b0ddf691dcbc632"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca5b4090d6524f460b0ddf691dcbc632">SX1276_REG_FIFO_THRESH</a>&#160;&#160;&#160;0x35U</td></tr>
+<tr class="memitem:af757ec5ea0c01620684a3c6be380c5ba" id="r_af757ec5ea0c01620684a3c6be380c5ba"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af757ec5ea0c01620684a3c6be380c5ba">SX1276_REG_DETECTION_OPTIMIZE</a>&#160;&#160;&#160;0x31U</td></tr>
+<tr class="memitem:ae5281fd20c7b872762cdc90d8e709788" id="r_ae5281fd20c7b872762cdc90d8e709788"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae5281fd20c7b872762cdc90d8e709788">SX1276_REG_INVERT_IQ</a>&#160;&#160;&#160;0x33U</td></tr>
+<tr class="memitem:acf3b381154e86da44db144a331e3d6b0" id="r_acf3b381154e86da44db144a331e3d6b0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf3b381154e86da44db144a331e3d6b0">SX1276_REG_DETECTION_THRESHOLD</a>&#160;&#160;&#160;0x37U</td></tr>
+<tr class="memitem:a7d3724e50f816db0efb6a91d30a8960f" id="r_a7d3724e50f816db0efb6a91d30a8960f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d3724e50f816db0efb6a91d30a8960f">SX1276_REG_SYNC_WORD</a>&#160;&#160;&#160;0x39U</td></tr>
+<tr class="memitem:af2e7ff9d4fe9c5e69195570daed57892" id="r_af2e7ff9d4fe9c5e69195570daed57892"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2e7ff9d4fe9c5e69195570daed57892">SX1276_REG_IRQ_FLAGS_1</a>&#160;&#160;&#160;0x3EU</td></tr>
+<tr class="memitem:ace4d246e0fdf8b218a04a16100f2f42f" id="r_ace4d246e0fdf8b218a04a16100f2f42f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ace4d246e0fdf8b218a04a16100f2f42f">SX1276_REG_IRQ_FLAGS_2</a>&#160;&#160;&#160;0x3FU</td></tr>
+<tr class="memitem:a28313439438c3700106b9b0c04f1524c" id="r_a28313439438c3700106b9b0c04f1524c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a28313439438c3700106b9b0c04f1524c">SX1276_REG_INVERT_IQ2</a>&#160;&#160;&#160;0x3BU</td></tr>
+<tr class="memitem:aa6b737cd6f47c60c55b3a3f00bbba7c9" id="r_aa6b737cd6f47c60c55b3a3f00bbba7c9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa6b737cd6f47c60c55b3a3f00bbba7c9">SX1276_REG_DIO_MAPPING_1</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:a728f1e3266c13ff6db2c4a4b9e56f1e3" id="r_a728f1e3266c13ff6db2c4a4b9e56f1e3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a728f1e3266c13ff6db2c4a4b9e56f1e3">SX1276_REG_DIO_MAPPING_2</a>&#160;&#160;&#160;0x41U</td></tr>
+<tr class="memitem:a99a158df582a50d6bb2dcb330836da75" id="r_a99a158df582a50d6bb2dcb330836da75"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a99a158df582a50d6bb2dcb330836da75">SX1276_REG_VERSION</a>&#160;&#160;&#160;0x42U</td></tr>
+<tr class="memitem:a8177b74124aa491c1a1eb8981c7999a3" id="r_a8177b74124aa491c1a1eb8981c7999a3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8177b74124aa491c1a1eb8981c7999a3">SX1276_REG_PA_DAC</a>&#160;&#160;&#160;0x4DU</td></tr>
+<tr class="memitem:a220c509d71239314bf628ee5d813ab24" id="r_a220c509d71239314bf628ee5d813ab24"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a220c509d71239314bf628ee5d813ab24">SX1276_SPI_WRITE_MASK</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:af79c43036a1a3a6678bee3007c5a4e54" id="r_af79c43036a1a3a6678bee3007c5a4e54"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af79c43036a1a3a6678bee3007c5a4e54">SX1276_SPI_READ_MASK</a>&#160;&#160;&#160;0x7FU</td></tr>
+<tr class="memitem:a8b4b6f68f343a1804ddaa84aa5397ff7" id="r_a8b4b6f68f343a1804ddaa84aa5397ff7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b4b6f68f343a1804ddaa84aa5397ff7">SX1276_VERSION_ID</a>&#160;&#160;&#160;0x12U</td></tr>
+<tr class="memitem:a877686a01a0afdc90e16ad112ff04168" id="r_a877686a01a0afdc90e16ad112ff04168"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a877686a01a0afdc90e16ad112ff04168">SX1276_OPMODE_LONG_RANGE_MODE</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:a5176cb239995893222f579b808d57a1f" id="r_a5176cb239995893222f579b808d57a1f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5176cb239995893222f579b808d57a1f">SX1276_OPMODE_ACCESS_SHARED_REG</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:a459780c44cb366953c8e3eaf2b900d43" id="r_a459780c44cb366953c8e3eaf2b900d43"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a459780c44cb366953c8e3eaf2b900d43">SX1276_OPMODE_MODULATION_MASK</a>&#160;&#160;&#160;0x60U</td></tr>
+<tr class="memitem:ad97233e36a5e44debff4db8784a45800" id="r_ad97233e36a5e44debff4db8784a45800"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad97233e36a5e44debff4db8784a45800">SX1276_OPMODE_MODULATION_FSK</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:ae40ac781e0a7f992c1ca68520e1b8062" id="r_ae40ac781e0a7f992c1ca68520e1b8062"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae40ac781e0a7f992c1ca68520e1b8062">SX1276_OPMODE_MODULATION_OOK</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a2af2a3265adb621fdcbf9c1222791dd6" id="r_a2af2a3265adb621fdcbf9c1222791dd6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2af2a3265adb621fdcbf9c1222791dd6">SX1276_OPMODE_SHAPING_MASK</a>&#160;&#160;&#160;0x18U</td></tr>
+<tr class="memitem:a992d75a7518a9f4f72c8c71ed4e510cc" id="r_a992d75a7518a9f4f72c8c71ed4e510cc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a992d75a7518a9f4f72c8c71ed4e510cc">SX1276_OPMODE_SHAPING_NONE</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:ad8373207dd80c2a83a487a5a9dec7154" id="r_ad8373207dd80c2a83a487a5a9dec7154"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8373207dd80c2a83a487a5a9dec7154">SX1276_OPMODE_SHAPING_FSK_BT10</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:ab81c72570dca52a07e5cb062777643e0" id="r_ab81c72570dca52a07e5cb062777643e0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab81c72570dca52a07e5cb062777643e0">SX1276_OPMODE_SHAPING_FSK_BT05</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:a038242203df2c9f2c93163a1541bba16" id="r_a038242203df2c9f2c93163a1541bba16"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a038242203df2c9f2c93163a1541bba16">SX1276_OPMODE_SHAPING_FSK_BT03</a>&#160;&#160;&#160;0x18U</td></tr>
+<tr class="memitem:a72c45e027cda27250cde352a47bbd777" id="r_a72c45e027cda27250cde352a47bbd777"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72c45e027cda27250cde352a47bbd777">SX1276_OPMODE_SHAPING_OOK_FILTER</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:a00d4b5d9923186dff9e21fea5958616a" id="r_a00d4b5d9923186dff9e21fea5958616a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a00d4b5d9923186dff9e21fea5958616a">SX1276_OPMODE_LOW_FREQ_MODE_ON</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:a3dcea886a0397db135527bfd11d4a3da" id="r_a3dcea886a0397db135527bfd11d4a3da"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3dcea886a0397db135527bfd11d4a3da">SX1276_OPMODE_MODE_MASK</a>&#160;&#160;&#160;0x07U</td></tr>
+<tr class="memitem:a8cc075ec415707fbc2c74f1799dac78c" id="r_a8cc075ec415707fbc2c74f1799dac78c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cc075ec415707fbc2c74f1799dac78c">SX1276_MODE_SLEEP</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:af495a1aa91eab42126b30925aca30e1e" id="r_af495a1aa91eab42126b30925aca30e1e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af495a1aa91eab42126b30925aca30e1e">SX1276_MODE_STDBY</a>&#160;&#160;&#160;0x01U</td></tr>
+<tr class="memitem:a368886c0c4b3d767c3fccba004da49bf" id="r_a368886c0c4b3d767c3fccba004da49bf"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a368886c0c4b3d767c3fccba004da49bf">SX1276_MODE_FSTX</a>&#160;&#160;&#160;0x02U</td></tr>
+<tr class="memitem:a3d85c560f8c7fe6042a80d8054e52d5c" id="r_a3d85c560f8c7fe6042a80d8054e52d5c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3d85c560f8c7fe6042a80d8054e52d5c">SX1276_MODE_TX</a>&#160;&#160;&#160;0x03U</td></tr>
+<tr class="memitem:ac929e12ca0742494e6908f33e408f654" id="r_ac929e12ca0742494e6908f33e408f654"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac929e12ca0742494e6908f33e408f654">SX1276_MODE_FSRX</a>&#160;&#160;&#160;0x04U</td></tr>
+<tr class="memitem:a36047e7b4f10609d82979c4386baa859" id="r_a36047e7b4f10609d82979c4386baa859"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36047e7b4f10609d82979c4386baa859">SX1276_MODE_RXCONTINUOUS</a>&#160;&#160;&#160;0x05U</td></tr>
+<tr class="memitem:a8ebd93ae1fe8ddccbf2a405603cc8978" id="r_a8ebd93ae1fe8ddccbf2a405603cc8978"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ebd93ae1fe8ddccbf2a405603cc8978">SX1276_MODE_RXSINGLE</a>&#160;&#160;&#160;0x06U</td></tr>
+<tr class="memitem:af3183d2c35027accbda82f62331a966f" id="r_af3183d2c35027accbda82f62331a966f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af3183d2c35027accbda82f62331a966f">SX1276_MODE_CAD</a>&#160;&#160;&#160;0x07U</td></tr>
+<tr class="memitem:afaaf43b29cf23fbc08b22a9b71b41e88" id="r_afaaf43b29cf23fbc08b22a9b71b41e88"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afaaf43b29cf23fbc08b22a9b71b41e88">SX1276_IRQ_RX_TIMEOUT</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:aa531fb351fd8dbf3df4f15e536eed586" id="r_aa531fb351fd8dbf3df4f15e536eed586"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa531fb351fd8dbf3df4f15e536eed586">SX1276_IRQ_RX_DONE</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:a572ac14260a1b0a23edb5707015c642b" id="r_a572ac14260a1b0a23edb5707015c642b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a572ac14260a1b0a23edb5707015c642b">SX1276_IRQ_PAYLOAD_CRC_ERROR</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a3a17f04ffdd915d4f792f58e9a8b2b12" id="r_a3a17f04ffdd915d4f792f58e9a8b2b12"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a17f04ffdd915d4f792f58e9a8b2b12">SX1276_IRQ_VALID_HEADER</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:ad1075afbe65634167541f18142a4d2b3" id="r_ad1075afbe65634167541f18142a4d2b3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1075afbe65634167541f18142a4d2b3">SX1276_IRQ_TX_DONE</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:af8d920eaafe6dfd6d8e46aa61d455947" id="r_af8d920eaafe6dfd6d8e46aa61d455947"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8d920eaafe6dfd6d8e46aa61d455947">SX1276_IRQ_CAD_DONE</a>&#160;&#160;&#160;0x04U</td></tr>
+<tr class="memitem:af76dc20d75b5566cd5cc5094834e3cfe" id="r_af76dc20d75b5566cd5cc5094834e3cfe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af76dc20d75b5566cd5cc5094834e3cfe">SX1276_IRQ_FHSS_CHANGE_CHANNEL</a>&#160;&#160;&#160;0x02U</td></tr>
+<tr class="memitem:a1beb9c0885a3db54399ede5a3086f3d3" id="r_a1beb9c0885a3db54399ede5a3086f3d3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1beb9c0885a3db54399ede5a3086f3d3">SX1276_IRQ_CAD_DETECTED</a>&#160;&#160;&#160;0x01U</td></tr>
+<tr class="memitem:a69a43bad95ed270e01ae419fc85e89e9" id="r_a69a43bad95ed270e01ae419fc85e89e9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69a43bad95ed270e01ae419fc85e89e9">SX1276_DIO0_MAP_RX_DONE</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a14c645e9d09a41c1a9c6bbcef51a63b1" id="r_a14c645e9d09a41c1a9c6bbcef51a63b1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14c645e9d09a41c1a9c6bbcef51a63b1">SX1276_DIO0_MAP_TX_DONE</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:a0828a20d45cfd500465d31294bcaf9a2" id="r_a0828a20d45cfd500465d31294bcaf9a2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0828a20d45cfd500465d31294bcaf9a2">SX1276_DIO0_MAP_CAD_DONE</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:ae8d2b7078a64c6348112163250912ece" id="r_ae8d2b7078a64c6348112163250912ece"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae8d2b7078a64c6348112163250912ece">SX1276_DIO1_MAP_RX_TIMEOUT</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a4124f604f1b8ba38bfa1fd23f5af6854" id="r_a4124f604f1b8ba38bfa1fd23f5af6854"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4124f604f1b8ba38bfa1fd23f5af6854">SX1276_DIO1_MAP_FHSS_CHANGE</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:a047bb16e3fca7c6a24d95d63720b576a" id="r_a047bb16e3fca7c6a24d95d63720b576a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a047bb16e3fca7c6a24d95d63720b576a">SX1276_DIO1_MAP_CAD_DETECTED</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a0983883292e24b867d9660172b81d07e" id="r_a0983883292e24b867d9660172b81d07e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0983883292e24b867d9660172b81d07e">SX1276_DIO0_MAP_FSK_PAYLOAD_READY</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a26582065b543a6887d63863bc676a4e4" id="r_a26582065b543a6887d63863bc676a4e4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a26582065b543a6887d63863bc676a4e4">SX1276_DIO0_MAP_FSK_PACKET_SENT</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a1f330206d9d648d29e1c712580fdf4ae" id="r_a1f330206d9d648d29e1c712580fdf4ae"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1f330206d9d648d29e1c712580fdf4ae">SX1276_PACKET_FORMAT_FIXED</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:aeebac48dd6523687a43e9ca4dcc6bd95" id="r_aeebac48dd6523687a43e9ca4dcc6bd95"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeebac48dd6523687a43e9ca4dcc6bd95">SX1276_PACKET_FORMAT_VARIABLE</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:a15adb7e5f8bb13e9b000982f9e4706a5" id="r_a15adb7e5f8bb13e9b000982f9e4706a5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a15adb7e5f8bb13e9b000982f9e4706a5">SX1276_PACKET_DC_FREE_NONE</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a5be3d293f84bffb3e37a41a7e353fc48" id="r_a5be3d293f84bffb3e37a41a7e353fc48"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5be3d293f84bffb3e37a41a7e353fc48">SX1276_PACKET_DC_FREE_WHITENING</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:aa537e1d77837ae967ca341d93a5ee8d7" id="r_aa537e1d77837ae967ca341d93a5ee8d7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa537e1d77837ae967ca341d93a5ee8d7">SX1276_PACKET_CRC_ON</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:a22af29fe46bc4aab35f5f278042cf057" id="r_a22af29fe46bc4aab35f5f278042cf057"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22af29fe46bc4aab35f5f278042cf057">SX1276_PACKET_CRC_OFF</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a60e76df2484b831d2654ee79488c8a17" id="r_a60e76df2484b831d2654ee79488c8a17"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a60e76df2484b831d2654ee79488c8a17">SX1276_PACKET_CRC_WHITENING_IBM</a>&#160;&#160;&#160;0x01U</td></tr>
+<tr class="memitem:a1781a771b7b8c3bff674ddfe21a4f60b" id="r_a1781a771b7b8c3bff674ddfe21a4f60b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1781a771b7b8c3bff674ddfe21a4f60b">SX1276_PACKET_CRC_WHITENING_CCITT</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a7c9edfcf5705ea8fb61c41374997c830" id="r_a7c9edfcf5705ea8fb61c41374997c830"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7c9edfcf5705ea8fb61c41374997c830">SX1276_PACKET_ADDR_FILTER_OFF</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a74365c1e7e26386385eb427a610d8a87" id="r_a74365c1e7e26386385eb427a610d8a87"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74365c1e7e26386385eb427a610d8a87">SX1276_PACKET_ADDR_FILTER_NODE</a>&#160;&#160;&#160;0x02U</td></tr>
+<tr class="memitem:a8a078c6225cdc9044690d76dea3fc9cd" id="r_a8a078c6225cdc9044690d76dea3fc9cd"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a078c6225cdc9044690d76dea3fc9cd">SX1276_PACKET_ADDR_FILTER_NODE_BC</a>&#160;&#160;&#160;0x04U</td></tr>
+<tr class="memitem:a7d27352f35a34f07e3663ce466b95dc4" id="r_a7d27352f35a34f07e3663ce466b95dc4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7d27352f35a34f07e3663ce466b95dc4">SX1276_SYNC_AUTO_RESTART_OFF</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:ae76d99a9fe9aef6b5eeb23c46df4da15" id="r_ae76d99a9fe9aef6b5eeb23c46df4da15"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae76d99a9fe9aef6b5eeb23c46df4da15">SX1276_SYNC_AUTO_RESTART_NO_PLL</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:ad024112f717b7e95f78a3f8b094c2768" id="r_ad024112f717b7e95f78a3f8b094c2768"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad024112f717b7e95f78a3f8b094c2768">SX1276_SYNC_AUTO_RESTART_PLL</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:a7735f51ca6ca107da5af6d3a9d6940fb" id="r_a7735f51ca6ca107da5af6d3a9d6940fb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7735f51ca6ca107da5af6d3a9d6940fb">SX1276_SYNC_PREAMBLE_POLARITY_AA</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:a7316be0c27ca5d44534679e55c97dbec" id="r_a7316be0c27ca5d44534679e55c97dbec"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7316be0c27ca5d44534679e55c97dbec">SX1276_SYNC_PREAMBLE_POLARITY_55</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a783adffad700bcd10cf539c4d2ae7f5c" id="r_a783adffad700bcd10cf539c4d2ae7f5c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a783adffad700bcd10cf539c4d2ae7f5c">SX1276_SYNC_ON</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:af854c1f4509bef2f5cac9f0a90fcb195" id="r_af854c1f4509bef2f5cac9f0a90fcb195"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af854c1f4509bef2f5cac9f0a90fcb195">SX1276_SYNC_OFF</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:abfb7f4f65ee0198e7420a35c8eff4a2f" id="r_abfb7f4f65ee0198e7420a35c8eff4a2f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfb7f4f65ee0198e7420a35c8eff4a2f">SX1276_SYNC_FIFOFILL_AUTO</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:ac9eefacdfe4b3b18a1d7173ae62af9d6" id="r_ac9eefacdfe4b3b18a1d7173ae62af9d6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9eefacdfe4b3b18a1d7173ae62af9d6">SX1276_SYNC_FIFOFILL_MANUAL</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:a42cf46935c3a61e88957d5900369f291" id="r_a42cf46935c3a61e88957d5900369f291"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42cf46935c3a61e88957d5900369f291">SX1276_PACKET_DATA_MODE_CONTINUOUS</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:af83a607a2dd53dc4ecdfb64d4726618a" id="r_af83a607a2dd53dc4ecdfb64d4726618a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af83a607a2dd53dc4ecdfb64d4726618a">SX1276_PACKET_DATA_MODE_PACKET</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:aa0bacbb9669989bfb087140d50d9e0a4" id="r_aa0bacbb9669989bfb087140d50d9e0a4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa0bacbb9669989bfb087140d50d9e0a4">SX1276_RXCONFIG_RESTART_RX_NO_PLL_LOCK</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:ad653ba3d4dce45ad5f42846d4c6bdc88" id="r_ad653ba3d4dce45ad5f42846d4c6bdc88"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad653ba3d4dce45ad5f42846d4c6bdc88">SX1276_RXCONFIG_AFC_AUTO_ON</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:ae3adc02fd891c2969815c3261351a17b" id="r_ae3adc02fd891c2969815c3261351a17b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3adc02fd891c2969815c3261351a17b">SX1276_RXCONFIG_AGC_AUTO_ON</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:ac6ca4807af0bc37bbbe5397f52577c9c" id="r_ac6ca4807af0bc37bbbe5397f52577c9c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6ca4807af0bc37bbbe5397f52577c9c">SX1276_RXCONFIG_TRIGGER_RSSI</a>&#160;&#160;&#160;0x00U</td></tr>
+<tr class="memitem:ada3cdbc95de9bc9645d0f634c4a9cb65" id="r_ada3cdbc95de9bc9645d0f634c4a9cb65"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada3cdbc95de9bc9645d0f634c4a9cb65">SX1276_FIFO_THRESH_TX_START_NOT_EMPTY</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:aef984862d0eb74b1dab00818592f7892" id="r_aef984862d0eb74b1dab00818592f7892"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef984862d0eb74b1dab00818592f7892">SX1276_IRQ1_MODE_READY</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:a0a0b9ce1f4c97655e575f5324d7e7962" id="r_a0a0b9ce1f4c97655e575f5324d7e7962"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a0b9ce1f4c97655e575f5324d7e7962">SX1276_IRQ1_RX_READY</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:aa53b00fcc9a1f05bef7c5d4e0685ca8f" id="r_aa53b00fcc9a1f05bef7c5d4e0685ca8f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa53b00fcc9a1f05bef7c5d4e0685ca8f">SX1276_IRQ1_TX_READY</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a572d40f70e2a3ba25c0afb01e04849aa" id="r_a572d40f70e2a3ba25c0afb01e04849aa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a572d40f70e2a3ba25c0afb01e04849aa">SX1276_IRQ1_PLL_LOCK</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:acdfcffc386fe53a487e08c8423902291" id="r_acdfcffc386fe53a487e08c8423902291"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acdfcffc386fe53a487e08c8423902291">SX1276_IRQ1_RSSI</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:a97cd7d3e3b843911af9031dbd119ae49" id="r_a97cd7d3e3b843911af9031dbd119ae49"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97cd7d3e3b843911af9031dbd119ae49">SX1276_IRQ1_TIMEOUT</a>&#160;&#160;&#160;0x04U</td></tr>
+<tr class="memitem:ab11f114686154c826270838ac5a88f27" id="r_ab11f114686154c826270838ac5a88f27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab11f114686154c826270838ac5a88f27">SX1276_IRQ1_PREAMBLE_DETECT</a>&#160;&#160;&#160;0x02U</td></tr>
+<tr class="memitem:af94816060c8befc1f637797dbfb51dbe" id="r_af94816060c8befc1f637797dbfb51dbe"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af94816060c8befc1f637797dbfb51dbe">SX1276_IRQ1_SYNC_ADDRESS_MATCH</a>&#160;&#160;&#160;0x01U</td></tr>
+<tr class="memitem:a4ec7040830898b7c00bcf25500fbb713" id="r_a4ec7040830898b7c00bcf25500fbb713"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ec7040830898b7c00bcf25500fbb713">SX1276_IRQ2_FIFO_FULL</a>&#160;&#160;&#160;0x80U</td></tr>
+<tr class="memitem:a4004f09b1f8f763fb68c049463c41586" id="r_a4004f09b1f8f763fb68c049463c41586"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4004f09b1f8f763fb68c049463c41586">SX1276_IRQ2_FIFO_NOT_EMPTY</a>&#160;&#160;&#160;0x40U</td></tr>
+<tr class="memitem:a2f5b354e63768689a80afe5e13c6b9e4" id="r_a2f5b354e63768689a80afe5e13c6b9e4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f5b354e63768689a80afe5e13c6b9e4">SX1276_IRQ2_FIFO_LEVEL</a>&#160;&#160;&#160;0x20U</td></tr>
+<tr class="memitem:a1d2addecb7b44b104bf4f46e4d9da330" id="r_a1d2addecb7b44b104bf4f46e4d9da330"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d2addecb7b44b104bf4f46e4d9da330">SX1276_IRQ2_FIFO_OVERRUN</a>&#160;&#160;&#160;0x10U</td></tr>
+<tr class="memitem:a370409aaed1bbacfcce09602fe335cf3" id="r_a370409aaed1bbacfcce09602fe335cf3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a370409aaed1bbacfcce09602fe335cf3">SX1276_IRQ2_PACKET_SENT</a>&#160;&#160;&#160;0x08U</td></tr>
+<tr class="memitem:ae4407249f5a739793b8d1924b154dca9" id="r_ae4407249f5a739793b8d1924b154dca9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae4407249f5a739793b8d1924b154dca9">SX1276_IRQ2_PAYLOAD_READY</a>&#160;&#160;&#160;0x04U</td></tr>
+<tr class="memitem:a85d8b23f782402fed711c2e7cfc0367f" id="r_a85d8b23f782402fed711c2e7cfc0367f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85d8b23f782402fed711c2e7cfc0367f">SX1276_IRQ2_CRC_OK</a>&#160;&#160;&#160;0x02U</td></tr>
+<tr class="memitem:a76fc20293b196f902aa7f2a79e8fc6c2" id="r_a76fc20293b196f902aa7f2a79e8fc6c2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76fc20293b196f902aa7f2a79e8fc6c2">SX1276_IRQ2_LOW_BAT</a>&#160;&#160;&#160;0x01U</td></tr>
+<tr class="memitem:a8ac67470658902111060be4dfa9c54e1" id="r_a8ac67470658902111060be4dfa9c54e1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ac67470658902111060be4dfa9c54e1">SX1276_PA_DAC_ENABLE_20DBM</a>&#160;&#160;&#160;0x87U</td></tr>
+<tr class="memitem:a69eb0f2f6b28017e91dc579552476676" id="r_a69eb0f2f6b28017e91dc579552476676"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69eb0f2f6b28017e91dc579552476676">SX1276_PA_DAC_DISABLE_17DBM</a>&#160;&#160;&#160;0x84U</td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Mapa rejestrów SX1276 i definicje bitów używane w bibliotece. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Dokumentacja definicji</h2>
+<a id="a0828a20d45cfd500465d31294bcaf9a2" name="a0828a20d45cfd500465d31294bcaf9a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0828a20d45cfd500465d31294bcaf9a2">&#9670;&#160;</a></span>SX1276_DIO0_MAP_CAD_DONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO0_MAP_CAD_DONE&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00111">111</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a26582065b543a6887d63863bc676a4e4" name="a26582065b543a6887d63863bc676a4e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26582065b543a6887d63863bc676a4e4">&#9670;&#160;</a></span>SX1276_DIO0_MAP_FSK_PACKET_SENT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO0_MAP_FSK_PACKET_SENT&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00119">119</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a0983883292e24b867d9660172b81d07e" name="a0983883292e24b867d9660172b81d07e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0983883292e24b867d9660172b81d07e">&#9670;&#160;</a></span>SX1276_DIO0_MAP_FSK_PAYLOAD_READY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO0_MAP_FSK_PAYLOAD_READY&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00118">118</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a69a43bad95ed270e01ae419fc85e89e9" name="a69a43bad95ed270e01ae419fc85e89e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69a43bad95ed270e01ae419fc85e89e9">&#9670;&#160;</a></span>SX1276_DIO0_MAP_RX_DONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO0_MAP_RX_DONE&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00109">109</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a14c645e9d09a41c1a9c6bbcef51a63b1" name="a14c645e9d09a41c1a9c6bbcef51a63b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14c645e9d09a41c1a9c6bbcef51a63b1">&#9670;&#160;</a></span>SX1276_DIO0_MAP_TX_DONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO0_MAP_TX_DONE&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00110">110</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a047bb16e3fca7c6a24d95d63720b576a" name="a047bb16e3fca7c6a24d95d63720b576a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a047bb16e3fca7c6a24d95d63720b576a">&#9670;&#160;</a></span>SX1276_DIO1_MAP_CAD_DETECTED</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO1_MAP_CAD_DETECTED&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00115">115</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a4124f604f1b8ba38bfa1fd23f5af6854" name="a4124f604f1b8ba38bfa1fd23f5af6854"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4124f604f1b8ba38bfa1fd23f5af6854">&#9670;&#160;</a></span>SX1276_DIO1_MAP_FHSS_CHANGE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO1_MAP_FHSS_CHANGE&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00114">114</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae8d2b7078a64c6348112163250912ece" name="ae8d2b7078a64c6348112163250912ece"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8d2b7078a64c6348112163250912ece">&#9670;&#160;</a></span>SX1276_DIO1_MAP_RX_TIMEOUT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_DIO1_MAP_RX_TIMEOUT&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00113">113</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ada3cdbc95de9bc9645d0f634c4a9cb65" name="ada3cdbc95de9bc9645d0f634c4a9cb65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada3cdbc95de9bc9645d0f634c4a9cb65">&#9670;&#160;</a></span>SX1276_FIFO_THRESH_TX_START_NOT_EMPTY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_FIFO_THRESH_TX_START_NOT_EMPTY&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00156">156</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aef984862d0eb74b1dab00818592f7892" name="aef984862d0eb74b1dab00818592f7892"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef984862d0eb74b1dab00818592f7892">&#9670;&#160;</a></span>SX1276_IRQ1_MODE_READY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_MODE_READY&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00159">159</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a572d40f70e2a3ba25c0afb01e04849aa" name="a572d40f70e2a3ba25c0afb01e04849aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a572d40f70e2a3ba25c0afb01e04849aa">&#9670;&#160;</a></span>SX1276_IRQ1_PLL_LOCK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_PLL_LOCK&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00162">162</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ab11f114686154c826270838ac5a88f27" name="ab11f114686154c826270838ac5a88f27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab11f114686154c826270838ac5a88f27">&#9670;&#160;</a></span>SX1276_IRQ1_PREAMBLE_DETECT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_PREAMBLE_DETECT&#160;&#160;&#160;0x02U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00165">165</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="acdfcffc386fe53a487e08c8423902291" name="acdfcffc386fe53a487e08c8423902291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdfcffc386fe53a487e08c8423902291">&#9670;&#160;</a></span>SX1276_IRQ1_RSSI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_RSSI&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00163">163</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a0a0b9ce1f4c97655e575f5324d7e7962" name="a0a0b9ce1f4c97655e575f5324d7e7962"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a0b9ce1f4c97655e575f5324d7e7962">&#9670;&#160;</a></span>SX1276_IRQ1_RX_READY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_RX_READY&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00160">160</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af94816060c8befc1f637797dbfb51dbe" name="af94816060c8befc1f637797dbfb51dbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af94816060c8befc1f637797dbfb51dbe">&#9670;&#160;</a></span>SX1276_IRQ1_SYNC_ADDRESS_MATCH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_SYNC_ADDRESS_MATCH&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00166">166</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a97cd7d3e3b843911af9031dbd119ae49" name="a97cd7d3e3b843911af9031dbd119ae49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97cd7d3e3b843911af9031dbd119ae49">&#9670;&#160;</a></span>SX1276_IRQ1_TIMEOUT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_TIMEOUT&#160;&#160;&#160;0x04U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00164">164</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa53b00fcc9a1f05bef7c5d4e0685ca8f" name="aa53b00fcc9a1f05bef7c5d4e0685ca8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa53b00fcc9a1f05bef7c5d4e0685ca8f">&#9670;&#160;</a></span>SX1276_IRQ1_TX_READY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ1_TX_READY&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00161">161</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a85d8b23f782402fed711c2e7cfc0367f" name="a85d8b23f782402fed711c2e7cfc0367f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85d8b23f782402fed711c2e7cfc0367f">&#9670;&#160;</a></span>SX1276_IRQ2_CRC_OK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_CRC_OK&#160;&#160;&#160;0x02U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00175">175</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a4ec7040830898b7c00bcf25500fbb713" name="a4ec7040830898b7c00bcf25500fbb713"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ec7040830898b7c00bcf25500fbb713">&#9670;&#160;</a></span>SX1276_IRQ2_FIFO_FULL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_FIFO_FULL&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00169">169</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a2f5b354e63768689a80afe5e13c6b9e4" name="a2f5b354e63768689a80afe5e13c6b9e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f5b354e63768689a80afe5e13c6b9e4">&#9670;&#160;</a></span>SX1276_IRQ2_FIFO_LEVEL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_FIFO_LEVEL&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00171">171</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a4004f09b1f8f763fb68c049463c41586" name="a4004f09b1f8f763fb68c049463c41586"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4004f09b1f8f763fb68c049463c41586">&#9670;&#160;</a></span>SX1276_IRQ2_FIFO_NOT_EMPTY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_FIFO_NOT_EMPTY&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00170">170</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a1d2addecb7b44b104bf4f46e4d9da330" name="a1d2addecb7b44b104bf4f46e4d9da330"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d2addecb7b44b104bf4f46e4d9da330">&#9670;&#160;</a></span>SX1276_IRQ2_FIFO_OVERRUN</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_FIFO_OVERRUN&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00172">172</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a76fc20293b196f902aa7f2a79e8fc6c2" name="a76fc20293b196f902aa7f2a79e8fc6c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76fc20293b196f902aa7f2a79e8fc6c2">&#9670;&#160;</a></span>SX1276_IRQ2_LOW_BAT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_LOW_BAT&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00176">176</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a370409aaed1bbacfcce09602fe335cf3" name="a370409aaed1bbacfcce09602fe335cf3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a370409aaed1bbacfcce09602fe335cf3">&#9670;&#160;</a></span>SX1276_IRQ2_PACKET_SENT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_PACKET_SENT&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00173">173</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae4407249f5a739793b8d1924b154dca9" name="ae4407249f5a739793b8d1924b154dca9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4407249f5a739793b8d1924b154dca9">&#9670;&#160;</a></span>SX1276_IRQ2_PAYLOAD_READY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ2_PAYLOAD_READY&#160;&#160;&#160;0x04U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00174">174</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a1beb9c0885a3db54399ede5a3086f3d3" name="a1beb9c0885a3db54399ede5a3086f3d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1beb9c0885a3db54399ede5a3086f3d3">&#9670;&#160;</a></span>SX1276_IRQ_CAD_DETECTED</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_CAD_DETECTED&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00106">106</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af8d920eaafe6dfd6d8e46aa61d455947" name="af8d920eaafe6dfd6d8e46aa61d455947"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8d920eaafe6dfd6d8e46aa61d455947">&#9670;&#160;</a></span>SX1276_IRQ_CAD_DONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_CAD_DONE&#160;&#160;&#160;0x04U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00104">104</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af76dc20d75b5566cd5cc5094834e3cfe" name="af76dc20d75b5566cd5cc5094834e3cfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af76dc20d75b5566cd5cc5094834e3cfe">&#9670;&#160;</a></span>SX1276_IRQ_FHSS_CHANGE_CHANNEL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_FHSS_CHANGE_CHANNEL&#160;&#160;&#160;0x02U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00105">105</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a572ac14260a1b0a23edb5707015c642b" name="a572ac14260a1b0a23edb5707015c642b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a572ac14260a1b0a23edb5707015c642b">&#9670;&#160;</a></span>SX1276_IRQ_PAYLOAD_CRC_ERROR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_PAYLOAD_CRC_ERROR&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00101">101</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa531fb351fd8dbf3df4f15e536eed586" name="aa531fb351fd8dbf3df4f15e536eed586"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa531fb351fd8dbf3df4f15e536eed586">&#9670;&#160;</a></span>SX1276_IRQ_RX_DONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_RX_DONE&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00100">100</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="afaaf43b29cf23fbc08b22a9b71b41e88" name="afaaf43b29cf23fbc08b22a9b71b41e88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaaf43b29cf23fbc08b22a9b71b41e88">&#9670;&#160;</a></span>SX1276_IRQ_RX_TIMEOUT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_RX_TIMEOUT&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00099">99</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ad1075afbe65634167541f18142a4d2b3" name="ad1075afbe65634167541f18142a4d2b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1075afbe65634167541f18142a4d2b3">&#9670;&#160;</a></span>SX1276_IRQ_TX_DONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_TX_DONE&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00103">103</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a3a17f04ffdd915d4f792f58e9a8b2b12" name="a3a17f04ffdd915d4f792f58e9a8b2b12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a17f04ffdd915d4f792f58e9a8b2b12">&#9670;&#160;</a></span>SX1276_IRQ_VALID_HEADER</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_IRQ_VALID_HEADER&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00102">102</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af3183d2c35027accbda82f62331a966f" name="af3183d2c35027accbda82f62331a966f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3183d2c35027accbda82f62331a966f">&#9670;&#160;</a></span>SX1276_MODE_CAD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_CAD&#160;&#160;&#160;0x07U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00096">96</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ac929e12ca0742494e6908f33e408f654" name="ac929e12ca0742494e6908f33e408f654"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac929e12ca0742494e6908f33e408f654">&#9670;&#160;</a></span>SX1276_MODE_FSRX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_FSRX&#160;&#160;&#160;0x04U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00093">93</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a368886c0c4b3d767c3fccba004da49bf" name="a368886c0c4b3d767c3fccba004da49bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a368886c0c4b3d767c3fccba004da49bf">&#9670;&#160;</a></span>SX1276_MODE_FSTX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_FSTX&#160;&#160;&#160;0x02U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00091">91</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a36047e7b4f10609d82979c4386baa859" name="a36047e7b4f10609d82979c4386baa859"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36047e7b4f10609d82979c4386baa859">&#9670;&#160;</a></span>SX1276_MODE_RXCONTINUOUS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_RXCONTINUOUS&#160;&#160;&#160;0x05U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00094">94</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a8ebd93ae1fe8ddccbf2a405603cc8978" name="a8ebd93ae1fe8ddccbf2a405603cc8978"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ebd93ae1fe8ddccbf2a405603cc8978">&#9670;&#160;</a></span>SX1276_MODE_RXSINGLE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_RXSINGLE&#160;&#160;&#160;0x06U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00095">95</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a8cc075ec415707fbc2c74f1799dac78c" name="a8cc075ec415707fbc2c74f1799dac78c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cc075ec415707fbc2c74f1799dac78c">&#9670;&#160;</a></span>SX1276_MODE_SLEEP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_SLEEP&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00089">89</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af495a1aa91eab42126b30925aca30e1e" name="af495a1aa91eab42126b30925aca30e1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af495a1aa91eab42126b30925aca30e1e">&#9670;&#160;</a></span>SX1276_MODE_STDBY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_STDBY&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00090">90</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a3d85c560f8c7fe6042a80d8054e52d5c" name="a3d85c560f8c7fe6042a80d8054e52d5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d85c560f8c7fe6042a80d8054e52d5c">&#9670;&#160;</a></span>SX1276_MODE_TX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_MODE_TX&#160;&#160;&#160;0x03U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00092">92</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a5176cb239995893222f579b808d57a1f" name="a5176cb239995893222f579b808d57a1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5176cb239995893222f579b808d57a1f">&#9670;&#160;</a></span>SX1276_OPMODE_ACCESS_SHARED_REG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_ACCESS_SHARED_REG&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00077">77</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a877686a01a0afdc90e16ad112ff04168" name="a877686a01a0afdc90e16ad112ff04168"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a877686a01a0afdc90e16ad112ff04168">&#9670;&#160;</a></span>SX1276_OPMODE_LONG_RANGE_MODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_LONG_RANGE_MODE&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00076">76</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a00d4b5d9923186dff9e21fea5958616a" name="a00d4b5d9923186dff9e21fea5958616a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00d4b5d9923186dff9e21fea5958616a">&#9670;&#160;</a></span>SX1276_OPMODE_LOW_FREQ_MODE_ON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_LOW_FREQ_MODE_ON&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00087">87</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a3dcea886a0397db135527bfd11d4a3da" name="a3dcea886a0397db135527bfd11d4a3da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3dcea886a0397db135527bfd11d4a3da">&#9670;&#160;</a></span>SX1276_OPMODE_MODE_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_MODE_MASK&#160;&#160;&#160;0x07U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00088">88</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ad97233e36a5e44debff4db8784a45800" name="ad97233e36a5e44debff4db8784a45800"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad97233e36a5e44debff4db8784a45800">&#9670;&#160;</a></span>SX1276_OPMODE_MODULATION_FSK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_MODULATION_FSK&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00079">79</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a459780c44cb366953c8e3eaf2b900d43" name="a459780c44cb366953c8e3eaf2b900d43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a459780c44cb366953c8e3eaf2b900d43">&#9670;&#160;</a></span>SX1276_OPMODE_MODULATION_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_MODULATION_MASK&#160;&#160;&#160;0x60U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00078">78</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae40ac781e0a7f992c1ca68520e1b8062" name="ae40ac781e0a7f992c1ca68520e1b8062"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae40ac781e0a7f992c1ca68520e1b8062">&#9670;&#160;</a></span>SX1276_OPMODE_MODULATION_OOK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_MODULATION_OOK&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00080">80</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a038242203df2c9f2c93163a1541bba16" name="a038242203df2c9f2c93163a1541bba16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a038242203df2c9f2c93163a1541bba16">&#9670;&#160;</a></span>SX1276_OPMODE_SHAPING_FSK_BT03</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_SHAPING_FSK_BT03&#160;&#160;&#160;0x18U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00085">85</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ab81c72570dca52a07e5cb062777643e0" name="ab81c72570dca52a07e5cb062777643e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab81c72570dca52a07e5cb062777643e0">&#9670;&#160;</a></span>SX1276_OPMODE_SHAPING_FSK_BT05</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_SHAPING_FSK_BT05&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00084">84</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ad8373207dd80c2a83a487a5a9dec7154" name="ad8373207dd80c2a83a487a5a9dec7154"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8373207dd80c2a83a487a5a9dec7154">&#9670;&#160;</a></span>SX1276_OPMODE_SHAPING_FSK_BT10</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_SHAPING_FSK_BT10&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00083">83</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a2af2a3265adb621fdcbf9c1222791dd6" name="a2af2a3265adb621fdcbf9c1222791dd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2af2a3265adb621fdcbf9c1222791dd6">&#9670;&#160;</a></span>SX1276_OPMODE_SHAPING_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_SHAPING_MASK&#160;&#160;&#160;0x18U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00081">81</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a992d75a7518a9f4f72c8c71ed4e510cc" name="a992d75a7518a9f4f72c8c71ed4e510cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a992d75a7518a9f4f72c8c71ed4e510cc">&#9670;&#160;</a></span>SX1276_OPMODE_SHAPING_NONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_SHAPING_NONE&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00082">82</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a72c45e027cda27250cde352a47bbd777" name="a72c45e027cda27250cde352a47bbd777"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72c45e027cda27250cde352a47bbd777">&#9670;&#160;</a></span>SX1276_OPMODE_SHAPING_OOK_FILTER</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_OPMODE_SHAPING_OOK_FILTER&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00086">86</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a69eb0f2f6b28017e91dc579552476676" name="a69eb0f2f6b28017e91dc579552476676"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69eb0f2f6b28017e91dc579552476676">&#9670;&#160;</a></span>SX1276_PA_DAC_DISABLE_17DBM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PA_DAC_DISABLE_17DBM&#160;&#160;&#160;0x84U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00180">180</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a8ac67470658902111060be4dfa9c54e1" name="a8ac67470658902111060be4dfa9c54e1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ac67470658902111060be4dfa9c54e1">&#9670;&#160;</a></span>SX1276_PA_DAC_ENABLE_20DBM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PA_DAC_ENABLE_20DBM&#160;&#160;&#160;0x87U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00179">179</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a74365c1e7e26386385eb427a610d8a87" name="a74365c1e7e26386385eb427a610d8a87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74365c1e7e26386385eb427a610d8a87">&#9670;&#160;</a></span>SX1276_PACKET_ADDR_FILTER_NODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_ADDR_FILTER_NODE&#160;&#160;&#160;0x02U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00131">131</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a8a078c6225cdc9044690d76dea3fc9cd" name="a8a078c6225cdc9044690d76dea3fc9cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a078c6225cdc9044690d76dea3fc9cd">&#9670;&#160;</a></span>SX1276_PACKET_ADDR_FILTER_NODE_BC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_ADDR_FILTER_NODE_BC&#160;&#160;&#160;0x04U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00132">132</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a7c9edfcf5705ea8fb61c41374997c830" name="a7c9edfcf5705ea8fb61c41374997c830"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c9edfcf5705ea8fb61c41374997c830">&#9670;&#160;</a></span>SX1276_PACKET_ADDR_FILTER_OFF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_ADDR_FILTER_OFF&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00130">130</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a22af29fe46bc4aab35f5f278042cf057" name="a22af29fe46bc4aab35f5f278042cf057"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22af29fe46bc4aab35f5f278042cf057">&#9670;&#160;</a></span>SX1276_PACKET_CRC_OFF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_CRC_OFF&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00127">127</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa537e1d77837ae967ca341d93a5ee8d7" name="aa537e1d77837ae967ca341d93a5ee8d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa537e1d77837ae967ca341d93a5ee8d7">&#9670;&#160;</a></span>SX1276_PACKET_CRC_ON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_CRC_ON&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00126">126</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a1781a771b7b8c3bff674ddfe21a4f60b" name="a1781a771b7b8c3bff674ddfe21a4f60b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1781a771b7b8c3bff674ddfe21a4f60b">&#9670;&#160;</a></span>SX1276_PACKET_CRC_WHITENING_CCITT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_CRC_WHITENING_CCITT&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00129">129</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a60e76df2484b831d2654ee79488c8a17" name="a60e76df2484b831d2654ee79488c8a17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60e76df2484b831d2654ee79488c8a17">&#9670;&#160;</a></span>SX1276_PACKET_CRC_WHITENING_IBM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_CRC_WHITENING_IBM&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00128">128</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a42cf46935c3a61e88957d5900369f291" name="a42cf46935c3a61e88957d5900369f291"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42cf46935c3a61e88957d5900369f291">&#9670;&#160;</a></span>SX1276_PACKET_DATA_MODE_CONTINUOUS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_DATA_MODE_CONTINUOUS&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00146">146</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af83a607a2dd53dc4ecdfb64d4726618a" name="af83a607a2dd53dc4ecdfb64d4726618a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af83a607a2dd53dc4ecdfb64d4726618a">&#9670;&#160;</a></span>SX1276_PACKET_DATA_MODE_PACKET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_DATA_MODE_PACKET&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00147">147</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a15adb7e5f8bb13e9b000982f9e4706a5" name="a15adb7e5f8bb13e9b000982f9e4706a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15adb7e5f8bb13e9b000982f9e4706a5">&#9670;&#160;</a></span>SX1276_PACKET_DC_FREE_NONE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_DC_FREE_NONE&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00124">124</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a5be3d293f84bffb3e37a41a7e353fc48" name="a5be3d293f84bffb3e37a41a7e353fc48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5be3d293f84bffb3e37a41a7e353fc48">&#9670;&#160;</a></span>SX1276_PACKET_DC_FREE_WHITENING</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_DC_FREE_WHITENING&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00125">125</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a1f330206d9d648d29e1c712580fdf4ae" name="a1f330206d9d648d29e1c712580fdf4ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f330206d9d648d29e1c712580fdf4ae">&#9670;&#160;</a></span>SX1276_PACKET_FORMAT_FIXED</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_FORMAT_FIXED&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00122">122</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aeebac48dd6523687a43e9ca4dcc6bd95" name="aeebac48dd6523687a43e9ca4dcc6bd95"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeebac48dd6523687a43e9ca4dcc6bd95">&#9670;&#160;</a></span>SX1276_PACKET_FORMAT_VARIABLE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_PACKET_FORMAT_VARIABLE&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00123">123</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a2cd0ee3d05272f40793e5b4ad3d568b1" name="a2cd0ee3d05272f40793e5b4ad3d568b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cd0ee3d05272f40793e5b4ad3d568b1">&#9670;&#160;</a></span>SX1276_REG_AFC_BW</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_AFC_BW&#160;&#160;&#160;0x13U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00025">25</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aeb3e0c01ece23c32ca19f2dfe1b9790e" name="aeb3e0c01ece23c32ca19f2dfe1b9790e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb3e0c01ece23c32ca19f2dfe1b9790e">&#9670;&#160;</a></span>SX1276_REG_BITRATE_LSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_BITRATE_LSB&#160;&#160;&#160;0x03U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00013">13</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a09f8d24c65861b3910c85ee3c5a68fe1" name="a09f8d24c65861b3910c85ee3c5a68fe1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09f8d24c65861b3910c85ee3c5a68fe1">&#9670;&#160;</a></span>SX1276_REG_BITRATE_MSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_BITRATE_MSB&#160;&#160;&#160;0x02U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00012">12</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a5332ef909cb280e7d7aa54e520446537" name="a5332ef909cb280e7d7aa54e520446537"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5332ef909cb280e7d7aa54e520446537">&#9670;&#160;</a></span>SX1276_REG_BROADCAST_ADDRESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_BROADCAST_ADDRESS&#160;&#160;&#160;0x34U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00054">54</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af757ec5ea0c01620684a3c6be380c5ba" name="af757ec5ea0c01620684a3c6be380c5ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af757ec5ea0c01620684a3c6be380c5ba">&#9670;&#160;</a></span>SX1276_REG_DETECTION_OPTIMIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_DETECTION_OPTIMIZE&#160;&#160;&#160;0x31U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00056">56</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="acf3b381154e86da44db144a331e3d6b0" name="acf3b381154e86da44db144a331e3d6b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf3b381154e86da44db144a331e3d6b0">&#9670;&#160;</a></span>SX1276_REG_DETECTION_THRESHOLD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_DETECTION_THRESHOLD&#160;&#160;&#160;0x37U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00058">58</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa6b737cd6f47c60c55b3a3f00bbba7c9" name="aa6b737cd6f47c60c55b3a3f00bbba7c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6b737cd6f47c60c55b3a3f00bbba7c9">&#9670;&#160;</a></span>SX1276_REG_DIO_MAPPING_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_DIO_MAPPING_1&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00063">63</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a728f1e3266c13ff6db2c4a4b9e56f1e3" name="a728f1e3266c13ff6db2c4a4b9e56f1e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a728f1e3266c13ff6db2c4a4b9e56f1e3">&#9670;&#160;</a></span>SX1276_REG_DIO_MAPPING_2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_DIO_MAPPING_2&#160;&#160;&#160;0x41U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00064">64</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a514331635527b55009f5fbe631799d34" name="a514331635527b55009f5fbe631799d34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a514331635527b55009f5fbe631799d34">&#9670;&#160;</a></span>SX1276_REG_FDEV_LSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FDEV_LSB&#160;&#160;&#160;0x05U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00015">15</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a4e592bf3ea2ef3f89fb29ebfbbda29fd" name="a4e592bf3ea2ef3f89fb29ebfbbda29fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e592bf3ea2ef3f89fb29ebfbbda29fd">&#9670;&#160;</a></span>SX1276_REG_FDEV_MSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FDEV_MSB&#160;&#160;&#160;0x04U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00014">14</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a197daf1173f5058b442df27639ff5dc2" name="a197daf1173f5058b442df27639ff5dc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a197daf1173f5058b442df27639ff5dc2">&#9670;&#160;</a></span>SX1276_REG_FIFO</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FIFO&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00010">10</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a5bd9596ecd31541aa53cc9670a640017" name="a5bd9596ecd31541aa53cc9670a640017"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bd9596ecd31541aa53cc9670a640017">&#9670;&#160;</a></span>SX1276_REG_FIFO_ADDR_PTR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FIFO_ADDR_PTR&#160;&#160;&#160;0x0DU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00029">29</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ac371d2ff579a340177fd004b8647cdc0" name="ac371d2ff579a340177fd004b8647cdc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac371d2ff579a340177fd004b8647cdc0">&#9670;&#160;</a></span>SX1276_REG_FIFO_RX_BASE_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FIFO_RX_BASE_ADDR&#160;&#160;&#160;0x0FU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00031">31</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a380c4b9415d3a70e9ff1eff9091835e4" name="a380c4b9415d3a70e9ff1eff9091835e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a380c4b9415d3a70e9ff1eff9091835e4">&#9670;&#160;</a></span>SX1276_REG_FIFO_RX_CURRENT_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FIFO_RX_CURRENT_ADDR&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00032">32</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aca5b4090d6524f460b0ddf691dcbc632" name="aca5b4090d6524f460b0ddf691dcbc632"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca5b4090d6524f460b0ddf691dcbc632">&#9670;&#160;</a></span>SX1276_REG_FIFO_THRESH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FIFO_THRESH&#160;&#160;&#160;0x35U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00055">55</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a19aca47fa2915b5fb1cb382e3288e14a" name="a19aca47fa2915b5fb1cb382e3288e14a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19aca47fa2915b5fb1cb382e3288e14a">&#9670;&#160;</a></span>SX1276_REG_FIFO_TX_BASE_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FIFO_TX_BASE_ADDR&#160;&#160;&#160;0x0EU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00030">30</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a87e2dae1189c733261c5187812de0105" name="a87e2dae1189c733261c5187812de0105"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87e2dae1189c733261c5187812de0105">&#9670;&#160;</a></span>SX1276_REG_FRF_LSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FRF_LSB&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00018">18</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a10dbc8577c9c208e5578e9536452c873" name="a10dbc8577c9c208e5578e9536452c873"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10dbc8577c9c208e5578e9536452c873">&#9670;&#160;</a></span>SX1276_REG_FRF_MID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FRF_MID&#160;&#160;&#160;0x07U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00017">17</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ab0a9d78cc4b75af2dc3269d2402be6ad" name="ab0a9d78cc4b75af2dc3269d2402be6ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0a9d78cc4b75af2dc3269d2402be6ad">&#9670;&#160;</a></span>SX1276_REG_FRF_MSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_FRF_MSB&#160;&#160;&#160;0x06U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00016">16</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae5281fd20c7b872762cdc90d8e709788" name="ae5281fd20c7b872762cdc90d8e709788"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5281fd20c7b872762cdc90d8e709788">&#9670;&#160;</a></span>SX1276_REG_INVERT_IQ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_INVERT_IQ&#160;&#160;&#160;0x33U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00057">57</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a28313439438c3700106b9b0c04f1524c" name="a28313439438c3700106b9b0c04f1524c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28313439438c3700106b9b0c04f1524c">&#9670;&#160;</a></span>SX1276_REG_INVERT_IQ2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_INVERT_IQ2&#160;&#160;&#160;0x3BU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00062">62</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a6ddf0378bad2ab21ffae2d1c7e3828f0" name="a6ddf0378bad2ab21ffae2d1c7e3828f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ddf0378bad2ab21ffae2d1c7e3828f0">&#9670;&#160;</a></span>SX1276_REG_IRQ_FLAGS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_IRQ_FLAGS&#160;&#160;&#160;0x12U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00034">34</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af2e7ff9d4fe9c5e69195570daed57892" name="af2e7ff9d4fe9c5e69195570daed57892"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2e7ff9d4fe9c5e69195570daed57892">&#9670;&#160;</a></span>SX1276_REG_IRQ_FLAGS_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_IRQ_FLAGS_1&#160;&#160;&#160;0x3EU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00060">60</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ace4d246e0fdf8b218a04a16100f2f42f" name="ace4d246e0fdf8b218a04a16100f2f42f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace4d246e0fdf8b218a04a16100f2f42f">&#9670;&#160;</a></span>SX1276_REG_IRQ_FLAGS_2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_IRQ_FLAGS_2&#160;&#160;&#160;0x3FU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00061">61</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa955ad200a53923f9c785c51f4a81d00" name="aa955ad200a53923f9c785c51f4a81d00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa955ad200a53923f9c785c51f4a81d00">&#9670;&#160;</a></span>SX1276_REG_IRQ_FLAGS_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_IRQ_FLAGS_MASK&#160;&#160;&#160;0x11U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00033">33</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a728679957d90c599061990dc03033315" name="a728679957d90c599061990dc03033315"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a728679957d90c599061990dc03033315">&#9670;&#160;</a></span>SX1276_REG_LNA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_LNA&#160;&#160;&#160;0x0CU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00020">20</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a64940ab11fa01837f964631e180f9104" name="a64940ab11fa01837f964631e180f9104"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64940ab11fa01837f964631e180f9104">&#9670;&#160;</a></span>SX1276_REG_MODEM_CONFIG_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_MODEM_CONFIG_1&#160;&#160;&#160;0x1DU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00039">39</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a17421691cc61dadd5d6fdc6f8acab9de" name="a17421691cc61dadd5d6fdc6f8acab9de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17421691cc61dadd5d6fdc6f8acab9de">&#9670;&#160;</a></span>SX1276_REG_MODEM_CONFIG_2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_MODEM_CONFIG_2&#160;&#160;&#160;0x1EU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00040">40</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae2baad239b355bd736d3476eb4f0d803" name="ae2baad239b355bd736d3476eb4f0d803"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2baad239b355bd736d3476eb4f0d803">&#9670;&#160;</a></span>SX1276_REG_MODEM_CONFIG_3</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_MODEM_CONFIG_3&#160;&#160;&#160;0x26U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00049">49</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a2902a72404916bf9c9165d261759fa1a" name="a2902a72404916bf9c9165d261759fa1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2902a72404916bf9c9165d261759fa1a">&#9670;&#160;</a></span>SX1276_REG_NODE_ADDRESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_NODE_ADDRESS&#160;&#160;&#160;0x33U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00053">53</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ac82856dad04b9d26d7260540144ac48d" name="ac82856dad04b9d26d7260540144ac48d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac82856dad04b9d26d7260540144ac48d">&#9670;&#160;</a></span>SX1276_REG_OOK_AVG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_OOK_AVG&#160;&#160;&#160;0x16U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00028">28</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a6e7163ee29d52edb7288724572e23ca1" name="a6e7163ee29d52edb7288724572e23ca1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e7163ee29d52edb7288724572e23ca1">&#9670;&#160;</a></span>SX1276_REG_OOK_FIX</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_OOK_FIX&#160;&#160;&#160;0x15U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00027">27</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a03b66bcc5c36ea36a7b9c2badc1ae824" name="a03b66bcc5c36ea36a7b9c2badc1ae824"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03b66bcc5c36ea36a7b9c2badc1ae824">&#9670;&#160;</a></span>SX1276_REG_OOK_PEAK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_OOK_PEAK&#160;&#160;&#160;0x14U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00026">26</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a69c0f732512b573a09dfe43bd30c66a6" name="a69c0f732512b573a09dfe43bd30c66a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69c0f732512b573a09dfe43bd30c66a6">&#9670;&#160;</a></span>SX1276_REG_OP_MODE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_OP_MODE&#160;&#160;&#160;0x01U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00011">11</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a34c16f8ebdc6f416cb37e92e7f9a6dd0" name="a34c16f8ebdc6f416cb37e92e7f9a6dd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34c16f8ebdc6f416cb37e92e7f9a6dd0">&#9670;&#160;</a></span>SX1276_REG_PA_CONFIG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PA_CONFIG&#160;&#160;&#160;0x09U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00019">19</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a8177b74124aa491c1a1eb8981c7999a3" name="a8177b74124aa491c1a1eb8981c7999a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8177b74124aa491c1a1eb8981c7999a3">&#9670;&#160;</a></span>SX1276_REG_PA_DAC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PA_DAC&#160;&#160;&#160;0x4DU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00066">66</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a18591134b18fcead9d52d18f0fd71a87" name="a18591134b18fcead9d52d18f0fd71a87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a18591134b18fcead9d52d18f0fd71a87">&#9670;&#160;</a></span>SX1276_REG_PACKET_CONFIG_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PACKET_CONFIG_1&#160;&#160;&#160;0x30U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00050">50</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a4b78315f77e35ac9bf0bc67e6bd5ea28" name="a4b78315f77e35ac9bf0bc67e6bd5ea28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b78315f77e35ac9bf0bc67e6bd5ea28">&#9670;&#160;</a></span>SX1276_REG_PACKET_CONFIG_2</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PACKET_CONFIG_2&#160;&#160;&#160;0x31U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00051">51</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae79732e3dc6e692772b67cc7f6d84e74" name="ae79732e3dc6e692772b67cc7f6d84e74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae79732e3dc6e692772b67cc7f6d84e74">&#9670;&#160;</a></span>SX1276_REG_PAYLOAD_LENGTH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PAYLOAD_LENGTH&#160;&#160;&#160;0x22U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00044">44</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a154a07d4ba364dc3731ea64797a7d6e5" name="a154a07d4ba364dc3731ea64797a7d6e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a154a07d4ba364dc3731ea64797a7d6e5">&#9670;&#160;</a></span>SX1276_REG_PAYLOAD_LENGTH_FSK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PAYLOAD_LENGTH_FSK&#160;&#160;&#160;0x32U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00052">52</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a77f951cd01aeed0d43ea715fd55fdfbd" name="a77f951cd01aeed0d43ea715fd55fdfbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77f951cd01aeed0d43ea715fd55fdfbd">&#9670;&#160;</a></span>SX1276_REG_PKT_RSSI_VALUE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PKT_RSSI_VALUE&#160;&#160;&#160;0x1AU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00037">37</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ab9178f72a1e5ca435104a74c8c0166b7" name="ab9178f72a1e5ca435104a74c8c0166b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9178f72a1e5ca435104a74c8c0166b7">&#9670;&#160;</a></span>SX1276_REG_PKT_SNR_VALUE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PKT_SNR_VALUE&#160;&#160;&#160;0x19U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00036">36</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a5dcc0e802d590db68abb629efbd16e1d" name="a5dcc0e802d590db68abb629efbd16e1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dcc0e802d590db68abb629efbd16e1d">&#9670;&#160;</a></span>SX1276_REG_PREAMBLE_DETECT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PREAMBLE_DETECT&#160;&#160;&#160;0x1FU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00038">38</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a99c76515a1bda1b9cd38d5df6e1ab481" name="a99c76515a1bda1b9cd38d5df6e1ab481"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99c76515a1bda1b9cd38d5df6e1ab481">&#9670;&#160;</a></span>SX1276_REG_PREAMBLE_LSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PREAMBLE_LSB&#160;&#160;&#160;0x21U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00043">43</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="afb6ef591e5c0dd9b47c88782ba14554d" name="afb6ef591e5c0dd9b47c88782ba14554d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb6ef591e5c0dd9b47c88782ba14554d">&#9670;&#160;</a></span>SX1276_REG_PREAMBLE_LSB_FSK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PREAMBLE_LSB_FSK&#160;&#160;&#160;0x26U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00046">46</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a762dcf817391c74a6a7f7c1bed4da3bb" name="a762dcf817391c74a6a7f7c1bed4da3bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a762dcf817391c74a6a7f7c1bed4da3bb">&#9670;&#160;</a></span>SX1276_REG_PREAMBLE_MSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PREAMBLE_MSB&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00042">42</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a6f07ab86f4ea434b72b6645474bbab18" name="a6f07ab86f4ea434b72b6645474bbab18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f07ab86f4ea434b72b6645474bbab18">&#9670;&#160;</a></span>SX1276_REG_PREAMBLE_MSB_FSK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_PREAMBLE_MSB_FSK&#160;&#160;&#160;0x25U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00045">45</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ac24dd517d581b1c0595bf5d56ac146f6" name="ac24dd517d581b1c0595bf5d56ac146f6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac24dd517d581b1c0595bf5d56ac146f6">&#9670;&#160;</a></span>SX1276_REG_RSSI_CONFIG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_RSSI_CONFIG&#160;&#160;&#160;0x0EU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00022">22</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ab6a9a8408e7a5bfa042558ec07250b46" name="ab6a9a8408e7a5bfa042558ec07250b46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6a9a8408e7a5bfa042558ec07250b46">&#9670;&#160;</a></span>SX1276_REG_RSSI_VALUE_FSK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_RSSI_VALUE_FSK&#160;&#160;&#160;0x11U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00023">23</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a2e07891c3bf6661af5d5f22649a10781" name="a2e07891c3bf6661af5d5f22649a10781"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e07891c3bf6661af5d5f22649a10781">&#9670;&#160;</a></span>SX1276_REG_RX_BW</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_RX_BW&#160;&#160;&#160;0x12U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00024">24</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa8afbbd417b764665465507474a8dd6c" name="aa8afbbd417b764665465507474a8dd6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8afbbd417b764665465507474a8dd6c">&#9670;&#160;</a></span>SX1276_REG_RX_CONFIG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_RX_CONFIG&#160;&#160;&#160;0x0DU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00021">21</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ab016a04625461bc5cdedcd615239f1bf" name="ab016a04625461bc5cdedcd615239f1bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab016a04625461bc5cdedcd615239f1bf">&#9670;&#160;</a></span>SX1276_REG_RX_NB_BYTES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_RX_NB_BYTES&#160;&#160;&#160;0x13U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00035">35</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a5f324f0c491c57c3426b483142697714" name="a5f324f0c491c57c3426b483142697714"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f324f0c491c57c3426b483142697714">&#9670;&#160;</a></span>SX1276_REG_SYMB_TIMEOUT_LSB</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_SYMB_TIMEOUT_LSB&#160;&#160;&#160;0x1FU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00041">41</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ad259467013560a7a240386f601faeabe" name="ad259467013560a7a240386f601faeabe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad259467013560a7a240386f601faeabe">&#9670;&#160;</a></span>SX1276_REG_SYNC_CONFIG</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_SYNC_CONFIG&#160;&#160;&#160;0x27U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00047">47</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a166ac4acac1667e626be8221b52110f5" name="a166ac4acac1667e626be8221b52110f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a166ac4acac1667e626be8221b52110f5">&#9670;&#160;</a></span>SX1276_REG_SYNC_VALUE_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_SYNC_VALUE_1&#160;&#160;&#160;0x28U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00048">48</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a7d3724e50f816db0efb6a91d30a8960f" name="a7d3724e50f816db0efb6a91d30a8960f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d3724e50f816db0efb6a91d30a8960f">&#9670;&#160;</a></span>SX1276_REG_SYNC_WORD</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_SYNC_WORD&#160;&#160;&#160;0x39U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00059">59</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a99a158df582a50d6bb2dcb330836da75" name="a99a158df582a50d6bb2dcb330836da75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99a158df582a50d6bb2dcb330836da75">&#9670;&#160;</a></span>SX1276_REG_VERSION</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_REG_VERSION&#160;&#160;&#160;0x42U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00065">65</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ad653ba3d4dce45ad5f42846d4c6bdc88" name="ad653ba3d4dce45ad5f42846d4c6bdc88"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad653ba3d4dce45ad5f42846d4c6bdc88">&#9670;&#160;</a></span>SX1276_RXCONFIG_AFC_AUTO_ON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_RXCONFIG_AFC_AUTO_ON&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00151">151</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae3adc02fd891c2969815c3261351a17b" name="ae3adc02fd891c2969815c3261351a17b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3adc02fd891c2969815c3261351a17b">&#9670;&#160;</a></span>SX1276_RXCONFIG_AGC_AUTO_ON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_RXCONFIG_AGC_AUTO_ON&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00152">152</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="aa0bacbb9669989bfb087140d50d9e0a4" name="aa0bacbb9669989bfb087140d50d9e0a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0bacbb9669989bfb087140d50d9e0a4">&#9670;&#160;</a></span>SX1276_RXCONFIG_RESTART_RX_NO_PLL_LOCK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_RXCONFIG_RESTART_RX_NO_PLL_LOCK&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00150">150</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ac6ca4807af0bc37bbbe5397f52577c9c" name="ac6ca4807af0bc37bbbe5397f52577c9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6ca4807af0bc37bbbe5397f52577c9c">&#9670;&#160;</a></span>SX1276_RXCONFIG_TRIGGER_RSSI</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_RXCONFIG_TRIGGER_RSSI&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00153">153</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af79c43036a1a3a6678bee3007c5a4e54" name="af79c43036a1a3a6678bee3007c5a4e54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af79c43036a1a3a6678bee3007c5a4e54">&#9670;&#160;</a></span>SX1276_SPI_READ_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SPI_READ_MASK&#160;&#160;&#160;0x7FU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00070">70</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a220c509d71239314bf628ee5d813ab24" name="a220c509d71239314bf628ee5d813ab24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a220c509d71239314bf628ee5d813ab24">&#9670;&#160;</a></span>SX1276_SPI_WRITE_MASK</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SPI_WRITE_MASK&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00069">69</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ae76d99a9fe9aef6b5eeb23c46df4da15" name="ae76d99a9fe9aef6b5eeb23c46df4da15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae76d99a9fe9aef6b5eeb23c46df4da15">&#9670;&#160;</a></span>SX1276_SYNC_AUTO_RESTART_NO_PLL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_AUTO_RESTART_NO_PLL&#160;&#160;&#160;0x40U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00136">136</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a7d27352f35a34f07e3663ce466b95dc4" name="a7d27352f35a34f07e3663ce466b95dc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d27352f35a34f07e3663ce466b95dc4">&#9670;&#160;</a></span>SX1276_SYNC_AUTO_RESTART_OFF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_AUTO_RESTART_OFF&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00135">135</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ad024112f717b7e95f78a3f8b094c2768" name="ad024112f717b7e95f78a3f8b094c2768"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad024112f717b7e95f78a3f8b094c2768">&#9670;&#160;</a></span>SX1276_SYNC_AUTO_RESTART_PLL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_AUTO_RESTART_PLL&#160;&#160;&#160;0x80U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00137">137</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="abfb7f4f65ee0198e7420a35c8eff4a2f" name="abfb7f4f65ee0198e7420a35c8eff4a2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfb7f4f65ee0198e7420a35c8eff4a2f">&#9670;&#160;</a></span>SX1276_SYNC_FIFOFILL_AUTO</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_FIFOFILL_AUTO&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00142">142</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="ac9eefacdfe4b3b18a1d7173ae62af9d6" name="ac9eefacdfe4b3b18a1d7173ae62af9d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac9eefacdfe4b3b18a1d7173ae62af9d6">&#9670;&#160;</a></span>SX1276_SYNC_FIFOFILL_MANUAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_FIFOFILL_MANUAL&#160;&#160;&#160;0x08U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00143">143</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="af854c1f4509bef2f5cac9f0a90fcb195" name="af854c1f4509bef2f5cac9f0a90fcb195"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af854c1f4509bef2f5cac9f0a90fcb195">&#9670;&#160;</a></span>SX1276_SYNC_OFF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_OFF&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00141">141</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a783adffad700bcd10cf539c4d2ae7f5c" name="a783adffad700bcd10cf539c4d2ae7f5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a783adffad700bcd10cf539c4d2ae7f5c">&#9670;&#160;</a></span>SX1276_SYNC_ON</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_ON&#160;&#160;&#160;0x10U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00140">140</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a7316be0c27ca5d44534679e55c97dbec" name="a7316be0c27ca5d44534679e55c97dbec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7316be0c27ca5d44534679e55c97dbec">&#9670;&#160;</a></span>SX1276_SYNC_PREAMBLE_POLARITY_55</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_PREAMBLE_POLARITY_55&#160;&#160;&#160;0x20U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00139">139</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a7735f51ca6ca107da5af6d3a9d6940fb" name="a7735f51ca6ca107da5af6d3a9d6940fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7735f51ca6ca107da5af6d3a9d6940fb">&#9670;&#160;</a></span>SX1276_SYNC_PREAMBLE_POLARITY_AA</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_SYNC_PREAMBLE_POLARITY_AA&#160;&#160;&#160;0x00U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00138">138</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+<a id="a8b4b6f68f343a1804ddaa84aa5397ff7" name="a8b4b6f68f343a1804ddaa84aa5397ff7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b4b6f68f343a1804ddaa84aa5397ff7">&#9670;&#160;</a></span>SX1276_VERSION_ID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SX1276_VERSION_ID&#160;&#160;&#160;0x12U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276__regs_8h_source.html#l00073">73</a> pliku <a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_a2e8606bee7d2eaf4a9e334d73381ef3.html">radio_lib</a></li><li class="navelem"><b>common</b></li><li class="navelem"><b>sx1276</b></li><li class="navelem"><a href="radio__sx1276__regs_8h.html">radio_sx1276_regs.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

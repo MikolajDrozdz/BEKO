@@ -1,0 +1,1004 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+lib/modulations/fsk/radio\+\_\+fsk.c}
+\hypertarget{radio__fsk_8c}{}\label{radio__fsk_8c}\index{Core/App/radio\_lib/modulations/fsk/radio\_fsk.c@{Core/App/radio\_lib/modulations/fsk/radio\_fsk.c}}
+
+
+Backend modulacji FSK/\+GFSK/\+MSK/\+GMSK dla SX1276.  
+
+
+{\ttfamily \#include "{}radio\+\_\+fsk.\+h"{}}\newline
+{\ttfamily \#include "{}app\+\_\+delay.\+h"{}}\newline
+{\ttfamily \#include "{}main.\+h"{}}\newline
+{\ttfamily \#include "{}../../common/sx1276/radio\+\_\+sx1276.\+h"{}}\newline
+{\ttfamily \#include "{}../../common/sx1276/radio\+\_\+sx1276\+\_\+regs.\+h"{}}\newline
+{\ttfamily \#include "{}../lora/radio\+\_\+lora.\+h"{}}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structradio__fsk__context__t}{radio\+\_\+fsk\+\_\+context\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_a87f59be1a8134c26c9fae52c4a3df3bf}{RADIO\+\_\+\+FSK\+\_\+\+FIFO\+\_\+\+THRESH\+\_\+\+LEVEL}}~31U
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_a596e25c3b63aedc3d2739beca49fc488}{RADIO\+\_\+\+FSK\+\_\+\+RESET\+\_\+\+LOW\+\_\+\+DELAY\+\_\+\+MS}}~2U
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_aa4bf2da08d26adbbeb736fd09917959e}{RADIO\+\_\+\+FSK\+\_\+\+RESET\+\_\+\+HIGH\+\_\+\+DELAY\+\_\+\+MS}}~10U
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_ab9f0aab292c58ed0b2010939f943290a}{RADIO\+\_\+\+FSK\+\_\+\+NODE\+\_\+\+ADDRESS\+\_\+\+DEFAULT}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_a812e3fb1c3187062c8e6e8a55a2b1e25}{RADIO\+\_\+\+FSK\+\_\+\+BROADCAST\+\_\+\+ADDRESS}}~0x\+FFU
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_ad09a1d3776578c068cb6d85c4b05bcff}{RADIO\+\_\+\+FSK\+\_\+\+TX\+\_\+\+GUARD\+\_\+\+MS}}~40\+UL
+\item 
+\#define \mbox{\hyperlink{radio__fsk_8c_ad2009060485da03f4e167b83d0f35fd9}{RADIO\+\_\+\+FSK\+\_\+\+FIFO\+\_\+\+MAX\+\_\+\+BYTES}}~64U
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__fsk_8c_a2ab4223aae96dbd1739d91f4d07b0579}{radio\+\_\+irq\+\_\+save}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a2ab4223aae96dbd1739d91f4d07b0579}{radio\+\_\+irq\+\_\+save}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__fsk_8c_aaaa1bf4e7d3fa022ffd192b64a72bfa7}{radio\+\_\+irq\+\_\+restore}} (uint32\+\_\+t primask)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_aaaa1bf4e7d3fa022ffd192b64a72bfa7}{radio\+\_\+irq\+\_\+restore}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__fsk_8c_a28d53cac62352b93c97b2ea8a2b8da23}{radio\+\_\+set\+\_\+event\+\_\+flags}} (uint32\+\_\+t events)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a28d53cac62352b93c97b2ea8a2b8da23}{radio\+\_\+set\+\_\+event\+\_\+flags}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{radio__fsk_8c_a5e90fb2cad65ccec1c8f18a1022a2ead}{radio\+\_\+cfg\+\_\+valid}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a5e90fb2cad65ccec1c8f18a1022a2ead}{radio\+\_\+cfg\+\_\+valid}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__fsk_8c_aec7ef5922d44d8cd7860c29aedf51e55}{radio\+\_\+hw\+\_\+reset}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_aec7ef5922d44d8cd7860c29aedf51e55}{radio\+\_\+hw\+\_\+reset}}. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{radio__fsk_8c_aaea9277e84c6e581262c4c9b755e7095}{radio\+\_\+get\+\_\+rx\+\_\+bw\+\_\+reg\+\_\+value}} (\mbox{\hyperlink{radio__lib_8h_a227ddbfeda5a2c2c4cbe5ab3bde9b6cd}{radio\+\_\+lora\+\_\+bw\+\_\+t}} bw)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_aaea9277e84c6e581262c4c9b755e7095}{radio\+\_\+get\+\_\+rx\+\_\+bw\+\_\+reg\+\_\+value}}. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{radio__fsk_8c_af4598374ee0d9d463c5b4c2d53fc7db3}{radio\+\_\+get\+\_\+shaping\+\_\+bits}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_af4598374ee0d9d463c5b4c2d53fc7db3}{radio\+\_\+get\+\_\+shaping\+\_\+bits}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__fsk_8c_add2b04b242c230950774184b60827115}{radio\+\_\+get\+\_\+frequency\+\_\+deviation}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_add2b04b242c230950774184b60827115}{radio\+\_\+get\+\_\+frequency\+\_\+deviation}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{radio__fsk_8c_ad7c4b83974bc4a61029f971daef760c5}{radio\+\_\+set\+\_\+op\+\_\+mode\+\_\+ready}} (uint8\+\_\+t op\+\_\+mode)
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{radio__fsk_8c_a4683c1410044c276827df7bd4e5eaf6a}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a4683c1410044c276827df7bd4e5eaf6a}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{radio__fsk_8c_a2afefcd1d22cf6d1569414193a2ee665}{radio\+\_\+write\+\_\+sync\+\_\+word}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a2afefcd1d22cf6d1569414193a2ee665}{radio\+\_\+write\+\_\+sync\+\_\+word}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{radio__fsk_8c_a9dfc20d6b74d481eb4f5bedf1ce0638e}{radio\+\_\+apply\+\_\+fsk\+\_\+config}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a9dfc20d6b74d481eb4f5bedf1ce0638e}{radio\+\_\+apply\+\_\+fsk\+\_\+config}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__fsk_8c_a7419352df9bc0283d77f25c0125dd829}{radio\+\_\+set\+\_\+state}} (\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} state)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a7419352df9bc0283d77f25c0125dd829}{radio\+\_\+set\+\_\+state}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__fsk_8c_a0bcd2cf534613aa58fca09aa7c3e5567}{radio\+\_\+resume\+\_\+after\+\_\+tx}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a0bcd2cf534613aa58fca09aa7c3e5567}{radio\+\_\+resume\+\_\+after\+\_\+tx}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__fsk_8c_af51c74a2fe3116913e1adc6a724240c5}{radio\+\_\+tx\+\_\+timeout\+\_\+ms}} (uint8\+\_\+t payload\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_af51c74a2fe3116913e1adc6a724240c5}{radio\+\_\+tx\+\_\+timeout\+\_\+ms}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{radio__fsk_8c_a704361faf71d5dc249577f1bf2f6ce95}{radio\+\_\+rx\+\_\+single\+\_\+timeout\+\_\+ms}} (uint32\+\_\+t symbol\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a704361faf71d5dc249577f1bf2f6ce95}{radio\+\_\+rx\+\_\+single\+\_\+timeout\+\_\+ms}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{radio__fsk_8c_a9ee152d8ad3a6176b915d5a9e446d0f8}{radio\+\_\+handle\+\_\+exti\+\_\+pin}} (uint16\+\_\+t pin)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a9ee152d8ad3a6176b915d5a9e446d0f8}{radio\+\_\+handle\+\_\+exti\+\_\+pin}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_ad6cdc4fd106c45d1d2c6c11732681f89}{radio\+\_\+read\+\_\+rx\+\_\+packet}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_ad6cdc4fd106c45d1d2c6c11732681f89}{radio\+\_\+read\+\_\+rx\+\_\+packet}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8c_a7da352a7eca2bba1fe3ce2e45eea11dc}{radio\+\_\+fsk\+\_\+default\+\_\+hw\+\_\+cfg}} (\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hspi)
+\begin{DoxyCompactList}\small\item\em Domyślna konfiguracja sprzętowa backendu FSK. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8c_a3f3cb604d11db7401202502ba194bfec}{radio\+\_\+fsk\+\_\+default\+\_\+lora\+\_\+cfg}} (\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Domyślna konfiguracja parametrów backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a6bfd270c417c165cde47462e2f8f6dcf}{radio\+\_\+fsk\+\_\+set\+\_\+runtime\+\_\+cfg}} (const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Ustawia runtime konfigurację właściwą dla backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a3bce426af9377a35ba779fecb93709a2}{radio\+\_\+fsk\+\_\+init}} (const \mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}hw, const \mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, \mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}} cb, void \texorpdfstring{$\ast$}{*}user\+\_\+ctx)
+\begin{DoxyCompactList}\small\item\em Inicjalizacja backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_acc9f82d37eb1ba8baf32225b17176162}{radio\+\_\+fsk\+\_\+deinit}} (void)
+\begin{DoxyCompactList}\small\item\em Deinicjalizacja backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_abc10767656c9437cf21d543d4efb3c8e}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous}} (void)
+\begin{DoxyCompactList}\small\item\em Uruchomienie odbioru ciągłego FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_afe2df52f73954a7c04849f4dea812963}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single}} (uint16\+\_\+t symbol\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Uruchomienie odbioru pojedynczego FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_aac6513309bccd4c723b7f37d2d1d3ebe}{radio\+\_\+fsk\+\_\+send\+\_\+async}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Uruchomienie nadawania asynchronicznego FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_aac044a17df998a6ee3ae094da0e527e4}{radio\+\_\+fsk\+\_\+standby}} (void)
+\begin{DoxyCompactList}\small\item\em Przejście do standby backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a69436e5dd1977f344be2fe5bb8396a73}{radio\+\_\+fsk\+\_\+sleep}} (void)
+\begin{DoxyCompactList}\small\item\em Przejście do sleep backendu FSK. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8c_abde60aa61bf2de0b9dc28ad082b8efac}{radio\+\_\+fsk\+\_\+process}} (void)
+\begin{DoxyCompactList}\small\item\em Przetwarzanie logiki odroczonej backendu FSK. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{radio__fsk_8c_a90e4c1995da4a6e628a39044c3c4e483}{radio\+\_\+fsk\+\_\+take\+\_\+events}} (void)
+\begin{DoxyCompactList}\small\item\em Zwrócenie i wyczyszczenie flag zdarzeń backendu FSK. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__fsk_8c_aab1a413e95e54815c8503d06e58ed218}{radio\+\_\+fsk\+\_\+get\+\_\+last\+\_\+packet}} (\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}pkt)
+\begin{DoxyCompactList}\small\item\em Odczyt ostatniego pakietu backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a2a475006526b0718271056aed1dd1048}{radio\+\_\+fsk\+\_\+get\+\_\+state}} (void)
+\begin{DoxyCompactList}\small\item\em Odczyt stanu backendu FSK. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_ac4b311b82336b9a5ce281b234794913b}{radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+reg}} (uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}value)
+\begin{DoxyCompactList}\small\item\em Odczyt pojedynczego rejestru (backend FSK). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_aeb6c131eec73349617a81fe300a74ec4}{radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+reg}} (uint8\+\_\+t reg, uint8\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Zapis pojedynczego rejestru (backend FSK). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a474cfecfe04aa8f8bd19ffde5fa6b0e8}{radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+burst}} (uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Odczyt sekwencji rejestrów (backend FSK). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a6ad38dae6ac92137637ad301698500d9}{radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+burst}} (uint8\+\_\+t reg, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Zapis sekwencji rejestrów (backend FSK). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__fsk_8c_ac0060268606f59533013b637e1459a4d}{radio\+\_\+fsk\+\_\+on\+\_\+exti}} (uint16\+\_\+t gpio\+\_\+pin)
+\begin{DoxyCompactList}\small\item\em Przekazanie pinu EXTI do backendu FSK. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Zmienne}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{structradio__fsk__context__t}{radio\+\_\+fsk\+\_\+context\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a30ae65af15423f8b8a252fab1418f1fc}{s\+\_\+radio}}
+\item 
+static \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{radio__fsk_8c_a744a49e4270045b330762170258e821d}{s\+\_\+runtime\+\_\+cfg}}
+\item 
+static bool \mbox{\hyperlink{radio__fsk_8c_a765b962df9b8238d8c125cc79dff897a}{s\+\_\+runtime\+\_\+cfg\+\_\+ready}} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Backend modulacji FSK/\+GFSK/\+MSK/\+GMSK dla SX1276. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{radio__fsk_8c_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{radio__fsk_8c_a812e3fb1c3187062c8e6e8a55a2b1e25}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_BROADCAST\_ADDRESS@{RADIO\_FSK\_BROADCAST\_ADDRESS}}
+\index{RADIO\_FSK\_BROADCAST\_ADDRESS@{RADIO\_FSK\_BROADCAST\_ADDRESS}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_BROADCAST\_ADDRESS}{RADIO\_FSK\_BROADCAST\_ADDRESS}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a812e3fb1c3187062c8e6e8a55a2b1e25} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+BROADCAST\+\_\+\+ADDRESS~0x\+FFU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00020}{20}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_ad2009060485da03f4e167b83d0f35fd9}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_FIFO\_MAX\_BYTES@{RADIO\_FSK\_FIFO\_MAX\_BYTES}}
+\index{RADIO\_FSK\_FIFO\_MAX\_BYTES@{RADIO\_FSK\_FIFO\_MAX\_BYTES}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_FIFO\_MAX\_BYTES}{RADIO\_FSK\_FIFO\_MAX\_BYTES}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ad2009060485da03f4e167b83d0f35fd9} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+FIFO\+\_\+\+MAX\+\_\+\+BYTES~64U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00022}{22}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_a87f59be1a8134c26c9fae52c4a3df3bf}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_FIFO\_THRESH\_LEVEL@{RADIO\_FSK\_FIFO\_THRESH\_LEVEL}}
+\index{RADIO\_FSK\_FIFO\_THRESH\_LEVEL@{RADIO\_FSK\_FIFO\_THRESH\_LEVEL}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_FIFO\_THRESH\_LEVEL}{RADIO\_FSK\_FIFO\_THRESH\_LEVEL}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a87f59be1a8134c26c9fae52c4a3df3bf} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+FIFO\+\_\+\+THRESH\+\_\+\+LEVEL~31U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00016}{16}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_ab9f0aab292c58ed0b2010939f943290a}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_NODE\_ADDRESS\_DEFAULT@{RADIO\_FSK\_NODE\_ADDRESS\_DEFAULT}}
+\index{RADIO\_FSK\_NODE\_ADDRESS\_DEFAULT@{RADIO\_FSK\_NODE\_ADDRESS\_DEFAULT}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_NODE\_ADDRESS\_DEFAULT}{RADIO\_FSK\_NODE\_ADDRESS\_DEFAULT}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ab9f0aab292c58ed0b2010939f943290a} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+NODE\+\_\+\+ADDRESS\+\_\+\+DEFAULT~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00019}{19}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_aa4bf2da08d26adbbeb736fd09917959e}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_RESET\_HIGH\_DELAY\_MS@{RADIO\_FSK\_RESET\_HIGH\_DELAY\_MS}}
+\index{RADIO\_FSK\_RESET\_HIGH\_DELAY\_MS@{RADIO\_FSK\_RESET\_HIGH\_DELAY\_MS}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_RESET\_HIGH\_DELAY\_MS}{RADIO\_FSK\_RESET\_HIGH\_DELAY\_MS}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aa4bf2da08d26adbbeb736fd09917959e} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+RESET\+\_\+\+HIGH\+\_\+\+DELAY\+\_\+\+MS~10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00018}{18}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_a596e25c3b63aedc3d2739beca49fc488}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_RESET\_LOW\_DELAY\_MS@{RADIO\_FSK\_RESET\_LOW\_DELAY\_MS}}
+\index{RADIO\_FSK\_RESET\_LOW\_DELAY\_MS@{RADIO\_FSK\_RESET\_LOW\_DELAY\_MS}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_RESET\_LOW\_DELAY\_MS}{RADIO\_FSK\_RESET\_LOW\_DELAY\_MS}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a596e25c3b63aedc3d2739beca49fc488} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+RESET\+\_\+\+LOW\+\_\+\+DELAY\+\_\+\+MS~2U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00017}{17}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_ad09a1d3776578c068cb6d85c4b05bcff}\index{radio\_fsk.c@{radio\_fsk.c}!RADIO\_FSK\_TX\_GUARD\_MS@{RADIO\_FSK\_TX\_GUARD\_MS}}
+\index{RADIO\_FSK\_TX\_GUARD\_MS@{RADIO\_FSK\_TX\_GUARD\_MS}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{RADIO\_FSK\_TX\_GUARD\_MS}{RADIO\_FSK\_TX\_GUARD\_MS}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ad09a1d3776578c068cb6d85c4b05bcff} 
+\#define RADIO\+\_\+\+FSK\+\_\+\+TX\+\_\+\+GUARD\+\_\+\+MS~40\+UL}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00021}{21}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{radio__fsk_8c_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{radio__fsk_8c_a9dfc20d6b74d481eb4f5bedf1ce0638e}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_apply\_fsk\_config@{radio\_apply\_fsk\_config}}
+\index{radio\_apply\_fsk\_config@{radio\_apply\_fsk\_config}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_apply\_fsk\_config()}{radio\_apply\_fsk\_config()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a9dfc20d6b74d481eb4f5bedf1ce0638e} 
+bool radio\+\_\+apply\+\_\+fsk\+\_\+config (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a9dfc20d6b74d481eb4f5bedf1ce0638e}{radio\+\_\+apply\+\_\+fsk\+\_\+config}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00271}{271}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00180}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::bitrate\+\_\+bps}}, \mbox{\hyperlink{radio__lib_8h_source_l00179}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::frequency\+\_\+hz}}, \mbox{\hyperlink{radio__lib_8h_source_l00185}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::preamble\+\_\+len}}, \mbox{\hyperlink{radio__fsk_8c_source_l00162}{radio\+\_\+get\+\_\+frequency\+\_\+deviation()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00208}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00102}{radio\+\_\+get\+\_\+rx\+\_\+bw\+\_\+reg\+\_\+value()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib__config_8h_source_l00051}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{radio__fsk_8c_source_l00250}{radio\+\_\+write\+\_\+sync\+\_\+word()}}, \mbox{\hyperlink{radio__lib_8h_source_l00181}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::rx\+\_\+bandwidth}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00135}{sx1276\+\_\+set\+\_\+frequency()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00152}{sx1276\+\_\+set\+\_\+pa\+\_\+output\+\_\+power()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}} i \mbox{\hyperlink{radio__lib_8h_source_l00184}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::tx\+\_\+power\+\_\+dbm}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}.
+
+\Hypertarget{radio__fsk_8c_a5e90fb2cad65ccec1c8f18a1022a2ead}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_cfg\_valid@{radio\_cfg\_valid}}
+\index{radio\_cfg\_valid@{radio\_cfg\_valid}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_cfg\_valid()}{radio\_cfg\_valid()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a5e90fb2cad65ccec1c8f18a1022a2ead} 
+bool radio\+\_\+cfg\+\_\+valid (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a5e90fb2cad65ccec1c8f18a1022a2ead}{radio\+\_\+cfg\+\_\+valid}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00071}{71}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00188}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::address\+\_\+filter}}, \mbox{\hyperlink{radio__lib_8h_source_l00180}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::bitrate\+\_\+bps}}, \mbox{\hyperlink{radio__lib_8h_source_l00189}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::crc\+\_\+type}}, \mbox{\hyperlink{radio__lib_8h_source_l00183}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::filter}}, \mbox{\hyperlink{radio__lib_8h_source_l00179}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::frequency\+\_\+hz}}, \mbox{\hyperlink{radio__lib_8h_source_l00185}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::preamble\+\_\+len}}, \mbox{\hyperlink{radio__lib_8h_source_l00129}{RADIO\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GMSK}}, \mbox{\hyperlink{radio__lib_8h_source_l00181}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::rx\+\_\+bandwidth}}, \mbox{\hyperlink{radio__lib_8h_source_l00182}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::shaping}} i \mbox{\hyperlink{radio__lib_8h_source_l00186}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word\+\_\+len}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00477}{radio\+\_\+fsk\+\_\+set\+\_\+runtime\+\_\+cfg()}} i \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}}.
+
+\Hypertarget{radio__fsk_8c_a7da352a7eca2bba1fe3ce2e45eea11dc}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_default\_hw\_cfg@{radio\_fsk\_default\_hw\_cfg}}
+\index{radio\_fsk\_default\_hw\_cfg@{radio\_fsk\_default\_hw\_cfg}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_default\_hw\_cfg()}{radio\_fsk\_default\_hw\_cfg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a7da352a7eca2bba1fe3ce2e45eea11dc} 
+void radio\+\_\+fsk\+\_\+default\+\_\+hw\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hspi}{}\end{DoxyParamCaption})}
+
+
+
+Domyślna konfiguracja sprzętowa backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00467}{467}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}.
+
+\Hypertarget{radio__fsk_8c_a3f3cb604d11db7401202502ba194bfec}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_default\_lora\_cfg@{radio\_fsk\_default\_lora\_cfg}}
+\index{radio\_fsk\_default\_lora\_cfg@{radio\_fsk\_default\_lora\_cfg}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_default\_lora\_cfg()}{radio\_fsk\_default\_lora\_cfg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a3f3cb604d11db7401202502ba194bfec} 
+void radio\+\_\+fsk\+\_\+default\+\_\+lora\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Domyślna konfiguracja parametrów backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00472}{472}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lora_8c_source_l00347}{radio\+\_\+lora\+\_\+default\+\_\+lora\+\_\+cfg()}}.
+
+\Hypertarget{radio__fsk_8c_acc9f82d37eb1ba8baf32225b17176162}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_deinit@{radio\_fsk\_deinit}}
+\index{radio\_fsk\_deinit@{radio\_fsk\_deinit}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_deinit()}{radio\_fsk\_deinit()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_acc9f82d37eb1ba8baf32225b17176162} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+deinit (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Deinicjalizacja backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00550}{550}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00687}{radio\+\_\+fsk\+\_\+sleep()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__lib_8h_source_l00042}{RADIO\+\_\+\+STATE\+\_\+\+UNINIT}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00119}{radio\+\_\+deinit()}}.
+
+\Hypertarget{radio__fsk_8c_aab1a413e95e54815c8503d06e58ed218}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_get\_last\_packet@{radio\_fsk\_get\_last\_packet}}
+\index{radio\_fsk\_get\_last\_packet@{radio\_fsk\_get\_last\_packet}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_get\_last\_packet()}{radio\_fsk\_get\_last\_packet()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aab1a413e95e54815c8503d06e58ed218} 
+bool radio\+\_\+fsk\+\_\+get\+\_\+last\+\_\+packet (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__packet__t}{radio\+\_\+packet\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{pkt}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt ostatniego pakietu backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00834}{834}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00250}{radio\+\_\+get\+\_\+last\+\_\+packet()}}.
+
+\Hypertarget{radio__fsk_8c_a2a475006526b0718271056aed1dd1048}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_get\_state@{radio\_fsk\_get\_state}}
+\index{radio\_fsk\_get\_state@{radio\_fsk\_get\_state}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_get\_state()}{radio\_fsk\_get\_state()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a2a475006526b0718271056aed1dd1048} 
+\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}} radio\+\_\+fsk\+\_\+get\+\_\+state (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt stanu backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00845}{845}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}.
+
+\Hypertarget{radio__fsk_8c_a3bce426af9377a35ba779fecb93709a2}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_init@{radio\_fsk\_init}}
+\index{radio\_fsk\_init@{radio\_fsk\_init}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_init()}{radio\_fsk\_init()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a3bce426af9377a35ba779fecb93709a2} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+init (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__hw__cfg__t}{radio\+\_\+hw\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{hw}{, }\item[{const \mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{\mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\+\_\+event\+\_\+cb\+\_\+t}}}]{cb}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{user\+\_\+ctx}{}\end{DoxyParamCaption})}
+
+
+
+Inicjalizacja backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00489}{489}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00096}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::hspi}}, \mbox{\hyperlink{radio__lib_8h_source_l00097}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::nss}}, \mbox{\hyperlink{radio__lib_8h_source_l00088}{radio\+\_\+gpio\+\_\+t\+::pin}}, \mbox{\hyperlink{radio__lib_8h_source_l00087}{radio\+\_\+gpio\+\_\+t\+::port}}, \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__fsk_8c_source_l00092}{radio\+\_\+hw\+\_\+reset()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}}, \mbox{\hyperlink{radio__lib_8h_source_l00042}{RADIO\+\_\+\+STATE\+\_\+\+UNINIT}}, \mbox{\hyperlink{radio__lib_8h_source_l00098}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::reset}}, \mbox{\hyperlink{radio__lib_8h_source_l00100}{radio\+\_\+hw\+\_\+cfg\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00125}{sx1276\+\_\+get\+\_\+version()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00100}{radio\+\_\+init()}}.
+
+\Hypertarget{radio__fsk_8c_ac0060268606f59533013b637e1459a4d}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_on\_exti@{radio\_fsk\_on\_exti}}
+\index{radio\_fsk\_on\_exti@{radio\_fsk\_on\_exti}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_on\_exti()}{radio\_fsk\_on\_exti()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ac0060268606f59533013b637e1459a4d} 
+void radio\+\_\+fsk\+\_\+on\+\_\+exti (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{gpio\+\_\+pin}{}\end{DoxyParamCaption})}
+
+
+
+Przekazanie pinu EXTI do backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00900}{900}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00410}{radio\+\_\+handle\+\_\+exti\+\_\+pin()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00346}{radio\+\_\+on\+\_\+exti()}}.
+
+\Hypertarget{radio__fsk_8c_abde60aa61bf2de0b9dc28ad082b8efac}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_process@{radio\_fsk\_process}}
+\index{radio\_fsk\_process@{radio\_fsk\_process}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_process()}{radio\_fsk\_process()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_abde60aa61bf2de0b9dc28ad082b8efac} 
+void radio\+\_\+fsk\+\_\+process (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Przetwarzanie logiki odroczonej backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00705}{705}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00058}{RADIO\+\_\+\+EVENT\+\_\+\+CRC\+\_\+\+ERR}}, \mbox{\hyperlink{radio__lib_8h_source_l00061}{RADIO\+\_\+\+EVENT\+\_\+\+FIFO\+\_\+\+OVERRUN}}, \mbox{\hyperlink{radio__lib_8h_source_l00062}{RADIO\+\_\+\+EVENT\+\_\+\+HW\+\_\+\+ERROR}}, \mbox{\hyperlink{radio__lib_8h_source_l00054}{RADIO\+\_\+\+EVENT\+\_\+\+NONE}}, \mbox{\hyperlink{radio__lib_8h_source_l00056}{RADIO\+\_\+\+EVENT\+\_\+\+RX\+\_\+\+DONE}}, \mbox{\hyperlink{radio__lib_8h_source_l00057}{RADIO\+\_\+\+EVENT\+\_\+\+RX\+\_\+\+TIMEOUT}}, \mbox{\hyperlink{radio__lib_8h_source_l00055}{RADIO\+\_\+\+EVENT\+\_\+\+TX\+\_\+\+DONE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00669}{radio\+\_\+fsk\+\_\+standby()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00432}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00324}{radio\+\_\+resume\+\_\+after\+\_\+tx()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00063}{radio\+\_\+set\+\_\+event\+\_\+flags()}}, \mbox{\hyperlink{radio__lib_8h_source_l00045}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+SINGLE}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00215}{radio\+\_\+process()}}.
+
+\Hypertarget{radio__fsk_8c_a474cfecfe04aa8f8bd19ffde5fa6b0e8}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_raw\_read\_burst@{radio\_fsk\_raw\_read\_burst}}
+\index{radio\_fsk\_raw\_read\_burst@{radio\_fsk\_raw\_read\_burst}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_read\_burst()}{radio\_fsk\_raw\_read\_burst()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a474cfecfe04aa8f8bd19ffde5fa6b0e8} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+burst (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt sekwencji rejestrów (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00870}{870}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{sx1276\+\_\+read\+\_\+burst()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00314}{radio\+\_\+raw\+\_\+read\+\_\+burst()}}.
+
+\Hypertarget{radio__fsk_8c_ac4b311b82336b9a5ce281b234794913b}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_raw\_read\_reg@{radio\_fsk\_raw\_read\_reg}}
+\index{radio\_fsk\_raw\_read\_reg@{radio\_fsk\_raw\_read\_reg}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_read\_reg()}{radio\_fsk\_raw\_read\_reg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ac4b311b82336b9a5ce281b234794913b} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+reg (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Odczyt pojedynczego rejestru (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00850}{850}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}.
+
+\Hypertarget{radio__fsk_8c_a6ad38dae6ac92137637ad301698500d9}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_raw\_write\_burst@{radio\_fsk\_raw\_write\_burst}}
+\index{radio\_fsk\_raw\_write\_burst@{radio\_fsk\_raw\_write\_burst}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_write\_burst()}{radio\_fsk\_raw\_write\_burst()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a6ad38dae6ac92137637ad301698500d9} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+burst (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Zapis sekwencji rejestrów (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00885}{885}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00330}{radio\+\_\+raw\+\_\+write\+\_\+burst()}}.
+
+\Hypertarget{radio__fsk_8c_aeb6c131eec73349617a81fe300a74ec4}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_raw\_write\_reg@{radio\_fsk\_raw\_write\_reg}}
+\index{radio\_fsk\_raw\_write\_reg@{radio\_fsk\_raw\_write\_reg}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_raw\_write\_reg()}{radio\_fsk\_raw\_write\_reg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aeb6c131eec73349617a81fe300a74ec4} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+reg (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Zapis pojedynczego rejestru (backend FSK). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00860}{860}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00298}{radio\+\_\+raw\+\_\+write\+\_\+reg()}}.
+
+\Hypertarget{radio__fsk_8c_aac6513309bccd4c723b7f37d2d1d3ebe}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_send\_async@{radio\_fsk\_send\_async}}
+\index{radio\_fsk\_send\_async@{radio\_fsk\_send\_async}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_send\_async()}{radio\_fsk\_send\_async()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aac6513309bccd4c723b7f37d2d1d3ebe} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+send\+\_\+async (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Uruchomienie nadawania asynchronicznego FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00618}{618}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}, \mbox{\hyperlink{radio__lib__config_8h_source_l00051}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__fsk_8c_source_l00353}{radio\+\_\+tx\+\_\+timeout\+\_\+ms()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00167}{radio\+\_\+send\+\_\+async()}}.
+
+\Hypertarget{radio__fsk_8c_a6bfd270c417c165cde47462e2f8f6dcf}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_set\_runtime\_cfg@{radio\_fsk\_set\_runtime\_cfg}}
+\index{radio\_fsk\_set\_runtime\_cfg@{radio\_fsk\_set\_runtime\_cfg}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_set\_runtime\_cfg()}{radio\_fsk\_set\_runtime\_cfg()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a6bfd270c417c165cde47462e2f8f6dcf} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+set\+\_\+runtime\+\_\+cfg (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia runtime konfigurację właściwą dla backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00477}{477}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}} i \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00090}{radio\+\_\+set\+\_\+fsk\+\_\+cfg()}}.
+
+\Hypertarget{radio__fsk_8c_a69436e5dd1977f344be2fe5bb8396a73}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_sleep@{radio\_fsk\_sleep}}
+\index{radio\_fsk\_sleep@{radio\_fsk\_sleep}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_sleep()}{radio\_fsk\_sleep()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a69436e5dd1977f344be2fe5bb8396a73} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+sleep (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Przejście do sleep backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00687}{687}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}} i \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00550}{radio\+\_\+fsk\+\_\+deinit()}} i \mbox{\hyperlink{radio__lib_8c_source_l00199}{radio\+\_\+sleep()}}.
+
+\Hypertarget{radio__fsk_8c_aac044a17df998a6ee3ae094da0e527e4}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_standby@{radio\_fsk\_standby}}
+\index{radio\_fsk\_standby@{radio\_fsk\_standby}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_standby()}{radio\_fsk\_standby()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aac044a17df998a6ee3ae094da0e527e4} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+standby (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Przejście do standby backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00669}{669}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}} i \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}} i \mbox{\hyperlink{radio__lib_8c_source_l00183}{radio\+\_\+standby()}}.
+
+\Hypertarget{radio__fsk_8c_abc10767656c9437cf21d543d4efb3c8e}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_start\_rx\_continuous@{radio\_fsk\_start\_rx\_continuous}}
+\index{radio\_fsk\_start\_rx\_continuous@{radio\_fsk\_start\_rx\_continuous}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_start\_rx\_continuous()}{radio\_fsk\_start\_rx\_continuous()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_abc10767656c9437cf21d543d4efb3c8e} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Uruchomienie odbioru ciągłego FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00563}{563}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00044}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+CONT}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}.
+
+\Hypertarget{radio__fsk_8c_afe2df52f73954a7c04849f4dea812963}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_start\_rx\_single@{radio\_fsk\_start\_rx\_single}}
+\index{radio\_fsk\_start\_rx\_single@{radio\_fsk\_start\_rx\_single}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_start\_rx\_single()}{radio\_fsk\_start\_rx\_single()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_afe2df52f73954a7c04849f4dea812963} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{symbol\+\_\+timeout}{}\end{DoxyParamCaption})}
+
+
+
+Uruchomienie odbioru pojedynczego FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00588}{588}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib_8h_source_l00030}{RADIO\+\_\+\+EINVAL}}, \mbox{\hyperlink{radio__lib_8h_source_l00033}{RADIO\+\_\+\+ESTATE}}, \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__fsk_8c_source_l00385}{radio\+\_\+rx\+\_\+single\+\_\+timeout\+\_\+ms()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00045}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+SINGLE}}, \mbox{\hyperlink{radio__lib_8h_source_l00046}{RADIO\+\_\+\+STATE\+\_\+\+TX}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00151}{radio\+\_\+start\+\_\+rx\+\_\+single()}}.
+
+\Hypertarget{radio__fsk_8c_a90e4c1995da4a6e628a39044c3c4e483}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_fsk\_take\_events@{radio\_fsk\_take\_events}}
+\index{radio\_fsk\_take\_events@{radio\_fsk\_take\_events}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_fsk\_take\_events()}{radio\_fsk\_take\_events()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a90e4c1995da4a6e628a39044c3c4e483} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+take\+\_\+events (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Zwrócenie i wyczyszczenie flag zdarzeń backendu FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00823}{823}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00234}{radio\+\_\+take\+\_\+events()}}.
+
+\Hypertarget{radio__fsk_8c_add2b04b242c230950774184b60827115}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_get\_frequency\_deviation@{radio\_get\_frequency\_deviation}}
+\index{radio\_get\_frequency\_deviation@{radio\_get\_frequency\_deviation}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_get\_frequency\_deviation()}{radio\_get\_frequency\_deviation()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_add2b04b242c230950774184b60827115} 
+uint32\+\_\+t radio\+\_\+get\+\_\+frequency\+\_\+deviation (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_add2b04b242c230950774184b60827115}{radio\+\_\+get\+\_\+frequency\+\_\+deviation}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00162}{162}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00180}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::bitrate\+\_\+bps}}, \mbox{\hyperlink{radio__lib_8h_source_l00129}{RADIO\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GMSK}}, \mbox{\hyperlink{radio__lib_8h_source_l00128}{RADIO\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+MSK}} i \mbox{\hyperlink{radio__lib_8h_source_l00182}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::shaping}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}.
+
+\Hypertarget{radio__fsk_8c_a4683c1410044c276827df7bd4e5eaf6a}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_get\_packet\_config\_1@{radio\_get\_packet\_config\_1}}
+\index{radio\_get\_packet\_config\_1@{radio\_get\_packet\_config\_1}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_get\_packet\_config\_1()}{radio\_get\_packet\_config\_1()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a4683c1410044c276827df7bd4e5eaf6a} 
+uint8\+\_\+t radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a4683c1410044c276827df7bd4e5eaf6a}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00208}{208}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00188}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::address\+\_\+filter}}, \mbox{\hyperlink{radio__lib_8h_source_l00189}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::crc\+\_\+type}} i \mbox{\hyperlink{radio__lib_8h_source_l00190}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::data\+\_\+whitening}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}.
+
+\Hypertarget{radio__fsk_8c_aaea9277e84c6e581262c4c9b755e7095}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_get\_rx\_bw\_reg\_value@{radio\_get\_rx\_bw\_reg\_value}}
+\index{radio\_get\_rx\_bw\_reg\_value@{radio\_get\_rx\_bw\_reg\_value}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_get\_rx\_bw\_reg\_value()}{radio\_get\_rx\_bw\_reg\_value()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aaea9277e84c6e581262c4c9b755e7095} 
+uint8\+\_\+t radio\+\_\+get\+\_\+rx\+\_\+bw\+\_\+reg\+\_\+value (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio__lib_8h_a227ddbfeda5a2c2c4cbe5ab3bde9b6cd}{radio\+\_\+lora\+\_\+bw\+\_\+t}}}]{bw}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_aaea9277e84c6e581262c4c9b755e7095}{radio\+\_\+get\+\_\+rx\+\_\+bw\+\_\+reg\+\_\+value}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00102}{102}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}.
+
+\Hypertarget{radio__fsk_8c_af4598374ee0d9d463c5b4c2d53fc7db3}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_get\_shaping\_bits@{radio\_get\_shaping\_bits}}
+\index{radio\_get\_shaping\_bits@{radio\_get\_shaping\_bits}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_get\_shaping\_bits()}{radio\_get\_shaping\_bits()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_af4598374ee0d9d463c5b4c2d53fc7db3} 
+uint8\+\_\+t radio\+\_\+get\+\_\+shaping\+\_\+bits (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_af4598374ee0d9d463c5b4c2d53fc7db3}{radio\+\_\+get\+\_\+shaping\+\_\+bits}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00131}{131}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00183}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::filter}}, \mbox{\hyperlink{radio__lib_8h_source_l00126}{RADIO\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+FSK}}, \mbox{\hyperlink{radio__lib_8h_source_l00128}{RADIO\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+MSK}} i \mbox{\hyperlink{radio__lib_8h_source_l00182}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::shaping}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00687}{radio\+\_\+fsk\+\_\+sleep()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00669}{radio\+\_\+fsk\+\_\+standby()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00563}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00588}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00324}{radio\+\_\+resume\+\_\+after\+\_\+tx()}}.
+
+\Hypertarget{radio__fsk_8c_a9ee152d8ad3a6176b915d5a9e446d0f8}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_handle\_exti\_pin@{radio\_handle\_exti\_pin}}
+\index{radio\_handle\_exti\_pin@{radio\_handle\_exti\_pin}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_handle\_exti\_pin()}{radio\_handle\_exti\_pin()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a9ee152d8ad3a6176b915d5a9e446d0f8} 
+void radio\+\_\+handle\+\_\+exti\+\_\+pin (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{pin}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a9ee152d8ad3a6176b915d5a9e446d0f8}{radio\+\_\+handle\+\_\+exti\+\_\+pin}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00410}{410}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00900}{radio\+\_\+fsk\+\_\+on\+\_\+exti()}}.
+
+\Hypertarget{radio__fsk_8c_aec7ef5922d44d8cd7860c29aedf51e55}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_hw\_reset@{radio\_hw\_reset}}
+\index{radio\_hw\_reset@{radio\_hw\_reset}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_hw\_reset()}{radio\_hw\_reset()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aec7ef5922d44d8cd7860c29aedf51e55} 
+void radio\+\_\+hw\+\_\+reset (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_aec7ef5922d44d8cd7860c29aedf51e55}{radio\+\_\+hw\+\_\+reset}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00092}{92}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}.
+
+\Hypertarget{radio__fsk_8c_aaaa1bf4e7d3fa022ffd192b64a72bfa7}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_irq\_restore@{radio\_irq\_restore}}
+\index{radio\_irq\_restore@{radio\_irq\_restore}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_irq\_restore()}{radio\_irq\_restore()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_aaaa1bf4e7d3fa022ffd192b64a72bfa7} 
+void radio\+\_\+irq\+\_\+restore (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{primask}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_aaaa1bf4e7d3fa022ffd192b64a72bfa7}{radio\+\_\+irq\+\_\+restore}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00054}{54}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00823}{radio\+\_\+fsk\+\_\+take\+\_\+events()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00410}{radio\+\_\+handle\+\_\+exti\+\_\+pin()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00063}{radio\+\_\+set\+\_\+event\+\_\+flags()}}.
+
+\Hypertarget{radio__fsk_8c_a2ab4223aae96dbd1739d91f4d07b0579}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_irq\_save@{radio\_irq\_save}}
+\index{radio\_irq\_save@{radio\_irq\_save}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_irq\_save()}{radio\_irq\_save()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a2ab4223aae96dbd1739d91f4d07b0579} 
+uint32\+\_\+t radio\+\_\+irq\+\_\+save (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a2ab4223aae96dbd1739d91f4d07b0579}{radio\+\_\+irq\+\_\+save}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00046}{46}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00823}{radio\+\_\+fsk\+\_\+take\+\_\+events()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00410}{radio\+\_\+handle\+\_\+exti\+\_\+pin()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00063}{radio\+\_\+set\+\_\+event\+\_\+flags()}}.
+
+\Hypertarget{radio__fsk_8c_ad6cdc4fd106c45d1d2c6c11732681f89}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_read\_rx\_packet@{radio\_read\_rx\_packet}}
+\index{radio\_read\_rx\_packet@{radio\_read\_rx\_packet}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_read\_rx\_packet()}{radio\_read\_rx\_packet()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ad6cdc4fd106c45d1d2c6c11732681f89} 
+\mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\+\_\+status\+\_\+t}} radio\+\_\+read\+\_\+rx\+\_\+packet (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_ad6cdc4fd106c45d1d2c6c11732681f89}{radio\+\_\+read\+\_\+rx\+\_\+packet}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00432}{432}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00031}{RADIO\+\_\+\+EBUS}}, \mbox{\hyperlink{radio__lib_8h_source_l00034}{RADIO\+\_\+\+EHW}}, \mbox{\hyperlink{radio__lib__config_8h_source_l00051}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{radio__lib_8h_source_l00029}{RADIO\+\_\+\+OK}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{sx1276\+\_\+read\+\_\+burst()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}}.
+
+\Hypertarget{radio__fsk_8c_a0bcd2cf534613aa58fca09aa7c3e5567}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_resume\_after\_tx@{radio\_resume\_after\_tx}}
+\index{radio\_resume\_after\_tx@{radio\_resume\_after\_tx}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_resume\_after\_tx()}{radio\_resume\_after\_tx()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a0bcd2cf534613aa58fca09aa7c3e5567} 
+void radio\+\_\+resume\+\_\+after\+\_\+tx (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a0bcd2cf534613aa58fca09aa7c3e5567}{radio\+\_\+resume\+\_\+after\+\_\+tx}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00324}{324}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00318}{radio\+\_\+set\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8h_source_l00044}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+CONT}}, \mbox{\hyperlink{radio__lib_8h_source_l00045}{RADIO\+\_\+\+STATE\+\_\+\+RX\+\_\+\+SINGLE}}, \mbox{\hyperlink{radio__lib_8h_source_l00043}{RADIO\+\_\+\+STATE\+\_\+\+STANDBY}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}}.
+
+\Hypertarget{radio__fsk_8c_a704361faf71d5dc249577f1bf2f6ce95}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_rx\_single\_timeout\_ms@{radio\_rx\_single\_timeout\_ms}}
+\index{radio\_rx\_single\_timeout\_ms@{radio\_rx\_single\_timeout\_ms}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_rx\_single\_timeout\_ms()}{radio\_rx\_single\_timeout\_ms()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a704361faf71d5dc249577f1bf2f6ce95} 
+uint32\+\_\+t radio\+\_\+rx\+\_\+single\+\_\+timeout\+\_\+ms (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{symbol\+\_\+timeout}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a704361faf71d5dc249577f1bf2f6ce95}{radio\+\_\+rx\+\_\+single\+\_\+timeout\+\_\+ms}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00385}{385}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00588}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single()}}.
+
+\Hypertarget{radio__fsk_8c_a28d53cac62352b93c97b2ea8a2b8da23}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_set\_event\_flags@{radio\_set\_event\_flags}}
+\index{radio\_set\_event\_flags@{radio\_set\_event\_flags}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_set\_event\_flags()}{radio\_set\_event\_flags()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a28d53cac62352b93c97b2ea8a2b8da23} 
+void radio\+\_\+set\+\_\+event\+\_\+flags (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{events}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a28d53cac62352b93c97b2ea8a2b8da23}{radio\+\_\+set\+\_\+event\+\_\+flags}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00063}{63}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__fsk_8c_source_l00054}{radio\+\_\+irq\+\_\+restore()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00046}{radio\+\_\+irq\+\_\+save()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}}.
+
+\Hypertarget{radio__fsk_8c_ad7c4b83974bc4a61029f971daef760c5}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_set\_op\_mode\_ready@{radio\_set\_op\_mode\_ready}}
+\index{radio\_set\_op\_mode\_ready@{radio\_set\_op\_mode\_ready}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_set\_op\_mode\_ready()}{radio\_set\_op\_mode\_ready()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_ad7c4b83974bc4a61029f971daef760c5} 
+bool radio\+\_\+set\+\_\+op\+\_\+mode\+\_\+ready (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{op\+\_\+mode}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00178}{178}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_a7419352df9bc0283d77f25c0125dd829}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_set\_state@{radio\_set\_state}}
+\index{radio\_set\_state@{radio\_set\_state}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_set\_state()}{radio\_set\_state()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a7419352df9bc0283d77f25c0125dd829} 
+void radio\+\_\+set\+\_\+state (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\+\_\+state\+\_\+t}}}]{state}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a7419352df9bc0283d77f25c0125dd829}{radio\+\_\+set\+\_\+state}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00318}{318}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00687}{radio\+\_\+fsk\+\_\+sleep()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00669}{radio\+\_\+fsk\+\_\+standby()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00563}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00588}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00324}{radio\+\_\+resume\+\_\+after\+\_\+tx()}}.
+
+\Hypertarget{radio__fsk_8c_af51c74a2fe3116913e1adc6a724240c5}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_tx\_timeout\_ms@{radio\_tx\_timeout\_ms}}
+\index{radio\_tx\_timeout\_ms@{radio\_tx\_timeout\_ms}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_tx\_timeout\_ms()}{radio\_tx\_timeout\_ms()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_af51c74a2fe3116913e1adc6a724240c5} 
+uint32\+\_\+t radio\+\_\+tx\+\_\+timeout\+\_\+ms (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{payload\+\_\+len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_af51c74a2fe3116913e1adc6a724240c5}{radio\+\_\+tx\+\_\+timeout\+\_\+ms}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00353}{353}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}.
+
+\Hypertarget{radio__fsk_8c_a2afefcd1d22cf6d1569414193a2ee665}\index{radio\_fsk.c@{radio\_fsk.c}!radio\_write\_sync\_word@{radio\_write\_sync\_word}}
+\index{radio\_write\_sync\_word@{radio\_write\_sync\_word}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{radio\_write\_sync\_word()}{radio\_write\_sync\_word()}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a2afefcd1d22cf6d1569414193a2ee665} 
+bool radio\+\_\+write\+\_\+sync\+\_\+word (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{radio__fsk_8c_a2afefcd1d22cf6d1569414193a2ee665}{radio\+\_\+write\+\_\+sync\+\_\+word}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00250}{250}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8h_source_l00187}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word}} i \mbox{\hyperlink{radio__lib_8h_source_l00186}{radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word\+\_\+len}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{radio__fsk_8c_doc-var-members}
+\doxysubsection{Dokumentacja zmiennych}
+\Hypertarget{radio__fsk_8c_a30ae65af15423f8b8a252fab1418f1fc}\index{radio\_fsk.c@{radio\_fsk.c}!s\_radio@{s\_radio}}
+\index{s\_radio@{s\_radio}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{s\_radio}{s\_radio}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a30ae65af15423f8b8a252fab1418f1fc} 
+\mbox{\hyperlink{structradio__fsk__context__t}{radio\+\_\+fsk\+\_\+context\+\_\+t}} s\+\_\+radio\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00041}{41}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_a744a49e4270045b330762170258e821d}\index{radio\_fsk.c@{radio\_fsk.c}!s\_runtime\_cfg@{s\_runtime\_cfg}}
+\index{s\_runtime\_cfg@{s\_runtime\_cfg}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{s\_runtime\_cfg}{s\_runtime\_cfg}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a744a49e4270045b330762170258e821d} 
+\mbox{\hyperlink{structradio__fsk__cfg__t}{radio\+\_\+fsk\+\_\+cfg\+\_\+t}} s\+\_\+runtime\+\_\+cfg\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00042}{42}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+
+\Hypertarget{radio__fsk_8c_a765b962df9b8238d8c125cc79dff897a}\index{radio\_fsk.c@{radio\_fsk.c}!s\_runtime\_cfg\_ready@{s\_runtime\_cfg\_ready}}
+\index{s\_runtime\_cfg\_ready@{s\_runtime\_cfg\_ready}!radio\_fsk.c@{radio\_fsk.c}}
+\doxysubsubsection{\texorpdfstring{s\_runtime\_cfg\_ready}{s\_runtime\_cfg\_ready}}
+{\footnotesize\ttfamily \label{radio__fsk_8c_a765b962df9b8238d8c125cc79dff897a} 
+bool s\+\_\+runtime\+\_\+cfg\+\_\+ready = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__fsk_8c_source_l00043}{43}} pliku \mbox{\hyperlink{radio__fsk_8c_source}{radio\+\_\+fsk.\+c}}.
+

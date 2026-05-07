@@ -1,0 +1,391 @@
+\doxysection{Dokumentacja struktury BMP280\+\_\+\+Handle\+Typedef}
+\hypertarget{structBMP280__HandleTypedef}{}\label{structBMP280__HandleTypedef}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+
+
+Driver handle with calibration constants and active configuration.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/bmp280\+\_\+lib/bmp280.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+uint16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{dig\+\_\+\+T1}}
+\begin{DoxyCompactList}\small\item\em Temperature calibration coefficient T1. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4}{dig\+\_\+\+T2}}
+\begin{DoxyCompactList}\small\item\em Temperature calibration coefficient T2. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d}{dig\+\_\+\+T3}}
+\begin{DoxyCompactList}\small\item\em Temperature calibration coefficient T3. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e}{dig\+\_\+\+P1}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P1. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f}{dig\+\_\+\+P2}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P2. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b}{dig\+\_\+\+P3}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P3. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82}{dig\+\_\+\+P4}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P4. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03}{dig\+\_\+\+P5}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P5. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b}{dig\+\_\+\+P6}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P6. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9}{dig\+\_\+\+P7}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P7. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133}{dig\+\_\+\+P8}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P8. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336}{dig\+\_\+\+P9}}
+\begin{DoxyCompactList}\small\item\em Pressure calibration coefficient P9. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec}{dig\+\_\+\+H1}}
+\begin{DoxyCompactList}\small\item\em Humidity calibration coefficient H1. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51}{dig\+\_\+\+H2}}
+\begin{DoxyCompactList}\small\item\em Humidity calibration coefficient H2. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8}{dig\+\_\+\+H3}}
+\begin{DoxyCompactList}\small\item\em Humidity calibration coefficient H3. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0}{dig\+\_\+\+H4}}
+\begin{DoxyCompactList}\small\item\em Humidity calibration coefficient H4. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a}{dig\+\_\+\+H5}}
+\begin{DoxyCompactList}\small\item\em Humidity calibration coefficient H5. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629}{dig\+\_\+\+H6}}
+\begin{DoxyCompactList}\small\item\em Humidity calibration coefficient H6. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}}
+\begin{DoxyCompactList}\small\item\em 7-\/bit I2C device address. \end{DoxyCompactList}\item 
+I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}{i2c}}
+\begin{DoxyCompactList}\small\item\em I2C peripheral handle. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}} \mbox{\hyperlink{structBMP280__HandleTypedef_a101ee64667bccd172bf4a9fb00fb10df}{params}}
+\begin{DoxyCompactList}\small\item\em Active sensor configuration. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}}
+\begin{DoxyCompactList}\small\item\em Chip ID read from the sensor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Driver handle with calibration constants and active configuration. 
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00097}{97}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structBMP280__HandleTypedef_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!addr@{addr}}
+\index{addr@{addr}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{addr}{addr}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987} 
+uint16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::addr}
+
+
+
+7-\/bit I2C device address. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00119}{119}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280_8c_source_l00146}{bmp280\+\_\+init()}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_H1@{dig\_H1}}
+\index{dig\_H1@{dig\_H1}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_H1}{dig\_H1}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec} 
+uint8\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+H1}
+
+
+
+Humidity calibration coefficient H1. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00112}{112}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_H2@{dig\_H2}}
+\index{dig\_H2@{dig\_H2}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_H2}{dig\_H2}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+H2}
+
+
+
+Humidity calibration coefficient H2. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00113}{113}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_H3@{dig\_H3}}
+\index{dig\_H3@{dig\_H3}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_H3}{dig\_H3}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8} 
+uint8\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+H3}
+
+
+
+Humidity calibration coefficient H3. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00114}{114}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_H4@{dig\_H4}}
+\index{dig\_H4@{dig\_H4}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_H4}{dig\_H4}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+H4}
+
+
+
+Humidity calibration coefficient H4. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00115}{115}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_H5@{dig\_H5}}
+\index{dig\_H5@{dig\_H5}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_H5}{dig\_H5}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+H5}
+
+
+
+Humidity calibration coefficient H5. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00116}{116}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_H6@{dig\_H6}}
+\index{dig\_H6@{dig\_H6}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_H6}{dig\_H6}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629} 
+int8\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+H6}
+
+
+
+Humidity calibration coefficient H6. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00117}{117}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P1@{dig\_P1}}
+\index{dig\_P1@{dig\_P1}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P1}{dig\_P1}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e} 
+uint16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P1}
+
+
+
+Pressure calibration coefficient P1. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00101}{101}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P2@{dig\_P2}}
+\index{dig\_P2@{dig\_P2}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P2}{dig\_P2}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P2}
+
+
+
+Pressure calibration coefficient P2. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00102}{102}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P3@{dig\_P3}}
+\index{dig\_P3@{dig\_P3}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P3}{dig\_P3}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P3}
+
+
+
+Pressure calibration coefficient P3. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00103}{103}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P4@{dig\_P4}}
+\index{dig\_P4@{dig\_P4}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P4}{dig\_P4}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P4}
+
+
+
+Pressure calibration coefficient P4. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00104}{104}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P5@{dig\_P5}}
+\index{dig\_P5@{dig\_P5}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P5}{dig\_P5}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P5}
+
+
+
+Pressure calibration coefficient P5. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00105}{105}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P6@{dig\_P6}}
+\index{dig\_P6@{dig\_P6}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P6}{dig\_P6}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P6}
+
+
+
+Pressure calibration coefficient P6. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00106}{106}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P7@{dig\_P7}}
+\index{dig\_P7@{dig\_P7}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P7}{dig\_P7}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P7}
+
+
+
+Pressure calibration coefficient P7. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00107}{107}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P8@{dig\_P8}}
+\index{dig\_P8@{dig\_P8}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P8}{dig\_P8}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P8}
+
+
+
+Pressure calibration coefficient P8. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00108}{108}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_P9@{dig\_P9}}
+\index{dig\_P9@{dig\_P9}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_P9}{dig\_P9}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+P9}
+
+
+
+Pressure calibration coefficient P9. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00109}{109}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_T1@{dig\_T1}}
+\index{dig\_T1@{dig\_T1}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_T1}{dig\_T1}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a} 
+uint16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+T1}
+
+
+
+Temperature calibration coefficient T1. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00098}{98}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_T2@{dig\_T2}}
+\index{dig\_T2@{dig\_T2}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_T2}{dig\_T2}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+T2}
+
+
+
+Temperature calibration coefficient T2. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00099}{99}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!dig\_T3@{dig\_T3}}
+\index{dig\_T3@{dig\_T3}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{dig\_T3}{dig\_T3}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d} 
+int16\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::dig\+\_\+\+T3}
+
+
+
+Temperature calibration coefficient T3. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00100}{100}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!i2c@{i2c}}
+\index{i2c@{i2c}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{i2c}{i2c}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4} 
+I2\+C\+\_\+\+Handle\+Type\+Def\texorpdfstring{$\ast$}{*} BMP280\+\_\+\+Handle\+Typedef\+::i2c}
+
+
+
+I2C peripheral handle. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00121}{121}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!id@{id}}
+\index{id@{id}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671} 
+uint8\+\_\+t BMP280\+\_\+\+Handle\+Typedef\+::id}
+
+
+
+Chip ID read from the sensor. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00125}{125}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280_8c_source_l00146}{bmp280\+\_\+init()}} i \mbox{\hyperlink{bmp280_8c_source_l00306}{bmp280\+\_\+read\+\_\+fixed()}}.
+
+\Hypertarget{structBMP280__HandleTypedef_a101ee64667bccd172bf4a9fb00fb10df}\index{BMP280\_HandleTypedef@{BMP280\_HandleTypedef}!params@{params}}
+\index{params@{params}!BMP280\_HandleTypedef@{BMP280\_HandleTypedef}}
+\doxysubsubsection{\texorpdfstring{params}{params}}
+{\footnotesize\ttfamily \label{structBMP280__HandleTypedef_a101ee64667bccd172bf4a9fb00fb10df} 
+\mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}} BMP280\+\_\+\+Handle\+Typedef\+::params}
+
+
+
+Active sensor configuration. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00123}{123}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/bmp280\+\_\+lib/\mbox{\hyperlink{bmp280_8h}{bmp280.\+h}}\end{DoxyCompactItemize}

@@ -1,0 +1,681 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/radio_lib/modulations/fsk/radio_fsk.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('radio__fsk_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku radio_fsk.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Interfejs backendu modulacji FSK dla SX1276.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="radio__lib_8h_source.html">../../radio_lib.h</a>&quot;</code><br />
+</div>
+<p><a href="radio__fsk_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:a7da352a7eca2bba1fe3ce2e45eea11dc" id="r_a7da352a7eca2bba1fe3ce2e45eea11dc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7da352a7eca2bba1fe3ce2e45eea11dc">radio_fsk_default_hw_cfg</a> (<a class="el" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> *cfg, SPI_HandleTypeDef *hspi)</td></tr>
+<tr class="memdesc:a7da352a7eca2bba1fe3ce2e45eea11dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domyślna konfiguracja sprzętowa backendu FSK.  <br /></td></tr>
+<tr class="memitem:a3f3cb604d11db7401202502ba194bfec" id="r_a3f3cb604d11db7401202502ba194bfec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3f3cb604d11db7401202502ba194bfec">radio_fsk_default_lora_cfg</a> (<a class="el" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg)</td></tr>
+<tr class="memdesc:a3f3cb604d11db7401202502ba194bfec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Domyślna konfiguracja parametrów backendu FSK.  <br /></td></tr>
+<tr class="memitem:a6bfd270c417c165cde47462e2f8f6dcf" id="r_a6bfd270c417c165cde47462e2f8f6dcf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bfd270c417c165cde47462e2f8f6dcf">radio_fsk_set_runtime_cfg</a> (const <a class="el" href="structradio__fsk__cfg__t.html">radio_fsk_cfg_t</a> *cfg)</td></tr>
+<tr class="memdesc:a6bfd270c417c165cde47462e2f8f6dcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia runtime konfigurację właściwą dla backendu FSK.  <br /></td></tr>
+<tr class="memitem:a3bce426af9377a35ba779fecb93709a2" id="r_a3bce426af9377a35ba779fecb93709a2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bce426af9377a35ba779fecb93709a2">radio_fsk_init</a> (const <a class="el" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> *hw, const <a class="el" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg, <a class="el" href="radio__lib_8h.html#a36ff66981b6c3ee55ddf5b6e75504e76">radio_event_cb_t</a> cb, void *user_ctx)</td></tr>
+<tr class="memdesc:a3bce426af9377a35ba779fecb93709a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inicjalizacja backendu FSK.  <br /></td></tr>
+<tr class="memitem:acc9f82d37eb1ba8baf32225b17176162" id="r_acc9f82d37eb1ba8baf32225b17176162"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc9f82d37eb1ba8baf32225b17176162">radio_fsk_deinit</a> (void)</td></tr>
+<tr class="memdesc:acc9f82d37eb1ba8baf32225b17176162"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinicjalizacja backendu FSK.  <br /></td></tr>
+<tr class="memitem:abc10767656c9437cf21d543d4efb3c8e" id="r_abc10767656c9437cf21d543d4efb3c8e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc10767656c9437cf21d543d4efb3c8e">radio_fsk_start_rx_continuous</a> (void)</td></tr>
+<tr class="memdesc:abc10767656c9437cf21d543d4efb3c8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uruchomienie odbioru ciągłego FSK.  <br /></td></tr>
+<tr class="memitem:afe2df52f73954a7c04849f4dea812963" id="r_afe2df52f73954a7c04849f4dea812963"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afe2df52f73954a7c04849f4dea812963">radio_fsk_start_rx_single</a> (uint16_t symbol_timeout)</td></tr>
+<tr class="memdesc:afe2df52f73954a7c04849f4dea812963"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uruchomienie odbioru pojedynczego FSK.  <br /></td></tr>
+<tr class="memitem:aac6513309bccd4c723b7f37d2d1d3ebe" id="r_aac6513309bccd4c723b7f37d2d1d3ebe"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac6513309bccd4c723b7f37d2d1d3ebe">radio_fsk_send_async</a> (const uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:aac6513309bccd4c723b7f37d2d1d3ebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uruchomienie nadawania asynchronicznego FSK.  <br /></td></tr>
+<tr class="memitem:aac044a17df998a6ee3ae094da0e527e4" id="r_aac044a17df998a6ee3ae094da0e527e4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac044a17df998a6ee3ae094da0e527e4">radio_fsk_standby</a> (void)</td></tr>
+<tr class="memdesc:aac044a17df998a6ee3ae094da0e527e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Przejście do standby backendu FSK.  <br /></td></tr>
+<tr class="memitem:a69436e5dd1977f344be2fe5bb8396a73" id="r_a69436e5dd1977f344be2fe5bb8396a73"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a69436e5dd1977f344be2fe5bb8396a73">radio_fsk_sleep</a> (void)</td></tr>
+<tr class="memdesc:a69436e5dd1977f344be2fe5bb8396a73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Przejście do sleep backendu FSK.  <br /></td></tr>
+<tr class="memitem:abde60aa61bf2de0b9dc28ad082b8efac" id="r_abde60aa61bf2de0b9dc28ad082b8efac"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abde60aa61bf2de0b9dc28ad082b8efac">radio_fsk_process</a> (void)</td></tr>
+<tr class="memdesc:abde60aa61bf2de0b9dc28ad082b8efac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Przetwarzanie logiki odroczonej backendu FSK.  <br /></td></tr>
+<tr class="memitem:a90e4c1995da4a6e628a39044c3c4e483" id="r_a90e4c1995da4a6e628a39044c3c4e483"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90e4c1995da4a6e628a39044c3c4e483">radio_fsk_take_events</a> (void)</td></tr>
+<tr class="memdesc:a90e4c1995da4a6e628a39044c3c4e483"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zwrócenie i wyczyszczenie flag zdarzeń backendu FSK.  <br /></td></tr>
+<tr class="memitem:aab1a413e95e54815c8503d06e58ed218" id="r_aab1a413e95e54815c8503d06e58ed218"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab1a413e95e54815c8503d06e58ed218">radio_fsk_get_last_packet</a> (<a class="el" href="structradio__packet__t.html">radio_packet_t</a> *pkt)</td></tr>
+<tr class="memdesc:aab1a413e95e54815c8503d06e58ed218"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczyt ostatniego pakietu backendu FSK.  <br /></td></tr>
+<tr class="memitem:a2a475006526b0718271056aed1dd1048" id="r_a2a475006526b0718271056aed1dd1048"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a475006526b0718271056aed1dd1048">radio_fsk_get_state</a> (void)</td></tr>
+<tr class="memdesc:a2a475006526b0718271056aed1dd1048"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczyt stanu backendu FSK.  <br /></td></tr>
+<tr class="memitem:ac4b311b82336b9a5ce281b234794913b" id="r_ac4b311b82336b9a5ce281b234794913b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac4b311b82336b9a5ce281b234794913b">radio_fsk_raw_read_reg</a> (uint8_t reg, uint8_t *value)</td></tr>
+<tr class="memdesc:ac4b311b82336b9a5ce281b234794913b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczyt pojedynczego rejestru (backend FSK).  <br /></td></tr>
+<tr class="memitem:aeb6c131eec73349617a81fe300a74ec4" id="r_aeb6c131eec73349617a81fe300a74ec4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb6c131eec73349617a81fe300a74ec4">radio_fsk_raw_write_reg</a> (uint8_t reg, uint8_t value)</td></tr>
+<tr class="memdesc:aeb6c131eec73349617a81fe300a74ec4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zapis pojedynczego rejestru (backend FSK).  <br /></td></tr>
+<tr class="memitem:a474cfecfe04aa8f8bd19ffde5fa6b0e8" id="r_a474cfecfe04aa8f8bd19ffde5fa6b0e8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a474cfecfe04aa8f8bd19ffde5fa6b0e8">radio_fsk_raw_read_burst</a> (uint8_t reg, uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:a474cfecfe04aa8f8bd19ffde5fa6b0e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczyt sekwencji rejestrów (backend FSK).  <br /></td></tr>
+<tr class="memitem:a6ad38dae6ac92137637ad301698500d9" id="r_a6ad38dae6ac92137637ad301698500d9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ad38dae6ac92137637ad301698500d9">radio_fsk_raw_write_burst</a> (uint8_t reg, const uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:a6ad38dae6ac92137637ad301698500d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zapis sekwencji rejestrów (backend FSK).  <br /></td></tr>
+<tr class="memitem:ac0060268606f59533013b637e1459a4d" id="r_ac0060268606f59533013b637e1459a4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0060268606f59533013b637e1459a4d">radio_fsk_on_exti</a> (uint16_t gpio_pin)</td></tr>
+<tr class="memdesc:ac0060268606f59533013b637e1459a4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Przekazanie pinu EXTI do backendu FSK.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Interfejs backendu modulacji FSK dla SX1276. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="radio__fsk_8h_source.html">radio_fsk.h</a>.</p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a7da352a7eca2bba1fe3ce2e45eea11dc" name="a7da352a7eca2bba1fe3ce2e45eea11dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7da352a7eca2bba1fe3ce2e45eea11dc">&#9670;&#160;</a></span>radio_fsk_default_hw_cfg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_fsk_default_hw_cfg </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SPI_HandleTypeDef *</td>          <td class="paramname"><span class="paramname"><em>hspi</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Domyślna konfiguracja sprzętowa backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00467">467</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a3f3cb604d11db7401202502ba194bfec" name="a3f3cb604d11db7401202502ba194bfec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f3cb604d11db7401202502ba194bfec">&#9670;&#160;</a></span>radio_fsk_default_lora_cfg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_fsk_default_lora_cfg </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Domyślna konfiguracja parametrów backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00472">472</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lora_8c_source.html#l00347">radio_lora_default_lora_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="acc9f82d37eb1ba8baf32225b17176162" name="acc9f82d37eb1ba8baf32225b17176162"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc9f82d37eb1ba8baf32225b17176162">&#9670;&#160;</a></span>radio_fsk_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_deinit </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Deinicjalizacja backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00550">550</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__fsk_8c_source.html#l00687">radio_fsk_sleep()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__lib_8h_source.html#l00042">RADIO_STATE_UNINIT</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00119">radio_deinit()</a>.</p>
+
+</div>
+</div>
+<a id="aab1a413e95e54815c8503d06e58ed218" name="aab1a413e95e54815c8503d06e58ed218"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab1a413e95e54815c8503d06e58ed218">&#9670;&#160;</a></span>radio_fsk_get_last_packet()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_fsk_get_last_packet </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structradio__packet__t.html">radio_packet_t</a> *</td>          <td class="paramname"><span class="paramname"><em>pkt</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczyt ostatniego pakietu backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00834">834</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00250">radio_get_last_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a2a475006526b0718271056aed1dd1048" name="a2a475006526b0718271056aed1dd1048"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a475006526b0718271056aed1dd1048">&#9670;&#160;</a></span>radio_fsk_get_state()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a> radio_fsk_get_state </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczyt stanu backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00845">845</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00266">radio_get_state()</a>.</p>
+
+</div>
+</div>
+<a id="a3bce426af9377a35ba779fecb93709a2" name="a3bce426af9377a35ba779fecb93709a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bce426af9377a35ba779fecb93709a2">&#9670;&#160;</a></span>radio_fsk_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_init </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>hw</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="radio__lib_8h.html#a36ff66981b6c3ee55ddf5b6e75504e76">radio_event_cb_t</a></td>          <td class="paramname"><span class="paramname"><em>cb</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *</td>          <td class="paramname"><span class="paramname"><em>user_ctx</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inicjalizacja backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00489">489</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00096">radio_hw_cfg_t::hspi</a>, <a class="el" href="radio__lib_8h_source.html#l00097">radio_hw_cfg_t::nss</a>, <a class="el" href="radio__lib_8h_source.html#l00088">radio_gpio_t::pin</a>, <a class="el" href="radio__lib_8h_source.html#l00087">radio_gpio_t::port</a>, <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8c_source.html#l00039">radio_default_fsk_cfg()</a>, <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00030">RADIO_EINVAL</a>, <a class="el" href="radio__fsk_8c_source.html#l00092">radio_hw_reset()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__lib_8h_source.html#l00043">RADIO_STATE_STANDBY</a>, <a class="el" href="radio__lib_8h_source.html#l00042">RADIO_STATE_UNINIT</a>, <a class="el" href="radio__lib_8h_source.html#l00098">radio_hw_cfg_t::reset</a>, <a class="el" href="radio__lib_8h_source.html#l00100">radio_hw_cfg_t::spi_timeout_ms</a> i <a class="el" href="radio__sx1276_8c_source.html#l00125">sx1276_get_version()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00100">radio_init()</a>.</p>
+
+</div>
+</div>
+<a id="ac0060268606f59533013b637e1459a4d" name="ac0060268606f59533013b637e1459a4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0060268606f59533013b637e1459a4d">&#9670;&#160;</a></span>radio_fsk_on_exti()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_fsk_on_exti </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>gpio_pin</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Przekazanie pinu EXTI do backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00900">900</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__fsk_8c_source.html#l00410">radio_handle_exti_pin()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00346">radio_on_exti()</a>.</p>
+
+</div>
+</div>
+<a id="abde60aa61bf2de0b9dc28ad082b8efac" name="abde60aa61bf2de0b9dc28ad082b8efac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abde60aa61bf2de0b9dc28ad082b8efac">&#9670;&#160;</a></span>radio_fsk_process()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void radio_fsk_process </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Przetwarzanie logiki odroczonej backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00705">705</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00031">RADIO_EBUS</a>, <a class="el" href="radio__lib_8h_source.html#l00058">RADIO_EVENT_CRC_ERR</a>, <a class="el" href="radio__lib_8h_source.html#l00061">RADIO_EVENT_FIFO_OVERRUN</a>, <a class="el" href="radio__lib_8h_source.html#l00062">RADIO_EVENT_HW_ERROR</a>, <a class="el" href="radio__lib_8h_source.html#l00054">RADIO_EVENT_NONE</a>, <a class="el" href="radio__lib_8h_source.html#l00056">RADIO_EVENT_RX_DONE</a>, <a class="el" href="radio__lib_8h_source.html#l00057">RADIO_EVENT_RX_TIMEOUT</a>, <a class="el" href="radio__lib_8h_source.html#l00055">RADIO_EVENT_TX_DONE</a>, <a class="el" href="radio__fsk_8c_source.html#l00669">radio_fsk_standby()</a>, <a class="el" href="radio__fsk_8c_source.html#l00054">radio_irq_restore()</a>, <a class="el" href="radio__fsk_8c_source.html#l00046">radio_irq_save()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__fsk_8c_source.html#l00432">radio_read_rx_packet()</a>, <a class="el" href="radio__fsk_8c_source.html#l00324">radio_resume_after_tx()</a>, <a class="el" href="radio__fsk_8c_source.html#l00063">radio_set_event_flags()</a>, <a class="el" href="radio__lib_8h_source.html#l00045">RADIO_STATE_RX_SINGLE</a>, <a class="el" href="radio__lib_8h_source.html#l00046">RADIO_STATE_TX</a> i <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00215">radio_process()</a>.</p>
+
+</div>
+</div>
+<a id="a474cfecfe04aa8f8bd19ffde5fa6b0e8" name="a474cfecfe04aa8f8bd19ffde5fa6b0e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a474cfecfe04aa8f8bd19ffde5fa6b0e8">&#9670;&#160;</a></span>radio_fsk_raw_read_burst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_raw_read_burst </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczyt sekwencji rejestrów (backend FSK). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00870">870</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00030">RADIO_EINVAL</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__sx1276_8c_source.html#l00073">sx1276_read_burst()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00314">radio_raw_read_burst()</a>.</p>
+
+</div>
+</div>
+<a id="ac4b311b82336b9a5ce281b234794913b" name="ac4b311b82336b9a5ce281b234794913b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4b311b82336b9a5ce281b234794913b">&#9670;&#160;</a></span>radio_fsk_raw_read_reg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_raw_read_reg </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczyt pojedynczego rejestru (backend FSK). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00850">850</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00282">radio_raw_read_reg()</a>.</p>
+
+</div>
+</div>
+<a id="a6ad38dae6ac92137637ad301698500d9" name="a6ad38dae6ac92137637ad301698500d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ad38dae6ac92137637ad301698500d9">&#9670;&#160;</a></span>radio_fsk_raw_write_burst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_raw_write_burst </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zapis sekwencji rejestrów (backend FSK). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00885">885</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00030">RADIO_EINVAL</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00330">radio_raw_write_burst()</a>.</p>
+
+</div>
+</div>
+<a id="aeb6c131eec73349617a81fe300a74ec4" name="aeb6c131eec73349617a81fe300a74ec4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb6c131eec73349617a81fe300a74ec4">&#9670;&#160;</a></span>radio_fsk_raw_write_reg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_raw_write_reg </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zapis pojedynczego rejestru (backend FSK). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00860">860</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00298">radio_raw_write_reg()</a>.</p>
+
+</div>
+</div>
+<a id="aac6513309bccd4c723b7f37d2d1d3ebe" name="aac6513309bccd4c723b7f37d2d1d3ebe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac6513309bccd4c723b7f37d2d1d3ebe">&#9670;&#160;</a></span>radio_fsk_send_async()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_send_async </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Uruchomienie nadawania asynchronicznego FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00618">618</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00031">RADIO_EBUS</a>, <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00030">RADIO_EINVAL</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>, <a class="el" href="radio__fsk_8c_source.html#l00054">radio_irq_restore()</a>, <a class="el" href="radio__fsk_8c_source.html#l00046">radio_irq_save()</a>, <a class="el" href="radio__lib__config_8h_source.html#l00051">RADIO_LIB_MAX_PAYLOAD</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__fsk_8c_source.html#l00318">radio_set_state()</a>, <a class="el" href="radio__lib_8h_source.html#l00046">RADIO_STATE_TX</a>, <a class="el" href="radio__fsk_8c_source.html#l00353">radio_tx_timeout_ms()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00130">sx1276_set_op_mode()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00167">radio_send_async()</a>.</p>
+
+</div>
+</div>
+<a id="a6bfd270c417c165cde47462e2f8f6dcf" name="a6bfd270c417c165cde47462e2f8f6dcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bfd270c417c165cde47462e2f8f6dcf">&#9670;&#160;</a></span>radio_fsk_set_runtime_cfg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_set_runtime_cfg </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structradio__fsk__cfg__t.html">radio_fsk_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia runtime konfigurację właściwą dla backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00477">477</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__fsk_8c_source.html#l00071">radio_cfg_valid()</a>, <a class="el" href="radio__lib_8h_source.html#l00030">RADIO_EINVAL</a> i <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00090">radio_set_fsk_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a69436e5dd1977f344be2fe5bb8396a73" name="a69436e5dd1977f344be2fe5bb8396a73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69436e5dd1977f344be2fe5bb8396a73">&#9670;&#160;</a></span>radio_fsk_sleep()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_sleep </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Przejście do sleep backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00687">687</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__fsk_8c_source.html#l00318">radio_set_state()</a> i <a class="el" href="radio__lib_8h_source.html#l00043">RADIO_STATE_STANDBY</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00550">radio_fsk_deinit()</a> i <a class="el" href="radio__lib_8c_source.html#l00199">radio_sleep()</a>.</p>
+
+</div>
+</div>
+<a id="aac044a17df998a6ee3ae094da0e527e4" name="aac044a17df998a6ee3ae094da0e527e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac044a17df998a6ee3ae094da0e527e4">&#9670;&#160;</a></span>radio_fsk_standby()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_standby </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Przejście do standby backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00669">669</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__fsk_8c_source.html#l00318">radio_set_state()</a> i <a class="el" href="radio__lib_8h_source.html#l00043">RADIO_STATE_STANDBY</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00705">radio_fsk_process()</a> i <a class="el" href="radio__lib_8c_source.html#l00183">radio_standby()</a>.</p>
+
+</div>
+</div>
+<a id="abc10767656c9437cf21d543d4efb3c8e" name="abc10767656c9437cf21d543d4efb3c8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc10767656c9437cf21d543d4efb3c8e">&#9670;&#160;</a></span>radio_fsk_start_rx_continuous()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_start_rx_continuous </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Uruchomienie odbioru ciągłego FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00563">563</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00031">RADIO_EBUS</a>, <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__fsk_8c_source.html#l00318">radio_set_state()</a>, <a class="el" href="radio__lib_8h_source.html#l00044">RADIO_STATE_RX_CONT</a>, <a class="el" href="radio__lib_8h_source.html#l00046">RADIO_STATE_TX</a>, <a class="el" href="radio__sx1276_8c_source.html#l00130">sx1276_set_op_mode()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00135">radio_start_rx_continuous()</a>.</p>
+
+</div>
+</div>
+<a id="afe2df52f73954a7c04849f4dea812963" name="afe2df52f73954a7c04849f4dea812963"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe2df52f73954a7c04849f4dea812963">&#9670;&#160;</a></span>radio_fsk_start_rx_single()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> radio_fsk_start_rx_single </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>symbol_timeout</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Uruchomienie odbioru pojedynczego FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00588">588</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__lib_8h_source.html#l00031">RADIO_EBUS</a>, <a class="el" href="radio__lib_8h_source.html#l00034">RADIO_EHW</a>, <a class="el" href="radio__lib_8h_source.html#l00030">RADIO_EINVAL</a>, <a class="el" href="radio__lib_8h_source.html#l00033">RADIO_ESTATE</a>, <a class="el" href="radio__fsk_8c_source.html#l00131">radio_get_shaping_bits()</a>, <a class="el" href="radio__lib_8h_source.html#l00029">RADIO_OK</a>, <a class="el" href="radio__fsk_8c_source.html#l00385">radio_rx_single_timeout_ms()</a>, <a class="el" href="radio__fsk_8c_source.html#l00318">radio_set_state()</a>, <a class="el" href="radio__lib_8h_source.html#l00045">RADIO_STATE_RX_SINGLE</a>, <a class="el" href="radio__lib_8h_source.html#l00046">RADIO_STATE_TX</a>, <a class="el" href="radio__sx1276_8c_source.html#l00130">sx1276_set_op_mode()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00151">radio_start_rx_single()</a>.</p>
+
+</div>
+</div>
+<a id="a90e4c1995da4a6e628a39044c3c4e483" name="a90e4c1995da4a6e628a39044c3c4e483"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90e4c1995da4a6e628a39044c3c4e483">&#9670;&#160;</a></span>radio_fsk_take_events()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_fsk_take_events </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zwrócenie i wyczyszczenie flag zdarzeń backendu FSK. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__fsk_8c_source.html#l00823">823</a> pliku <a class="el" href="radio__fsk_8c_source.html">radio_fsk.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__fsk_8c_source.html#l00054">radio_irq_restore()</a> i <a class="el" href="radio__fsk_8c_source.html#l00046">radio_irq_save()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lib_8c_source.html#l00234">radio_take_events()</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_a2e8606bee7d2eaf4a9e334d73381ef3.html">radio_lib</a></li><li class="navelem"><b>modulations</b></li><li class="navelem"><b>fsk</b></li><li class="navelem"><a href="radio__fsk_8h.html">radio_fsk.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury security_runtime_cfg_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structsecurity__runtime__cfg__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury security_runtime_cfg_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Persistent and runtime security settings snapshot.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="security__main_8h_source.html">Core/App/security_main.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a2dbe7463349f84d116c1f25e2e9ba027" id="r_a2dbe7463349f84d116c1f25e2e9ba027"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2dbe7463349f84d116c1f25e2e9ba027">coding_enabled</a></td></tr>
+<tr class="memdesc:a2dbe7463349f84d116c1f25e2e9ba027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected/coded traffic setting.  <br /></td></tr>
+<tr class="memitem:adbfd578d8f0882cb768e8bedb10b3bdd" id="r_adbfd578d8f0882cb768e8bedb10b3bdd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbfd578d8f0882cb768e8bedb10b3bdd">fh_enabled</a></td></tr>
+<tr class="memdesc:adbfd578d8f0882cb768e8bedb10b3bdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frequency hopping setting.  <br /></td></tr>
+<tr class="memitem:acf4e54f09cb7da3404f3a21971c4edaa" id="r_acf4e54f09cb7da3404f3a21971c4edaa"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf4e54f09cb7da3404f3a21971c4edaa">fh_period_ms</a></td></tr>
+<tr class="memdesc:acf4e54f09cb7da3404f3a21971c4edaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frequency hopping period in milliseconds.  <br /></td></tr>
+<tr class="memitem:a0ab9ab1cc0a38c67d09c9ebfebe670eb" id="r_a0ab9ab1cc0a38c67d09c9ebfebe670eb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ab9ab1cc0a38c67d09c9ebfebe670eb">auto_ping_enabled</a></td></tr>
+<tr class="memdesc:a0ab9ab1cc0a38c67d09c9ebfebe670eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Automatic ping setting.  <br /></td></tr>
+<tr class="memitem:a654ffd1797b943c53db8e2aecfb61898" id="r_a654ffd1797b943c53db8e2aecfb61898"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a654ffd1797b943c53db8e2aecfb61898">auto_ping_period_ms</a></td></tr>
+<tr class="memdesc:a654ffd1797b943c53db8e2aecfb61898"><td class="mdescLeft">&#160;</td><td class="mdescRight">Automatic ping period in milliseconds.  <br /></td></tr>
+<tr class="memitem:a836268a1850253e7f0d5aab38fe96ab9" id="r_a836268a1850253e7f0d5aab38fe96ab9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__main_8h.html#a924b68fe454425e6115096a3568341b6">radio_main_auto_ping_mode_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a836268a1850253e7f0d5aab38fe96ab9">auto_ping_mode</a></td></tr>
+<tr class="memdesc:a836268a1850253e7f0d5aab38fe96ab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Automatic ping payload mode.  <br /></td></tr>
+<tr class="memitem:adf9cf796c526ed33659d841a00d35447" id="r_adf9cf796c526ed33659d841a00d35447"><td class="memItemLeft" align="right" valign="top"><a class="el" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf9cf796c526ed33659d841a00d35447">notify_mode</a></td></tr>
+<tr class="memdesc:adf9cf796c526ed33659d841a00d35447"><td class="mdescLeft">&#160;</td><td class="mdescRight">Security notification display mode.  <br /></td></tr>
+<tr class="memitem:a27deaae71af67200235a6f06a9a3d84a" id="r_a27deaae71af67200235a6f06a9a3d84a"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a27deaae71af67200235a6f06a9a3d84a">lora_preset</a></td></tr>
+<tr class="memdesc:a27deaae71af67200235a6f06a9a3d84a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Selected LoRa preset.  <br /></td></tr>
+<tr class="memitem:a6ea64e49878b3e18a540e1b0ff2bda34" id="r_a6ea64e49878b3e18a540e1b0ff2bda34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="radio__main_8h.html#a94aa5079cc936bd8622c2615177ee6e1">radio_main_modulation_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ea64e49878b3e18a540e1b0ff2bda34">active_modulation</a></td></tr>
+<tr class="memdesc:a6ea64e49878b3e18a540e1b0ff2bda34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active modulation family.  <br /></td></tr>
+<tr class="memitem:abfa0ce16882adff3981a56126ba5f6d4" id="r_abfa0ce16882adff3981a56126ba5f6d4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abfa0ce16882adff3981a56126ba5f6d4">lora</a></td></tr>
+<tr class="memdesc:abfa0ce16882adff3981a56126ba5f6d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persisted LoRa profile.  <br /></td></tr>
+<tr class="memitem:ac0efdc06c007576c76335b661b576217" id="r_ac0efdc06c007576c76335b661b576217"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__main__fsk__cfg__t.html">radio_main_fsk_cfg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac0efdc06c007576c76335b661b576217">fsk</a></td></tr>
+<tr class="memdesc:ac0efdc06c007576c76335b661b576217"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persisted FSK profile.  <br /></td></tr>
+<tr class="memitem:aac2ddfcf83fbd0fe477f54d1cc57a55a" id="r_aac2ddfcf83fbd0fe477f54d1cc57a55a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__main__ook__cfg__t.html">radio_main_ook_cfg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac2ddfcf83fbd0fe477f54d1cc57a55a">ook</a></td></tr>
+<tr class="memdesc:aac2ddfcf83fbd0fe477f54d1cc57a55a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persisted OOK profile.  <br /></td></tr>
+<tr class="memitem:a661a780c148d7641dc2ab54556577842" id="r_a661a780c148d7641dc2ab54556577842"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a661a780c148d7641dc2ab54556577842">radio_profiles_persisted</a></td></tr>
+<tr class="memdesc:a661a780c148d7641dc2ab54556577842"><td class="mdescLeft">&#160;</td><td class="mdescRight"><span class="tt">true</span> when radio profiles were loaded from store.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Persistent and runtime security settings snapshot. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00048">48</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a6ea64e49878b3e18a540e1b0ff2bda34" name="a6ea64e49878b3e18a540e1b0ff2bda34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ea64e49878b3e18a540e1b0ff2bda34">&#9670;&#160;</a></span>active_modulation</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__main_8h.html#a94aa5079cc936bd8622c2615177ee6e1">radio_main_modulation_t</a> security_runtime_cfg_t::active_modulation</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Active modulation family. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00058">58</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a0ab9ab1cc0a38c67d09c9ebfebe670eb" name="a0ab9ab1cc0a38c67d09c9ebfebe670eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ab9ab1cc0a38c67d09c9ebfebe670eb">&#9670;&#160;</a></span>auto_ping_enabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_runtime_cfg_t::auto_ping_enabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Automatic ping setting. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00053">53</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a836268a1850253e7f0d5aab38fe96ab9" name="a836268a1850253e7f0d5aab38fe96ab9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a836268a1850253e7f0d5aab38fe96ab9">&#9670;&#160;</a></span>auto_ping_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__main_8h.html#a924b68fe454425e6115096a3568341b6">radio_main_auto_ping_mode_t</a> security_runtime_cfg_t::auto_ping_mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Automatic ping payload mode. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00055">55</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a654ffd1797b943c53db8e2aecfb61898" name="a654ffd1797b943c53db8e2aecfb61898"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a654ffd1797b943c53db8e2aecfb61898">&#9670;&#160;</a></span>auto_ping_period_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t security_runtime_cfg_t::auto_ping_period_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Automatic ping period in milliseconds. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00054">54</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a2dbe7463349f84d116c1f25e2e9ba027" name="a2dbe7463349f84d116c1f25e2e9ba027"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dbe7463349f84d116c1f25e2e9ba027">&#9670;&#160;</a></span>coding_enabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_runtime_cfg_t::coding_enabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Protected/coded traffic setting. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00050">50</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="adbfd578d8f0882cb768e8bedb10b3bdd" name="adbfd578d8f0882cb768e8bedb10b3bdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbfd578d8f0882cb768e8bedb10b3bdd">&#9670;&#160;</a></span>fh_enabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_runtime_cfg_t::fh_enabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Frequency hopping setting. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00051">51</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="acf4e54f09cb7da3404f3a21971c4edaa" name="acf4e54f09cb7da3404f3a21971c4edaa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf4e54f09cb7da3404f3a21971c4edaa">&#9670;&#160;</a></span>fh_period_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t security_runtime_cfg_t::fh_period_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Frequency hopping period in milliseconds. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00052">52</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="ac0efdc06c007576c76335b661b576217" name="ac0efdc06c007576c76335b661b576217"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0efdc06c007576c76335b661b576217">&#9670;&#160;</a></span>fsk</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__main__fsk__cfg__t.html">radio_main_fsk_cfg_t</a> security_runtime_cfg_t::fsk</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Persisted FSK profile. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00060">60</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="abfa0ce16882adff3981a56126ba5f6d4" name="abfa0ce16882adff3981a56126ba5f6d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfa0ce16882adff3981a56126ba5f6d4">&#9670;&#160;</a></span>lora</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> security_runtime_cfg_t::lora</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Persisted LoRa profile. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00059">59</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a27deaae71af67200235a6f06a9a3d84a" name="a27deaae71af67200235a6f06a9a3d84a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27deaae71af67200235a6f06a9a3d84a">&#9670;&#160;</a></span>lora_preset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_runtime_cfg_t::lora_preset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Selected LoRa preset. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00057">57</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="adf9cf796c526ed33659d841a00d35447" name="adf9cf796c526ed33659d841a00d35447"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf9cf796c526ed33659d841a00d35447">&#9670;&#160;</a></span>notify_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a> security_runtime_cfg_t::notify_mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Security notification display mode. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00056">56</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="aac2ddfcf83fbd0fe477f54d1cc57a55a" name="aac2ddfcf83fbd0fe477f54d1cc57a55a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac2ddfcf83fbd0fe477f54d1cc57a55a">&#9670;&#160;</a></span>ook</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__main__ook__cfg__t.html">radio_main_ook_cfg_t</a> security_runtime_cfg_t::ook</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Persisted OOK profile. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00061">61</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a661a780c148d7641dc2ab54556577842" name="a661a780c148d7641dc2ab54556577842"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a661a780c148d7641dc2ab54556577842">&#9670;&#160;</a></span>radio_profiles_persisted</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_runtime_cfg_t::radio_profiles_persisted</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><span class="tt">true</span> when radio profiles were loaded from store. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8h_source.html#l00062">62</a> pliku <a class="el" href="security__main_8h_source.html">security_main.h</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="security__main_8h_source.html">security_main.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structsecurity__runtime__cfg__t.html">security_runtime_cfg_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,143 @@
+\doxysection{Dokumentacja struktury radio\+\_\+packet\+\_\+t}
+\hypertarget{structradio__packet__t}{}\label{structradio__packet__t}\index{radio\_packet\_t@{radio\_packet\_t}}
+
+
+Bufor ostatnio odebranej ramki.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/radio\+\_\+lib/radio\+\_\+lib.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}{data}} \mbox{[}\mbox{\hyperlink{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Payload ramki. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}{length}}
+\begin{DoxyCompactList}\small\item\em Długość payloadu. \end{DoxyCompactList}\item 
+int16\+\_\+t \mbox{\hyperlink{structradio__packet__t_a6bf8985619e83f6b6f8fd02065a36a6c}{rssi\+\_\+dbm}}
+\begin{DoxyCompactList}\small\item\em RSSI pakietu \mbox{[}d\+Bm\mbox{]}. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{structradio__packet__t_acab0b755530b605b24c592961626cded}{snr\+\_\+db}}
+\begin{DoxyCompactList}\small\item\em SNR pakietu \mbox{[}dB\mbox{]}. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__packet__t_ab2b61197ed2f23da7b4257c4729b06e2}{timestamp\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Znacznik czasu ({\ttfamily HAL\+\_\+\+Get\+Tick}). \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structradio__packet__t_a99311068f676a7c97904e177a3390fca}{valid}}
+\begin{DoxyCompactList}\small\item\em Flaga poprawności danych bufora. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Bufor ostatnio odebranej ramki. 
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00212}{212}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__packet__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3}\index{radio\_packet\_t@{radio\_packet\_t}!data@{data}}
+\index{data@{data}!radio\_packet\_t@{radio\_packet\_t}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily \label{structradio__packet__t_acfbf131a3f82687b4855338496e2a3e3} 
+uint8\+\_\+t radio\+\_\+packet\+\_\+t\+::data\mbox{[}\mbox{\hyperlink{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}\mbox{]}}
+
+
+
+Payload ramki. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00214}{214}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00084}{radio\+\_\+test\+\_\+print\+\_\+packet()}}, \mbox{\hyperlink{radio__test_8c_source_l00110}{radio\+\_\+test\+\_\+print\+\_\+packet\+\_\+text()}}, \mbox{\hyperlink{radio__test_8c_source_l00124}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd()}} i \mbox{\hyperlink{radio__test_8c_source_l00138}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory()}}.
+
+\Hypertarget{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e}\index{radio\_packet\_t@{radio\_packet\_t}!length@{length}}
+\index{length@{length}!radio\_packet\_t@{radio\_packet\_t}}
+\doxysubsubsection{\texorpdfstring{length}{length}}
+{\footnotesize\ttfamily \label{structradio__packet__t_a4a3540f8c1fec6702e5615a36d7c8f7e} 
+uint8\+\_\+t radio\+\_\+packet\+\_\+t\+::length}
+
+
+
+Długość payloadu. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00215}{215}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00084}{radio\+\_\+test\+\_\+print\+\_\+packet()}}, \mbox{\hyperlink{radio__test_8c_source_l00110}{radio\+\_\+test\+\_\+print\+\_\+packet\+\_\+text()}}, \mbox{\hyperlink{radio__test_8c_source_l00124}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd()}} i \mbox{\hyperlink{radio__test_8c_source_l00138}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory()}}.
+
+\Hypertarget{structradio__packet__t_a6bf8985619e83f6b6f8fd02065a36a6c}\index{radio\_packet\_t@{radio\_packet\_t}!rssi\_dbm@{rssi\_dbm}}
+\index{rssi\_dbm@{rssi\_dbm}!radio\_packet\_t@{radio\_packet\_t}}
+\doxysubsubsection{\texorpdfstring{rssi\_dbm}{rssi\_dbm}}
+{\footnotesize\ttfamily \label{structradio__packet__t_a6bf8985619e83f6b6f8fd02065a36a6c} 
+int16\+\_\+t radio\+\_\+packet\+\_\+t\+::rssi\+\_\+dbm}
+
+
+
+RSSI pakietu \mbox{[}d\+Bm\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00216}{216}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00084}{radio\+\_\+test\+\_\+print\+\_\+packet()}}, \mbox{\hyperlink{radio__test_8c_source_l00124}{radio\+\_\+test\+\_\+publish\+\_\+packet\+\_\+to\+\_\+lcd()}} i \mbox{\hyperlink{radio__test_8c_source_l00138}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory()}}.
+
+\Hypertarget{structradio__packet__t_acab0b755530b605b24c592961626cded}\index{radio\_packet\_t@{radio\_packet\_t}!snr\_db@{snr\_db}}
+\index{snr\_db@{snr\_db}!radio\_packet\_t@{radio\_packet\_t}}
+\doxysubsubsection{\texorpdfstring{snr\_db}{snr\_db}}
+{\footnotesize\ttfamily \label{structradio__packet__t_acab0b755530b605b24c592961626cded} 
+int8\+\_\+t radio\+\_\+packet\+\_\+t\+::snr\+\_\+db}
+
+
+
+SNR pakietu \mbox{[}dB\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00217}{217}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00084}{radio\+\_\+test\+\_\+print\+\_\+packet()}}.
+
+\Hypertarget{structradio__packet__t_ab2b61197ed2f23da7b4257c4729b06e2}\index{radio\_packet\_t@{radio\_packet\_t}!timestamp\_ms@{timestamp\_ms}}
+\index{timestamp\_ms@{timestamp\_ms}!radio\_packet\_t@{radio\_packet\_t}}
+\doxysubsubsection{\texorpdfstring{timestamp\_ms}{timestamp\_ms}}
+{\footnotesize\ttfamily \label{structradio__packet__t_ab2b61197ed2f23da7b4257c4729b06e2} 
+uint32\+\_\+t radio\+\_\+packet\+\_\+t\+::timestamp\+\_\+ms}
+
+
+
+Znacznik czasu ({\ttfamily HAL\+\_\+\+Get\+Tick}). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00218}{218}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+\Hypertarget{structradio__packet__t_a99311068f676a7c97904e177a3390fca}\index{radio\_packet\_t@{radio\_packet\_t}!valid@{valid}}
+\index{valid@{valid}!radio\_packet\_t@{radio\_packet\_t}}
+\doxysubsubsection{\texorpdfstring{valid}{valid}}
+{\footnotesize\ttfamily \label{structradio__packet__t_a99311068f676a7c97904e177a3390fca} 
+bool radio\+\_\+packet\+\_\+t\+::valid}
+
+
+
+Flaga poprawności danych bufora. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00219}{219}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+lib/\mbox{\hyperlink{radio__lib_8h}{radio\+\_\+lib.\+h}}\end{DoxyCompactItemize}

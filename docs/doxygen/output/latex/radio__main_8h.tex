@@ -1,0 +1,1215 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+main.h}
+\hypertarget{radio__main_8h}{}\label{radio__main_8h}\index{Core/App/radio\_main.h@{Core/App/radio\_main.h}}
+
+
+Application radio task, runtime profile and command API.  
+
+
+{\ttfamily \#include "{}radio\+\_\+lib/radio\+\_\+lib.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Profil rodziny FSK/\+GFSK/\+MSK/\+GMSK trzymany przez warstwę aplikacji. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Profil rodziny OOK przechowywany przez warstwę aplikacji. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Snapshot pełnej konfiguracji radiowej widzianej przez aplikację. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1aeeb0dc39a1ce649d1fe2d542f199b31a}{RADIO\+\_\+\+MAIN\+\_\+\+MODULATION\+\_\+\+LORA}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a9e9da87b1dc8b43ea0a75dcf25090c0f}{RADIO\+\_\+\+MAIN\+\_\+\+MODULATION\+\_\+\+FSK}} = 1U
+, \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a56d2b96dabc1e8701c595f80b0ade0be}{RADIO\+\_\+\+MAIN\+\_\+\+MODULATION\+\_\+\+OOK}} = 2U
+ \}
+\begin{DoxyCompactList}\small\item\em Rodziny modulacji zarządzane przez warstwę aplikacyjną. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6a53209418691d97bd3b03a305513a4fe6}{RADIO\+\_\+\+MAIN\+\_\+\+AUTO\+\_\+\+PING\+\_\+\+FRAME}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6af4cbf424b6a2df00cd89eb89105c1add}{RADIO\+\_\+\+MAIN\+\_\+\+AUTO\+\_\+\+PING\+\_\+\+RAW}} = 1U
+ \}
+\begin{DoxyCompactList}\small\item\em Encoding used for the periodic automatic ping feature. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96}{radio\+\_\+main\+\_\+fsk\+\_\+shaping\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a2e786784d83f20a32ff19516bf3bc376}{RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+FSK}} = 0U
+, \mbox{\hyperlink{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a4811e89923932861f2085fd307d468c2}{RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GFSK}} = 1U
+, \mbox{\hyperlink{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96ad45acf34f6524fa44e7ae7fa5802d9b3}{RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+MSK}} = 2U
+, \mbox{\hyperlink{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a0a1d2b0435a0c4f4a22f3e418b642afd}{RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GMSK}} = 3U
+ \}
+\begin{DoxyCompactList}\small\item\em Typ kształtowania sygnału dla rodziny FSK. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033}{radio\+\_\+main\+\_\+filter\+\_\+t}} \{ \newline
+\mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033ac0151b4d3155a8bac6f5228cb9ea178c}{RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+NONE}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033ab51bc08cc073181b386f5f36fb706532}{RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+10}} = 1U
+, \mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033aeef05a8c21f31430d0b4a273d8e40735}{RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+07}} = 2U
+, \mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033a9b067856bb19218d24fe18db8b8b3b56}{RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+05}} = 3U
+, \newline
+\mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033af05f90abfad0b58142666f060ff746e2}{RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+03}} = 4U
+ \}
+\begin{DoxyCompactList}\small\item\em Typ filtra i współczynnik BT dla FSK/\+GFSK/\+GMSK. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_a00f404066a9d3935c394933a6322574c}{radio\+\_\+main\+\_\+crc\+\_\+type\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_a00f404066a9d3935c394933a6322574cacedd1232628ada0c12776011497882c7}{RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+OFF}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a00f404066a9d3935c394933a6322574ca99a0ae2c0d35c2295eed72c8cceb99e7}{RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+SX1276}} = 1U
+, \mbox{\hyperlink{radio__main_8h_a00f404066a9d3935c394933a6322574cac7e0557343c3f39ed2b9c73c32a9ec16}{RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+IBM}} = 2U
+, \mbox{\hyperlink{radio__main_8h_a00f404066a9d3935c394933a6322574ca039669168d2f106deacf44fa3b9510d1}{RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+CCITT}} = 3U
+ \}
+\begin{DoxyCompactList}\small\item\em Rodzaj CRC pakietowego zapisanego w profilu aplikacyjnym. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0}{radio\+\_\+main\+\_\+header\+\_\+mode\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0aa91cca1cc96ae8aea273d23bfa71fb4e}{RADIO\+\_\+\+MAIN\+\_\+\+HEADER\+\_\+\+EXPLICIT}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0a7a8a513d143b4635b3c1680ae11d3fd0}{RADIO\+\_\+\+MAIN\+\_\+\+HEADER\+\_\+\+IMPLICIT}} = 1U
+ \}
+\begin{DoxyCompactList}\small\item\em Tryb nagłówka pakietu. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_a32135fc97970a6342133745bd76dd54f}{radio\+\_\+main\+\_\+address\+\_\+filter\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_a32135fc97970a6342133745bd76dd54fa41afb49df93f9e475edfeee4321af0fb}{RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NONE}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a32135fc97970a6342133745bd76dd54fa2b760791d0d45482677f3770cbb8419d}{RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NODE}} = 1U
+, \mbox{\hyperlink{radio__main_8h_a32135fc97970a6342133745bd76dd54fa6305549a92407c9a177f3c62c8da83b9}{RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NODE\+\_\+\+BROADCAST}} = 2U
+ \}
+\begin{DoxyCompactList}\small\item\em Tryb filtrowania adresu dla trybów pakietowych FSK. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_ab310d0064afa6f990b2aa801731722e6}{radio\+\_\+main\+\_\+ook\+\_\+threshold\+\_\+t}} \{ \mbox{\hyperlink{radio__main_8h_ab310d0064afa6f990b2aa801731722e6aaa7be62d5986ff3f8fcfe2cd86c321c7}{RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+FIXED}} = 0U
+, \mbox{\hyperlink{radio__main_8h_ab310d0064afa6f990b2aa801731722e6ae023352809d7522e5e5a7aaedcdbaf45}{RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+PEAK}} = 1U
+, \mbox{\hyperlink{radio__main_8h_ab310d0064afa6f990b2aa801731722e6a145815eecf566d1aaa7ba6268cacc81b}{RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+AVERAGE}} = 2U
+ \}
+\begin{DoxyCompactList}\small\item\em Tryb detekcji progu OOK. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2}{radio\+\_\+main\+\_\+option\+\_\+t}} \{ \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2aef5ecd0d17f14d725a565c82579fda53}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+PRESET}} = 0U
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2acebc79742beb14d5418c0264912ec149}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+FREQ}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a5bf6efe68c247e51af9b17860fbe8a03}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+BW}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a3c4db7bc2b44f72bc55d322e3eab2dc6}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+SF}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2abf9b52241c96b9586ff71c26bc6b7346}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+CR}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a9ce5761c1c0e49c2ed6b296b00370668}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+TX\+\_\+\+POWER}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2af1ba0b42bc485483676257a860e9a132}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+CRC}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a244141425f14e0ce24638643e7c5c3e9}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+PREAMBLE}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2b4fb6af79f1e8099e06b8af97498d9e}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+HEADER\+\_\+\+MODE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2afe00d5daf60fefe342943a5033556624}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+IQ\+\_\+\+INVERT}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2bd7a3d0e644f7719e05dbe650aac370}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+SYNC\+\_\+\+WORD}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a4eb509e4e52481e0810211f5168f16be}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+RESET\+\_\+\+DEFAULTS}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ac113bb7a561b64858b3edd19d9f77f13}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+SHAPING}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a45b23de0dee15ce4ce39fdaa6b310854}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+FREQ}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ab1e02f60ea997f82262588a7cad83852}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+BITRATE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a05166a4689a2424321b017ce9e8940c0}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+RX\+\_\+\+BW}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0c5c842ffd896e5148dea7cf70017500}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+FILTER}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2aa2acfd11dca4d98c15935f2c37b32e47}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+TX\+\_\+\+POWER}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7d36e95522a4220401694a790a87df7a}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+PREAMBLE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0c8936223236147a51891615906b728c}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+SYNC\+\_\+\+LEN}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ac71404e5c20e9049694c82ec7f910581}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+SYNC\+\_\+\+WORD}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0199da7f38c1e33372e9ed5b83567364}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+ADDRESS\+\_\+\+FILTER}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a8816b31813fe56bad1763310632abc18}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+CRC}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a97243e069dad2b1d9d13eb2004b50f18}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+WHITENING}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a1212001d33d33bf1ac4a1be176858d1d}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+RESET\+\_\+\+DEFAULTS}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ab978587cd2434f4941bcdb48aff649b0}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+FREQ}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a9f5cb25cc0226252f150d4bccafcb929}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+BITRATE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ad1acc2d302f5613a7e21800ddd466e51}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+TX\+\_\+\+POWER}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a475c6013b3bcf3075adfed0b438b9f6d}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+RX\+\_\+\+BW}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a1fefc52330e3cfd15873de1d4e352dae}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+PREAMBLE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2acc362872dcfca5d43059229e7291cee6}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+SYNC\+\_\+\+LEN}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a37cac04d7f3ae2e4869581db3717067a}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+SYNC\+\_\+\+WORD}}
+, \newline
+\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2df2884f5ae9c9de015d6ce9e66987f2}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+TYPE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a4bbd7074549eaeca2f49da5f46be8ee8}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+VALUE}}
+, \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7947be97f2c979de56828e4de0adf58d}{RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+RESET\+\_\+\+DEFAULTS}}
+ \}
+\begin{DoxyCompactList}\small\item\em Identyfikator pojedynczej opcji konfiguracyjnej. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{radio__main_8h_ab221d3b21587b4d9178a2ed25d665d6b}{radio\+\_\+main\+\_\+load\+\_\+default\+\_\+lora\+\_\+preset}} (uint8\+\_\+t preset\+\_\+id, \mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Load one predefined Lo\+Ra preset into a profile object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__main_8h_ab18a17f4a4a286d797f27b0a992ed09f}{radio\+\_\+main\+\_\+load\+\_\+default\+\_\+fsk\+\_\+profile}} (\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Load the default FSK/\+GFSK/\+MSK/\+GMSK profile. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__main_8h_a5f0e0653bbd66a5420ef11ae2bfa6321}{radio\+\_\+main\+\_\+load\+\_\+default\+\_\+ook\+\_\+profile}} (\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Load the default OOK profile. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{radio__main_8h_a306213035cbba7d1c6a53b0233651c71}{radio\+\_\+main\+\_\+create\+\_\+task}} (void)
+\begin{DoxyCompactList}\small\item\em Create the radio task and command queue. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_ae2a8b849753c8866b8dc26a618898a5e}{radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+template}} (uint8\+\_\+t group\+\_\+id, uint8\+\_\+t msg\+\_\+id, uint32\+\_\+t dst\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Queue transmission of a built-\/in message template. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a29d412c8de9c504e26fb1cc4b6718e88}{radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+user\+\_\+text}} (const char \texorpdfstring{$\ast$}{*}text, uint32\+\_\+t dst\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Queue transmission of user-\/entered text. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a11bfe5e86c5aa83fd5951233b99487cc}{radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+raw}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Queue transmission of raw payload bytes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a52f9eb3eda854256886cb95af83566ee}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+lora\+\_\+preset}} (uint8\+\_\+t preset\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Select and apply a Lo\+Ra preset. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_ab3d8e7a8dad86394c04d2143b752cbfa}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+modulation}} (uint8\+\_\+t modulation\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Switch active modulation family. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a71e2c582b793778a57b02f683e606409}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+modulation\+\_\+freq}} (uint32\+\_\+t frequency\+\_\+hz)
+\begin{DoxyCompactList}\small\item\em Set carrier frequency for the active modulation profile. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a7e5ec1ea48516612888e9b7358c45def}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+modulation\+\_\+bw}} (uint8\+\_\+t bandwidth\+\_\+code)
+\begin{DoxyCompactList}\small\item\em Set bandwidth code for the active modulation profile. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_add74f39cacd41b88ad25ccfb9058229b}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+option}} (\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2}{radio\+\_\+main\+\_\+option\+\_\+t}} option, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Set one runtime radio option. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_ae83130b85e978ebcefce065237f1e377}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Enable or disable frequency hopping. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_aa84e70a672060c4f8a2b24049b5679de}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh\+\_\+period}} (uint32\+\_\+t period\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Set frequency-\/hopping period. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_af9e5a75fc61fe9c4509dd68bff1708f5}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+coding}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Enable or disable protected/coded traffic mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a8ba631a5f5d8dee8e1464946af0f882f}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping}} (bool enabled)
+\begin{DoxyCompactList}\small\item\em Enable or disable automatic ping. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a0c31d87959a0b048364eb9783d29e797}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+period}} (uint32\+\_\+t period\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Set automatic ping period. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_aef0741aa4a37cbbba8f3708a8ce5ee4e}{radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+mode}} (\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} mode)
+\begin{DoxyCompactList}\small\item\em Select automatic ping encoding mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a6b34b76f51130d8b14324fc0fb5fa4b6}{radio\+\_\+main\+\_\+cmd\+\_\+reset\+\_\+module}} (void)
+\begin{DoxyCompactList}\small\item\em Reset and reinitialize the radio module. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_afea379ddbdcf0d17f439bfa84f74ae75}{radio\+\_\+main\+\_\+cmd\+\_\+start\+\_\+pairing}} (uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Start local device pairing window. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_abdf870876444fcac5a07b7b2098c98e1}{radio\+\_\+main\+\_\+cmd\+\_\+start\+\_\+network\+\_\+pairing}} (uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Start gateway/network pairing window. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_ad122e29798c257b9ccd5c526f8af88cb}{radio\+\_\+main\+\_\+cmd\+\_\+pairing\+\_\+accept}} (bool accept)
+\begin{DoxyCompactList}\small\item\em Accept or reject the current pairing candidate. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_ada7155c7607614fab7bb5e1e87d454ba}{radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+pair\+\_\+req}} (void)
+\begin{DoxyCompactList}\small\item\em Send a device pair request using the current pairing code. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_adf259509242311894ffc0bda4bd756df}{radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+network\+\_\+pair\+\_\+req}} (void)
+\begin{DoxyCompactList}\small\item\em Send a network/gateway pair request. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a8976d105965d3a2f501f75c35f099988}{radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+pair\+\_\+error}} (uint32\+\_\+t dst\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Send a pairing error frame to a destination. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a44374dfa094c78c6338c022cb2a8f1af}{radio\+\_\+main\+\_\+get\+\_\+runtime\+\_\+cfg}} (\mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Read a snapshot of the radio runtime configuration. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_aee6b1d7396603e45a2def6d29c1f60bb}{radio\+\_\+main\+\_\+get\+\_\+auto\+\_\+ping\+\_\+period\+\_\+ms}} (uint32\+\_\+t \texorpdfstring{$\ast$}{*}period\+\_\+ms\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Read the effective automatic ping period. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__main_8h_a89a05069974673d833e5ed49c1e680af}{radio\+\_\+main\+\_\+get\+\_\+last\+\_\+error\+\_\+text}} (char \texorpdfstring{$\ast$}{*}out, uint8\+\_\+t out\+\_\+size)
+\begin{DoxyCompactList}\small\item\em Read the last short radio error message. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{radio__main_8h_a808700d24d8fefed60600dedb2980765}{radio\+\_\+main\+\_\+get\+\_\+node\+\_\+id}} (void)
+\begin{DoxyCompactList}\small\item\em Return this node\textquotesingle{}s application-\/level radio identifier. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Application radio task, runtime profile and command API. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{radio__main_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{radio__main_8h_a32135fc97970a6342133745bd76dd54f}\index{radio\_main.h@{radio\_main.h}!radio\_main\_address\_filter\_t@{radio\_main\_address\_filter\_t}}
+\index{radio\_main\_address\_filter\_t@{radio\_main\_address\_filter\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_address\_filter\_t}{radio\_main\_address\_filter\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a32135fc97970a6342133745bd76dd54f} 
+enum \mbox{\hyperlink{radio__main_8h_a32135fc97970a6342133745bd76dd54f}{radio\+\_\+main\+\_\+address\+\_\+filter\+\_\+t}}}
+
+
+
+Tryb filtrowania adresu dla trybów pakietowych FSK. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_ADDRESS\_FILTER\_NONE@{RADIO\_MAIN\_ADDRESS\_FILTER\_NONE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_ADDRESS\_FILTER\_NONE@{RADIO\_MAIN\_ADDRESS\_FILTER\_NONE}}}\Hypertarget{radio__main_8h_a32135fc97970a6342133745bd76dd54fa41afb49df93f9e475edfeee4321af0fb}\label{radio__main_8h_a32135fc97970a6342133745bd76dd54fa41afb49df93f9e475edfeee4321af0fb} 
+RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NONE&Brak filtrowania adresowego. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_ADDRESS\_FILTER\_NODE@{RADIO\_MAIN\_ADDRESS\_FILTER\_NODE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_ADDRESS\_FILTER\_NODE@{RADIO\_MAIN\_ADDRESS\_FILTER\_NODE}}}\Hypertarget{radio__main_8h_a32135fc97970a6342133745bd76dd54fa2b760791d0d45482677f3770cbb8419d}\label{radio__main_8h_a32135fc97970a6342133745bd76dd54fa2b760791d0d45482677f3770cbb8419d} 
+RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NODE&Akceptuj tylko adres lokalny. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_ADDRESS\_FILTER\_NODE\_BROADCAST@{RADIO\_MAIN\_ADDRESS\_FILTER\_NODE\_BROADCAST}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_ADDRESS\_FILTER\_NODE\_BROADCAST@{RADIO\_MAIN\_ADDRESS\_FILTER\_NODE\_BROADCAST}}}\Hypertarget{radio__main_8h_a32135fc97970a6342133745bd76dd54fa6305549a92407c9a177f3c62c8da83b9}\label{radio__main_8h_a32135fc97970a6342133745bd76dd54fa6305549a92407c9a177f3c62c8da83b9} 
+RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NODE\+\_\+\+BROADCAST&Akceptuj adres lokalny i broadcast. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00086}{86}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_a924b68fe454425e6115096a3568341b6}\index{radio\_main.h@{radio\_main.h}!radio\_main\_auto\_ping\_mode\_t@{radio\_main\_auto\_ping\_mode\_t}}
+\index{radio\_main\_auto\_ping\_mode\_t@{radio\_main\_auto\_ping\_mode\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_auto\_ping\_mode\_t}{radio\_main\_auto\_ping\_mode\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a924b68fe454425e6115096a3568341b6} 
+enum \mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}}}
+
+
+
+Encoding used for the periodic automatic ping feature. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_AUTO\_PING\_FRAME@{RADIO\_MAIN\_AUTO\_PING\_FRAME}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_AUTO\_PING\_FRAME@{RADIO\_MAIN\_AUTO\_PING\_FRAME}}}\Hypertarget{radio__main_8h_a924b68fe454425e6115096a3568341b6a53209418691d97bd3b03a305513a4fe6}\label{radio__main_8h_a924b68fe454425e6115096a3568341b6a53209418691d97bd3b03a305513a4fe6} 
+RADIO\+\_\+\+MAIN\+\_\+\+AUTO\+\_\+\+PING\+\_\+\+FRAME&Auto ping jako normalny {\ttfamily laviet\+\_\+frame}. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_AUTO\_PING\_RAW@{RADIO\_MAIN\_AUTO\_PING\_RAW}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_AUTO\_PING\_RAW@{RADIO\_MAIN\_AUTO\_PING\_RAW}}}\Hypertarget{radio__main_8h_a924b68fe454425e6115096a3568341b6af4cbf424b6a2df00cd89eb89105c1add}\label{radio__main_8h_a924b68fe454425e6115096a3568341b6af4cbf424b6a2df00cd89eb89105c1add} 
+RADIO\+\_\+\+MAIN\+\_\+\+AUTO\+\_\+\+PING\+\_\+\+RAW&Auto ping jako surowy payload ASCII {\ttfamily PING}. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00030}{30}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_a00f404066a9d3935c394933a6322574c}\index{radio\_main.h@{radio\_main.h}!radio\_main\_crc\_type\_t@{radio\_main\_crc\_type\_t}}
+\index{radio\_main\_crc\_type\_t@{radio\_main\_crc\_type\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_crc\_type\_t}{radio\_main\_crc\_type\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a00f404066a9d3935c394933a6322574c} 
+enum \mbox{\hyperlink{radio__main_8h_a00f404066a9d3935c394933a6322574c}{radio\+\_\+main\+\_\+crc\+\_\+type\+\_\+t}}}
+
+
+
+Rodzaj CRC pakietowego zapisanego w profilu aplikacyjnym. 
+
+Lo\+Ra na SX1276 wspiera tylko własny, wbudowany CRC payloadu ON/\+OFF. Pozostałe typy są przechowywane w profilach FSK/\+OOK na potrzeby menu, dokumentacji i przyszłego backendu FSK/\+OOK. \begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_CRC\_OFF@{RADIO\_MAIN\_CRC\_OFF}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_CRC\_OFF@{RADIO\_MAIN\_CRC\_OFF}}}\Hypertarget{radio__main_8h_a00f404066a9d3935c394933a6322574cacedd1232628ada0c12776011497882c7}\label{radio__main_8h_a00f404066a9d3935c394933a6322574cacedd1232628ada0c12776011497882c7} 
+RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+OFF&CRC wyłączone. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_CRC\_SX1276@{RADIO\_MAIN\_CRC\_SX1276}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_CRC\_SX1276@{RADIO\_MAIN\_CRC\_SX1276}}}\Hypertarget{radio__main_8h_a00f404066a9d3935c394933a6322574ca99a0ae2c0d35c2295eed72c8cceb99e7}\label{radio__main_8h_a00f404066a9d3935c394933a6322574ca99a0ae2c0d35c2295eed72c8cceb99e7} 
+RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+SX1276&Wbudowane CRC payloadu SX1276/\+Lo\+Ra. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_CRC\_IBM@{RADIO\_MAIN\_CRC\_IBM}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_CRC\_IBM@{RADIO\_MAIN\_CRC\_IBM}}}\Hypertarget{radio__main_8h_a00f404066a9d3935c394933a6322574cac7e0557343c3f39ed2b9c73c32a9ec16}\label{radio__main_8h_a00f404066a9d3935c394933a6322574cac7e0557343c3f39ed2b9c73c32a9ec16} 
+RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+IBM&CRC-\/16 IBM/\+ANSI. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_CRC\_CCITT@{RADIO\_MAIN\_CRC\_CCITT}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_CRC\_CCITT@{RADIO\_MAIN\_CRC\_CCITT}}}\Hypertarget{radio__main_8h_a00f404066a9d3935c394933a6322574ca039669168d2f106deacf44fa3b9510d1}\label{radio__main_8h_a00f404066a9d3935c394933a6322574ca039669168d2f106deacf44fa3b9510d1} 
+RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+CCITT&CRC-\/16 CCITT. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00066}{66}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033}\index{radio\_main.h@{radio\_main.h}!radio\_main\_filter\_t@{radio\_main\_filter\_t}}
+\index{radio\_main\_filter\_t@{radio\_main\_filter\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_filter\_t}{radio\_main\_filter\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033} 
+enum \mbox{\hyperlink{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033}{radio\+\_\+main\+\_\+filter\+\_\+t}}}
+
+
+
+Typ filtra i współczynnik BT dla FSK/\+GFSK/\+GMSK. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FILTER\_NONE@{RADIO\_MAIN\_FILTER\_NONE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FILTER\_NONE@{RADIO\_MAIN\_FILTER\_NONE}}}\Hypertarget{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033ac0151b4d3155a8bac6f5228cb9ea178c}\label{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033ac0151b4d3155a8bac6f5228cb9ea178c} 
+RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+NONE&Brak dodatkowego filtrowania gaussowskiego. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FILTER\_BT\_10@{RADIO\_MAIN\_FILTER\_BT\_10}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FILTER\_BT\_10@{RADIO\_MAIN\_FILTER\_BT\_10}}}\Hypertarget{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033ab51bc08cc073181b386f5f36fb706532}\label{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033ab51bc08cc073181b386f5f36fb706532} 
+RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+10&BT = 1.\+0. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FILTER\_BT\_07@{RADIO\_MAIN\_FILTER\_BT\_07}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FILTER\_BT\_07@{RADIO\_MAIN\_FILTER\_BT\_07}}}\Hypertarget{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033aeef05a8c21f31430d0b4a273d8e40735}\label{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033aeef05a8c21f31430d0b4a273d8e40735} 
+RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+07&BT = 0.\+7. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FILTER\_BT\_05@{RADIO\_MAIN\_FILTER\_BT\_05}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FILTER\_BT\_05@{RADIO\_MAIN\_FILTER\_BT\_05}}}\Hypertarget{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033a9b067856bb19218d24fe18db8b8b3b56}\label{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033a9b067856bb19218d24fe18db8b8b3b56} 
+RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+05&BT = 0.\+5. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FILTER\_BT\_03@{RADIO\_MAIN\_FILTER\_BT\_03}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FILTER\_BT\_03@{RADIO\_MAIN\_FILTER\_BT\_03}}}\Hypertarget{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033af05f90abfad0b58142666f060ff746e2}\label{radio__main_8h_a8a4928275c1f5dad6aa14a2df27a5033af05f90abfad0b58142666f060ff746e2} 
+RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+03&BT = 0.\+3. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00050}{50}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96}\index{radio\_main.h@{radio\_main.h}!radio\_main\_fsk\_shaping\_t@{radio\_main\_fsk\_shaping\_t}}
+\index{radio\_main\_fsk\_shaping\_t@{radio\_main\_fsk\_shaping\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_fsk\_shaping\_t}{radio\_main\_fsk\_shaping\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96} 
+enum \mbox{\hyperlink{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96}{radio\+\_\+main\+\_\+fsk\+\_\+shaping\+\_\+t}}}
+
+
+
+Typ kształtowania sygnału dla rodziny FSK. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FSK\_SHAPING\_FSK@{RADIO\_MAIN\_FSK\_SHAPING\_FSK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FSK\_SHAPING\_FSK@{RADIO\_MAIN\_FSK\_SHAPING\_FSK}}}\Hypertarget{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a2e786784d83f20a32ff19516bf3bc376}\label{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a2e786784d83f20a32ff19516bf3bc376} 
+RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+FSK&Czyste FSK bez filtra gaussowskiego. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FSK\_SHAPING\_GFSK@{RADIO\_MAIN\_FSK\_SHAPING\_GFSK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FSK\_SHAPING\_GFSK@{RADIO\_MAIN\_FSK\_SHAPING\_GFSK}}}\Hypertarget{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a4811e89923932861f2085fd307d468c2}\label{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a4811e89923932861f2085fd307d468c2} 
+RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GFSK&GFSK z filtrem gaussowskim. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FSK\_SHAPING\_MSK@{RADIO\_MAIN\_FSK\_SHAPING\_MSK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FSK\_SHAPING\_MSK@{RADIO\_MAIN\_FSK\_SHAPING\_MSK}}}\Hypertarget{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96ad45acf34f6524fa44e7ae7fa5802d9b3}\label{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96ad45acf34f6524fa44e7ae7fa5802d9b3} 
+RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+MSK&Minimal shift keying. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_FSK\_SHAPING\_GMSK@{RADIO\_MAIN\_FSK\_SHAPING\_GMSK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_FSK\_SHAPING\_GMSK@{RADIO\_MAIN\_FSK\_SHAPING\_GMSK}}}\Hypertarget{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a0a1d2b0435a0c4f4a22f3e418b642afd}\label{radio__main_8h_acd388c6753b22a14e1b74df0be60ed96a0a1d2b0435a0c4f4a22f3e418b642afd} 
+RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GMSK&GMSK z filtrem gaussowskim. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00039}{39}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0}\index{radio\_main.h@{radio\_main.h}!radio\_main\_header\_mode\_t@{radio\_main\_header\_mode\_t}}
+\index{radio\_main\_header\_mode\_t@{radio\_main\_header\_mode\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_header\_mode\_t}{radio\_main\_header\_mode\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0} 
+enum \mbox{\hyperlink{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0}{radio\+\_\+main\+\_\+header\+\_\+mode\+\_\+t}}}
+
+
+
+Tryb nagłówka pakietu. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_HEADER\_EXPLICIT@{RADIO\_MAIN\_HEADER\_EXPLICIT}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_HEADER\_EXPLICIT@{RADIO\_MAIN\_HEADER\_EXPLICIT}}}\Hypertarget{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0aa91cca1cc96ae8aea273d23bfa71fb4e}\label{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0aa91cca1cc96ae8aea273d23bfa71fb4e} 
+RADIO\+\_\+\+MAIN\+\_\+\+HEADER\+\_\+\+EXPLICIT&Długość payloadu niesiona w nagłówku. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_HEADER\_IMPLICIT@{RADIO\_MAIN\_HEADER\_IMPLICIT}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_HEADER\_IMPLICIT@{RADIO\_MAIN\_HEADER\_IMPLICIT}}}\Hypertarget{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0a7a8a513d143b4635b3c1680ae11d3fd0}\label{radio__main_8h_a7b8ada5e3c3e438e646db9066052c9f0a7a8a513d143b4635b3c1680ae11d3fd0} 
+RADIO\+\_\+\+MAIN\+\_\+\+HEADER\+\_\+\+IMPLICIT&Stała długość payloadu po obu stronach. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00077}{77}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}\index{radio\_main.h@{radio\_main.h}!radio\_main\_modulation\_t@{radio\_main\_modulation\_t}}
+\index{radio\_main\_modulation\_t@{radio\_main\_modulation\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_modulation\_t}{radio\_main\_modulation\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1} 
+enum \mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}}}
+
+
+
+Rodziny modulacji zarządzane przez warstwę aplikacyjną. 
+
+Wartości tych identyfikatorów są używane zarówno przez {\ttfamily radio\+\_\+main}, jak i przez menu LCD. Dzięki temu UI nie operuje na "{}gołych"{} liczbach. \begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_MODULATION\_LORA@{RADIO\_MAIN\_MODULATION\_LORA}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_MODULATION\_LORA@{RADIO\_MAIN\_MODULATION\_LORA}}}\Hypertarget{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1aeeb0dc39a1ce649d1fe2d542f199b31a}\label{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1aeeb0dc39a1ce649d1fe2d542f199b31a} 
+RADIO\+\_\+\+MAIN\+\_\+\+MODULATION\+\_\+\+LORA&Profil Lo\+Ra. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_MODULATION\_FSK@{RADIO\_MAIN\_MODULATION\_FSK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_MODULATION\_FSK@{RADIO\_MAIN\_MODULATION\_FSK}}}\Hypertarget{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a9e9da87b1dc8b43ea0a75dcf25090c0f}\label{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a9e9da87b1dc8b43ea0a75dcf25090c0f} 
+RADIO\+\_\+\+MAIN\+\_\+\+MODULATION\+\_\+\+FSK&Profil FSK/\+GFSK/\+MSK/\+GMSK. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_MODULATION\_OOK@{RADIO\_MAIN\_MODULATION\_OOK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_MODULATION\_OOK@{RADIO\_MAIN\_MODULATION\_OOK}}}\Hypertarget{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a56d2b96dabc1e8701c595f80b0ade0be}\label{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1a56d2b96dabc1e8701c595f80b0ade0be} 
+RADIO\+\_\+\+MAIN\+\_\+\+MODULATION\+\_\+\+OOK&Profil OOK. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00020}{20}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_ab310d0064afa6f990b2aa801731722e6}\index{radio\_main.h@{radio\_main.h}!radio\_main\_ook\_threshold\_t@{radio\_main\_ook\_threshold\_t}}
+\index{radio\_main\_ook\_threshold\_t@{radio\_main\_ook\_threshold\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_ook\_threshold\_t}{radio\_main\_ook\_threshold\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_ab310d0064afa6f990b2aa801731722e6} 
+enum \mbox{\hyperlink{radio__main_8h_ab310d0064afa6f990b2aa801731722e6}{radio\+\_\+main\+\_\+ook\+\_\+threshold\+\_\+t}}}
+
+
+
+Tryb detekcji progu OOK. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OOK\_THRESHOLD\_FIXED@{RADIO\_MAIN\_OOK\_THRESHOLD\_FIXED}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OOK\_THRESHOLD\_FIXED@{RADIO\_MAIN\_OOK\_THRESHOLD\_FIXED}}}\Hypertarget{radio__main_8h_ab310d0064afa6f990b2aa801731722e6aaa7be62d5986ff3f8fcfe2cd86c321c7}\label{radio__main_8h_ab310d0064afa6f990b2aa801731722e6aaa7be62d5986ff3f8fcfe2cd86c321c7} 
+RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+FIXED&Stały próg RSSI/\+OOK. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OOK\_THRESHOLD\_PEAK@{RADIO\_MAIN\_OOK\_THRESHOLD\_PEAK}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OOK\_THRESHOLD\_PEAK@{RADIO\_MAIN\_OOK\_THRESHOLD\_PEAK}}}\Hypertarget{radio__main_8h_ab310d0064afa6f990b2aa801731722e6ae023352809d7522e5e5a7aaedcdbaf45}\label{radio__main_8h_ab310d0064afa6f990b2aa801731722e6ae023352809d7522e5e5a7aaedcdbaf45} 
+RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+PEAK&Próg śledzący szczyt sygnału. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OOK\_THRESHOLD\_AVERAGE@{RADIO\_MAIN\_OOK\_THRESHOLD\_AVERAGE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OOK\_THRESHOLD\_AVERAGE@{RADIO\_MAIN\_OOK\_THRESHOLD\_AVERAGE}}}\Hypertarget{radio__main_8h_ab310d0064afa6f990b2aa801731722e6a145815eecf566d1aaa7ba6268cacc81b}\label{radio__main_8h_ab310d0064afa6f990b2aa801731722e6a145815eecf566d1aaa7ba6268cacc81b} 
+RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+AVERAGE&Próg wyznaczany z uśredniania. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00096}{96}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2}\index{radio\_main.h@{radio\_main.h}!radio\_main\_option\_t@{radio\_main\_option\_t}}
+\index{radio\_main\_option\_t@{radio\_main\_option\_t}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_option\_t}{radio\_main\_option\_t}}
+{\footnotesize\ttfamily \label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2} 
+enum \mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2}{radio\+\_\+main\+\_\+option\+\_\+t}}}
+
+
+
+Identyfikator pojedynczej opcji konfiguracyjnej. 
+
+Menu korzysta z tego enum-\/a do wysyłania jednej, spójnej komendy {\ttfamily radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+option(...)}, a {\ttfamily radio\+\_\+main} wykonuje walidację i ewentualną rekonfigurację radia w jednym miejscu. \begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_PRESET@{RADIO\_MAIN\_OPTION\_LORA\_PRESET}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_PRESET@{RADIO\_MAIN\_OPTION\_LORA\_PRESET}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2aef5ecd0d17f14d725a565c82579fda53}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2aef5ecd0d17f14d725a565c82579fda53} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+PRESET&Select one of the predefined Lo\+Ra presets. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_FREQ@{RADIO\_MAIN\_OPTION\_LORA\_FREQ}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_FREQ@{RADIO\_MAIN\_OPTION\_LORA\_FREQ}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2acebc79742beb14d5418c0264912ec149}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2acebc79742beb14d5418c0264912ec149} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+FREQ&Set Lo\+Ra carrier frequency. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_BW@{RADIO\_MAIN\_OPTION\_LORA\_BW}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_BW@{RADIO\_MAIN\_OPTION\_LORA\_BW}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a5bf6efe68c247e51af9b17860fbe8a03}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a5bf6efe68c247e51af9b17860fbe8a03} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+BW&Set Lo\+Ra bandwidth code. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_SF@{RADIO\_MAIN\_OPTION\_LORA\_SF}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_SF@{RADIO\_MAIN\_OPTION\_LORA\_SF}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a3c4db7bc2b44f72bc55d322e3eab2dc6}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a3c4db7bc2b44f72bc55d322e3eab2dc6} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+SF&Set Lo\+Ra spreading factor. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_CR@{RADIO\_MAIN\_OPTION\_LORA\_CR}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_CR@{RADIO\_MAIN\_OPTION\_LORA\_CR}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2abf9b52241c96b9586ff71c26bc6b7346}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2abf9b52241c96b9586ff71c26bc6b7346} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+CR&Set Lo\+Ra coding-\/rate denominator. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_TX\_POWER@{RADIO\_MAIN\_OPTION\_LORA\_TX\_POWER}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_TX\_POWER@{RADIO\_MAIN\_OPTION\_LORA\_TX\_POWER}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a9ce5761c1c0e49c2ed6b296b00370668}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a9ce5761c1c0e49c2ed6b296b00370668} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+TX\+\_\+\+POWER&Set Lo\+Ra TX power. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_CRC@{RADIO\_MAIN\_OPTION\_LORA\_CRC}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_CRC@{RADIO\_MAIN\_OPTION\_LORA\_CRC}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2af1ba0b42bc485483676257a860e9a132}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2af1ba0b42bc485483676257a860e9a132} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+CRC&Enable or disable Lo\+Ra payload CRC. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_PREAMBLE@{RADIO\_MAIN\_OPTION\_LORA\_PREAMBLE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_PREAMBLE@{RADIO\_MAIN\_OPTION\_LORA\_PREAMBLE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a244141425f14e0ce24638643e7c5c3e9}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a244141425f14e0ce24638643e7c5c3e9} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+PREAMBLE&Set Lo\+Ra preamble length. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_HEADER\_MODE@{RADIO\_MAIN\_OPTION\_LORA\_HEADER\_MODE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_HEADER\_MODE@{RADIO\_MAIN\_OPTION\_LORA\_HEADER\_MODE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2b4fb6af79f1e8099e06b8af97498d9e}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2b4fb6af79f1e8099e06b8af97498d9e} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+HEADER\+\_\+\+MODE&Select explicit or implicit Lo\+Ra header mode. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_IQ\_INVERT@{RADIO\_MAIN\_OPTION\_LORA\_IQ\_INVERT}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_IQ\_INVERT@{RADIO\_MAIN\_OPTION\_LORA\_IQ\_INVERT}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2afe00d5daf60fefe342943a5033556624}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2afe00d5daf60fefe342943a5033556624} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+IQ\+\_\+\+INVERT&Enable or disable Lo\+Ra IQ inversion. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_SYNC\_WORD@{RADIO\_MAIN\_OPTION\_LORA\_SYNC\_WORD}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_SYNC\_WORD@{RADIO\_MAIN\_OPTION\_LORA\_SYNC\_WORD}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2bd7a3d0e644f7719e05dbe650aac370}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2bd7a3d0e644f7719e05dbe650aac370} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+SYNC\+\_\+\+WORD&Set Lo\+Ra sync word. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_LORA\_RESET\_DEFAULTS@{RADIO\_MAIN\_OPTION\_LORA\_RESET\_DEFAULTS}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_LORA\_RESET\_DEFAULTS@{RADIO\_MAIN\_OPTION\_LORA\_RESET\_DEFAULTS}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a4eb509e4e52481e0810211f5168f16be}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a4eb509e4e52481e0810211f5168f16be} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+LORA\+\_\+\+RESET\+\_\+\+DEFAULTS&Restore default Lo\+Ra profile. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_SHAPING@{RADIO\_MAIN\_OPTION\_FSK\_SHAPING}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_SHAPING@{RADIO\_MAIN\_OPTION\_FSK\_SHAPING}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ac113bb7a561b64858b3edd19d9f77f13}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ac113bb7a561b64858b3edd19d9f77f13} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+SHAPING&Select FSK/\+GFSK/\+MSK/\+GMSK shaping. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_FREQ@{RADIO\_MAIN\_OPTION\_FSK\_FREQ}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_FREQ@{RADIO\_MAIN\_OPTION\_FSK\_FREQ}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a45b23de0dee15ce4ce39fdaa6b310854}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a45b23de0dee15ce4ce39fdaa6b310854} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+FREQ&Set FSK carrier frequency. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_BITRATE@{RADIO\_MAIN\_OPTION\_FSK\_BITRATE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_BITRATE@{RADIO\_MAIN\_OPTION\_FSK\_BITRATE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ab1e02f60ea997f82262588a7cad83852}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ab1e02f60ea997f82262588a7cad83852} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+BITRATE&Set FSK bitrate. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_RX\_BW@{RADIO\_MAIN\_OPTION\_FSK\_RX\_BW}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_RX\_BW@{RADIO\_MAIN\_OPTION\_FSK\_RX\_BW}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a05166a4689a2424321b017ce9e8940c0}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a05166a4689a2424321b017ce9e8940c0} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+RX\+\_\+\+BW&Set FSK RX bandwidth code. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_FILTER@{RADIO\_MAIN\_OPTION\_FSK\_FILTER}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_FILTER@{RADIO\_MAIN\_OPTION\_FSK\_FILTER}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0c5c842ffd896e5148dea7cf70017500}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0c5c842ffd896e5148dea7cf70017500} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+FILTER&Select Gaussian filter BT. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_TX\_POWER@{RADIO\_MAIN\_OPTION\_FSK\_TX\_POWER}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_TX\_POWER@{RADIO\_MAIN\_OPTION\_FSK\_TX\_POWER}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2aa2acfd11dca4d98c15935f2c37b32e47}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2aa2acfd11dca4d98c15935f2c37b32e47} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+TX\+\_\+\+POWER&Set FSK TX power. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_PREAMBLE@{RADIO\_MAIN\_OPTION\_FSK\_PREAMBLE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_PREAMBLE@{RADIO\_MAIN\_OPTION\_FSK\_PREAMBLE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7d36e95522a4220401694a790a87df7a}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7d36e95522a4220401694a790a87df7a} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+PREAMBLE&Set FSK preamble length. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_SYNC\_LEN@{RADIO\_MAIN\_OPTION\_FSK\_SYNC\_LEN}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_SYNC\_LEN@{RADIO\_MAIN\_OPTION\_FSK\_SYNC\_LEN}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0c8936223236147a51891615906b728c}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0c8936223236147a51891615906b728c} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+SYNC\+\_\+\+LEN&Set FSK sync word length. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_SYNC\_WORD@{RADIO\_MAIN\_OPTION\_FSK\_SYNC\_WORD}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_SYNC\_WORD@{RADIO\_MAIN\_OPTION\_FSK\_SYNC\_WORD}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ac71404e5c20e9049694c82ec7f910581}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ac71404e5c20e9049694c82ec7f910581} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+SYNC\+\_\+\+WORD&Set FSK sync word pattern. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_ADDRESS\_FILTER@{RADIO\_MAIN\_OPTION\_FSK\_ADDRESS\_FILTER}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_ADDRESS\_FILTER@{RADIO\_MAIN\_OPTION\_FSK\_ADDRESS\_FILTER}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0199da7f38c1e33372e9ed5b83567364}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a0199da7f38c1e33372e9ed5b83567364} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+ADDRESS\+\_\+\+FILTER&Set FSK address filtering mode. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_CRC@{RADIO\_MAIN\_OPTION\_FSK\_CRC}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_CRC@{RADIO\_MAIN\_OPTION\_FSK\_CRC}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a8816b31813fe56bad1763310632abc18}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a8816b31813fe56bad1763310632abc18} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+CRC&Set FSK packet CRC type. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_WHITENING@{RADIO\_MAIN\_OPTION\_FSK\_WHITENING}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_WHITENING@{RADIO\_MAIN\_OPTION\_FSK\_WHITENING}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a97243e069dad2b1d9d13eb2004b50f18}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a97243e069dad2b1d9d13eb2004b50f18} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+WHITENING&Enable or disable FSK data whitening. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_FSK\_RESET\_DEFAULTS@{RADIO\_MAIN\_OPTION\_FSK\_RESET\_DEFAULTS}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_FSK\_RESET\_DEFAULTS@{RADIO\_MAIN\_OPTION\_FSK\_RESET\_DEFAULTS}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a1212001d33d33bf1ac4a1be176858d1d}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a1212001d33d33bf1ac4a1be176858d1d} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+FSK\+\_\+\+RESET\+\_\+\+DEFAULTS&Restore default FSK profile. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_FREQ@{RADIO\_MAIN\_OPTION\_OOK\_FREQ}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_FREQ@{RADIO\_MAIN\_OPTION\_OOK\_FREQ}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ab978587cd2434f4941bcdb48aff649b0}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ab978587cd2434f4941bcdb48aff649b0} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+FREQ&Set OOK carrier frequency. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_BITRATE@{RADIO\_MAIN\_OPTION\_OOK\_BITRATE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_BITRATE@{RADIO\_MAIN\_OPTION\_OOK\_BITRATE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a9f5cb25cc0226252f150d4bccafcb929}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a9f5cb25cc0226252f150d4bccafcb929} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+BITRATE&Set OOK bitrate. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_TX\_POWER@{RADIO\_MAIN\_OPTION\_OOK\_TX\_POWER}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_TX\_POWER@{RADIO\_MAIN\_OPTION\_OOK\_TX\_POWER}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ad1acc2d302f5613a7e21800ddd466e51}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2ad1acc2d302f5613a7e21800ddd466e51} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+TX\+\_\+\+POWER&Set OOK TX power. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_RX\_BW@{RADIO\_MAIN\_OPTION\_OOK\_RX\_BW}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_RX\_BW@{RADIO\_MAIN\_OPTION\_OOK\_RX\_BW}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a475c6013b3bcf3075adfed0b438b9f6d}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a475c6013b3bcf3075adfed0b438b9f6d} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+RX\+\_\+\+BW&Set OOK RX bandwidth code. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_PREAMBLE@{RADIO\_MAIN\_OPTION\_OOK\_PREAMBLE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_PREAMBLE@{RADIO\_MAIN\_OPTION\_OOK\_PREAMBLE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a1fefc52330e3cfd15873de1d4e352dae}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a1fefc52330e3cfd15873de1d4e352dae} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+PREAMBLE&Set OOK preamble length. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_SYNC\_LEN@{RADIO\_MAIN\_OPTION\_OOK\_SYNC\_LEN}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_SYNC\_LEN@{RADIO\_MAIN\_OPTION\_OOK\_SYNC\_LEN}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2acc362872dcfca5d43059229e7291cee6}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2acc362872dcfca5d43059229e7291cee6} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+SYNC\+\_\+\+LEN&Set OOK sync word length. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_SYNC\_WORD@{RADIO\_MAIN\_OPTION\_OOK\_SYNC\_WORD}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_SYNC\_WORD@{RADIO\_MAIN\_OPTION\_OOK\_SYNC\_WORD}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a37cac04d7f3ae2e4869581db3717067a}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a37cac04d7f3ae2e4869581db3717067a} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+SYNC\+\_\+\+WORD&Set OOK sync word pattern. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_TYPE@{RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_TYPE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_TYPE@{RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_TYPE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2df2884f5ae9c9de015d6ce9e66987f2}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a2df2884f5ae9c9de015d6ce9e66987f2} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+TYPE&Select OOK threshold algorithm. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_VALUE@{RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_VALUE}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_VALUE@{RADIO\_MAIN\_OPTION\_OOK\_THRESHOLD\_VALUE}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a4bbd7074549eaeca2f49da5f46be8ee8}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a4bbd7074549eaeca2f49da5f46be8ee8} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+VALUE&Set OOK raw threshold value. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{RADIO\_MAIN\_OPTION\_OOK\_RESET\_DEFAULTS@{RADIO\_MAIN\_OPTION\_OOK\_RESET\_DEFAULTS}!radio\_main.h@{radio\_main.h}}\index{radio\_main.h@{radio\_main.h}!RADIO\_MAIN\_OPTION\_OOK\_RESET\_DEFAULTS@{RADIO\_MAIN\_OPTION\_OOK\_RESET\_DEFAULTS}}}\Hypertarget{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7947be97f2c979de56828e4de0adf58d}\label{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2a7947be97f2c979de56828e4de0adf58d} 
+RADIO\+\_\+\+MAIN\+\_\+\+OPTION\+\_\+\+OOK\+\_\+\+RESET\+\_\+\+DEFAULTS&Restore default OOK profile. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8h_source_l00110}{110}} pliku \mbox{\hyperlink{radio__main_8h_source}{radio\+\_\+main.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{radio__main_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{radio__main_8h_ad122e29798c257b9ccd5c526f8af88cb}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_pairing\_accept@{radio\_main\_cmd\_pairing\_accept}}
+\index{radio\_main\_cmd\_pairing\_accept@{radio\_main\_cmd\_pairing\_accept}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_pairing\_accept()}{radio\_main\_cmd\_pairing\_accept()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ad122e29798c257b9ccd5c526f8af88cb} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+pairing\+\_\+accept (\begin{DoxyParamCaption}\item[{bool}]{accept}{}\end{DoxyParamCaption})}
+
+
+
+Accept or reject the current pairing candidate. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em accept} & {\ttfamily true} to accept, {\ttfamily false} to reject. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00647}{647}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a6b34b76f51130d8b14324fc0fb5fa4b6}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_reset\_module@{radio\_main\_cmd\_reset\_module}}
+\index{radio\_main\_cmd\_reset\_module@{radio\_main\_cmd\_reset\_module}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_reset\_module()}{radio\_main\_cmd\_reset\_module()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a6b34b76f51130d8b14324fc0fb5fa4b6} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+reset\+\_\+module (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Reset and reinitialize the radio module. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00613}{613}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_adf259509242311894ffc0bda4bd756df}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_send\_network\_pair\_req@{radio\_main\_cmd\_send\_network\_pair\_req}}
+\index{radio\_main\_cmd\_send\_network\_pair\_req@{radio\_main\_cmd\_send\_network\_pair\_req}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_send\_network\_pair\_req()}{radio\_main\_cmd\_send\_network\_pair\_req()}}
+{\footnotesize\ttfamily \label{radio__main_8h_adf259509242311894ffc0bda4bd756df} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+network\+\_\+pair\+\_\+req (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Send a network/gateway pair request. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00668}{668}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a8976d105965d3a2f501f75c35f099988}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_send\_pair\_error@{radio\_main\_cmd\_send\_pair\_error}}
+\index{radio\_main\_cmd\_send\_pair\_error@{radio\_main\_cmd\_send\_pair\_error}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_send\_pair\_error()}{radio\_main\_cmd\_send\_pair\_error()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a8976d105965d3a2f501f75c35f099988} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+pair\+\_\+error (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{dst\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Send a pairing error frame to a destination. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em dst\+\_\+id} & Destination node/device identifier. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00674}{674}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_ada7155c7607614fab7bb5e1e87d454ba}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_send\_pair\_req@{radio\_main\_cmd\_send\_pair\_req}}
+\index{radio\_main\_cmd\_send\_pair\_req@{radio\_main\_cmd\_send\_pair\_req}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_send\_pair\_req()}{radio\_main\_cmd\_send\_pair\_req()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ada7155c7607614fab7bb5e1e87d454ba} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+pair\+\_\+req (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Send a device pair request using the current pairing code. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00658}{658}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a11bfe5e86c5aa83fd5951233b99487cc}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_send\_raw@{radio\_main\_cmd\_send\_raw}}
+\index{radio\_main\_cmd\_send\_raw@{radio\_main\_cmd\_send\_raw}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_send\_raw()}{radio\_main\_cmd\_send\_raw()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a11bfe5e86c5aa83fd5951233b99487cc} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+raw (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Queue transmission of raw payload bytes. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em data} & Payload bytes. \\
+\hline
+{\em len} & Payload length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00468}{468}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_ae2a8b849753c8866b8dc26a618898a5e}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_send\_template@{radio\_main\_cmd\_send\_template}}
+\index{radio\_main\_cmd\_send\_template@{radio\_main\_cmd\_send\_template}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_send\_template()}{radio\_main\_cmd\_send\_template()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ae2a8b849753c8866b8dc26a618898a5e} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+template (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{group\+\_\+id}{, }\item[{uint8\+\_\+t}]{msg\+\_\+id}{, }\item[{uint32\+\_\+t}]{dst\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Queue transmission of a built-\/in message template. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em group\+\_\+id} & Template group identifier. \\
+\hline
+{\em msg\+\_\+id} & Template message identifier. \\
+\hline
+{\em dst\+\_\+id} & Destination node/device identifier. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00428}{428}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a29d412c8de9c504e26fb1cc4b6718e88}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_send\_user\_text@{radio\_main\_cmd\_send\_user\_text}}
+\index{radio\_main\_cmd\_send\_user\_text@{radio\_main\_cmd\_send\_user\_text}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_send\_user\_text()}{radio\_main\_cmd\_send\_user\_text()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a29d412c8de9c504e26fb1cc4b6718e88} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+send\+\_\+user\+\_\+text (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{text}{, }\item[{uint32\+\_\+t}]{dst\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Queue transmission of user-\/entered text. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em text} & Null-\/terminated text payload. \\
+\hline
+{\em dst\+\_\+id} & Destination node/device identifier. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00442}{442}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00019}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}}.
+
+\Hypertarget{radio__main_8h_a8ba631a5f5d8dee8e1464946af0f882f}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_auto\_ping@{radio\_main\_cmd\_set\_auto\_ping}}
+\index{radio\_main\_cmd\_set\_auto\_ping@{radio\_main\_cmd\_set\_auto\_ping}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_auto\_ping()}{radio\_main\_cmd\_set\_auto\_ping()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a8ba631a5f5d8dee8e1464946af0f882f} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Enable or disable automatic ping. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em enabled} & Desired auto-\/ping state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00580}{580}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_aef0741aa4a37cbbba8f3708a8ce5ee4e}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_auto\_ping\_mode@{radio\_main\_cmd\_set\_auto\_ping\_mode}}
+\index{radio\_main\_cmd\_set\_auto\_ping\_mode@{radio\_main\_cmd\_set\_auto\_ping\_mode}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_auto\_ping\_mode()}{radio\_main\_cmd\_set\_auto\_ping\_mode()}}
+{\footnotesize\ttfamily \label{radio__main_8h_aef0741aa4a37cbbba8f3708a8ce5ee4e} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+mode (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}}}]{mode}{}\end{DoxyParamCaption})}
+
+
+
+Select automatic ping encoding mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em mode} & Auto-\/ping encoding mode. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00602}{602}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a0c31d87959a0b048364eb9783d29e797}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_auto\_ping\_period@{radio\_main\_cmd\_set\_auto\_ping\_period}}
+\index{radio\_main\_cmd\_set\_auto\_ping\_period@{radio\_main\_cmd\_set\_auto\_ping\_period}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_auto\_ping\_period()}{radio\_main\_cmd\_set\_auto\_ping\_period()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a0c31d87959a0b048364eb9783d29e797} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+auto\+\_\+ping\+\_\+period (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Set automatic ping period. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em period\+\_\+ms} & Period in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00591}{591}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_af9e5a75fc61fe9c4509dd68bff1708f5}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_coding@{radio\_main\_cmd\_set\_coding}}
+\index{radio\_main\_cmd\_set\_coding@{radio\_main\_cmd\_set\_coding}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_coding()}{radio\_main\_cmd\_set\_coding()}}
+{\footnotesize\ttfamily \label{radio__main_8h_af9e5a75fc61fe9c4509dd68bff1708f5} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+coding (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Enable or disable protected/coded traffic mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em enabled} & Desired coding state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00569}{569}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_ae83130b85e978ebcefce065237f1e377}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_fh@{radio\_main\_cmd\_set\_fh}}
+\index{radio\_main\_cmd\_set\_fh@{radio\_main\_cmd\_set\_fh}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_fh()}{radio\_main\_cmd\_set\_fh()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ae83130b85e978ebcefce065237f1e377} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh (\begin{DoxyParamCaption}\item[{bool}]{enabled}{}\end{DoxyParamCaption})}
+
+
+
+Enable or disable frequency hopping. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em enabled} & Desired FH state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00547}{547}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_aa84e70a672060c4f8a2b24049b5679de}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_fh\_period@{radio\_main\_cmd\_set\_fh\_period}}
+\index{radio\_main\_cmd\_set\_fh\_period@{radio\_main\_cmd\_set\_fh\_period}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_fh\_period()}{radio\_main\_cmd\_set\_fh\_period()}}
+{\footnotesize\ttfamily \label{radio__main_8h_aa84e70a672060c4f8a2b24049b5679de} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+fh\+\_\+period (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{period\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Set frequency-\/hopping period. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em period\+\_\+ms} & Hop period in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00558}{558}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a52f9eb3eda854256886cb95af83566ee}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_lora\_preset@{radio\_main\_cmd\_set\_lora\_preset}}
+\index{radio\_main\_cmd\_set\_lora\_preset@{radio\_main\_cmd\_set\_lora\_preset}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_lora\_preset()}{radio\_main\_cmd\_set\_lora\_preset()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a52f9eb3eda854256886cb95af83566ee} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+lora\+\_\+preset (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{preset\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Select and apply a Lo\+Ra preset. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em preset\+\_\+id} & Preset index. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted and applied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00486}{486}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_ab3d8e7a8dad86394c04d2143b752cbfa}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_modulation@{radio\_main\_cmd\_set\_modulation}}
+\index{radio\_main\_cmd\_set\_modulation@{radio\_main\_cmd\_set\_modulation}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_modulation()}{radio\_main\_cmd\_set\_modulation()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ab3d8e7a8dad86394c04d2143b752cbfa} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+modulation (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{modulation\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Switch active modulation family. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em modulation\+\_\+id} & One of {\ttfamily \doxylink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted and applied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00498}{498}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a7e5ec1ea48516612888e9b7358c45def}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_modulation\_bw@{radio\_main\_cmd\_set\_modulation\_bw}}
+\index{radio\_main\_cmd\_set\_modulation\_bw@{radio\_main\_cmd\_set\_modulation\_bw}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_modulation\_bw()}{radio\_main\_cmd\_set\_modulation\_bw()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a7e5ec1ea48516612888e9b7358c45def} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+modulation\+\_\+bw (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{bandwidth\+\_\+code}{}\end{DoxyParamCaption})}
+
+
+
+Set bandwidth code for the active modulation profile. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em bandwidth\+\_\+code} & Bandwidth enum/code value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted and applied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00522}{522}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a71e2c582b793778a57b02f683e606409}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_modulation\_freq@{radio\_main\_cmd\_set\_modulation\_freq}}
+\index{radio\_main\_cmd\_set\_modulation\_freq@{radio\_main\_cmd\_set\_modulation\_freq}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_modulation\_freq()}{radio\_main\_cmd\_set\_modulation\_freq()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a71e2c582b793778a57b02f683e606409} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+modulation\+\_\+freq (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{frequency\+\_\+hz}{}\end{DoxyParamCaption})}
+
+
+
+Set carrier frequency for the active modulation profile. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frequency\+\_\+hz} & Frequency in Hz. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted and applied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00510}{510}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_add74f39cacd41b88ad25ccfb9058229b}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_set\_option@{radio\_main\_cmd\_set\_option}}
+\index{radio\_main\_cmd\_set\_option@{radio\_main\_cmd\_set\_option}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_set\_option()}{radio\_main\_cmd\_set\_option()}}
+{\footnotesize\ttfamily \label{radio__main_8h_add74f39cacd41b88ad25ccfb9058229b} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+set\+\_\+option (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{radio__main_8h_a13f3ef3efed1bdfd60e6f3c8594790e2}{radio\+\_\+main\+\_\+option\+\_\+t}}}]{option}{, }\item[{uint32\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Set one runtime radio option. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em option} & Option identifier. \\
+\hline
+{\em value} & Raw option value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted and applied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00534}{534}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_abdf870876444fcac5a07b7b2098c98e1}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_start\_network\_pairing@{radio\_main\_cmd\_start\_network\_pairing}}
+\index{radio\_main\_cmd\_start\_network\_pairing@{radio\_main\_cmd\_start\_network\_pairing}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_start\_network\_pairing()}{radio\_main\_cmd\_start\_network\_pairing()}}
+{\footnotesize\ttfamily \label{radio__main_8h_abdf870876444fcac5a07b7b2098c98e1} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+start\+\_\+network\+\_\+pairing (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Start gateway/network pairing window. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em timeout\+\_\+ms} & Pairing timeout in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00635}{635}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_afea379ddbdcf0d17f439bfa84f74ae75}\index{radio\_main.h@{radio\_main.h}!radio\_main\_cmd\_start\_pairing@{radio\_main\_cmd\_start\_pairing}}
+\index{radio\_main\_cmd\_start\_pairing@{radio\_main\_cmd\_start\_pairing}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_cmd\_start\_pairing()}{radio\_main\_cmd\_start\_pairing()}}
+{\footnotesize\ttfamily \label{radio__main_8h_afea379ddbdcf0d17f439bfa84f74ae75} 
+bool radio\+\_\+main\+\_\+cmd\+\_\+start\+\_\+pairing (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Start local device pairing window. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em timeout\+\_\+ms} & Pairing timeout in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the command was accepted. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00623}{623}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a306213035cbba7d1c6a53b0233651c71}\index{radio\_main.h@{radio\_main.h}!radio\_main\_create\_task@{radio\_main\_create\_task}}
+\index{radio\_main\_create\_task@{radio\_main\_create\_task}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_create\_task()}{radio\_main\_create\_task()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a306213035cbba7d1c6a53b0233651c71} 
+void radio\+\_\+main\+\_\+create\+\_\+task (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create the radio task and command queue. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00396}{396}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00057}{app\+\_\+freertos\+\_\+init()}}.
+
+\Hypertarget{radio__main_8h_aee6b1d7396603e45a2def6d29c1f60bb}\index{radio\_main.h@{radio\_main.h}!radio\_main\_get\_auto\_ping\_period\_ms@{radio\_main\_get\_auto\_ping\_period\_ms}}
+\index{radio\_main\_get\_auto\_ping\_period\_ms@{radio\_main\_get\_auto\_ping\_period\_ms}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_get\_auto\_ping\_period\_ms()}{radio\_main\_get\_auto\_ping\_period\_ms()}}
+{\footnotesize\ttfamily \label{radio__main_8h_aee6b1d7396603e45a2def6d29c1f60bb} 
+bool radio\+\_\+main\+\_\+get\+\_\+auto\+\_\+ping\+\_\+period\+\_\+ms (\begin{DoxyParamCaption}\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{period\+\_\+ms\+\_\+out}{}\end{DoxyParamCaption})}
+
+
+
+Read the effective automatic ping period. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em period\+\_\+ms\+\_\+out} & \mbox{[}out\mbox{]} Period in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the value was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00704}{704}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a89a05069974673d833e5ed49c1e680af}\index{radio\_main.h@{radio\_main.h}!radio\_main\_get\_last\_error\_text@{radio\_main\_get\_last\_error\_text}}
+\index{radio\_main\_get\_last\_error\_text@{radio\_main\_get\_last\_error\_text}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_get\_last\_error\_text()}{radio\_main\_get\_last\_error\_text()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a89a05069974673d833e5ed49c1e680af} 
+bool radio\+\_\+main\+\_\+get\+\_\+last\+\_\+error\+\_\+text (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{out}{, }\item[{uint8\+\_\+t}]{out\+\_\+size}{}\end{DoxyParamCaption})}
+
+
+
+Read the last short radio error message. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em out} & Destination text buffer. \\
+\hline
+{\em out\+\_\+size} & Destination buffer size. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when an error string was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00724}{724}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a808700d24d8fefed60600dedb2980765}\index{radio\_main.h@{radio\_main.h}!radio\_main\_get\_node\_id@{radio\_main\_get\_node\_id}}
+\index{radio\_main\_get\_node\_id@{radio\_main\_get\_node\_id}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_get\_node\_id()}{radio\_main\_get\_node\_id()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a808700d24d8fefed60600dedb2980765} 
+uint32\+\_\+t radio\+\_\+main\+\_\+get\+\_\+node\+\_\+id (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Return this node\textquotesingle{}s application-\/level radio identifier. 
+
+\begin{DoxyReturn}{Zwraca}
+Node identifier. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00744}{744}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_a44374dfa094c78c6338c022cb2a8f1af}\index{radio\_main.h@{radio\_main.h}!radio\_main\_get\_runtime\_cfg@{radio\_main\_get\_runtime\_cfg}}
+\index{radio\_main\_get\_runtime\_cfg@{radio\_main\_get\_runtime\_cfg}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_get\_runtime\_cfg()}{radio\_main\_get\_runtime\_cfg()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a44374dfa094c78c6338c022cb2a8f1af} 
+bool radio\+\_\+main\+\_\+get\+\_\+runtime\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__main__runtime__cfg__t}{radio\+\_\+main\+\_\+runtime\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg\+\_\+out}{}\end{DoxyParamCaption})}
+
+
+
+Read a snapshot of the radio runtime configuration. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg\+\_\+out} & \mbox{[}out\mbox{]} Destination configuration snapshot. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when a snapshot was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l00685}{685}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+\Hypertarget{radio__main_8h_ab18a17f4a4a286d797f27b0a992ed09f}\index{radio\_main.h@{radio\_main.h}!radio\_main\_load\_default\_fsk\_profile@{radio\_main\_load\_default\_fsk\_profile}}
+\index{radio\_main\_load\_default\_fsk\_profile@{radio\_main\_load\_default\_fsk\_profile}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_load\_default\_fsk\_profile()}{radio\_main\_load\_default\_fsk\_profile()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ab18a17f4a4a286d797f27b0a992ed09f} 
+void radio\+\_\+main\+\_\+load\+\_\+default\+\_\+fsk\+\_\+profile (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Load the default FSK/\+GFSK/\+MSK/\+GMSK profile. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg} & \mbox{[}out\mbox{]} Destination FSK profile. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l01827}{1827}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__main_8h_source_l00163}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::address\+\_\+filter}}, \mbox{\hyperlink{radio__main_8h_source_l00156}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::bitrate\+\_\+bps}}, \mbox{\hyperlink{radio__main_8h_source_l00164}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::crc\+\_\+type}}, \mbox{\hyperlink{radio__main_8h_source_l00165}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::data\+\_\+whitening}}, \mbox{\hyperlink{radio__main_8h_source_l00158}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::filter}}, \mbox{\hyperlink{radio__main_8h_source_l00155}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::frequency\+\_\+hz}}, \mbox{\hyperlink{radio__main_8h_source_l00160}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::preamble\+\_\+len}}, \mbox{\hyperlink{radio__main_8h_source_l00088}{RADIO\+\_\+\+MAIN\+\_\+\+ADDRESS\+\_\+\+FILTER\+\_\+\+NONE}}, \mbox{\hyperlink{radio__main_8h_source_l00071}{RADIO\+\_\+\+MAIN\+\_\+\+CRC\+\_\+\+CCITT}}, \mbox{\hyperlink{radio__main_8h_source_l00055}{RADIO\+\_\+\+MAIN\+\_\+\+FILTER\+\_\+\+BT\+\_\+05}}, \mbox{\hyperlink{radio__main_8h_source_l00042}{RADIO\+\_\+\+MAIN\+\_\+\+FSK\+\_\+\+SHAPING\+\_\+\+GFSK}}, \mbox{\hyperlink{radio__main_8h_source_l00157}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::rx\+\_\+bandwidth}}, \mbox{\hyperlink{radio__main_8h_source_l00154}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::shaping}}, \mbox{\hyperlink{radio__main_8h_source_l00162}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word}}, \mbox{\hyperlink{radio__main_8h_source_l00161}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word\+\_\+len}} i \mbox{\hyperlink{radio__main_8h_source_l00159}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t\+::tx\+\_\+power\+\_\+dbm}}.
+
+\Hypertarget{radio__main_8h_ab221d3b21587b4d9178a2ed25d665d6b}\index{radio\_main.h@{radio\_main.h}!radio\_main\_load\_default\_lora\_preset@{radio\_main\_load\_default\_lora\_preset}}
+\index{radio\_main\_load\_default\_lora\_preset@{radio\_main\_load\_default\_lora\_preset}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_load\_default\_lora\_preset()}{radio\_main\_load\_default\_lora\_preset()}}
+{\footnotesize\ttfamily \label{radio__main_8h_ab221d3b21587b4d9178a2ed25d665d6b} 
+void radio\+\_\+main\+\_\+load\+\_\+default\+\_\+lora\+\_\+preset (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{preset\+\_\+id}{, }\item[{\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Load one predefined Lo\+Ra preset into a profile object. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em preset\+\_\+id} & Preset index. \\
+\hline
+{\em cfg} & \mbox{[}out\mbox{]} Destination Lo\+Ra profile. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l01752}{1752}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__lib_8h_source_l00109}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::bandwidth}}, \mbox{\hyperlink{radio__lib_8h_source_l00111}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::coding\+\_\+rate}}, \mbox{\hyperlink{radio__lib_8h_source_l00114}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::crc\+\_\+on}}, \mbox{\hyperlink{radio__lib_8h_source_l00108}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::frequency\+\_\+hz}}, \mbox{\hyperlink{radio__lib_8h_source_l00117}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::implicit\+\_\+header}}, \mbox{\hyperlink{radio__lib_8h_source_l00115}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::invert\+\_\+iq}}, \mbox{\hyperlink{radio__lib_8h_source_l00118}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::payload\+\_\+len}}, \mbox{\hyperlink{radio__lib_8h_source_l00112}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::preamble\+\_\+len}}, \mbox{\hyperlink{radio__lib_8h_source_l00110}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::spreading\+\_\+factor}}, \mbox{\hyperlink{radio__lib_8h_source_l00113}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::sync\+\_\+word}} i \mbox{\hyperlink{radio__lib_8h_source_l00116}{radio\+\_\+lora\+\_\+cfg\+\_\+t\+::tx\+\_\+power\+\_\+dbm}}.
+
+\Hypertarget{radio__main_8h_a5f0e0653bbd66a5420ef11ae2bfa6321}\index{radio\_main.h@{radio\_main.h}!radio\_main\_load\_default\_ook\_profile@{radio\_main\_load\_default\_ook\_profile}}
+\index{radio\_main\_load\_default\_ook\_profile@{radio\_main\_load\_default\_ook\_profile}!radio\_main.h@{radio\_main.h}}
+\doxysubsubsection{\texorpdfstring{radio\_main\_load\_default\_ook\_profile()}{radio\_main\_load\_default\_ook\_profile()}}
+{\footnotesize\ttfamily \label{radio__main_8h_a5f0e0653bbd66a5420ef11ae2bfa6321} 
+void radio\+\_\+main\+\_\+load\+\_\+default\+\_\+ook\+\_\+profile (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Load the default OOK profile. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg} & \mbox{[}out\mbox{]} Destination OOK profile. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{radio__main_8c_source_l01849}{1849}} pliku \mbox{\hyperlink{radio__main_8c_source}{radio\+\_\+main.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__main_8h_source_l00174}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::bitrate\+\_\+bps}}, \mbox{\hyperlink{radio__main_8h_source_l00173}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::frequency\+\_\+hz}}, \mbox{\hyperlink{radio__main_8h_source_l00177}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::preamble\+\_\+len}}, \mbox{\hyperlink{radio__main_8h_source_l00099}{RADIO\+\_\+\+MAIN\+\_\+\+OOK\+\_\+\+THRESHOLD\+\_\+\+PEAK}}, \mbox{\hyperlink{radio__main_8h_source_l00175}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::rx\+\_\+bandwidth}}, \mbox{\hyperlink{radio__main_8h_source_l00179}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::sync\+\_\+word}}, \mbox{\hyperlink{radio__main_8h_source_l00178}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::sync\+\_\+word\+\_\+len}}, \mbox{\hyperlink{radio__main_8h_source_l00180}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::threshold}}, \mbox{\hyperlink{radio__main_8h_source_l00181}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::threshold\+\_\+value}} i \mbox{\hyperlink{radio__main_8h_source_l00176}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t\+::tx\+\_\+power\+\_\+dbm}}.
+

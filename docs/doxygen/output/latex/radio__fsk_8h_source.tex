@@ -1,0 +1,45 @@
+\doxysection{radio\+\_\+fsk.\+h}
+\hypertarget{radio__fsk_8h_source}{}\label{radio__fsk_8h_source}\index{Core/App/radio\_lib/modulations/fsk/radio\_fsk.h@{Core/App/radio\_lib/modulations/fsk/radio\_fsk.h}}
+\mbox{\hyperlink{radio__fsk_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00006}00006\ \textcolor{preprocessor}{\#ifndef\ APP\_RADIO\_LIB\_MODULATIONS\_FSK\_RADIO\_FSK\_H\_}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00007}00007\ \textcolor{preprocessor}{\#define\ APP\_RADIO\_LIB\_MODULATIONS\_FSK\_RADIO\_FSK\_H\_}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{radio__lib_8h}{../../radio\_lib.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00011}00011\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00012}00012\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00013}00013\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00016}00016\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__fsk_8h_a7da352a7eca2bba1fe3ce2e45eea11dc}{radio\_fsk\_default\_hw\_cfg}}(\mbox{\hyperlink{structradio__hw__cfg__t}{radio\_hw\_cfg\_t}}\ *cfg,\ SPI\_HandleTypeDef\ *hspi);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00018}00018\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__fsk_8h_a3f3cb604d11db7401202502ba194bfec}{radio\_fsk\_default\_lora\_cfg}}(\mbox{\hyperlink{structradio__lora__cfg__t}{radio\_lora\_cfg\_t}}\ *cfg);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00020}00020\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_a6bfd270c417c165cde47462e2f8f6dcf}{radio\_fsk\_set\_runtime\_cfg}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__fsk__cfg__t}{radio\_fsk\_cfg\_t}}\ *cfg);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00022}00022\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_a3bce426af9377a35ba779fecb93709a2}{radio\_fsk\_init}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__hw__cfg__t}{radio\_hw\_cfg\_t}}\ *hw,}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00023}00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structradio__lora__cfg__t}{radio\_lora\_cfg\_t}}\ *cfg,}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00024}00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{radio__lib_8h_a36ff66981b6c3ee55ddf5b6e75504e76}{radio\_event\_cb\_t}}\ cb,}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00025}00025\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ *user\_ctx);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00027}00027\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_acc9f82d37eb1ba8baf32225b17176162}{radio\_fsk\_deinit}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00029}00029\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_abc10767656c9437cf21d543d4efb3c8e}{radio\_fsk\_start\_rx\_continuous}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00031}00031\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_afe2df52f73954a7c04849f4dea812963}{radio\_fsk\_start\_rx\_single}}(uint16\_t\ symbol\_timeout);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00033}00033\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_aac6513309bccd4c723b7f37d2d1d3ebe}{radio\_fsk\_send\_async}}(\textcolor{keyword}{const}\ uint8\_t\ *data,\ uint8\_t\ len);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00035}00035\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_aac044a17df998a6ee3ae094da0e527e4}{radio\_fsk\_standby}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00037}00037\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_a69436e5dd1977f344be2fe5bb8396a73}{radio\_fsk\_sleep}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00039}00039\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__fsk_8h_abde60aa61bf2de0b9dc28ad082b8efac}{radio\_fsk\_process}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00041}00041\ uint32\_t\ \mbox{\hyperlink{radio__fsk_8h_a90e4c1995da4a6e628a39044c3c4e483}{radio\_fsk\_take\_events}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00043}00043\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{radio__fsk_8h_aab1a413e95e54815c8503d06e58ed218}{radio\_fsk\_get\_last\_packet}}(\mbox{\hyperlink{structradio__packet__t}{radio\_packet\_t}}\ *pkt);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00045}00045\ \mbox{\hyperlink{radio__lib_8h_a756adac824be7fdeeac3026997c04711}{radio\_state\_t}}\ \mbox{\hyperlink{radio__fsk_8h_a2a475006526b0718271056aed1dd1048}{radio\_fsk\_get\_state}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00047}00047\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_ac4b311b82336b9a5ce281b234794913b}{radio\_fsk\_raw\_read\_reg}}(uint8\_t\ reg,\ uint8\_t\ *value);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00049}00049\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_aeb6c131eec73349617a81fe300a74ec4}{radio\_fsk\_raw\_write\_reg}}(uint8\_t\ reg,\ uint8\_t\ value);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00051}00051\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_a474cfecfe04aa8f8bd19ffde5fa6b0e8}{radio\_fsk\_raw\_read\_burst}}(uint8\_t\ reg,\ uint8\_t\ *data,\ uint8\_t\ len);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00053}00053\ \mbox{\hyperlink{radio__lib_8h_ab6afacea6a7310707d47839506c30a73}{radio\_status\_t}}\ \mbox{\hyperlink{radio__fsk_8h_a6ad38dae6ac92137637ad301698500d9}{radio\_fsk\_raw\_write\_burst}}(uint8\_t\ reg,\ \textcolor{keyword}{const}\ uint8\_t\ *data,\ uint8\_t\ len);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00055}00055\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{radio__fsk_8h_ac0060268606f59533013b637e1459a4d}{radio\_fsk\_on\_exti}}(uint16\_t\ gpio\_pin);}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00057}00057\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00058}00058\ \}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00059}00059\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{radio__fsk_8h_source_l00061}00061\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_RADIO\_LIB\_MODULATIONS\_FSK\_RADIO\_FSK\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

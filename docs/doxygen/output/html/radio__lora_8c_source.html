@@ -1,0 +1,1061 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Plik źródłowy Core/App/radio_lib/modulations/lora/radio_lora.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('radio__lora_8c_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">radio_lora.c</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="radio__lora_8c.html">Idź do dokumentacji tego pliku.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="radio__lora_8h.html">radio_lora.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;app_delay.h&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;main.h&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="radio__sx1276_8h.html">../../common/sx1276/radio_sx1276.h</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="radio__sx1276__regs_8h.html">../../common/sx1276/radio_sx1276_regs.h</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;string.h&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#define RADIO_SX1276_FIFO_TX_BASE_ADDR        0x00U</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#define RADIO_SX1276_FIFO_RX_BASE_ADDR        0x00U</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#define RADIO_DEFAULT_RX_TIMEOUT_SYMBOLS      0x03FFU</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#define RADIO_RESET_LOW_DELAY_MS              2U</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#define RADIO_RESET_HIGH_DELAY_MS             10U</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structradio__context__t.html">   21</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordtype">bool</span> initialized;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <a class="code hl_struct" href="structsx1276__bus__t.html">sx1276_bus_t</a> bus;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_struct" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> hw;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> lora;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <a class="code hl_typedef" href="radio__lib_8h.html#a36ff66981b6c3ee55ddf5b6e75504e76">radio_event_cb_t</a> callback;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordtype">void</span> *callback_ctx;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keyword">volatile</span> uint8_t dio_pending_mask;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keyword">volatile</span> uint32_t event_flags;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_enumeration" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a> state;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_enumeration" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a> tx_resume_state;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    uint16_t rx_single_timeout_symbols;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <a class="code hl_struct" href="structradio__packet__t.html">radio_packet_t</a> last_packet;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>} <a class="code hl_struct" href="structradio__context__t.html">radio_context_t</a>;</div>
+</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">static</span> <a class="code hl_struct" href="structradio__context__t.html">radio_context_t</a> s_radio;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span></div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">   40</a></span><span class="keyword">static</span> uint32_t <a class="code hl_function" href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">radio_irq_save</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>{</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    uint32_t primask = __get_PRIMASK();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    __disable_irq();</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">return</span> primask;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>}</div>
+</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span></div>
+<div class="foldopen" id="foldopen00048" data-start="{" data-end="}">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">   48</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">radio_irq_restore</a>(uint32_t primask)</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>{</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keywordflow">if</span> (primask == 0U)</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        __enable_irq();</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>}</div>
+</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span></div>
+<div class="foldopen" id="foldopen00057" data-start="{" data-end="}">
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a28d53cac62352b93c97b2ea8a2b8da23">   57</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#a28d53cac62352b93c97b2ea8a2b8da23">radio_set_event_flags</a>(uint32_t events)</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>{</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    uint32_t key;</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    key = <a class="code hl_function" href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">radio_irq_save</a>();</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    s_radio.event_flags |= events;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <a class="code hl_function" href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">radio_irq_restore</a>(key);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
+</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span></div>
+<div class="foldopen" id="foldopen00067" data-start="{" data-end="}">
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a20af9511beb2ff4d7f048bbd706f97aa">   67</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#a20af9511beb2ff4d7f048bbd706f97aa">radio_read_irq_flags_retry</a>(uint8_t *irq_flags)</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>{</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="radio__sx1276_8c.html#a038d9ebac1fb9c451ebb19d717d72959">sx1276_get_irq_flags</a>(&amp;s_radio.bus, irq_flags))</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    }</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="comment">/* Retry once to handle occasional SPI transient errors. */</span></div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#a038d9ebac1fb9c451ebb19d717d72959">sx1276_get_irq_flags</a>(&amp;s_radio.bus, irq_flags);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}</div>
+</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span></div>
+<div class="foldopen" id="foldopen00079" data-start="{" data-end="}">
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a6e1e6653bce774027458043edd482dd8">   79</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#a6e1e6653bce774027458043edd482dd8">radio_cfg_valid</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg)</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keywordflow">if</span> ((cfg == NULL) ||</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a236743b550328d327f192949f48581eb">frequency_hz</a> &lt; 137000000UL) || (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a236743b550328d327f192949f48581eb">frequency_hz</a> &gt; 1020000000UL) ||</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        ((uint8_t)cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a300ec2a46e684c012f0ee12b5679f988">bandwidth</a> &gt; (uint8_t)RADIO_LORA_BW_500_KHZ) ||</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">spreading_factor</a> &lt; 6U) || (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">spreading_factor</a> &gt; 12U) ||</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a47ad70fdf79b88a8225739cad8ca1ce0">coding_rate</a> &lt; 5U) || (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a47ad70fdf79b88a8225739cad8ca1ce0">coding_rate</a> &gt; 8U) ||</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a7b19ae88b893b564bd0e9a6ab3c8e498">preamble_len</a> == 0U))</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    {</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    }</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordflow">if</span> (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a12734a038b4af79bba8156b7ac7c1ca2">implicit_header</a> &amp;&amp; (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#aa788c5dc5f90ac4287b24fca55b42861">payload_len</a> == 0U))</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    {</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    }</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keywordflow">if</span> ((cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">spreading_factor</a> == 6U) &amp;&amp; !cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a12734a038b4af79bba8156b7ac7c1ca2">implicit_header</a>)</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    {</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    }</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>}</div>
+</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span></div>
+<div class="foldopen" id="foldopen00105" data-start="{" data-end="}">
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#aec7ef5922d44d8cd7860c29aedf51e55">  105</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#aec7ef5922d44d8cd7860c29aedf51e55">radio_hw_reset</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>{</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    HAL_GPIO_WritePin(s_radio.hw.nss.port, s_radio.hw.nss.pin, GPIO_PIN_SET);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    HAL_GPIO_WritePin(s_radio.hw.reset.port, s_radio.hw.reset.pin, GPIO_PIN_RESET);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    app_delay_ms(RADIO_RESET_LOW_DELAY_MS);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    HAL_GPIO_WritePin(s_radio.hw.reset.port, s_radio.hw.reset.pin, GPIO_PIN_SET);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    app_delay_ms(RADIO_RESET_HIGH_DELAY_MS);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span></div>
+<div class="foldopen" id="foldopen00115" data-start="{" data-end="}">
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#aadec9c56bdb5000babab26af2dcdcfef">  115</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#aadec9c56bdb5000babab26af2dcdcfef">radio_low_data_rate_optimize_required</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg)</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>{</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    <span class="keywordflow">if</span> ((cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a300ec2a46e684c012f0ee12b5679f988">bandwidth</a> &lt;= RADIO_LORA_BW_125_KHZ) &amp;&amp;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        (cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">spreading_factor</a> &gt;= 11U))</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    {</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    }</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>}</div>
+</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span></div>
+<div class="foldopen" id="foldopen00127" data-start="{" data-end="}">
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a08cbb131a5099bf4e95dd2a7a9e51f97">  127</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#a08cbb131a5099bf4e95dd2a7a9e51f97">radio_apply_lora_config</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg)</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>{</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keywordtype">bool</span> ldo_required;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    ldo_required = <a class="code hl_function" href="radio__lora_8c.html#aadec9c56bdb5000babab26af2dcdcfef">radio_low_data_rate_optimize_required</a>(cfg);</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span> </div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#a7726c49e402b455d667895cc37ac8ec8">sx1276_set_frequency</a>(&amp;s_radio.bus, cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a236743b550328d327f192949f48581eb">frequency_hz</a>) &amp;&amp;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a7f6da27f88d9e1ee14012e7fc01a06c5">sx1276_set_pa_output_power</a>(&amp;s_radio.bus, cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a9f879a727b2e50b9ed424d3ec7f23ba5">tx_power_dbm</a>) &amp;&amp;</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a114bd1113c90a7d2f7875d1776f2ec8e">sx1276_set_lora_modem</a>(&amp;s_radio.bus,</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                                 (uint8_t)cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a300ec2a46e684c012f0ee12b5679f988">bandwidth</a>,</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                                 cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">spreading_factor</a>,</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                                 cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a47ad70fdf79b88a8225739cad8ca1ce0">coding_rate</a>,</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                                 cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a12734a038b4af79bba8156b7ac7c1ca2">implicit_header</a>,</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                                 cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a76436ba006f22d9657e1ed345854a892">crc_on</a>,</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                                 ldo_required) &amp;&amp;</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a6487ef0d55e681a5e50e3d7354886753">sx1276_set_symbol_timeout</a>(&amp;s_radio.bus, RADIO_DEFAULT_RX_TIMEOUT_SYMBOLS) &amp;&amp;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a2bb5199c2391aa24e194d8a4d4ac2157">sx1276_set_preamble</a>(&amp;s_radio.bus, cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a7b19ae88b893b564bd0e9a6ab3c8e498">preamble_len</a>) &amp;&amp;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a74e72da97dcdd90a7e071af8504a4f04">sx1276_set_sync_word</a>(&amp;s_radio.bus, cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a970a51b95fd38c9143cb4f78cfa630ab">sync_word</a>) &amp;&amp;</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>           <a class="code hl_function" href="radio__sx1276_8c.html#af8c0cb076e901b4aa2d4ff6959dc71a3">sx1276_set_invert_iq</a>(&amp;s_radio.bus, cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#aa6fba08b43dcf5b0985ce0c492b74783">invert_iq</a>) &amp;&amp;</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a2c71c2e3d5c9a8404ccd9388fd3276d3">sx1276_set_fifo_base_addrs</a>(&amp;s_radio.bus,</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                                      RADIO_SX1276_FIFO_TX_BASE_ADDR,</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>                                      RADIO_SX1276_FIFO_RX_BASE_ADDR) &amp;&amp;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>           <a class="code hl_function" href="radio__sx1276_8c.html#a62348eb179378aacf27663c00ea490c1">sx1276_set_payload_length</a>(&amp;s_radio.bus, cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#aa788c5dc5f90ac4287b24fca55b42861">payload_len</a>) &amp;&amp;</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>           <a class="code hl_function" href="radio__sx1276_8c.html#af20d56d667bf340216eff31602a31c85">sx1276_write_reg</a>(&amp;s_radio.bus, SX1276_REG_LNA, 0x23U) &amp;&amp;</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>           <a class="code hl_function" href="radio__sx1276_8c.html#af20d56d667bf340216eff31602a31c85">sx1276_write_reg</a>(&amp;s_radio.bus, SX1276_REG_IRQ_FLAGS_MASK, 0x00U);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>}</div>
+</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span></div>
+<div class="foldopen" id="foldopen00155" data-start="{" data-end="}">
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#abbad6695e5ca7407f0fccf1701914437">  155</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#abbad6695e5ca7407f0fccf1701914437">radio_config_dio_for_rx</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>{</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    <span class="keyword">const</span> uint8_t dio_mapping1 = (uint8_t)(SX1276_DIO0_MAP_RX_DONE |</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                                           SX1276_DIO1_MAP_RX_TIMEOUT);</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#a71f3f213995c99ce1cf7ef22ddefed79">sx1276_map_dio</a>(&amp;s_radio.bus, dio_mapping1, 0x00U);</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>}</div>
+</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span></div>
+<div class="foldopen" id="foldopen00164" data-start="{" data-end="}">
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#ad5518cf74b46c61dd20a12d0c765db6e">  164</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#ad5518cf74b46c61dd20a12d0c765db6e">radio_config_dio_for_tx</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>{</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keyword">const</span> uint8_t dio_mapping1 = (uint8_t)(SX1276_DIO0_MAP_TX_DONE |</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                                           SX1276_DIO1_MAP_RX_TIMEOUT);</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#a71f3f213995c99ce1cf7ef22ddefed79">sx1276_map_dio</a>(&amp;s_radio.bus, dio_mapping1, 0x00U);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>}</div>
+</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span></div>
+<div class="foldopen" id="foldopen00173" data-start="{" data-end="}">
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">  173</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumeration" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a> state)</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>{</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>    s_radio.state = state;</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>}</div>
+</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span></div>
+<div class="foldopen" id="foldopen00179" data-start="{" data-end="}">
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a5b257ed53b5ef3d382776481e216326f">  179</a></span><span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#a5b257ed53b5ef3d382776481e216326f">radio_wait_for_tx_enter_or_done</a>(uint8_t *op_mode_snapshot)</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>{</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    uint8_t op_mode;</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    uint8_t irq_flags;</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    uint8_t retry;</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    <span class="keywordflow">for</span> (retry = 0U; retry &lt; 5U; retry++)</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    {</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="radio__sx1276_8c.html#a0be3807ba48f424c293c3e6312e4b004">sx1276_read_reg</a>(&amp;s_radio.bus, SX1276_REG_OP_MODE, &amp;op_mode))</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>        {</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>            <span class="keywordflow">if</span> (op_mode_snapshot != NULL)</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>            {</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>                *op_mode_snapshot = op_mode;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>            }</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>            op_mode &amp;= SX1276_OPMODE_MODE_MASK;</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>            <span class="keywordflow">if</span> ((op_mode == SX1276_MODE_TX) || (op_mode == SX1276_MODE_FSTX))</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>            {</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>            }</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        }</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span> </div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="radio__sx1276_8c.html#a038d9ebac1fb9c451ebb19d717d72959">sx1276_get_irq_flags</a>(&amp;s_radio.bus, &amp;irq_flags))</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        {</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>            <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_TX_DONE) != 0U)</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            {</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>            }</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        }</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        app_delay_ms(1U);</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    }</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>}</div>
+</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span></div>
+<div class="foldopen" id="foldopen00216" data-start="{" data-end="}">
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a9ee152d8ad3a6176b915d5a9e446d0f8">  216</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#a9ee152d8ad3a6176b915d5a9e446d0f8">radio_handle_exti_pin</a>(uint16_t pin)</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>{</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    uint8_t i;</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    {</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    }</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordflow">for</span> (i = 0U; i &lt; 6U; i++)</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    {</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keywordflow">if</span> ((i == 2U) &amp;&amp; (RADIO_LIB_ENABLE_DIO2_EXTI == 0))</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        {</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        }</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>        <span class="keywordflow">if</span> ((i == 3U) &amp;&amp; (RADIO_LIB_ENABLE_DIO3_EXTI == 0))</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        {</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        }</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        <span class="keywordflow">if</span> ((i == 4U) &amp;&amp; (RADIO_LIB_ENABLE_DIO4_EXTI == 0))</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        {</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        }</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        <span class="keywordflow">if</span> ((i == 5U) &amp;&amp; (RADIO_LIB_ENABLE_DIO5_EXTI == 0))</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        {</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        }</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span> </div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">if</span> (s_radio.hw.dio[i].pin == pin)</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>        {</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>            uint32_t key = <a class="code hl_function" href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">radio_irq_save</a>();</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>            s_radio.dio_pending_mask |= (uint8_t)(1U &lt;&lt; i);</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>            <a class="code hl_function" href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">radio_irq_restore</a>(key);</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>            <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        }</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    }</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>}</div>
+</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span></div>
+<div class="foldopen" id="foldopen00255" data-start="{" data-end="}">
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#ad6cdc4fd106c45d1d2c6c11732681f89">  255</a></span><span class="keyword">static</span> <a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#ad6cdc4fd106c45d1d2c6c11732681f89">radio_read_rx_packet</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>{</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    uint8_t current_addr;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    uint8_t rx_len;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    int8_t snr_raw;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    uint8_t rssi_raw;</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keywordtype">bool</span> rf_ok;</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    rf_ok = <a class="code hl_function" href="radio__sx1276_8c.html#a3c52ec2e93ac86e40f504021db364208">sx1276_get_rx_current_addr</a>(&amp;s_radio.bus, &amp;current_addr) &amp;&amp;</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            <a class="code hl_function" href="radio__sx1276_8c.html#a3675f7d7f297d0c053ede0812830844e">sx1276_get_rx_nb_bytes</a>(&amp;s_radio.bus, &amp;rx_len) &amp;&amp;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>            <a class="code hl_function" href="radio__sx1276_8c.html#ac768a620c5104a7cc1e932e0fd41e5bb">sx1276_set_fifo_addr_ptr</a>(&amp;s_radio.bus, current_addr);</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    <span class="keywordflow">if</span> (!rf_ok)</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    {</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    }</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    <span class="keywordflow">if</span> (rx_len &gt; <a class="code hl_define" href="radio__lib__config_8h.html#ade00f2ee6e56b6b5fb58c235c4c27641">RADIO_LIB_MAX_PAYLOAD</a>)</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    {</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        s_radio.last_packet.valid = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a">RADIO_EBUS</a>;</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    }</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#ab173599c491a7a6b761c9e4c685843af">sx1276_read_fifo</a>(&amp;s_radio.bus, s_radio.last_packet.data, rx_len))</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    {</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    }</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#a5ef2d8fcef425e0f53703b2181b66930">sx1276_get_packet_snr_raw</a>(&amp;s_radio.bus, &amp;snr_raw) ||</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a4623abcf4ecce80c86b787491dd35bd2">sx1276_get_packet_rssi_raw</a>(&amp;s_radio.bus, &amp;rssi_raw))</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    {</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    }</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    s_radio.last_packet.length = rx_len;</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>    s_radio.last_packet.snr_db = (int8_t)(snr_raw / 4);</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>    s_radio.last_packet.rssi_dbm = (int16_t)((int16_t)rssi_raw - 157);</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    s_radio.last_packet.timestamp_ms = HAL_GetTick();</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    s_radio.last_packet.valid = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span> </div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>}</div>
+</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span></div>
+<div class="foldopen" id="foldopen00298" data-start="{" data-end="}">
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a0bcd2cf534613aa58fca09aa7c3e5567">  298</a></span><span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#a0bcd2cf534613aa58fca09aa7c3e5567">radio_resume_after_tx</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>{</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    <span class="comment">/* Po wejściu tutaj TX jest już zakończony. */</span></div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>    <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a522079593b3bdf8214c41100ca31b760">RADIO_STATE_STANDBY</a>);</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>    <span class="keywordflow">if</span> (s_radio.tx_resume_state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a31f54938d9c9d60c5df407c9c1e52454">RADIO_STATE_RX_CONT</a>)</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    {</div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>        (void)<a class="code hl_function" href="radio__lora_8c.html#a390abe90ea9901cfa2a291ec16e7e69d">radio_lora_start_rx_continuous</a>();</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    }</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (s_radio.tx_resume_state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a8032e93494fbbd3e73677890ffc56f91">RADIO_STATE_RX_SINGLE</a>)</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    {</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        (void)<a class="code hl_function" href="radio__lora_8c.html#a1849ead0800ec3af47fd1e5564fcc20a">radio_lora_start_rx_single</a>(s_radio.rx_single_timeout_symbols);</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>    }</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>    {</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>        (void)<a class="code hl_function" href="radio__lora_8c.html#a80543933d13a8beee716d7a12ea69164">radio_lora_standby</a>();</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    }</div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>}</div>
+</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span> </div>
+<div class="foldopen" id="foldopen00317" data-start="{" data-end="}">
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#ae4cbe2cf2bb1d85d455990a56efa984e">  317</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#ae4cbe2cf2bb1d85d455990a56efa984e">radio_lora_default_hw_cfg</a>(<a class="code hl_struct" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> *cfg, SPI_HandleTypeDef *hspi)</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>{</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>    <span class="keywordflow">if</span> (cfg == NULL)</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>    {</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>    }</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span> </div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>    memset(cfg, 0, <span class="keyword">sizeof</span>(*cfg));</div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a8b24490acb6b0e9cac725031384ecf6b">hspi</a> = hspi;</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a2d0b1e40fa307d9dcfac95667feaebd5">nss</a>.<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = SPI_CS_GPIO_Port;</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a2d0b1e40fa307d9dcfac95667feaebd5">nss</a>.<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = SPI_CS_Pin;</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af0f810096603044a05d1d80fe1b6f9db">reset</a>.<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RMF_RST_GPIO_Port;</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af0f810096603044a05d1d80fe1b6f9db">reset</a>.<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RMF_RST_Pin;</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span> </div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[0].<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RFM_DIO0_EXIT_2_GPIO_Port;</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[0].<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RFM_DIO0_EXIT_2_Pin;</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[1].<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RFM_DIO1_EXIT_1_GPIO_Port;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[1].<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RFM_DIO1_EXIT_1_Pin;</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[2].<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RFM_DIO2_EXIT_15_GPIO_Port;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[2].<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RFM_DIO2_EXIT_15_Pin;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[3].<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RFM_DIO3_EXIT_14_GPIO_Port;</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[3].<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RFM_DIO3_EXIT_14_Pin;</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[4].<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RFM_DIO4_EXIT_13_GPIO_Port;</div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[4].<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RFM_DIO4_EXIT_13_Pin;</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[5].<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> = RFM_DIO5_EXIT_8_GPIO_Port;</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">dio</a>[5].<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a> = RFM_DIO5_EXIT_8_Pin;</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>    cfg-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a29c26647871986724b649e55533d2f07">spi_timeout_ms</a> = <a class="code hl_define" href="radio__lib__config_8h.html#a9cd07b89bb78518454369f72c9acd313">RADIO_LIB_SPI_TIMEOUT_MS</a>;</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>}</div>
+</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span> </div>
+<div class="foldopen" id="foldopen00347" data-start="{" data-end="}">
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a5471d87204b262ca4e0bd3acdc14e28f">  347</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#a5471d87204b262ca4e0bd3acdc14e28f">radio_lora_default_lora_cfg</a>(<a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg)</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>{</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    <span class="keywordflow">if</span> (cfg == NULL)</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    {</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    }</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span> </div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    memset(cfg, 0, <span class="keyword">sizeof</span>(*cfg));</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a236743b550328d327f192949f48581eb">frequency_hz</a> = <a class="code hl_define" href="radio__lib__config_8h.html#aeb31168bab90b0a04839cbcad56235b9">RADIO_LIB_DEFAULT_FREQ_HZ</a>;</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a300ec2a46e684c012f0ee12b5679f988">bandwidth</a> = RADIO_LORA_BW_125_KHZ;</div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">spreading_factor</a> = 7U;</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a47ad70fdf79b88a8225739cad8ca1ce0">coding_rate</a> = 5U;</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a7b19ae88b893b564bd0e9a6ab3c8e498">preamble_len</a> = 8U;</div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a970a51b95fd38c9143cb4f78cfa630ab">sync_word</a> = <a class="code hl_define" href="radio__lib__config_8h.html#ad84c65139cc4451b3125a7cebf8654c8">RADIO_LIB_DEFAULT_SYNC_WORD</a>;</div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a76436ba006f22d9657e1ed345854a892">crc_on</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#aa6fba08b43dcf5b0985ce0c492b74783">invert_iq</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a9f879a727b2e50b9ed424d3ec7f23ba5">tx_power_dbm</a> = 14;</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#a12734a038b4af79bba8156b7ac7c1ca2">implicit_header</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    cfg-&gt;<a class="code hl_variable" href="structradio__lora__cfg__t.html#aa788c5dc5f90ac4287b24fca55b42861">payload_len</a> = 0U;</div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>}</div>
+</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span> </div>
+<div class="foldopen" id="foldopen00368" data-start="{" data-end="}">
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a724060876c4526288e120688175abc74">  368</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a724060876c4526288e120688175abc74">radio_lora_init</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a> *hw,</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                          <span class="keyword">const</span> <a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> *cfg,</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                          <a class="code hl_typedef" href="radio__lib_8h.html#a36ff66981b6c3ee55ddf5b6e75504e76">radio_event_cb_t</a> cb,</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                          <span class="keywordtype">void</span> *user_ctx)</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>{</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>    uint8_t version;</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span> </div>
+<div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    <span class="keywordflow">if</span> ((hw == NULL) || (hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a8b24490acb6b0e9cac725031384ecf6b">hspi</a> == NULL) ||</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        (hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a2d0b1e40fa307d9dcfac95667feaebd5">nss</a>.<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> == NULL) || (hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#af0f810096603044a05d1d80fe1b6f9db">reset</a>.<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a> == NULL) ||</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>        !<a class="code hl_function" href="radio__fsk_8c.html#a5e90fb2cad65ccec1c8f18a1022a2ead">radio_cfg_valid</a>(cfg))</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>    {</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901">RADIO_EINVAL</a>;</div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    }</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span> </div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>    memset(&amp;s_radio, 0, <span class="keyword">sizeof</span>(s_radio));</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span> </div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>    s_radio.hw = *hw;</div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>    s_radio.lora = *cfg;</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    s_radio.callback = cb;</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    s_radio.callback_ctx = user_ctx;</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    s_radio.bus.hspi = hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a8b24490acb6b0e9cac725031384ecf6b">hspi</a>;</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    s_radio.bus.nss_port = hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a2d0b1e40fa307d9dcfac95667feaebd5">nss</a>.<a class="code hl_variable" href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">port</a>;</div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    s_radio.bus.nss_pin = hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a2d0b1e40fa307d9dcfac95667feaebd5">nss</a>.<a class="code hl_variable" href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">pin</a>;</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>    s_radio.bus.spi_timeout_ms = hw-&gt;<a class="code hl_variable" href="structradio__hw__cfg__t.html#a29c26647871986724b649e55533d2f07">spi_timeout_ms</a>;</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    s_radio.rx_single_timeout_symbols = RADIO_DEFAULT_RX_TIMEOUT_SYMBOLS;</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>    s_radio.state = <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a39a909f3a10e919a387c9e3ac92269d7">RADIO_STATE_UNINIT</a>;</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>    <a class="code hl_function" href="radio__lora_8c.html#aec7ef5922d44d8cd7860c29aedf51e55">radio_hw_reset</a>();</div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span> </div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_SLEEP)))</div>
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>    {</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    }</div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
+<div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>    app_delay_ms(1U);</div>
+<div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span> </div>
+<div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#ae308f754e1ef59472e61b1cba0b26d6d">sx1276_get_version</a>(&amp;s_radio.bus, &amp;version) || (version != SX1276_VERSION_ID))</div>
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>    {</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    }</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span> </div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__lora_8c.html#a08cbb131a5099bf4e95dd2a7a9e51f97">radio_apply_lora_config</a>(&amp;s_radio.lora) ||</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#ac768a620c5104a7cc1e932e0fd41e5bb">sx1276_set_fifo_addr_ptr</a>(&amp;s_radio.bus, RADIO_SX1276_FIFO_TX_BASE_ADDR) ||</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a>(&amp;s_radio.bus, 0xFFU) ||</div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_STDBY)))</div>
+<div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>    {</div>
+<div class="line"><a id="l00414" name="l00414"></a><span class="lineno">  414</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00415" name="l00415"></a><span class="lineno">  415</span>    }</div>
+<div class="line"><a id="l00416" name="l00416"></a><span class="lineno">  416</span> </div>
+<div class="line"><a id="l00417" name="l00417"></a><span class="lineno">  417</span><span class="preprocessor">#if RADIO_LIB_ENABLE_DIO5_EXTI == 0</span></div>
+<div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>    __HAL_GPIO_EXTI_CLEAR_IT(RFM_DIO5_EXIT_8_Pin);</div>
+<div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>    HAL_NVIC_DisableIRQ(RFM_DIO5_EXIT_8_EXTI_IRQn);</div>
+<div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span><span class="preprocessor">#if RADIO_LIB_ENABLE_DIO4_EXTI == 0</span></div>
+<div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    __HAL_GPIO_EXTI_CLEAR_IT(RFM_DIO4_EXIT_13_Pin);</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>    HAL_NVIC_DisableIRQ(RFM_DIO4_EXIT_13_EXTI_IRQn);</div>
+<div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span><span class="preprocessor">#if RADIO_LIB_ENABLE_DIO3_EXTI == 0</span></div>
+<div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>    __HAL_GPIO_EXTI_CLEAR_IT(RFM_DIO3_EXIT_14_Pin);</div>
+<div class="line"><a id="l00427" name="l00427"></a><span class="lineno">  427</span>    HAL_NVIC_DisableIRQ(RFM_DIO3_EXIT_14_EXTI_IRQn);</div>
+<div class="line"><a id="l00428" name="l00428"></a><span class="lineno">  428</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span><span class="preprocessor">#if RADIO_LIB_ENABLE_DIO2_EXTI == 0</span></div>
+<div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>    __HAL_GPIO_EXTI_CLEAR_IT(RFM_DIO2_EXIT_15_Pin);</div>
+<div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span>    HAL_NVIC_DisableIRQ(RFM_DIO2_EXIT_15_EXTI_IRQn);</div>
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span> </div>
+<div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>    s_radio.initialized = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>    s_radio.state = <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a522079593b3bdf8214c41100ca31b760">RADIO_STATE_STANDBY</a>;</div>
+<div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>}</div>
+</div>
+<div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span> </div>
+<div class="foldopen" id="foldopen00439" data-start="{" data-end="}">
+<div class="line"><a id="l00439" name="l00439"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a58eff148748a5f450d528787e7062fc1">  439</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a58eff148748a5f450d528787e7062fc1">radio_lora_deinit</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>{</div>
+<div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>    {</div>
+<div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>    }</div>
+<div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span> </div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>    (void)<a class="code hl_function" href="radio__lora_8c.html#aab57e6f3eab43fafc26cc074178f05d0">radio_lora_sleep</a>();</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>    memset(&amp;s_radio, 0, <span class="keyword">sizeof</span>(s_radio));</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>    s_radio.state = <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a39a909f3a10e919a387c9e3ac92269d7">RADIO_STATE_UNINIT</a>;</div>
+<div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>}</div>
+</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span> </div>
+<div class="foldopen" id="foldopen00452" data-start="{" data-end="}">
+<div class="line"><a id="l00452" name="l00452"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a390abe90ea9901cfa2a291ec16e7e69d">  452</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a390abe90ea9901cfa2a291ec16e7e69d">radio_lora_start_rx_continuous</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>{</div>
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>    {</div>
+<div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>    }</div>
+<div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span> </div>
+<div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>    <span class="keywordflow">if</span> (s_radio.state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a>)</div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>    {</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a">RADIO_EBUS</a>;</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    }</div>
+<div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span> </div>
+<div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__lora_8c.html#abbad6695e5ca7407f0fccf1701914437">radio_config_dio_for_rx</a>() ||</div>
+<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a6487ef0d55e681a5e50e3d7354886753">sx1276_set_symbol_timeout</a>(&amp;s_radio.bus, RADIO_DEFAULT_RX_TIMEOUT_SYMBOLS) ||</div>
+<div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a>(&amp;s_radio.bus, 0xFFU) ||</div>
+<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_RXCONTINUOUS)))</div>
+<div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>    {</div>
+<div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>    }</div>
+<div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span> </div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>    <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a31f54938d9c9d60c5df407c9c1e52454">RADIO_STATE_RX_CONT</a>);</div>
+<div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>}</div>
+</div>
+<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span> </div>
+<div class="foldopen" id="foldopen00476" data-start="{" data-end="}">
+<div class="line"><a id="l00476" name="l00476"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a1849ead0800ec3af47fd1e5564fcc20a">  476</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a1849ead0800ec3af47fd1e5564fcc20a">radio_lora_start_rx_single</a>(uint16_t symbol_timeout)</div>
+<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>{</div>
+<div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>    {</div>
+<div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span>    }</div>
+<div class="line"><a id="l00482" name="l00482"></a><span class="lineno">  482</span> </div>
+<div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>    <span class="keywordflow">if</span> (s_radio.state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a>)</div>
+<div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span>    {</div>
+<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a">RADIO_EBUS</a>;</div>
+<div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>    }</div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span> </div>
+<div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>    <span class="keywordflow">if</span> (symbol_timeout == 0U)</div>
+<div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span>    {</div>
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901">RADIO_EINVAL</a>;</div>
+<div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>    }</div>
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span> </div>
+<div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>    s_radio.rx_single_timeout_symbols = symbol_timeout;</div>
+<div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span> </div>
+<div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__lora_8c.html#abbad6695e5ca7407f0fccf1701914437">radio_config_dio_for_rx</a>() ||</div>
+<div class="line"><a id="l00496" name="l00496"></a><span class="lineno">  496</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a6487ef0d55e681a5e50e3d7354886753">sx1276_set_symbol_timeout</a>(&amp;s_radio.bus, symbol_timeout) ||</div>
+<div class="line"><a id="l00497" name="l00497"></a><span class="lineno">  497</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a>(&amp;s_radio.bus, 0xFFU) ||</div>
+<div class="line"><a id="l00498" name="l00498"></a><span class="lineno">  498</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_RXSINGLE)))</div>
+<div class="line"><a id="l00499" name="l00499"></a><span class="lineno">  499</span>    {</div>
+<div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>    }</div>
+<div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span> </div>
+<div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a8032e93494fbbd3e73677890ffc56f91">RADIO_STATE_RX_SINGLE</a>);</div>
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>}</div>
+</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
+<div class="foldopen" id="foldopen00507" data-start="{" data-end="}">
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a0f3c66737a0b3eececdafaf1ff57e1f8">  507</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a0f3c66737a0b3eececdafaf1ff57e1f8">radio_lora_send_async</a>(<span class="keyword">const</span> uint8_t *data, uint8_t len)</div>
+<div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>{</div>
+<div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    uint8_t op_mode = 0U;</div>
+<div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span> </div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>    {</div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>    }</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span> </div>
+<div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>    <span class="keywordflow">if</span> ((data == NULL) || (len == 0U) || (len &gt; <a class="code hl_define" href="radio__lib__config_8h.html#ade00f2ee6e56b6b5fb58c235c4c27641">RADIO_LIB_MAX_PAYLOAD</a>))</div>
+<div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    {</div>
+<div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901">RADIO_EINVAL</a>;</div>
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>    }</div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span> </div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>    <span class="keywordflow">if</span> (s_radio.state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a>)</div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>    {</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a">RADIO_EBUS</a>;</div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>    }</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span> </div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>    s_radio.tx_resume_state = s_radio.state;</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span> </div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_STDBY)) ||</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>        !<a class="code hl_function" href="radio__lora_8c.html#ad5518cf74b46c61dd20a12d0c765db6e">radio_config_dio_for_tx</a>() ||</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a>(&amp;s_radio.bus, 0xFFU) ||</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#ac768a620c5104a7cc1e932e0fd41e5bb">sx1276_set_fifo_addr_ptr</a>(&amp;s_radio.bus, RADIO_SX1276_FIFO_TX_BASE_ADDR) ||</div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a62348eb179378aacf27663c00ea490c1">sx1276_set_payload_length</a>(&amp;s_radio.bus, len) ||</div>
+<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#aeb0a3f646a276aed07c4e23dfabff75c">sx1276_write_fifo</a>(&amp;s_radio.bus, data, len) ||</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>        !<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_TX)))</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>    {</div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>    }</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span> </div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__lora_8c.html#a5b257ed53b5ef3d382776481e216326f">radio_wait_for_tx_enter_or_done</a>(&amp;op_mode))</div>
+<div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>    {</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>    }</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span> </div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a>);</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>}</div>
+</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
+<div class="foldopen" id="foldopen00548" data-start="{" data-end="}">
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a80543933d13a8beee716d7a12ea69164">  548</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a80543933d13a8beee716d7a12ea69164">radio_lora_standby</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>{</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>    {</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>    }</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_STDBY)))</div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    {</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>    }</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span> </div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>    <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a522079593b3bdf8214c41100ca31b760">RADIO_STATE_STANDBY</a>);</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>}</div>
+</div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span> </div>
+<div class="foldopen" id="foldopen00564" data-start="{" data-end="}">
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#aab57e6f3eab43fafc26cc074178f05d0">  564</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#aab57e6f3eab43fafc26cc074178f05d0">radio_lora_sleep</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>{</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    {</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>    }</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span> </div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a>(&amp;s_radio.bus, (uint8_t)(SX1276_OPMODE_LONG_RANGE_MODE | SX1276_MODE_SLEEP)))</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>    {</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    }</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span> </div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    <a class="code hl_function" href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a>(<a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a522079593b3bdf8214c41100ca31b760">RADIO_STATE_STANDBY</a>);</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>;</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>}</div>
+</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span> </div>
+<div class="foldopen" id="foldopen00580" data-start="{" data-end="}">
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#ad2de151584d730d180ecb53c3e01683d">  580</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#ad2de151584d730d180ecb53c3e01683d">radio_lora_process</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>{</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>    uint8_t pending;</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    uint8_t irq_flags;</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>    uint8_t op_mode;</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>    uint32_t events = <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa4a8bdcb8fee38c42a395721b15d04730">RADIO_EVENT_NONE</a>;</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>    uint32_t key;</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span> </div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>    {</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>    }</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span> </div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>    key = <a class="code hl_function" href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">radio_irq_save</a>();</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>    pending = s_radio.dio_pending_mask;</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>    s_radio.dio_pending_mask = 0U;</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>    <a class="code hl_function" href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">radio_irq_restore</a>(key);</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span> </div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>    <span class="comment">/*</span></div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span><span class="comment">     * Główna ścieżka: zdarzenia z EXTI (pending != 0).</span></div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span><span class="comment">     * Fallback: podczas TX sprawdzaj flagi IRQ pollingiem, jeśli zbocze DIO0</span></div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span><span class="comment">     * zostało pominięte.</span></div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>    <span class="keywordflow">if</span> ((pending == 0U) &amp;&amp;</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>        (s_radio.hw.dio[0].port != NULL) &amp;&amp;</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>        (HAL_GPIO_ReadPin(s_radio.hw.dio[0].port, s_radio.hw.dio[0].pin) == GPIO_PIN_SET))</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>    {</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        pending |= 0x01U;</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>    }</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span> </div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>    <span class="keywordflow">if</span> ((pending == 0U) &amp;&amp; (s_radio.state != <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a>))</div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>    {</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>        <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>    }</div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span> </div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__lora_8c.html#a20af9511beb2ff4d7f048bbd706f97aa">radio_read_irq_flags_retry</a>(&amp;irq_flags))</div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>    {</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa076d204c164b342eb0225e211d4e21e3">RADIO_EVENT_HW_ERROR</a>;</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>        <span class="keywordflow">goto</span> done;</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>    }</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span> </div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    <span class="keywordflow">if</span> (irq_flags == 0U)</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    {</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>        <span class="comment">/*</span></div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span><span class="comment">         * Ścieżka recovery: jeśli zbocze TX_DONE zostało pominięte, układ może</span></div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span><span class="comment">         * być już poza TX, mimo że stan software nadal wskazuje TX.</span></div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span><span class="comment">         */</span></div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>        <span class="keywordflow">if</span> ((s_radio.state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a>) &amp;&amp;</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>            <a class="code hl_function" href="radio__sx1276_8c.html#a0be3807ba48f424c293c3e6312e4b004">sx1276_read_reg</a>(&amp;s_radio.bus, SX1276_REG_OP_MODE, &amp;op_mode))</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>        {</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>            op_mode &amp;= SX1276_OPMODE_MODE_MASK;</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>            <span class="keywordflow">if</span> ((op_mode != SX1276_MODE_TX) &amp;&amp; (op_mode != SX1276_MODE_FSTX))</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>            {</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>                events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa1d149b25904001e51ed6f939e1fb3d9a">RADIO_EVENT_TX_DONE</a>;</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                <a class="code hl_function" href="radio__lora_8c.html#a0bcd2cf534613aa58fca09aa7c3e5567">radio_resume_after_tx</a>();</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>            }</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>        }</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>        <span class="keywordflow">goto</span> done;</div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>    }</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span> </div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="radio__sx1276_8c.html#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a>(&amp;s_radio.bus, irq_flags))</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>    {</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa076d204c164b342eb0225e211d4e21e3">RADIO_EVENT_HW_ERROR</a>;</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    }</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span> </div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_PAYLOAD_CRC_ERROR) != 0U)</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    {</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa85593f2e8599fcb847021bc3d03ed219">RADIO_EVENT_CRC_ERR</a>;</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>    }</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span> </div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span>    <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_RX_TIMEOUT) != 0U)</div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span>    {</div>
+<div class="line"><a id="l00652" name="l00652"></a><span class="lineno">  652</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfaebc5c9fba6326e9bc7a320de04ab1e00">RADIO_EVENT_RX_TIMEOUT</a>;</div>
+<div class="line"><a id="l00653" name="l00653"></a><span class="lineno">  653</span>        <span class="keywordflow">if</span> (s_radio.state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a8032e93494fbbd3e73677890ffc56f91">RADIO_STATE_RX_SINGLE</a>)</div>
+<div class="line"><a id="l00654" name="l00654"></a><span class="lineno">  654</span>        {</div>
+<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span>            (void)<a class="code hl_function" href="radio__lora_8c.html#a80543933d13a8beee716d7a12ea69164">radio_lora_standby</a>();</div>
+<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span>        }</div>
+<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span>    }</div>
+<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span> </div>
+<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>    <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_RX_DONE) != 0U)</div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    {</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_PAYLOAD_CRC_ERROR) == 0U)</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>        {</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>            <a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> read_status = <a class="code hl_function" href="radio__lora_8c.html#ad6cdc4fd106c45d1d2c6c11732681f89">radio_read_rx_packet</a>();</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>            <span class="keywordflow">if</span> (read_status == <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a>)</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>            {</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>                events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfaa62d4dc7b1c0ad3228a070cc87ec77c9">RADIO_EVENT_RX_DONE</a>;</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>            }</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>            <span class="keywordflow">else</span> <span class="keywordflow">if</span> (read_status == <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a">RADIO_EBUS</a>)</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>            {</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>                events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfaa29abb97d2ea6bf8a4459c42bfac9bf8">RADIO_EVENT_FIFO_OVERRUN</a>;</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>            }</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>            <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>            {</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>                events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa076d204c164b342eb0225e211d4e21e3">RADIO_EVENT_HW_ERROR</a>;</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>            }</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>        }</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span> </div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>        <span class="keywordflow">if</span> (s_radio.state == <a class="code hl_enumvalue" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a8032e93494fbbd3e73677890ffc56f91">RADIO_STATE_RX_SINGLE</a>)</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>        {</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>            (void)<a class="code hl_function" href="radio__lora_8c.html#a80543933d13a8beee716d7a12ea69164">radio_lora_standby</a>();</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>        }</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>    }</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span> </div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span>    <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_TX_DONE) != 0U)</div>
+<div class="line"><a id="l00685" name="l00685"></a><span class="lineno">  685</span>    {</div>
+<div class="line"><a id="l00686" name="l00686"></a><span class="lineno">  686</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa1d149b25904001e51ed6f939e1fb3d9a">RADIO_EVENT_TX_DONE</a>;</div>
+<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span>        <a class="code hl_function" href="radio__lora_8c.html#a0bcd2cf534613aa58fca09aa7c3e5567">radio_resume_after_tx</a>();</div>
+<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span>    }</div>
+<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span> </div>
+<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>    <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_CAD_DONE) != 0U)</div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    {</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa177e77f8e6d6384dcdfd46cab7ad6d4e">RADIO_EVENT_CAD_DONE</a>;</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    }</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span> </div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>    <span class="keywordflow">if</span> ((irq_flags &amp; SX1276_IRQ_CAD_DETECTED) != 0U)</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    {</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>        events |= <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa7f7068e1aebbac0c2315ae961c6f811b">RADIO_EVENT_CAD_DETECTED</a>;</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    }</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span> </div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>done:</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>    <span class="keywordflow">if</span> (events != <a class="code hl_enumvalue" href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa4a8bdcb8fee38c42a395721b15d04730">RADIO_EVENT_NONE</a>)</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    {</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        <a class="code hl_function" href="radio__lora_8c.html#a28d53cac62352b93c97b2ea8a2b8da23">radio_set_event_flags</a>(events);</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>        <span class="keywordflow">if</span> (s_radio.callback != NULL)</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>        {</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span>            s_radio.callback(events, s_radio.callback_ctx);</div>
+<div class="line"><a id="l00707" name="l00707"></a><span class="lineno">  707</span>        }</div>
+<div class="line"><a id="l00708" name="l00708"></a><span class="lineno">  708</span>    }</div>
+<div class="line"><a id="l00709" name="l00709"></a><span class="lineno">  709</span>}</div>
+</div>
+<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span> </div>
+<div class="foldopen" id="foldopen00711" data-start="{" data-end="}">
+<div class="line"><a id="l00711" name="l00711"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a6c63af4fea25c9be42ad2cd66f55c67a">  711</a></span>uint32_t <a class="code hl_function" href="radio__lora_8c.html#a6c63af4fea25c9be42ad2cd66f55c67a">radio_lora_take_events</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span>{</div>
+<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>    uint32_t events;</div>
+<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>    uint32_t key;</div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span> </div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>    key = <a class="code hl_function" href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">radio_irq_save</a>();</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>    events = s_radio.event_flags;</div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>    s_radio.event_flags = 0U;</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>    <a class="code hl_function" href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">radio_irq_restore</a>(key);</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span> </div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>    <span class="keywordflow">return</span> events;</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>}</div>
+</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span> </div>
+<div class="foldopen" id="foldopen00724" data-start="{" data-end="}">
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#ac27051855fe3d0c918470dce270157ab">  724</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="radio__lora_8c.html#ac27051855fe3d0c918470dce270157ab">radio_lora_get_last_packet</a>(<a class="code hl_struct" href="structradio__packet__t.html">radio_packet_t</a> *pkt)</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>{</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    <span class="keywordflow">if</span> ((pkt == NULL) || !s_radio.last_packet.valid)</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno">  727</span>    {</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno">  729</span>    }</div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span> </div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    *pkt = s_radio.last_packet;</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>}</div>
+</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span> </div>
+<div class="foldopen" id="foldopen00735" data-start="{" data-end="}">
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#aa33ef625306a53e33a059566eac3173b">  735</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a> <a class="code hl_function" href="radio__lora_8c.html#aa33ef625306a53e33a059566eac3173b">radio_lora_get_state</a>(<span class="keywordtype">void</span>)</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>{</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>    <span class="keywordflow">return</span> s_radio.state;</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>}</div>
+</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span> </div>
+<div class="foldopen" id="foldopen00740" data-start="{" data-end="}">
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a5dce945962df09085f7260d2c0eaeb0e">  740</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a5dce945962df09085f7260d2c0eaeb0e">radio_lora_raw_read_reg</a>(uint8_t reg, uint8_t *value)</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>{</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>    {</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    }</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span> </div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#a0be3807ba48f424c293c3e6312e4b004">sx1276_read_reg</a>(&amp;s_radio.bus, reg, value) ? <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a> : <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00748" name="l00748"></a><span class="lineno">  748</span>}</div>
+</div>
+<div class="line"><a id="l00749" name="l00749"></a><span class="lineno">  749</span> </div>
+<div class="foldopen" id="foldopen00750" data-start="{" data-end="}">
+<div class="line"><a id="l00750" name="l00750"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#ac925214c2b3322b9e6f504621f331b8c">  750</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#ac925214c2b3322b9e6f504621f331b8c">radio_lora_raw_write_reg</a>(uint8_t reg, uint8_t value)</div>
+<div class="line"><a id="l00751" name="l00751"></a><span class="lineno">  751</span>{</div>
+<div class="line"><a id="l00752" name="l00752"></a><span class="lineno">  752</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00753" name="l00753"></a><span class="lineno">  753</span>    {</div>
+<div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    }</div>
+<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span> </div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#af20d56d667bf340216eff31602a31c85">sx1276_write_reg</a>(&amp;s_radio.bus, reg, value) ? <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a> : <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>}</div>
+</div>
+<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span> </div>
+<div class="foldopen" id="foldopen00760" data-start="{" data-end="}">
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a485035c4367026bbc755d34eac447f02">  760</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#a485035c4367026bbc755d34eac447f02">radio_lora_raw_read_burst</a>(uint8_t reg, uint8_t *data, uint8_t len)</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>{</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>    {</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>    }</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span> </div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    <span class="keywordflow">if</span> ((data == NULL) || (len == 0U))</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    {</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901">RADIO_EINVAL</a>;</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>    }</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span> </div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#adc74dc514898113c4e43bc5fbc8b280b">sx1276_read_burst</a>(&amp;s_radio.bus, reg, data, len) ? <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a> : <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>}</div>
+</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span> </div>
+<div class="foldopen" id="foldopen00775" data-start="{" data-end="}">
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#af8c212409e07f17e6877459642de9dfb">  775</a></span><a class="code hl_enumeration" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a> <a class="code hl_function" href="radio__lora_8c.html#af8c212409e07f17e6877459642de9dfb">radio_lora_raw_write_burst</a>(uint8_t reg, <span class="keyword">const</span> uint8_t *data, uint8_t len)</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>{</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    <span class="keywordflow">if</span> (!s_radio.initialized)</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    {</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a>;</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>    }</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span> </div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    <span class="keywordflow">if</span> ((data == NULL) || (len == 0U))</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    {</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901">RADIO_EINVAL</a>;</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>    }</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span> </div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="radio__sx1276_8c.html#a3a3c532ff762f574aac721fe906acd85">sx1276_write_burst</a>(&amp;s_radio.bus, reg, data, len) ? <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a> : <a class="code hl_enumvalue" href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a>;</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>}</div>
+</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
+<div class="foldopen" id="foldopen00790" data-start="{" data-end="}">
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno"><a class="line" href="radio__lora_8c.html#a0877dbc4de5383bde4d30a035b26112a">  790</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="radio__lora_8c.html#a0877dbc4de5383bde4d30a035b26112a">radio_lora_on_exti</a>(uint16_t gpio_pin)</div>
+<div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>{</div>
+<div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>    <a class="code hl_function" href="radio__lora_8c.html#a9ee152d8ad3a6176b915d5a9e446d0f8">radio_handle_exti_pin</a>(gpio_pin);</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>}</div>
+</div>
+<div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span> </div>
+<div class="ttc" id="aradio__fsk_8c_html_a5e90fb2cad65ccec1c8f18a1022a2ead"><div class="ttname"><a href="radio__fsk_8c.html#a5e90fb2cad65ccec1c8f18a1022a2ead">radio_cfg_valid</a></div><div class="ttdeci">static bool radio_cfg_valid(const radio_fsk_cfg_t *cfg)</div><div class="ttdoc">Internal helper: radio_cfg_valid.</div><div class="ttdef"><b>Definicja</b> <a href="radio__fsk_8c_source.html#l00071">radio_fsk.c:71</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfa076d204c164b342eb0225e211d4e21e3"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa076d204c164b342eb0225e211d4e21e3">RADIO_EVENT_HW_ERROR</a></div><div class="ttdeci">@ RADIO_EVENT_HW_ERROR</div><div class="ttdoc">Błąd sprzętowy backendu.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00062">radio_lib.h:62</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfa177e77f8e6d6384dcdfd46cab7ad6d4e"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa177e77f8e6d6384dcdfd46cab7ad6d4e">RADIO_EVENT_CAD_DONE</a></div><div class="ttdeci">@ RADIO_EVENT_CAD_DONE</div><div class="ttdoc">Zakończono CAD.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00059">radio_lib.h:59</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfa1d149b25904001e51ed6f939e1fb3d9a"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa1d149b25904001e51ed6f939e1fb3d9a">RADIO_EVENT_TX_DONE</a></div><div class="ttdeci">@ RADIO_EVENT_TX_DONE</div><div class="ttdoc">Zakończono nadawanie.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00055">radio_lib.h:55</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfa4a8bdcb8fee38c42a395721b15d04730"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa4a8bdcb8fee38c42a395721b15d04730">RADIO_EVENT_NONE</a></div><div class="ttdeci">@ RADIO_EVENT_NONE</div><div class="ttdoc">Brak zdarzeń.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00054">radio_lib.h:54</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfa7f7068e1aebbac0c2315ae961c6f811b"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa7f7068e1aebbac0c2315ae961c6f811b">RADIO_EVENT_CAD_DETECTED</a></div><div class="ttdeci">@ RADIO_EVENT_CAD_DETECTED</div><div class="ttdoc">CAD wykrył aktywność.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00060">radio_lib.h:60</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfa85593f2e8599fcb847021bc3d03ed219"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfa85593f2e8599fcb847021bc3d03ed219">RADIO_EVENT_CRC_ERR</a></div><div class="ttdeci">@ RADIO_EVENT_CRC_ERR</div><div class="ttdoc">Błąd CRC ramki.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00058">radio_lib.h:58</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfaa29abb97d2ea6bf8a4459c42bfac9bf8"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfaa29abb97d2ea6bf8a4459c42bfac9bf8">RADIO_EVENT_FIFO_OVERRUN</a></div><div class="ttdeci">@ RADIO_EVENT_FIFO_OVERRUN</div><div class="ttdoc">Przepełnienie/niepoprawna długość FIFO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00061">radio_lib.h:61</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfaa62d4dc7b1c0ad3228a070cc87ec77c9"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfaa62d4dc7b1c0ad3228a070cc87ec77c9">RADIO_EVENT_RX_DONE</a></div><div class="ttdeci">@ RADIO_EVENT_RX_DONE</div><div class="ttdoc">Odebrano ramkę.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00056">radio_lib.h:56</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a34f401ecedc2a216d2822063915eb8dfaebc5c9fba6326e9bc7a320de04ab1e00"><div class="ttname"><a href="radio__lib_8h.html#a34f401ecedc2a216d2822063915eb8dfaebc5c9fba6326e9bc7a320de04ab1e00">RADIO_EVENT_RX_TIMEOUT</a></div><div class="ttdeci">@ RADIO_EVENT_RX_TIMEOUT</div><div class="ttdoc">Timeout odbioru.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00057">radio_lib.h:57</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a36ff66981b6c3ee55ddf5b6e75504e76"><div class="ttname"><a href="radio__lib_8h.html#a36ff66981b6c3ee55ddf5b6e75504e76">radio_event_cb_t</a></div><div class="ttdeci">void(* radio_event_cb_t)(uint32_t events, void *user_ctx)</div><div class="ttdoc">Typ funkcji callback dla zdarzeń radiowych.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00227">radio_lib.h:227</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a756adac824be7fdeeac3026997c04711"><div class="ttname"><a href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711">radio_state_t</a></div><div class="ttdeci">radio_state_t</div><div class="ttdoc">Aktualny stan pracy backendu radiowego.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00040">radio_lib.h:41</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a756adac824be7fdeeac3026997c04711a31f54938d9c9d60c5df407c9c1e52454"><div class="ttname"><a href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a31f54938d9c9d60c5df407c9c1e52454">RADIO_STATE_RX_CONT</a></div><div class="ttdeci">@ RADIO_STATE_RX_CONT</div><div class="ttdoc">Odbiór ciągły aktywny.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00044">radio_lib.h:44</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a756adac824be7fdeeac3026997c04711a39a909f3a10e919a387c9e3ac92269d7"><div class="ttname"><a href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a39a909f3a10e919a387c9e3ac92269d7">RADIO_STATE_UNINIT</a></div><div class="ttdeci">@ RADIO_STATE_UNINIT</div><div class="ttdoc">Backend nie został zainicjalizowany.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00042">radio_lib.h:42</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a756adac824be7fdeeac3026997c04711a522079593b3bdf8214c41100ca31b760"><div class="ttname"><a href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a522079593b3bdf8214c41100ca31b760">RADIO_STATE_STANDBY</a></div><div class="ttdeci">@ RADIO_STATE_STANDBY</div><div class="ttdoc">Tryb gotowości.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00043">radio_lib.h:43</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a756adac824be7fdeeac3026997c04711a8032e93494fbbd3e73677890ffc56f91"><div class="ttname"><a href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711a8032e93494fbbd3e73677890ffc56f91">RADIO_STATE_RX_SINGLE</a></div><div class="ttdeci">@ RADIO_STATE_RX_SINGLE</div><div class="ttdoc">Odbiór pojedynczy aktywny.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00045">radio_lib.h:45</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4"><div class="ttname"><a href="radio__lib_8h.html#a756adac824be7fdeeac3026997c04711ad740dc262fec4766c48bd651adb8b0b4">RADIO_STATE_TX</a></div><div class="ttdeci">@ RADIO_STATE_TX</div><div class="ttdoc">Nadawanie aktywne.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00046">radio_lib.h:46</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_ab6afacea6a7310707d47839506c30a73"><div class="ttname"><a href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73">radio_status_t</a></div><div class="ttdeci">radio_status_t</div><div class="ttdoc">Kody statusu zwracane przez API radia.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00027">radio_lib.h:28</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220"><div class="ttname"><a href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a2cee21296dd5537b5a7e4aee1b795220">RADIO_EHW</a></div><div class="ttdeci">@ RADIO_EHW</div><div class="ttdoc">Błąd warstwy sprzętowej (SPI/GPIO/rejestry).</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00034">radio_lib.h:34</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a"><div class="ttname"><a href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a391e31ddc76b76b3bae18d754063369a">RADIO_EBUS</a></div><div class="ttdeci">@ RADIO_EBUS</div><div class="ttdoc">Zasób zajęty lub niepoprawny stan wykonania.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00031">radio_lib.h:31</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901"><div class="ttname"><a href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73a55f99133f4e5121feae1b9ba59b3c901">RADIO_EINVAL</a></div><div class="ttdeci">@ RADIO_EINVAL</div><div class="ttdoc">Niepoprawny argument wejściowy.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00030">radio_lib.h:30</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206"><div class="ttname"><a href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aa7f5c41a2d24959de1c836bbf0cc3206">RADIO_ESTATE</a></div><div class="ttdeci">@ RADIO_ESTATE</div><div class="ttdoc">Niepoprawny stan cyklu życia (np.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00033">radio_lib.h:33</a></div></div>
+<div class="ttc" id="aradio__lib_8h_html_ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2"><div class="ttname"><a href="radio__lib_8h.html#ab6afacea6a7310707d47839506c30a73aae9351843b15bf62064ad207513f14f2">RADIO_OK</a></div><div class="ttdeci">@ RADIO_OK</div><div class="ttdoc">Operacja zakończona poprawnie.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00029">radio_lib.h:29</a></div></div>
+<div class="ttc" id="aradio__lib__config_8h_html_a9cd07b89bb78518454369f72c9acd313"><div class="ttname"><a href="radio__lib__config_8h.html#a9cd07b89bb78518454369f72c9acd313">RADIO_LIB_SPI_TIMEOUT_MS</a></div><div class="ttdeci">#define RADIO_LIB_SPI_TIMEOUT_MS</div><div class="ttdoc">Timeout blokujących transferów SPI (ms).</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib__config_8h_source.html#l00044">radio_lib_config.h:44</a></div></div>
+<div class="ttc" id="aradio__lib__config_8h_html_ad84c65139cc4451b3125a7cebf8654c8"><div class="ttname"><a href="radio__lib__config_8h.html#ad84c65139cc4451b3125a7cebf8654c8">RADIO_LIB_DEFAULT_SYNC_WORD</a></div><div class="ttdeci">#define RADIO_LIB_DEFAULT_SYNC_WORD</div><div class="ttdoc">Domyślny sync word LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib__config_8h_source.html#l00065">radio_lib_config.h:65</a></div></div>
+<div class="ttc" id="aradio__lib__config_8h_html_ade00f2ee6e56b6b5fb58c235c4c27641"><div class="ttname"><a href="radio__lib__config_8h.html#ade00f2ee6e56b6b5fb58c235c4c27641">RADIO_LIB_MAX_PAYLOAD</a></div><div class="ttdeci">#define RADIO_LIB_MAX_PAYLOAD</div><div class="ttdoc">Maksymalna długość payloadu bufora pakietu.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib__config_8h_source.html#l00051">radio_lib_config.h:51</a></div></div>
+<div class="ttc" id="aradio__lib__config_8h_html_aeb31168bab90b0a04839cbcad56235b9"><div class="ttname"><a href="radio__lib__config_8h.html#aeb31168bab90b0a04839cbcad56235b9">RADIO_LIB_DEFAULT_FREQ_HZ</a></div><div class="ttdeci">#define RADIO_LIB_DEFAULT_FREQ_HZ</div><div class="ttdoc">Domyślna częstotliwość LoRa (Hz).</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib__config_8h_source.html#l00058">radio_lib_config.h:58</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a0877dbc4de5383bde4d30a035b26112a"><div class="ttname"><a href="radio__lora_8c.html#a0877dbc4de5383bde4d30a035b26112a">radio_lora_on_exti</a></div><div class="ttdeci">void radio_lora_on_exti(uint16_t gpio_pin)</div><div class="ttdoc">Przekazuje pin EXTI do backendu LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00790">radio_lora.c:790</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a08cbb131a5099bf4e95dd2a7a9e51f97"><div class="ttname"><a href="radio__lora_8c.html#a08cbb131a5099bf4e95dd2a7a9e51f97">radio_apply_lora_config</a></div><div class="ttdeci">static bool radio_apply_lora_config(const radio_lora_cfg_t *cfg)</div><div class="ttdoc">Internal helper: radio_apply_lora_config.</div><div class="ttdef"><b>Definicja</b> <a href="#l00127">radio_lora.c:127</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a0bcd2cf534613aa58fca09aa7c3e5567"><div class="ttname"><a href="radio__lora_8c.html#a0bcd2cf534613aa58fca09aa7c3e5567">radio_resume_after_tx</a></div><div class="ttdeci">static void radio_resume_after_tx(void)</div><div class="ttdoc">Internal helper: radio_resume_after_tx.</div><div class="ttdef"><b>Definicja</b> <a href="#l00298">radio_lora.c:298</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a0f3c66737a0b3eececdafaf1ff57e1f8"><div class="ttname"><a href="radio__lora_8c.html#a0f3c66737a0b3eececdafaf1ff57e1f8">radio_lora_send_async</a></div><div class="ttdeci">radio_status_t radio_lora_send_async(const uint8_t *data, uint8_t len)</div><div class="ttdoc">Rozpoczyna asynchroniczne nadawanie LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00507">radio_lora.c:507</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a1849ead0800ec3af47fd1e5564fcc20a"><div class="ttname"><a href="radio__lora_8c.html#a1849ead0800ec3af47fd1e5564fcc20a">radio_lora_start_rx_single</a></div><div class="ttdeci">radio_status_t radio_lora_start_rx_single(uint16_t symbol_timeout)</div><div class="ttdoc">Uruchamia odbiór pojedynczy LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00476">radio_lora.c:476</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a20af9511beb2ff4d7f048bbd706f97aa"><div class="ttname"><a href="radio__lora_8c.html#a20af9511beb2ff4d7f048bbd706f97aa">radio_read_irq_flags_retry</a></div><div class="ttdeci">static bool radio_read_irq_flags_retry(uint8_t *irq_flags)</div><div class="ttdoc">Internal helper: radio_read_irq_flags_retry.</div><div class="ttdef"><b>Definicja</b> <a href="#l00067">radio_lora.c:67</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a28d53cac62352b93c97b2ea8a2b8da23"><div class="ttname"><a href="radio__lora_8c.html#a28d53cac62352b93c97b2ea8a2b8da23">radio_set_event_flags</a></div><div class="ttdeci">static void radio_set_event_flags(uint32_t events)</div><div class="ttdoc">Internal helper: radio_set_event_flags.</div><div class="ttdef"><b>Definicja</b> <a href="#l00057">radio_lora.c:57</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a2ab4223aae96dbd1739d91f4d07b0579"><div class="ttname"><a href="radio__lora_8c.html#a2ab4223aae96dbd1739d91f4d07b0579">radio_irq_save</a></div><div class="ttdeci">static uint32_t radio_irq_save(void)</div><div class="ttdoc">Internal helper: radio_irq_save.</div><div class="ttdef"><b>Definicja</b> <a href="#l00040">radio_lora.c:40</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a390abe90ea9901cfa2a291ec16e7e69d"><div class="ttname"><a href="radio__lora_8c.html#a390abe90ea9901cfa2a291ec16e7e69d">radio_lora_start_rx_continuous</a></div><div class="ttdeci">radio_status_t radio_lora_start_rx_continuous(void)</div><div class="ttdoc">Uruchamia odbiór ciągły LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00452">radio_lora.c:452</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a485035c4367026bbc755d34eac447f02"><div class="ttname"><a href="radio__lora_8c.html#a485035c4367026bbc755d34eac447f02">radio_lora_raw_read_burst</a></div><div class="ttdeci">radio_status_t radio_lora_raw_read_burst(uint8_t reg, uint8_t *data, uint8_t len)</div><div class="ttdoc">Odczyt sekwencji rejestrów.</div><div class="ttdef"><b>Definicja</b> <a href="#l00760">radio_lora.c:760</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a5471d87204b262ca4e0bd3acdc14e28f"><div class="ttname"><a href="radio__lora_8c.html#a5471d87204b262ca4e0bd3acdc14e28f">radio_lora_default_lora_cfg</a></div><div class="ttdeci">void radio_lora_default_lora_cfg(radio_lora_cfg_t *cfg)</div><div class="ttdoc">Uzupełnia domyślną konfigurację parametrów LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00347">radio_lora.c:347</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a58eff148748a5f450d528787e7062fc1"><div class="ttname"><a href="radio__lora_8c.html#a58eff148748a5f450d528787e7062fc1">radio_lora_deinit</a></div><div class="ttdeci">radio_status_t radio_lora_deinit(void)</div><div class="ttdoc">Deinicjalizuje backend LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00439">radio_lora.c:439</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a5b257ed53b5ef3d382776481e216326f"><div class="ttname"><a href="radio__lora_8c.html#a5b257ed53b5ef3d382776481e216326f">radio_wait_for_tx_enter_or_done</a></div><div class="ttdeci">static bool radio_wait_for_tx_enter_or_done(uint8_t *op_mode_snapshot)</div><div class="ttdoc">Internal helper: radio_wait_for_tx_enter_or_done.</div><div class="ttdef"><b>Definicja</b> <a href="#l00179">radio_lora.c:179</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a5dce945962df09085f7260d2c0eaeb0e"><div class="ttname"><a href="radio__lora_8c.html#a5dce945962df09085f7260d2c0eaeb0e">radio_lora_raw_read_reg</a></div><div class="ttdeci">radio_status_t radio_lora_raw_read_reg(uint8_t reg, uint8_t *value)</div><div class="ttdoc">Odczyt pojedynczego rejestru transceivera.</div><div class="ttdef"><b>Definicja</b> <a href="#l00740">radio_lora.c:740</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a6c63af4fea25c9be42ad2cd66f55c67a"><div class="ttname"><a href="radio__lora_8c.html#a6c63af4fea25c9be42ad2cd66f55c67a">radio_lora_take_events</a></div><div class="ttdeci">uint32_t radio_lora_take_events(void)</div><div class="ttdoc">Zwraca i czyści maskę zdarzeń LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00711">radio_lora.c:711</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a6e1e6653bce774027458043edd482dd8"><div class="ttname"><a href="radio__lora_8c.html#a6e1e6653bce774027458043edd482dd8">radio_cfg_valid</a></div><div class="ttdeci">static bool radio_cfg_valid(const radio_lora_cfg_t *cfg)</div><div class="ttdoc">Internal helper: radio_cfg_valid.</div><div class="ttdef"><b>Definicja</b> <a href="#l00079">radio_lora.c:79</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a724060876c4526288e120688175abc74"><div class="ttname"><a href="radio__lora_8c.html#a724060876c4526288e120688175abc74">radio_lora_init</a></div><div class="ttdeci">radio_status_t radio_lora_init(const radio_hw_cfg_t *hw, const radio_lora_cfg_t *cfg, radio_event_cb_t cb, void *user_ctx)</div><div class="ttdoc">Inicjalizuje backend LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00368">radio_lora.c:368</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a7419352df9bc0283d77f25c0125dd829"><div class="ttname"><a href="radio__lora_8c.html#a7419352df9bc0283d77f25c0125dd829">radio_set_state</a></div><div class="ttdeci">static void radio_set_state(radio_state_t state)</div><div class="ttdoc">Internal helper: radio_set_state.</div><div class="ttdef"><b>Definicja</b> <a href="#l00173">radio_lora.c:173</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a80543933d13a8beee716d7a12ea69164"><div class="ttname"><a href="radio__lora_8c.html#a80543933d13a8beee716d7a12ea69164">radio_lora_standby</a></div><div class="ttdeci">radio_status_t radio_lora_standby(void)</div><div class="ttdoc">Przełącza radio LoRa do standby.</div><div class="ttdef"><b>Definicja</b> <a href="#l00548">radio_lora.c:548</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_a9ee152d8ad3a6176b915d5a9e446d0f8"><div class="ttname"><a href="radio__lora_8c.html#a9ee152d8ad3a6176b915d5a9e446d0f8">radio_handle_exti_pin</a></div><div class="ttdeci">static void radio_handle_exti_pin(uint16_t pin)</div><div class="ttdoc">Internal helper: radio_handle_exti_pin.</div><div class="ttdef"><b>Definicja</b> <a href="#l00216">radio_lora.c:216</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_aa33ef625306a53e33a059566eac3173b"><div class="ttname"><a href="radio__lora_8c.html#aa33ef625306a53e33a059566eac3173b">radio_lora_get_state</a></div><div class="ttdeci">radio_state_t radio_lora_get_state(void)</div><div class="ttdoc">Zwraca stan backendu LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00735">radio_lora.c:735</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_aaaa1bf4e7d3fa022ffd192b64a72bfa7"><div class="ttname"><a href="radio__lora_8c.html#aaaa1bf4e7d3fa022ffd192b64a72bfa7">radio_irq_restore</a></div><div class="ttdeci">static void radio_irq_restore(uint32_t primask)</div><div class="ttdoc">Internal helper: radio_irq_restore.</div><div class="ttdef"><b>Definicja</b> <a href="#l00048">radio_lora.c:48</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_aab57e6f3eab43fafc26cc074178f05d0"><div class="ttname"><a href="radio__lora_8c.html#aab57e6f3eab43fafc26cc074178f05d0">radio_lora_sleep</a></div><div class="ttdeci">radio_status_t radio_lora_sleep(void)</div><div class="ttdoc">Przełącza radio LoRa do sleep.</div><div class="ttdef"><b>Definicja</b> <a href="#l00564">radio_lora.c:564</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_aadec9c56bdb5000babab26af2dcdcfef"><div class="ttname"><a href="radio__lora_8c.html#aadec9c56bdb5000babab26af2dcdcfef">radio_low_data_rate_optimize_required</a></div><div class="ttdeci">static bool radio_low_data_rate_optimize_required(const radio_lora_cfg_t *cfg)</div><div class="ttdoc">Internal helper: radio_low_data_rate_optimize_required.</div><div class="ttdef"><b>Definicja</b> <a href="#l00115">radio_lora.c:115</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_abbad6695e5ca7407f0fccf1701914437"><div class="ttname"><a href="radio__lora_8c.html#abbad6695e5ca7407f0fccf1701914437">radio_config_dio_for_rx</a></div><div class="ttdeci">static bool radio_config_dio_for_rx(void)</div><div class="ttdoc">Internal helper: radio_config_dio_for_rx.</div><div class="ttdef"><b>Definicja</b> <a href="#l00155">radio_lora.c:155</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_ac27051855fe3d0c918470dce270157ab"><div class="ttname"><a href="radio__lora_8c.html#ac27051855fe3d0c918470dce270157ab">radio_lora_get_last_packet</a></div><div class="ttdeci">bool radio_lora_get_last_packet(radio_packet_t *pkt)</div><div class="ttdoc">Odczytuje ostatnio odebrany pakiet LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00724">radio_lora.c:724</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_ac925214c2b3322b9e6f504621f331b8c"><div class="ttname"><a href="radio__lora_8c.html#ac925214c2b3322b9e6f504621f331b8c">radio_lora_raw_write_reg</a></div><div class="ttdeci">radio_status_t radio_lora_raw_write_reg(uint8_t reg, uint8_t value)</div><div class="ttdoc">Zapis pojedynczego rejestru transceivera.</div><div class="ttdef"><b>Definicja</b> <a href="#l00750">radio_lora.c:750</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_ad2de151584d730d180ecb53c3e01683d"><div class="ttname"><a href="radio__lora_8c.html#ad2de151584d730d180ecb53c3e01683d">radio_lora_process</a></div><div class="ttdeci">void radio_lora_process(void)</div><div class="ttdoc">Obsługuje logikę odroczoną po IRQ (wywoływać w pętli głównej).</div><div class="ttdef"><b>Definicja</b> <a href="#l00580">radio_lora.c:580</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_ad5518cf74b46c61dd20a12d0c765db6e"><div class="ttname"><a href="radio__lora_8c.html#ad5518cf74b46c61dd20a12d0c765db6e">radio_config_dio_for_tx</a></div><div class="ttdeci">static bool radio_config_dio_for_tx(void)</div><div class="ttdoc">Internal helper: radio_config_dio_for_tx.</div><div class="ttdef"><b>Definicja</b> <a href="#l00164">radio_lora.c:164</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_ad6cdc4fd106c45d1d2c6c11732681f89"><div class="ttname"><a href="radio__lora_8c.html#ad6cdc4fd106c45d1d2c6c11732681f89">radio_read_rx_packet</a></div><div class="ttdeci">static radio_status_t radio_read_rx_packet(void)</div><div class="ttdoc">Internal helper: radio_read_rx_packet.</div><div class="ttdef"><b>Definicja</b> <a href="#l00255">radio_lora.c:255</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_ae4cbe2cf2bb1d85d455990a56efa984e"><div class="ttname"><a href="radio__lora_8c.html#ae4cbe2cf2bb1d85d455990a56efa984e">radio_lora_default_hw_cfg</a></div><div class="ttdeci">void radio_lora_default_hw_cfg(radio_hw_cfg_t *cfg, SPI_HandleTypeDef *hspi)</div><div class="ttdoc">Uzupełnia domyślną konfigurację sprzętową LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="#l00317">radio_lora.c:317</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_aec7ef5922d44d8cd7860c29aedf51e55"><div class="ttname"><a href="radio__lora_8c.html#aec7ef5922d44d8cd7860c29aedf51e55">radio_hw_reset</a></div><div class="ttdeci">static void radio_hw_reset(void)</div><div class="ttdoc">Internal helper: radio_hw_reset.</div><div class="ttdef"><b>Definicja</b> <a href="#l00105">radio_lora.c:105</a></div></div>
+<div class="ttc" id="aradio__lora_8c_html_af8c212409e07f17e6877459642de9dfb"><div class="ttname"><a href="radio__lora_8c.html#af8c212409e07f17e6877459642de9dfb">radio_lora_raw_write_burst</a></div><div class="ttdeci">radio_status_t radio_lora_raw_write_burst(uint8_t reg, const uint8_t *data, uint8_t len)</div><div class="ttdoc">Zapis sekwencji rejestrów.</div><div class="ttdef"><b>Definicja</b> <a href="#l00775">radio_lora.c:775</a></div></div>
+<div class="ttc" id="aradio__lora_8h_html"><div class="ttname"><a href="radio__lora_8h.html">radio_lora.h</a></div><div class="ttdoc">Backend modulacji LoRa dla SX1276/RFM95.</div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a038d9ebac1fb9c451ebb19d717d72959"><div class="ttname"><a href="radio__sx1276_8c.html#a038d9ebac1fb9c451ebb19d717d72959">sx1276_get_irq_flags</a></div><div class="ttdeci">bool sx1276_get_irq_flags(const sx1276_bus_t *bus, uint8_t *flags)</div><div class="ttdoc">Odczytuje flagi IRQ LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00347">radio_sx1276.c:347</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a0be3807ba48f424c293c3e6312e4b004"><div class="ttname"><a href="radio__sx1276_8c.html#a0be3807ba48f424c293c3e6312e4b004">sx1276_read_reg</a></div><div class="ttdeci">bool sx1276_read_reg(const sx1276_bus_t *bus, uint8_t reg, uint8_t *value)</div><div class="ttdoc">Odczytuje pojedynczy rejestr SX1276.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00027">radio_sx1276.c:27</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a114bd1113c90a7d2f7875d1776f2ec8e"><div class="ttname"><a href="radio__sx1276_8c.html#a114bd1113c90a7d2f7875d1776f2ec8e">sx1276_set_lora_modem</a></div><div class="ttdeci">bool sx1276_set_lora_modem(const sx1276_bus_t *bus, uint8_t bandwidth_code, uint8_t spreading_factor, uint8_t coding_rate_denominator, bool implicit_header, bool crc_on, bool low_datarate_optimize)</div><div class="ttdoc">Konfiguruje parametry modemu LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00184">radio_sx1276.c:184</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a2bb5199c2391aa24e194d8a4d4ac2157"><div class="ttname"><a href="radio__sx1276_8c.html#a2bb5199c2391aa24e194d8a4d4ac2157">sx1276_set_preamble</a></div><div class="ttdeci">bool sx1276_set_preamble(const sx1276_bus_t *bus, uint16_t preamble_len)</div><div class="ttdoc">Ustawia długość preambuły LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00257">radio_sx1276.c:257</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a2c71c2e3d5c9a8404ccd9388fd3276d3"><div class="ttname"><a href="radio__sx1276_8c.html#a2c71c2e3d5c9a8404ccd9388fd3276d3">sx1276_set_fifo_base_addrs</a></div><div class="ttdeci">bool sx1276_set_fifo_base_addrs(const sx1276_bus_t *bus, uint8_t tx_base, uint8_t rx_base)</div><div class="ttdoc">Ustawia bazowe adresy FIFO dla TX i RX.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00293">radio_sx1276.c:293</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a2d735690e49eb3453479d5c70f9cdd20"><div class="ttname"><a href="radio__sx1276_8c.html#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a></div><div class="ttdeci">bool sx1276_set_op_mode(const sx1276_bus_t *bus, uint8_t op_mode)</div><div class="ttdoc">Ustawia rejestr trybu pracy RegOpMode.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00130">radio_sx1276.c:130</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a3675f7d7f297d0c053ede0812830844e"><div class="ttname"><a href="radio__sx1276_8c.html#a3675f7d7f297d0c053ede0812830844e">sx1276_get_rx_nb_bytes</a></div><div class="ttdeci">bool sx1276_get_rx_nb_bytes(const sx1276_bus_t *bus, uint8_t *len)</div><div class="ttdoc">Odczytuje liczbę odebranych bajtów pakietu.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00324">radio_sx1276.c:324</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a3a3c532ff762f574aac721fe906acd85"><div class="ttname"><a href="radio__sx1276_8c.html#a3a3c532ff762f574aac721fe906acd85">sx1276_write_burst</a></div><div class="ttdeci">bool sx1276_write_burst(const sx1276_bus_t *bus, uint8_t reg, const uint8_t *data, uint8_t len)</div><div class="ttdoc">Zapisuje sekwencję bajtów od rejestru startowego.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00099">radio_sx1276.c:99</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a3c52ec2e93ac86e40f504021db364208"><div class="ttname"><a href="radio__sx1276_8c.html#a3c52ec2e93ac86e40f504021db364208">sx1276_get_rx_current_addr</a></div><div class="ttdeci">bool sx1276_get_rx_current_addr(const sx1276_bus_t *bus, uint8_t *addr)</div><div class="ttdoc">Odczytuje adres początku aktualnego pakietu RX w FIFO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00319">radio_sx1276.c:319</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a4623abcf4ecce80c86b787491dd35bd2"><div class="ttname"><a href="radio__sx1276_8c.html#a4623abcf4ecce80c86b787491dd35bd2">sx1276_get_packet_rssi_raw</a></div><div class="ttdeci">bool sx1276_get_packet_rssi_raw(const sx1276_bus_t *bus, uint8_t *rssi_raw)</div><div class="ttdoc">Odczytuje surowy rejestr RSSI pakietu.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00342">radio_sx1276.c:342</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a5ef2d8fcef425e0f53703b2181b66930"><div class="ttname"><a href="radio__sx1276_8c.html#a5ef2d8fcef425e0f53703b2181b66930">sx1276_get_packet_snr_raw</a></div><div class="ttdeci">bool sx1276_get_packet_snr_raw(const sx1276_bus_t *bus, int8_t *snr_raw)</div><div class="ttdoc">Odczytuje surowy rejestr SNR pakietu.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00329">radio_sx1276.c:329</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a62348eb179378aacf27663c00ea490c1"><div class="ttname"><a href="radio__sx1276_8c.html#a62348eb179378aacf27663c00ea490c1">sx1276_set_payload_length</a></div><div class="ttdeci">bool sx1276_set_payload_length(const sx1276_bus_t *bus, uint8_t len)</div><div class="ttdoc">Ustawia długość payloadu LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00314">radio_sx1276.c:314</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a6487ef0d55e681a5e50e3d7354886753"><div class="ttname"><a href="radio__sx1276_8c.html#a6487ef0d55e681a5e50e3d7354886753">sx1276_set_symbol_timeout</a></div><div class="ttdeci">bool sx1276_set_symbol_timeout(const sx1276_bus_t *bus, uint16_t symbol_timeout)</div><div class="ttdoc">Ustawia timeout symbolowy dla odbioru pojedynczego.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00241">radio_sx1276.c:241</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a71f3f213995c99ce1cf7ef22ddefed79"><div class="ttname"><a href="radio__sx1276_8c.html#a71f3f213995c99ce1cf7ef22ddefed79">sx1276_map_dio</a></div><div class="ttdeci">bool sx1276_map_dio(const sx1276_bus_t *bus, uint8_t dio_mapping1, uint8_t dio_mapping2)</div><div class="ttdoc">Ustawia mapowanie funkcji dla linii DIO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00357">radio_sx1276.c:357</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a74e72da97dcdd90a7e071af8504a4f04"><div class="ttname"><a href="radio__sx1276_8c.html#a74e72da97dcdd90a7e071af8504a4f04">sx1276_set_sync_word</a></div><div class="ttdeci">bool sx1276_set_sync_word(const sx1276_bus_t *bus, uint8_t sync_word)</div><div class="ttdoc">Ustawia sync word LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00263">radio_sx1276.c:263</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a7726c49e402b455d667895cc37ac8ec8"><div class="ttname"><a href="radio__sx1276_8c.html#a7726c49e402b455d667895cc37ac8ec8">sx1276_set_frequency</a></div><div class="ttdeci">bool sx1276_set_frequency(const sx1276_bus_t *bus, uint32_t frequency_hz)</div><div class="ttdoc">Ustawia częstotliwość nośną RF.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00135">radio_sx1276.c:135</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a7f6da27f88d9e1ee14012e7fc01a06c5"><div class="ttname"><a href="radio__sx1276_8c.html#a7f6da27f88d9e1ee14012e7fc01a06c5">sx1276_set_pa_output_power</a></div><div class="ttdeci">bool sx1276_set_pa_output_power(const sx1276_bus_t *bus, int8_t tx_power_dbm)</div><div class="ttdoc">Ustawia moc nadajnika dla toru PA_BOOST.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00152">radio_sx1276.c:152</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_a8b3de4da7603cdd8c1de0b1519a0a96f"><div class="ttname"><a href="radio__sx1276_8c.html#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a></div><div class="ttdeci">bool sx1276_clear_irq_flags(const sx1276_bus_t *bus, uint8_t flags_to_clear)</div><div class="ttdoc">Czyści wskazane flagi IRQ LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00352">radio_sx1276.c:352</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_ab173599c491a7a6b761c9e4c685843af"><div class="ttname"><a href="radio__sx1276_8c.html#ab173599c491a7a6b761c9e4c685843af">sx1276_read_fifo</a></div><div class="ttdeci">bool sx1276_read_fifo(const sx1276_bus_t *bus, uint8_t *data, uint8_t len)</div><div class="ttdoc">Odczytuje payload z FIFO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00309">radio_sx1276.c:309</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_ac768a620c5104a7cc1e932e0fd41e5bb"><div class="ttname"><a href="radio__sx1276_8c.html#ac768a620c5104a7cc1e932e0fd41e5bb">sx1276_set_fifo_addr_ptr</a></div><div class="ttdeci">bool sx1276_set_fifo_addr_ptr(const sx1276_bus_t *bus, uint8_t addr)</div><div class="ttdoc">Ustawia wskaźnik bieżącego adresu FIFO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00299">radio_sx1276.c:299</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_adc74dc514898113c4e43bc5fbc8b280b"><div class="ttname"><a href="radio__sx1276_8c.html#adc74dc514898113c4e43bc5fbc8b280b">sx1276_read_burst</a></div><div class="ttdeci">bool sx1276_read_burst(const sx1276_bus_t *bus, uint8_t reg, uint8_t *data, uint8_t len)</div><div class="ttdoc">Odczytuje sekwencję bajtów od rejestru startowego.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00073">radio_sx1276.c:73</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_ae308f754e1ef59472e61b1cba0b26d6d"><div class="ttname"><a href="radio__sx1276_8c.html#ae308f754e1ef59472e61b1cba0b26d6d">sx1276_get_version</a></div><div class="ttdeci">bool sx1276_get_version(const sx1276_bus_t *bus, uint8_t *version)</div><div class="ttdoc">Odczytuje identyfikator wersji układu SX1276.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00125">radio_sx1276.c:125</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_aeb0a3f646a276aed07c4e23dfabff75c"><div class="ttname"><a href="radio__sx1276_8c.html#aeb0a3f646a276aed07c4e23dfabff75c">sx1276_write_fifo</a></div><div class="ttdeci">bool sx1276_write_fifo(const sx1276_bus_t *bus, const uint8_t *data, uint8_t len)</div><div class="ttdoc">Zapisuje payload do FIFO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00304">radio_sx1276.c:304</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_af20d56d667bf340216eff31602a31c85"><div class="ttname"><a href="radio__sx1276_8c.html#af20d56d667bf340216eff31602a31c85">sx1276_write_reg</a></div><div class="ttdeci">bool sx1276_write_reg(const sx1276_bus_t *bus, uint8_t reg, uint8_t value)</div><div class="ttdoc">Zapisuje pojedynczy rejestr SX1276.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00051">radio_sx1276.c:51</a></div></div>
+<div class="ttc" id="aradio__sx1276_8c_html_af8c0cb076e901b4aa2d4ff6959dc71a3"><div class="ttname"><a href="radio__sx1276_8c.html#af8c0cb076e901b4aa2d4ff6959dc71a3">sx1276_set_invert_iq</a></div><div class="ttdeci">bool sx1276_set_invert_iq(const sx1276_bus_t *bus, bool invert_iq)</div><div class="ttdoc">Włącza lub wyłącza inwersję IQ.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8c_source.html#l00268">radio_sx1276.c:268</a></div></div>
+<div class="ttc" id="aradio__sx1276_8h_html"><div class="ttname"><a href="radio__sx1276_8h.html">radio_sx1276.h</a></div><div class="ttdoc">Niskopoziomowe API dostępu do rejestrów SX1276.</div></div>
+<div class="ttc" id="aradio__sx1276__regs_8h_html"><div class="ttname"><a href="radio__sx1276__regs_8h.html">radio_sx1276_regs.h</a></div><div class="ttdoc">Mapa rejestrów SX1276 i definicje bitów używane w bibliotece.</div></div>
+<div class="ttc" id="astructradio__context__t_html"><div class="ttname"><a href="structradio__context__t.html">radio_context_t</a></div><div class="ttdef"><b>Definicja</b> <a href="#l00021">radio_lora.c:22</a></div></div>
+<div class="ttc" id="astructradio__gpio__t_html_a9f9fbb9a858d464b7b22eb1db82166e1"><div class="ttname"><a href="structradio__gpio__t.html#a9f9fbb9a858d464b7b22eb1db82166e1">radio_gpio_t::port</a></div><div class="ttdeci">GPIO_TypeDef * port</div><div class="ttdoc">Port GPIO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00087">radio_lib.h:87</a></div></div>
+<div class="ttc" id="astructradio__gpio__t_html_abbe0651ed022e45ee45e9d4906de4715"><div class="ttname"><a href="structradio__gpio__t.html#abbe0651ed022e45ee45e9d4906de4715">radio_gpio_t::pin</a></div><div class="ttdeci">uint16_t pin</div><div class="ttdoc">Maska pinu GPIO.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00088">radio_lib.h:88</a></div></div>
+<div class="ttc" id="astructradio__hw__cfg__t_html"><div class="ttname"><a href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a></div><div class="ttdoc">Konfiguracja sprzętowa modułu radiowego.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00094">radio_lib.h:95</a></div></div>
+<div class="ttc" id="astructradio__hw__cfg__t_html_a29c26647871986724b649e55533d2f07"><div class="ttname"><a href="structradio__hw__cfg__t.html#a29c26647871986724b649e55533d2f07">radio_hw_cfg_t::spi_timeout_ms</a></div><div class="ttdeci">uint32_t spi_timeout_ms</div><div class="ttdoc">Timeout blokujących transferów SPI.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00100">radio_lib.h:100</a></div></div>
+<div class="ttc" id="astructradio__hw__cfg__t_html_a2d0b1e40fa307d9dcfac95667feaebd5"><div class="ttname"><a href="structradio__hw__cfg__t.html#a2d0b1e40fa307d9dcfac95667feaebd5">radio_hw_cfg_t::nss</a></div><div class="ttdeci">radio_gpio_t nss</div><div class="ttdoc">Pin NSS/CS.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00097">radio_lib.h:97</a></div></div>
+<div class="ttc" id="astructradio__hw__cfg__t_html_a8b24490acb6b0e9cac725031384ecf6b"><div class="ttname"><a href="structradio__hw__cfg__t.html#a8b24490acb6b0e9cac725031384ecf6b">radio_hw_cfg_t::hspi</a></div><div class="ttdeci">SPI_HandleTypeDef * hspi</div><div class="ttdoc">Uchwyt SPI używany przez transceiver.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00096">radio_lib.h:96</a></div></div>
+<div class="ttc" id="astructradio__hw__cfg__t_html_af0f810096603044a05d1d80fe1b6f9db"><div class="ttname"><a href="structradio__hw__cfg__t.html#af0f810096603044a05d1d80fe1b6f9db">radio_hw_cfg_t::reset</a></div><div class="ttdeci">radio_gpio_t reset</div><div class="ttdoc">Pin RESET transceivera.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00098">radio_lib.h:98</a></div></div>
+<div class="ttc" id="astructradio__hw__cfg__t_html_af5bb732f22389146a887ea3cefa4ab80"><div class="ttname"><a href="structradio__hw__cfg__t.html#af5bb732f22389146a887ea3cefa4ab80">radio_hw_cfg_t::dio</a></div><div class="ttdeci">radio_gpio_t dio[6]</div><div class="ttdoc">Piny DIO0..DIO5 (IRQ/status).</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00099">radio_lib.h:99</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html"><div class="ttname"><a href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a></div><div class="ttdoc">Konfiguracja profilu LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00106">radio_lib.h:107</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a12734a038b4af79bba8156b7ac7c1ca2"><div class="ttname"><a href="structradio__lora__cfg__t.html#a12734a038b4af79bba8156b7ac7c1ca2">radio_lora_cfg_t::implicit_header</a></div><div class="ttdeci">bool implicit_header</div><div class="ttdoc">Tryb nagłówka niejawnego.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00117">radio_lib.h:117</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a236743b550328d327f192949f48581eb"><div class="ttname"><a href="structradio__lora__cfg__t.html#a236743b550328d327f192949f48581eb">radio_lora_cfg_t::frequency_hz</a></div><div class="ttdeci">uint32_t frequency_hz</div><div class="ttdoc">Częstotliwość RF [Hz].</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00108">radio_lib.h:108</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a2700bd692fbae8c52754804205d30553"><div class="ttname"><a href="structradio__lora__cfg__t.html#a2700bd692fbae8c52754804205d30553">radio_lora_cfg_t::spreading_factor</a></div><div class="ttdeci">uint8_t spreading_factor</div><div class="ttdoc">SF6..SF12.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00110">radio_lib.h:110</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a300ec2a46e684c012f0ee12b5679f988"><div class="ttname"><a href="structradio__lora__cfg__t.html#a300ec2a46e684c012f0ee12b5679f988">radio_lora_cfg_t::bandwidth</a></div><div class="ttdeci">radio_lora_bw_t bandwidth</div><div class="ttdoc">Szerokość pasma.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00109">radio_lib.h:109</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a47ad70fdf79b88a8225739cad8ca1ce0"><div class="ttname"><a href="structradio__lora__cfg__t.html#a47ad70fdf79b88a8225739cad8ca1ce0">radio_lora_cfg_t::coding_rate</a></div><div class="ttdeci">uint8_t coding_rate</div><div class="ttdoc">Mianownik CR: 4/x, x=5..8.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00111">radio_lib.h:111</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a76436ba006f22d9657e1ed345854a892"><div class="ttname"><a href="structradio__lora__cfg__t.html#a76436ba006f22d9657e1ed345854a892">radio_lora_cfg_t::crc_on</a></div><div class="ttdeci">bool crc_on</div><div class="ttdoc">Włączenie CRC payloadu.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00114">radio_lib.h:114</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a7b19ae88b893b564bd0e9a6ab3c8e498"><div class="ttname"><a href="structradio__lora__cfg__t.html#a7b19ae88b893b564bd0e9a6ab3c8e498">radio_lora_cfg_t::preamble_len</a></div><div class="ttdeci">uint16_t preamble_len</div><div class="ttdoc">Długość preambuły w symbolach.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00112">radio_lib.h:112</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a970a51b95fd38c9143cb4f78cfa630ab"><div class="ttname"><a href="structradio__lora__cfg__t.html#a970a51b95fd38c9143cb4f78cfa630ab">radio_lora_cfg_t::sync_word</a></div><div class="ttdeci">uint8_t sync_word</div><div class="ttdoc">Sync word LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00113">radio_lib.h:113</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_a9f879a727b2e50b9ed424d3ec7f23ba5"><div class="ttname"><a href="structradio__lora__cfg__t.html#a9f879a727b2e50b9ed424d3ec7f23ba5">radio_lora_cfg_t::tx_power_dbm</a></div><div class="ttdeci">int8_t tx_power_dbm</div><div class="ttdoc">Moc TX [dBm].</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00116">radio_lib.h:116</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_aa6fba08b43dcf5b0985ce0c492b74783"><div class="ttname"><a href="structradio__lora__cfg__t.html#aa6fba08b43dcf5b0985ce0c492b74783">radio_lora_cfg_t::invert_iq</a></div><div class="ttdeci">bool invert_iq</div><div class="ttdoc">Włączenie inwersji IQ.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00115">radio_lib.h:115</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html_aa788c5dc5f90ac4287b24fca55b42861"><div class="ttname"><a href="structradio__lora__cfg__t.html#aa788c5dc5f90ac4287b24fca55b42861">radio_lora_cfg_t::payload_len</a></div><div class="ttdeci">uint8_t payload_len</div><div class="ttdoc">Stała długość payloadu (implicit header).</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00118">radio_lib.h:118</a></div></div>
+<div class="ttc" id="astructradio__packet__t_html"><div class="ttname"><a href="structradio__packet__t.html">radio_packet_t</a></div><div class="ttdoc">Bufor ostatnio odebranej ramki.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00212">radio_lib.h:213</a></div></div>
+<div class="ttc" id="astructsx1276__bus__t_html"><div class="ttname"><a href="structsx1276__bus__t.html">sx1276_bus_t</a></div><div class="ttdoc">Kontekst magistrali SPI dla układu SX1276.</div><div class="ttdef"><b>Definicja</b> <a href="radio__sx1276_8h_source.html#l00017">radio_sx1276.h:18</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_a2e8606bee7d2eaf4a9e334d73381ef3.html">radio_lib</a></li><li class="navelem"><b>modulations</b></li><li class="navelem"><b>lora</b></li><li class="navelem"><a href="radio__lora_8c.html">radio_lora.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

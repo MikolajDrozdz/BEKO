@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury radio_hw_cfg_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structradio__hw__cfg__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury radio_hw_cfg_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Konfiguracja sprzętowa modułu radiowego.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="radio__lib_8h_source.html">Core/App/radio_lib/radio_lib.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a8b24490acb6b0e9cac725031384ecf6b" id="r_a8b24490acb6b0e9cac725031384ecf6b"><td class="memItemLeft" align="right" valign="top">SPI_HandleTypeDef *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b24490acb6b0e9cac725031384ecf6b">hspi</a></td></tr>
+<tr class="memdesc:a8b24490acb6b0e9cac725031384ecf6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uchwyt SPI używany przez transceiver.  <br /></td></tr>
+<tr class="memitem:a2d0b1e40fa307d9dcfac95667feaebd5" id="r_a2d0b1e40fa307d9dcfac95667feaebd5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__gpio__t.html">radio_gpio_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d0b1e40fa307d9dcfac95667feaebd5">nss</a></td></tr>
+<tr class="memdesc:a2d0b1e40fa307d9dcfac95667feaebd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin NSS/CS.  <br /></td></tr>
+<tr class="memitem:af0f810096603044a05d1d80fe1b6f9db" id="r_af0f810096603044a05d1d80fe1b6f9db"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__gpio__t.html">radio_gpio_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0f810096603044a05d1d80fe1b6f9db">reset</a></td></tr>
+<tr class="memdesc:af0f810096603044a05d1d80fe1b6f9db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin RESET transceivera.  <br /></td></tr>
+<tr class="memitem:af5bb732f22389146a887ea3cefa4ab80" id="r_af5bb732f22389146a887ea3cefa4ab80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__gpio__t.html">radio_gpio_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5bb732f22389146a887ea3cefa4ab80">dio</a> [6]</td></tr>
+<tr class="memdesc:af5bb732f22389146a887ea3cefa4ab80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Piny DIO0..DIO5 (IRQ/status).  <br /></td></tr>
+<tr class="memitem:a29c26647871986724b649e55533d2f07" id="r_a29c26647871986724b649e55533d2f07"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a29c26647871986724b649e55533d2f07">spi_timeout_ms</a></td></tr>
+<tr class="memdesc:a29c26647871986724b649e55533d2f07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timeout blokujących transferów SPI.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Konfiguracja sprzętowa modułu radiowego. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00094">94</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="af5bb732f22389146a887ea3cefa4ab80" name="af5bb732f22389146a887ea3cefa4ab80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5bb732f22389146a887ea3cefa4ab80">&#9670;&#160;</a></span>dio</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__gpio__t.html">radio_gpio_t</a> radio_hw_cfg_t::dio[6]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Piny DIO0..DIO5 (IRQ/status). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00099">99</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="a8b24490acb6b0e9cac725031384ecf6b" name="a8b24490acb6b0e9cac725031384ecf6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b24490acb6b0e9cac725031384ecf6b">&#9670;&#160;</a></span>hspi</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">SPI_HandleTypeDef* radio_hw_cfg_t::hspi</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Uchwyt SPI używany przez transceiver. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00096">96</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00489">radio_fsk_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>, <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a> i <a class="el" href="radio__ook_8c_source.html#l00406">radio_ook_init()</a>.</p>
+
+</div>
+</div>
+<a id="a2d0b1e40fa307d9dcfac95667feaebd5" name="a2d0b1e40fa307d9dcfac95667feaebd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d0b1e40fa307d9dcfac95667feaebd5">&#9670;&#160;</a></span>nss</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__gpio__t.html">radio_gpio_t</a> radio_hw_cfg_t::nss</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pin NSS/CS. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00097">97</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00489">radio_fsk_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>, <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a> i <a class="el" href="radio__ook_8c_source.html#l00406">radio_ook_init()</a>.</p>
+
+</div>
+</div>
+<a id="af0f810096603044a05d1d80fe1b6f9db" name="af0f810096603044a05d1d80fe1b6f9db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0f810096603044a05d1d80fe1b6f9db">&#9670;&#160;</a></span>reset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__gpio__t.html">radio_gpio_t</a> radio_hw_cfg_t::reset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pin RESET transceivera. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00098">98</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00489">radio_fsk_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>, <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a> i <a class="el" href="radio__ook_8c_source.html#l00406">radio_ook_init()</a>.</p>
+
+</div>
+</div>
+<a id="a29c26647871986724b649e55533d2f07" name="a29c26647871986724b649e55533d2f07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29c26647871986724b649e55533d2f07">&#9670;&#160;</a></span>spi_timeout_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_hw_cfg_t::spi_timeout_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timeout blokujących transferów SPI. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__lib_8h_source.html#l00100">100</a> pliku <a class="el" href="radio__lib_8h_source.html">radio_lib.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00489">radio_fsk_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00317">radio_lora_default_hw_cfg()</a>, <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a> i <a class="el" href="radio__ook_8c_source.html#l00406">radio_ook_init()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/radio_lib/<a class="el" href="radio__lib_8h_source.html">radio_lib.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structradio__hw__cfg__t.html">radio_hw_cfg_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

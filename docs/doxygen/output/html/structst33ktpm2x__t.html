@@ -1,0 +1,196 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury st33ktpm2x_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structst33ktpm2x__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury st33ktpm2x_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Driver context for one TPM device.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="st33ktpm2x_8h_source.html">Core/App/st33ktpm2x_lib/st33ktpm2x.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:ac20197af8ff84023d0bbbfc77f8add05" id="r_ac20197af8ff84023d0bbbfc77f8add05"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac20197af8ff84023d0bbbfc77f8add05">cfg</a></td></tr>
+<tr class="memdesc:ac20197af8ff84023d0bbbfc77f8add05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active runtime configuration.  <br /></td></tr>
+<tr class="memitem:a613590c5d8a478fd7b3d3f8f18f5029d" id="r_a613590c5d8a478fd7b3d3f8f18f5029d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a613590c5d8a478fd7b3d3f8f18f5029d">initialized</a></td></tr>
+<tr class="memdesc:a613590c5d8a478fd7b3d3f8f18f5029d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Driver init state.  <br /></td></tr>
+<tr class="memitem:a8ff12fe910a44f3d27ccadb1d4c0c9b0" id="r_a8ff12fe910a44f3d27ccadb1d4c0c9b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8ff12fe910a44f3d27ccadb1d4c0c9b0">locality0_acquired</a></td></tr>
+<tr class="memdesc:a8ff12fe910a44f3d27ccadb1d4c0c9b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Locality 0 acquisition state.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Driver context for one TPM device. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00109">109</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="ac20197af8ff84023d0bbbfc77f8add05" name="ac20197af8ff84023d0bbbfc77f8add05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac20197af8ff84023d0bbbfc77f8add05">&#9670;&#160;</a></span>cfg</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a> st33ktpm2x_t::cfg</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Active runtime configuration. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00111">111</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00154">st33_i2c_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00199">st33_i2c_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00437">st33_trace_tis()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00390">st33_wait_burst()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00605">st33ktpm2x_davint_is_asserted()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00547">st33ktpm2x_init()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00624">st33ktpm2x_pp_is_pressed()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00672">st33ktpm2x_request_locality0()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a613590c5d8a478fd7b3d3f8f18f5029d" name="a613590c5d8a478fd7b3d3f8f18f5029d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a613590c5d8a478fd7b3d3f8f18f5029d">&#9670;&#160;</a></span>initialized</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool st33ktpm2x_t::initialized</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Driver init state. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00112">112</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l01419">st33_tpm2_nv_write_auth()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00605">st33ktpm2x_davint_is_asserted()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00565">st33ktpm2x_deinit()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00547">st33ktpm2x_init()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00624">st33ktpm2x_pp_is_pressed()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00643">st33ktpm2x_pp_wait_pressed()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00755">st33ktpm2x_read_identity()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00730">st33ktpm2x_release_locality0()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00672">st33ktpm2x_request_locality0()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01270">st33ktpm2x_tpm2_nv_define()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01330">st33ktpm2x_tpm2_nv_read()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a8ff12fe910a44f3d27ccadb1d4c0c9b0" name="a8ff12fe910a44f3d27ccadb1d4c0c9b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ff12fe910a44f3d27ccadb1d4c0c9b0">&#9670;&#160;</a></span>locality0_acquired</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool st33ktpm2x_t::locality0_acquired</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Locality 0 acquisition state. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00113">113</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00437">st33_trace_tis()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00577">st33ktpm2x_hard_reset()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00730">st33ktpm2x_release_locality0()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00672">st33ktpm2x_request_locality0()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/st33ktpm2x_lib/<a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structst33ktpm2x__t.html">st33ktpm2x_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

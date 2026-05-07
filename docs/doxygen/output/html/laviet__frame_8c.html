@@ -1,0 +1,725 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/laviet_frame.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('laviet__frame_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku laviet_frame.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>LAVIET_FRAME_V1 parser, serializer and cheap validation.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="laviet__frame_8h_source.html">laviet_frame.h</a>&quot;</code><br />
+<code>#include &quot;stm32u5xx_hal.h&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div>
+<p><a href="laviet__frame_8c_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:af2b4e39297b09f5e4846836e2c22a829" id="r_af2b4e39297b09f5e4846836e2c22a829"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2b4e39297b09f5e4846836e2c22a829">laviet_be16_write</a> (uint8_t *dst, uint16_t value)</td></tr>
+<tr class="memdesc:af2b4e39297b09f5e4846836e2c22a829"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#af2b4e39297b09f5e4846836e2c22a829" title="Internal helper: laviet_be16_write.">laviet_be16_write</a></span>.  <br /></td></tr>
+<tr class="memitem:ac02cf8c0fe2ea0df90ecec7690c7fa86" id="r_ac02cf8c0fe2ea0df90ecec7690c7fa86"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac02cf8c0fe2ea0df90ecec7690c7fa86">laviet_be32_write</a> (uint8_t *dst, uint32_t value)</td></tr>
+<tr class="memdesc:ac02cf8c0fe2ea0df90ecec7690c7fa86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#ac02cf8c0fe2ea0df90ecec7690c7fa86" title="Internal helper: laviet_be32_write.">laviet_be32_write</a></span>.  <br /></td></tr>
+<tr class="memitem:a55687296aee50be46a5516fbe450a75b" id="r_a55687296aee50be46a5516fbe450a75b"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55687296aee50be46a5516fbe450a75b">laviet_be16_read</a> (const uint8_t *src)</td></tr>
+<tr class="memdesc:a55687296aee50be46a5516fbe450a75b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a55687296aee50be46a5516fbe450a75b" title="Internal helper: laviet_be16_read.">laviet_be16_read</a></span>.  <br /></td></tr>
+<tr class="memitem:a9f62c3d8335b3991ade03916c951e234" id="r_a9f62c3d8335b3991ade03916c951e234"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f62c3d8335b3991ade03916c951e234">laviet_be32_read</a> (const uint8_t *src)</td></tr>
+<tr class="memdesc:a9f62c3d8335b3991ade03916c951e234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a9f62c3d8335b3991ade03916c951e234" title="Internal helper: laviet_be32_read.">laviet_be32_read</a></span>.  <br /></td></tr>
+<tr class="memitem:aa2ee0153820cb3d03e711936dae0926e" id="r_aa2ee0153820cb3d03e711936dae0926e"><td class="memItemLeft" align="right" valign="top">static uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa2ee0153820cb3d03e711936dae0926e">laviet_frame_version_from_ver_type</a> (uint8_t ver_type)</td></tr>
+<tr class="memdesc:aa2ee0153820cb3d03e711936dae0926e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#aa2ee0153820cb3d03e711936dae0926e" title="Internal helper: laviet_frame_version_from_ver_type.">laviet_frame_version_from_ver_type</a></span>.  <br /></td></tr>
+<tr class="memitem:aeeebecb22f3195149752e27549634ad9" id="r_aeeebecb22f3195149752e27549634ad9"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeeebecb22f3195149752e27549634ad9">laviet_frame_type_known</a> (<a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> type)</td></tr>
+<tr class="memdesc:aeeebecb22f3195149752e27549634ad9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#aeeebecb22f3195149752e27549634ad9" title="Internal helper: laviet_frame_type_known.">laviet_frame_type_known</a></span>.  <br /></td></tr>
+<tr class="memitem:ac3ba36c6c1790bf1a5e8a3624be46201" id="r_ac3ba36c6c1790bf1a5e8a3624be46201"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac3ba36c6c1790bf1a5e8a3624be46201">laviet_frame_ver_type</a> (<a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> type)</td></tr>
+<tr class="memdesc:ac3ba36c6c1790bf1a5e8a3624be46201"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compose the version/type byte for a frame type.  <br /></td></tr>
+<tr class="memitem:a0c4799d9ab27acb8e329da925fa382bd" id="r_a0c4799d9ab27acb8e329da925fa382bd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0c4799d9ab27acb8e329da925fa382bd">laviet_frame_type</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</td></tr>
+<tr class="memdesc:a0c4799d9ab27acb8e329da925fa382bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract the low-nibble frame type from a parsed frame.  <br /></td></tr>
+<tr class="memitem:a48545bbdd416df64d1880430fe61498e" id="r_a48545bbdd416df64d1880430fe61498e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48545bbdd416df64d1880430fe61498e">laviet_frame_is_broadcast</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</td></tr>
+<tr class="memdesc:a48545bbdd416df64d1880430fe61498e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether a frame targets the broadcast address.  <br /></td></tr>
+<tr class="memitem:a58d0b229430a6d71b5f09e953192db3d" id="r_a58d0b229430a6d71b5f09e953192db3d"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a58d0b229430a6d71b5f09e953192db3d">laviet_local_node_id</a> (void)</td></tr>
+<tr class="memdesc:a58d0b229430a6d71b5f09e953192db3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Derive a stable local node identifier from STM32 unique ID words.  <br /></td></tr>
+<tr class="memitem:a9df225dfc1501016db4186285f38f71e" id="r_a9df225dfc1501016db4186285f38f71e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9df225dfc1501016db4186285f38f71e">laviet_frame_validate_plain</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame)</td></tr>
+<tr class="memdesc:a9df225dfc1501016db4186285f38f71e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Validate parsed frame fields before encryption/MAC checks.  <br /></td></tr>
+<tr class="memitem:adbb7c581bf1ab54461d5a7ba3595a9b6" id="r_adbb7c581bf1ab54461d5a7ba3595a9b6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbb7c581bf1ab54461d5a7ba3595a9b6">laviet_frame_encode</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame, uint8_t *out, uint8_t out_capacity, uint8_t *out_len)</td></tr>
+<tr class="memdesc:adbb7c581bf1ab54461d5a7ba3595a9b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serialize a parsed frame into wire format.  <br /></td></tr>
+<tr class="memitem:a0cbbd31fc9d8057a33552174c8ca7b07" id="r_a0cbbd31fc9d8057a33552174c8ca7b07"><td class="memItemLeft" align="right" valign="top"><a class="el" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cbbd31fc9d8057a33552174c8ca7b07">laviet_frame_decode</a> (const uint8_t *in, uint8_t in_len, <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame_out)</td></tr>
+<tr class="memdesc:a0cbbd31fc9d8057a33552174c8ca7b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse a serialized wire frame into a frame structure.  <br /></td></tr>
+<tr class="memitem:af39d27eb077be2b724a9b89e172ea79c" id="r_af39d27eb077be2b724a9b89e172ea79c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af39d27eb077be2b724a9b89e172ea79c">laviet_frame_build_mac_input</a> (const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *frame, uint8_t *out, uint8_t out_capacity, uint8_t *out_len)</td></tr>
+<tr class="memdesc:af39d27eb077be2b724a9b89e172ea79c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build the canonical byte sequence covered by the frame MAC.  <br /></td></tr>
+<tr class="memitem:a24b2cd573fc3274f8a92b86b3433b3b0" id="r_a24b2cd573fc3274f8a92b86b3433b3b0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a24b2cd573fc3274f8a92b86b3433b3b0">laviet_frame_write_ack_payload</a> (uint16_t acked_msg_id, uint32_t acked_counter, uint8_t out[<a class="el" href="laviet__frame_8h.html#afad0b33d1c1fe2b9810ba02be7f7c498">LAVIET_ACK_PAYLOAD_LEN</a>])</td></tr>
+<tr class="memdesc:a24b2cd573fc3274f8a92b86b3433b3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode an ACK payload.  <br /></td></tr>
+<tr class="memitem:a2870d34c9f2c9274fd637a115a977b64" id="r_a2870d34c9f2c9274fd637a115a977b64"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2870d34c9f2c9274fd637a115a977b64">laviet_frame_read_ack_payload</a> (const uint8_t payload[<a class="el" href="laviet__frame_8h.html#afad0b33d1c1fe2b9810ba02be7f7c498">LAVIET_ACK_PAYLOAD_LEN</a>], uint16_t *acked_msg_id, uint32_t *acked_counter)</td></tr>
+<tr class="memdesc:a2870d34c9f2c9274fd637a115a977b64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode an ACK payload.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>LAVIET_FRAME_V1 parser, serializer and cheap validation. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a55687296aee50be46a5516fbe450a75b" name="a55687296aee50be46a5516fbe450a75b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55687296aee50be46a5516fbe450a75b">&#9670;&#160;</a></span>laviet_be16_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t laviet_be16_read </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>src</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a55687296aee50be46a5516fbe450a75b" title="Internal helper: laviet_be16_read.">laviet_be16_read</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00029">29</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00328">laviet_frame_decode()</a> i <a class="el" href="laviet__frame_8c_source.html#l00429">laviet_frame_read_ack_payload()</a>.</p>
+
+</div>
+</div>
+<a id="af2b4e39297b09f5e4846836e2c22a829" name="af2b4e39297b09f5e4846836e2c22a829"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2b4e39297b09f5e4846836e2c22a829">&#9670;&#160;</a></span>laviet_be16_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_be16_write </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#af2b4e39297b09f5e4846836e2c22a829" title="Internal helper: laviet_be16_write.">laviet_be16_write</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00013">13</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00378">laviet_frame_build_mac_input()</a>, <a class="el" href="laviet__frame_8c_source.html#l00287">laviet_frame_encode()</a> i <a class="el" href="laviet__frame_8c_source.html#l00415">laviet_frame_write_ack_payload()</a>.</p>
+
+</div>
+</div>
+<a id="a9f62c3d8335b3991ade03916c951e234" name="a9f62c3d8335b3991ade03916c951e234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f62c3d8335b3991ade03916c951e234">&#9670;&#160;</a></span>laviet_be32_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t laviet_be32_read </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>src</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a9f62c3d8335b3991ade03916c951e234" title="Internal helper: laviet_be32_read.">laviet_be32_read</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00035">35</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00328">laviet_frame_decode()</a> i <a class="el" href="laviet__frame_8c_source.html#l00429">laviet_frame_read_ack_payload()</a>.</p>
+
+</div>
+</div>
+<a id="ac02cf8c0fe2ea0df90ecec7690c7fa86" name="ac02cf8c0fe2ea0df90ecec7690c7fa86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac02cf8c0fe2ea0df90ecec7690c7fa86">&#9670;&#160;</a></span>laviet_be32_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void laviet_be32_write </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#ac02cf8c0fe2ea0df90ecec7690c7fa86" title="Internal helper: laviet_be32_write.">laviet_be32_write</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00020">20</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00378">laviet_frame_build_mac_input()</a>, <a class="el" href="laviet__frame_8c_source.html#l00287">laviet_frame_encode()</a> i <a class="el" href="laviet__frame_8c_source.html#l00415">laviet_frame_write_ack_payload()</a>.</p>
+
+</div>
+</div>
+<a id="af39d27eb077be2b724a9b89e172ea79c" name="af39d27eb077be2b724a9b89e172ea79c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af39d27eb077be2b724a9b89e172ea79c">&#9670;&#160;</a></span>laviet_frame_build_mac_input()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_frame_build_mac_input </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Build the canonical byte sequence covered by the frame MAC. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>Frame whose header and payload are used. </td></tr>
+    <tr><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramname">out_capacity</td><td>Output buffer capacity. </td></tr>
+    <tr><td class="paramname">out_len</td><td>[out] MAC input length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the MAC input was built. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00378">378</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00102">laviet_frame_t::counter</a>, <a class="el" href="laviet__frame_8h_source.html#l00100">laviet_frame_t::dst_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00098">laviet_frame_t::flags</a>, <a class="el" href="laviet__frame_8c_source.html#l00013">laviet_be16_write()</a>, <a class="el" href="laviet__frame_8c_source.html#l00020">laviet_be32_write()</a>, <a class="el" href="laviet__frame_8h_source.html#l00023">LAVIET_FRAME_HEADER_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00019">LAVIET_MAX_PAYLOAD</a>, <a class="el" href="laviet__frame_8h_source.html#l00101">laviet_frame_t::msg_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00104">laviet_frame_t::payload</a>, <a class="el" href="laviet__frame_8h_source.html#l00103">laviet_frame_t::payload_len</a>, <a class="el" href="laviet__frame_8h_source.html#l00099">laviet_frame_t::src_id</a> i <a class="el" href="laviet__frame_8h_source.html#l00097">laviet_frame_t::ver_type</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__crypto_8c_source.html#l00739">laviet_frame_hmac_sha256()</a>.</p>
+
+</div>
+</div>
+<a id="a0cbbd31fc9d8057a33552174c8ca7b07" name="a0cbbd31fc9d8057a33552174c8ca7b07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0cbbd31fc9d8057a33552174c8ca7b07">&#9670;&#160;</a></span>laviet_frame_decode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> laviet_frame_decode </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>in</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>in_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame_out</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Parse a serialized wire frame into a frame structure. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">in</td><td>Serialized frame bytes. </td></tr>
+    <tr><td class="paramname">in_len</td><td>Serialized frame length. </td></tr>
+    <tr><td class="paramname">frame_out</td><td>[out] Parsed frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Decode status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00328">328</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00102">laviet_frame_t::counter</a>, <a class="el" href="laviet__frame_8h_source.html#l00100">laviet_frame_t::dst_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00098">laviet_frame_t::flags</a>, <a class="el" href="laviet__frame_8c_source.html#l00029">laviet_be16_read()</a>, <a class="el" href="laviet__frame_8c_source.html#l00035">laviet_be32_read()</a>, <a class="el" href="laviet__frame_8h_source.html#l00023">LAVIET_FRAME_HEADER_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00027">LAVIET_FRAME_MAX_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00025">LAVIET_FRAME_MIN_LEN</a>, <a class="el" href="laviet__frame_8c_source.html#l00120">laviet_frame_validate_plain()</a>, <a class="el" href="laviet__frame_8h_source.html#l00021">LAVIET_MAC_TAG_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00019">LAVIET_MAX_PAYLOAD</a>, <a class="el" href="laviet__frame_8h_source.html#l00084">LAVIET_STATUS_LENGTH</a>, <a class="el" href="laviet__frame_8h_source.html#l00083">LAVIET_STATUS_NULL</a>, <a class="el" href="laviet__frame_8h_source.html#l00082">LAVIET_STATUS_OK</a>, <a class="el" href="laviet__frame_8h_source.html#l00089">LAVIET_STATUS_PAYLOAD</a>, <a class="el" href="laviet__frame_8h_source.html#l00105">laviet_frame_t::mac_tag</a>, <a class="el" href="laviet__frame_8h_source.html#l00101">laviet_frame_t::msg_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00104">laviet_frame_t::payload</a>, <a class="el" href="laviet__frame_8h_source.html#l00103">laviet_frame_t::payload_len</a>, <a class="el" href="laviet__frame_8h_source.html#l00099">laviet_frame_t::src_id</a> i <a class="el" href="laviet__frame_8h_source.html#l00097">laviet_frame_t::ver_type</a>.</p>
+
+</div>
+</div>
+<a id="adbb7c581bf1ab54461d5a7ba3595a9b6" name="adbb7c581bf1ab54461d5a7ba3595a9b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbb7c581bf1ab54461d5a7ba3595a9b6">&#9670;&#160;</a></span>laviet_frame_encode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> laviet_frame_encode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Serialize a parsed frame into wire format. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>Frame to serialize. </td></tr>
+    <tr><td class="paramname">out</td><td>Output buffer. </td></tr>
+    <tr><td class="paramname">out_capacity</td><td>Output buffer capacity. </td></tr>
+    <tr><td class="paramname">out_len</td><td>[out] Serialized frame length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Encode status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00287">287</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00102">laviet_frame_t::counter</a>, <a class="el" href="laviet__frame_8h_source.html#l00100">laviet_frame_t::dst_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00098">laviet_frame_t::flags</a>, <a class="el" href="laviet__frame_8c_source.html#l00013">laviet_be16_write()</a>, <a class="el" href="laviet__frame_8c_source.html#l00020">laviet_be32_write()</a>, <a class="el" href="laviet__frame_8h_source.html#l00023">LAVIET_FRAME_HEADER_LEN</a>, <a class="el" href="laviet__frame_8c_source.html#l00120">laviet_frame_validate_plain()</a>, <a class="el" href="laviet__frame_8h_source.html#l00021">LAVIET_MAC_TAG_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00084">LAVIET_STATUS_LENGTH</a>, <a class="el" href="laviet__frame_8h_source.html#l00083">LAVIET_STATUS_NULL</a>, <a class="el" href="laviet__frame_8h_source.html#l00082">LAVIET_STATUS_OK</a>, <a class="el" href="laviet__frame_8h_source.html#l00105">laviet_frame_t::mac_tag</a>, <a class="el" href="laviet__frame_8h_source.html#l00101">laviet_frame_t::msg_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00104">laviet_frame_t::payload</a>, <a class="el" href="laviet__frame_8h_source.html#l00103">laviet_frame_t::payload_len</a>, <a class="el" href="laviet__frame_8h_source.html#l00099">laviet_frame_t::src_id</a> i <a class="el" href="laviet__frame_8h_source.html#l00097">laviet_frame_t::ver_type</a>.</p>
+
+</div>
+</div>
+<a id="a48545bbdd416df64d1880430fe61498e" name="a48545bbdd416df64d1880430fe61498e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48545bbdd416df64d1880430fe61498e">&#9670;&#160;</a></span>laviet_frame_is_broadcast()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_frame_is_broadcast </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check whether a frame targets the broadcast address. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>Frame object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when <span class="tt">dst_id</span> equals <span class="tt"><a class="el" href="laviet__frame_8h.html#a340f56ba04216b9995f4ef4da36b68b4" title="Broadcast destination identifier.">LAVIET_BROADCAST_ID</a></span>. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00070">70</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00100">laviet_frame_t::dst_id</a> i <a class="el" href="laviet__frame_8h_source.html#l00032">LAVIET_BROADCAST_ID</a>.</p>
+
+</div>
+</div>
+<a id="a2870d34c9f2c9274fd637a115a977b64" name="a2870d34c9f2c9274fd637a115a977b64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2870d34c9f2c9274fd637a115a977b64">&#9670;&#160;</a></span>laviet_frame_read_ack_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_frame_read_ack_payload </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>payload</em></span>[LAVIET_ACK_PAYLOAD_LEN], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>acked_msg_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>acked_counter</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Decode an ACK payload. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">payload</td><td>ACK payload bytes. </td></tr>
+    <tr><td class="paramname">acked_msg_id</td><td>[out] Decoded message identifier. </td></tr>
+    <tr><td class="paramname">acked_counter</td><td>[out] Decoded counter value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the payload was decoded. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00429">429</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00054">LAVIET_ACK_PAYLOAD_LEN</a>, <a class="el" href="laviet__frame_8c_source.html#l00029">laviet_be16_read()</a> i <a class="el" href="laviet__frame_8c_source.html#l00035">laviet_be32_read()</a>.</p>
+
+</div>
+</div>
+<a id="a0c4799d9ab27acb8e329da925fa382bd" name="a0c4799d9ab27acb8e329da925fa382bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0c4799d9ab27acb8e329da925fa382bd">&#9670;&#160;</a></span>laviet_frame_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a> laviet_frame_type </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Extract the low-nibble frame type from a parsed frame. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>Frame object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Frame type or <span class="tt"><a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e" title="Invalid/empty type sentinel.">LAVIET_TYPE_NONE</a></span> for a null frame. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00060">60</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00065">LAVIET_TYPE_NONE</a> i <a class="el" href="laviet__frame_8h_source.html#l00097">laviet_frame_t::ver_type</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00120">laviet_frame_validate_plain()</a>.</p>
+
+</div>
+</div>
+<a id="aeeebecb22f3195149752e27549634ad9" name="aeeebecb22f3195149752e27549634ad9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeeebecb22f3195149752e27549634ad9">&#9670;&#160;</a></span>laviet_frame_type_known()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_frame_type_known </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#aeeebecb22f3195149752e27549634ad9" title="Internal helper: laviet_frame_type_known.">laviet_frame_type_known</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00050">50</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00066">LAVIET_TYPE_DATA</a> i <a class="el" href="laviet__frame_8h_source.html#l00074">LAVIET_TYPE_ERROR</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00120">laviet_frame_validate_plain()</a>.</p>
+
+</div>
+</div>
+<a id="a9df225dfc1501016db4186285f38f71e" name="a9df225dfc1501016db4186285f38f71e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9df225dfc1501016db4186285f38f71e">&#9670;&#160;</a></span>laviet_frame_validate_plain()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="laviet__frame_8h.html#a94f44491f7aa364ec4349aeb9120d6a7">laviet_frame_status_t</a> laviet_frame_validate_plain </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structlaviet__frame__t.html">laviet_frame_t</a> *</td>          <td class="paramname"><span class="paramname"><em>frame</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Validate parsed frame fields before encryption/MAC checks. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frame</td><td>Frame object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Validation status. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00120">120</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00100">laviet_frame_t::dst_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00098">laviet_frame_t::flags</a>, <a class="el" href="laviet__frame_8h_source.html#l00054">LAVIET_ACK_PAYLOAD_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00032">LAVIET_BROADCAST_ID</a>, <a class="el" href="laviet__frame_8h_source.html#l00056">LAVIET_COUNTER_SYNC_PAYLOAD_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00058">LAVIET_ERROR_PAYLOAD_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00037">LAVIET_FLAG_ACK_REQUIRED</a>, <a class="el" href="laviet__frame_8h_source.html#l00045">LAVIET_FLAG_BROADCAST</a>, <a class="el" href="laviet__frame_8h_source.html#l00043">LAVIET_FLAG_CONFIG_ACCESS</a>, <a class="el" href="laviet__frame_8h_source.html#l00047">LAVIET_FLAG_COUNTER_OVERRIDE</a>, <a class="el" href="laviet__frame_8h_source.html#l00035">LAVIET_FLAG_ENCRYPTED</a>, <a class="el" href="laviet__frame_8h_source.html#l00039">LAVIET_FLAG_IS_ACK</a>, <a class="el" href="laviet__frame_8h_source.html#l00049">LAVIET_FLAG_KEY_UPDATE</a>, <a class="el" href="laviet__frame_8h_source.html#l00041">LAVIET_FLAG_PAIRING</a>, <a class="el" href="laviet__frame_8c_source.html#l00060">laviet_frame_type()</a>, <a class="el" href="laviet__frame_8c_source.html#l00050">laviet_frame_type_known()</a>, <a class="el" href="laviet__frame_8h_source.html#l00017">LAVIET_FRAME_VERSION</a>, <a class="el" href="laviet__frame_8c_source.html#l00044">laviet_frame_version_from_ver_type()</a>, <a class="el" href="laviet__frame_8h_source.html#l00030">LAVIET_GATEWAY_ID</a>, <a class="el" href="laviet__frame_8h_source.html#l00019">LAVIET_MAX_PAYLOAD</a>, <a class="el" href="laviet__frame_8h_source.html#l00052">LAVIET_PAIR_PAYLOAD_LEN</a>, <a class="el" href="laviet__frame_8h_source.html#l00088">LAVIET_STATUS_FLAGS</a>, <a class="el" href="laviet__frame_8h_source.html#l00087">LAVIET_STATUS_ID</a>, <a class="el" href="laviet__frame_8h_source.html#l00083">LAVIET_STATUS_NULL</a>, <a class="el" href="laviet__frame_8h_source.html#l00082">LAVIET_STATUS_OK</a>, <a class="el" href="laviet__frame_8h_source.html#l00089">LAVIET_STATUS_PAYLOAD</a>, <a class="el" href="laviet__frame_8h_source.html#l00086">LAVIET_STATUS_TYPE</a>, <a class="el" href="laviet__frame_8h_source.html#l00085">LAVIET_STATUS_VERSION</a>, <a class="el" href="laviet__frame_8h_source.html#l00067">LAVIET_TYPE_ACK</a>, <a class="el" href="laviet__frame_8h_source.html#l00071">LAVIET_TYPE_CFG</a>, <a class="el" href="laviet__frame_8h_source.html#l00072">LAVIET_TYPE_COUNTER_SYNC</a>, <a class="el" href="laviet__frame_8h_source.html#l00066">LAVIET_TYPE_DATA</a>, <a class="el" href="laviet__frame_8h_source.html#l00074">LAVIET_TYPE_ERROR</a>, <a class="el" href="laviet__frame_8h_source.html#l00073">LAVIET_TYPE_KEY_ROTATE</a>, <a class="el" href="laviet__frame_8h_source.html#l00069">LAVIET_TYPE_PAIR_REQ</a>, <a class="el" href="laviet__frame_8h_source.html#l00070">LAVIET_TYPE_PAIR_RESP</a>, <a class="el" href="laviet__frame_8h_source.html#l00068">LAVIET_TYPE_RESP</a>, <a class="el" href="laviet__frame_8h_source.html#l00101">laviet_frame_t::msg_id</a>, <a class="el" href="laviet__frame_8h_source.html#l00103">laviet_frame_t::payload_len</a>, <a class="el" href="laviet__frame_8h_source.html#l00099">laviet_frame_t::src_id</a> i <a class="el" href="laviet__frame_8h_source.html#l00097">laviet_frame_t::ver_type</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00328">laviet_frame_decode()</a> i <a class="el" href="laviet__frame_8c_source.html#l00287">laviet_frame_encode()</a>.</p>
+
+</div>
+</div>
+<a id="ac3ba36c6c1790bf1a5e8a3624be46201" name="ac3ba36c6c1790bf1a5e8a3624be46201"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3ba36c6c1790bf1a5e8a3624be46201">&#9670;&#160;</a></span>laviet_frame_ver_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t laviet_frame_ver_type </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="laviet__frame_8h.html#a7acce13de228087ca80104996d64165d">laviet_frame_type_t</a></td>          <td class="paramname"><span class="paramname"><em>type</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Compose the version/type byte for a frame type. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">type</td><td>LAVIET frame type. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Encoded <span class="tt">ver_type</span> byte. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00055">55</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00017">LAVIET_FRAME_VERSION</a>.</p>
+
+</div>
+</div>
+<a id="aa2ee0153820cb3d03e711936dae0926e" name="aa2ee0153820cb3d03e711936dae0926e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa2ee0153820cb3d03e711936dae0926e">&#9670;&#160;</a></span>laviet_frame_version_from_ver_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t laviet_frame_version_from_ver_type </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>ver_type</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#aa2ee0153820cb3d03e711936dae0926e" title="Internal helper: laviet_frame_version_from_ver_type.">laviet_frame_version_from_ver_type</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00044">44</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="laviet__frame_8c_source.html#l00120">laviet_frame_validate_plain()</a>.</p>
+
+</div>
+</div>
+<a id="a24b2cd573fc3274f8a92b86b3433b3b0" name="a24b2cd573fc3274f8a92b86b3433b3b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24b2cd573fc3274f8a92b86b3433b3b0">&#9670;&#160;</a></span>laviet_frame_write_ack_payload()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool laviet_frame_write_ack_payload </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>acked_msg_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>acked_counter</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[LAVIET_ACK_PAYLOAD_LEN]&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Encode an ACK payload. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">acked_msg_id</td><td>Message identifier being acknowledged. </td></tr>
+    <tr><td class="paramname">acked_counter</td><td>Counter value being acknowledged. </td></tr>
+    <tr><td class="paramname">out</td><td>[out] Fixed-size ACK payload buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the payload was written. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00415">415</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00054">LAVIET_ACK_PAYLOAD_LEN</a>, <a class="el" href="laviet__frame_8c_source.html#l00013">laviet_be16_write()</a> i <a class="el" href="laviet__frame_8c_source.html#l00020">laviet_be32_write()</a>.</p>
+
+</div>
+</div>
+<a id="a58d0b229430a6d71b5f09e953192db3d" name="a58d0b229430a6d71b5f09e953192db3d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58d0b229430a6d71b5f09e953192db3d">&#9670;&#160;</a></span>laviet_local_node_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t laviet_local_node_id </td>
+          <td>(</td>
+          <td class="paramtype">void</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Derive a stable local node identifier from STM32 unique ID words. </p>
+<dl class="section return"><dt>Zwraca</dt><dd>Non-reserved 16-bit node identifier. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="laviet__frame_8c_source.html#l00080">80</a> pliku <a class="el" href="laviet__frame_8c_source.html">laviet_frame.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="laviet__frame_8h_source.html#l00032">LAVIET_BROADCAST_ID</a> i <a class="el" href="laviet__frame_8h_source.html#l00030">LAVIET_GATEWAY_ID</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="laviet__frame_8c.html">laviet_frame.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

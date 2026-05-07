@@ -1,0 +1,594 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/bmp280_lib/bmp280.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('bmp280_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku bmp280.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Low-level BMP280/BME280 driver API.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;stm32u5xx_hal.h&quot;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &lt;stdbool.h&gt;</code><br />
+</div>
+<p><a href="bmp280_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Struktury danych</h2></td></tr>
+<tr class="memitem:bmp280_5Fparams_5Ft" id="r_bmp280_5Fparams_5Ft"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbmp280__params__t.html">bmp280_params_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration parameters for BMP280 module.  <a href="structbmp280__params__t.html#details">Więcej...</a><br /></td></tr>
+<tr class="memitem:BMP280_5FHandleTypedef" id="r_BMP280_5FHandleTypedef"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Driver handle with calibration constants and active configuration.  <a href="structBMP280__HandleTypedef.html#details">Więcej...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Definicje</h2></td></tr>
+<tr class="memitem:aa11b925ebf4b81cf1b62232196ac1d8f" id="r_aa11b925ebf4b81cf1b62232196ac1d8f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa11b925ebf4b81cf1b62232196ac1d8f">BMP280_I2C_ADDRESS_0</a>&#160;&#160;&#160;0x76</td></tr>
+<tr class="memdesc:aa11b925ebf4b81cf1b62232196ac1d8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ciastkolog.pl (<a href="https://github.com/ciastkolog">https://github.com/ciastkolog</a>).  <br /></td></tr>
+<tr class="memitem:a0b9ffea4fca103b7edef727777596909" id="r_a0b9ffea4fca103b7edef727777596909"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0b9ffea4fca103b7edef727777596909">BMP280_I2C_ADDRESS_1</a>&#160;&#160;&#160;0x77</td></tr>
+<tr class="memdesc:a0b9ffea4fca103b7edef727777596909"><td class="mdescLeft">&#160;</td><td class="mdescRight">I2C address when SDO pin is high.  <br /></td></tr>
+<tr class="memitem:aa29aaafdd798a1593a4b536f0ed7c9c2" id="r_aa29aaafdd798a1593a4b536f0ed7c9c2"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa29aaafdd798a1593a4b536f0ed7c9c2">BMP280_CHIP_ID</a>&#160;&#160;&#160;0x58</td></tr>
+<tr class="memdesc:aa29aaafdd798a1593a4b536f0ed7c9c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expected BMP280 chip identifier.  <br /></td></tr>
+<tr class="memitem:aa9471d8f9c99880c3b85360017908e6b" id="r_aa9471d8f9c99880c3b85360017908e6b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa9471d8f9c99880c3b85360017908e6b">BME280_CHIP_ID</a>&#160;&#160;&#160;0x60</td></tr>
+<tr class="memdesc:aa9471d8f9c99880c3b85360017908e6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Expected BME280 chip identifier.  <br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Wyliczenia</h2></td></tr>
+<tr class="memitem:a271e5e83e42a13012a3b8dbab9050af1" id="r_a271e5e83e42a13012a3b8dbab9050af1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a271e5e83e42a13012a3b8dbab9050af1">BMP280_Mode</a> { <b>BMP280_MODE_SLEEP</b> = 0
+, <b>BMP280_MODE_FORCED</b> = 1
+, <b>BMP280_MODE_NORMAL</b> = 3
+ }</td></tr>
+<tr class="memdesc:a271e5e83e42a13012a3b8dbab9050af1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mode of BMP280 module operation.  <a href="#a271e5e83e42a13012a3b8dbab9050af1">Więcej...</a><br /></td></tr>
+<tr class="memitem:a806a38733a5f185f636208781ee9d6ce" id="r_a806a38733a5f185f636208781ee9d6ce"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a806a38733a5f185f636208781ee9d6ce">BMP280_Filter</a> { <br />
+&#160;&#160;<a class="el" href="#a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2">BMP280_FILTER_OFF</a> = 0
+, <a class="el" href="#a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b">BMP280_FILTER_2</a> = 1
+, <a class="el" href="#a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de">BMP280_FILTER_4</a> = 2
+, <a class="el" href="#a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609">BMP280_FILTER_8</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="#a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e">BMP280_FILTER_16</a> = 4
+<br />
+ }</td></tr>
+<tr class="memitem:a17d17863e5caf335d19a58c4ca964e1f" id="r_a17d17863e5caf335d19a58c4ca964e1f"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a> { <br />
+&#160;&#160;<b>BMP280_SKIPPED</b> = 0
+, <b>BMP280_ULTRA_LOW_POWER</b> = 1
+, <b>BMP280_LOW_POWER</b> = 2
+, <b>BMP280_STANDARD</b> = 3
+, <br />
+&#160;&#160;<b>BMP280_HIGH_RES</b> = 4
+, <b>BMP280_ULTRA_HIGH_RES</b> = 5
+<br />
+ }</td></tr>
+<tr class="memdesc:a17d17863e5caf335d19a58c4ca964e1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pressure oversampling settings.  <a href="#a17d17863e5caf335d19a58c4ca964e1f">Więcej...</a><br /></td></tr>
+<tr class="memitem:a23ebf5aa69d883165e230c488833b109" id="r_a23ebf5aa69d883165e230c488833b109"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23ebf5aa69d883165e230c488833b109">BMP280_StandbyTime</a> { <br />
+&#160;&#160;<b>BMP280_STANDBY_05</b> = 0
+, <b>BMP280_STANDBY_62</b> = 1
+, <b>BMP280_STANDBY_125</b> = 2
+, <b>BMP280_STANDBY_250</b> = 3
+, <br />
+&#160;&#160;<b>BMP280_STANDBY_500</b> = 4
+, <b>BMP280_STANDBY_1000</b> = 5
+, <b>BMP280_STANDBY_2000</b> = 6
+, <b>BMP280_STANDBY_4000</b> = 7
+<br />
+ }</td></tr>
+<tr class="memdesc:a23ebf5aa69d883165e230c488833b109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stand by time between measurements in normal mode.  <a href="#a23ebf5aa69d883165e230c488833b109">Więcej...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:ae36e8912e8a4ad47a5b6bcd4939db6aa" id="r_ae36e8912e8a4ad47a5b6bcd4939db6aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae36e8912e8a4ad47a5b6bcd4939db6aa">bmp280_init_default_params</a> (<a class="el" href="structbmp280__params__t.html">bmp280_params_t</a> *params)</td></tr>
+<tr class="memdesc:ae36e8912e8a4ad47a5b6bcd4939db6aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize default BMP280 parameters.  <br /></td></tr>
+<tr class="memitem:ac86eef708d9f6c8a797d45cbbc360bd9" id="r_ac86eef708d9f6c8a797d45cbbc360bd9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac86eef708d9f6c8a797d45cbbc360bd9">bmp280_init</a> (<a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev, <a class="el" href="structbmp280__params__t.html">bmp280_params_t</a> *params)</td></tr>
+<tr class="memdesc:ac86eef708d9f6c8a797d45cbbc360bd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize BMP280/BME280 module.  <br /></td></tr>
+<tr class="memitem:a5bcdb981b95481059526976c23fb295e" id="r_a5bcdb981b95481059526976c23fb295e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5bcdb981b95481059526976c23fb295e">bmp280_force_measurement</a> (<a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev)</td></tr>
+<tr class="memdesc:a5bcdb981b95481059526976c23fb295e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start one measurement in forced mode.  <br /></td></tr>
+<tr class="memitem:aefa90b756a2bbd97ea580ff6527bca53" id="r_aefa90b756a2bbd97ea580ff6527bca53"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aefa90b756a2bbd97ea580ff6527bca53">bmp280_is_measuring</a> (<a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev)</td></tr>
+<tr class="memdesc:aefa90b756a2bbd97ea580ff6527bca53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether BMP280 is busy measuring temperature or pressure.  <br /></td></tr>
+<tr class="memitem:a648fe1b52d4a2ed15023d5efb1702256" id="r_a648fe1b52d4a2ed15023d5efb1702256"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a648fe1b52d4a2ed15023d5efb1702256">bmp280_read_fixed</a> (<a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev, int32_t *temperature, uint32_t *pressure, uint32_t *humidity)</td></tr>
+<tr class="memdesc:a648fe1b52d4a2ed15023d5efb1702256"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read compensated fixed-point temperature, pressure and optional humidity.  <br /></td></tr>
+<tr class="memitem:a7150453ab8fb9ae57ed7b89d0a4fa4d9" id="r_a7150453ab8fb9ae57ed7b89d0a4fa4d9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7150453ab8fb9ae57ed7b89d0a4fa4d9">bmp280_read_float</a> (<a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *dev, float *temperature, float *pressure, float *humidity)</td></tr>
+<tr class="memdesc:a7150453ab8fb9ae57ed7b89d0a4fa4d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read compensated floating-point temperature, pressure and optional humidity.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Low-level BMP280/BME280 driver API. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Dokumentacja definicji</h2>
+<a id="aa9471d8f9c99880c3b85360017908e6b" name="aa9471d8f9c99880c3b85360017908e6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa9471d8f9c99880c3b85360017908e6b">&#9670;&#160;</a></span>BME280_CHIP_ID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BME280_CHIP_ID&#160;&#160;&#160;0x60</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Expected BME280 chip identifier. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00033">33</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="bmp280_8c_source.html#l00146">bmp280_init()</a> i <a class="el" href="bmp280_8c_source.html#l00306">bmp280_read_fixed()</a>.</p>
+
+</div>
+</div>
+<a id="aa29aaafdd798a1593a4b536f0ed7c9c2" name="aa29aaafdd798a1593a4b536f0ed7c9c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa29aaafdd798a1593a4b536f0ed7c9c2">&#9670;&#160;</a></span>BMP280_CHIP_ID</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP280_CHIP_ID&#160;&#160;&#160;0x58</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Expected BMP280 chip identifier. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00031">31</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="bmp280_8c_source.html#l00146">bmp280_init()</a>.</p>
+
+</div>
+</div>
+<a id="aa11b925ebf4b81cf1b62232196ac1d8f" name="aa11b925ebf4b81cf1b62232196ac1d8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa11b925ebf4b81cf1b62232196ac1d8f">&#9670;&#160;</a></span>BMP280_I2C_ADDRESS_0</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP280_I2C_ADDRESS_0&#160;&#160;&#160;0x76</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ciastkolog.pl (<a href="https://github.com/ciastkolog">https://github.com/ciastkolog</a>). </p>
+<p>The MIT License (MIT) Copyright (c) 2016 sheinz (<a href="https://github.com/sheinz">https://github.com/sheinz</a>) BMP280 or BME280 address is 0x77 if SDO pin is high, and is 0x76 if SDO pin is low.</p>
+<p>I2C address when SDO pin is low. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00026">26</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="bmp280__api_8c_source.html#l00152">bmp280_api_init()</a> i <a class="el" href="bmp280_8c_source.html#l00146">bmp280_init()</a>.</p>
+
+</div>
+</div>
+<a id="a0b9ffea4fca103b7edef727777596909" name="a0b9ffea4fca103b7edef727777596909"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b9ffea4fca103b7edef727777596909">&#9670;&#160;</a></span>BMP280_I2C_ADDRESS_1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define BMP280_I2C_ADDRESS_1&#160;&#160;&#160;0x77</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>I2C address when SDO pin is high. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00028">28</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="bmp280__api_8c_source.html#l00152">bmp280_api_init()</a> i <a class="el" href="bmp280_8c_source.html#l00146">bmp280_init()</a>.</p>
+
+</div>
+</div>
+<a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Dokumentacja typów wyliczanych</h2>
+<a id="a806a38733a5f185f636208781ee9d6ce" name="a806a38733a5f185f636208781ee9d6ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a806a38733a5f185f636208781ee9d6ce">&#9670;&#160;</a></span>BMP280_Filter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a806a38733a5f185f636208781ee9d6ce">BMP280_Filter</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Wartości wyliczeń</th></tr><tr><td class="fieldname"><a id="a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2" name="a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2"></a>BMP280_FILTER_OFF&#160;</td><td class="fielddoc"><p>IIR filter disabled. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b" name="a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b"></a>BMP280_FILTER_2&#160;</td><td class="fielddoc"><p>IIR filter coefficient 2. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de" name="a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de"></a>BMP280_FILTER_4&#160;</td><td class="fielddoc"><p>IIR filter coefficient 4. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609" name="a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609"></a>BMP280_FILTER_8&#160;</td><td class="fielddoc"><p>IIR filter coefficient 8. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e" name="a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e"></a>BMP280_FILTER_16&#160;</td><td class="fielddoc"><p>IIR filter coefficient 16. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00046">46</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a271e5e83e42a13012a3b8dbab9050af1" name="a271e5e83e42a13012a3b8dbab9050af1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a271e5e83e42a13012a3b8dbab9050af1">&#9670;&#160;</a></span>BMP280_Mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a271e5e83e42a13012a3b8dbab9050af1">BMP280_Mode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Mode of BMP280 module operation. </p>
+<p>Forced - Measurement is initiated by user. Normal - Continues measurement. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00040">40</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a17d17863e5caf335d19a58c4ca964e1f" name="a17d17863e5caf335d19a58c4ca964e1f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d17863e5caf335d19a58c4ca964e1f">&#9670;&#160;</a></span>BMP280_Oversampling</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a17d17863e5caf335d19a58c4ca964e1f">BMP280_Oversampling</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Pressure oversampling settings. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00057">57</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a id="a23ebf5aa69d883165e230c488833b109" name="a23ebf5aa69d883165e230c488833b109"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23ebf5aa69d883165e230c488833b109">&#9670;&#160;</a></span>BMP280_StandbyTime</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a23ebf5aa69d883165e230c488833b109">BMP280_StandbyTime</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Stand by time between measurements in normal mode. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8h_source.html#l00069">69</a> pliku <a class="el" href="bmp280_8h_source.html">bmp280.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a5bcdb981b95481059526976c23fb295e" name="a5bcdb981b95481059526976c23fb295e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bcdb981b95481059526976c23fb295e">&#9670;&#160;</a></span>bmp280_force_measurement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool bmp280_force_measurement </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *</td>          <td class="paramname"><span class="paramname"><em>dev</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start one measurement in forced mode. </p>
+<p>The module remains in forced mode after this call. Do not call this method in normal mode.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dev</td><td>Driver handle. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the measurement trigger was written. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8c_source.html#l00211">211</a> pliku <a class="el" href="bmp280_8c_source.html">bmp280.c</a>.</p>
+
+</div>
+</div>
+<a id="ac86eef708d9f6c8a797d45cbbc360bd9" name="ac86eef708d9f6c8a797d45cbbc360bd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac86eef708d9f6c8a797d45cbbc360bd9">&#9670;&#160;</a></span>bmp280_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool bmp280_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *</td>          <td class="paramname"><span class="paramname"><em>dev</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structbmp280__params__t.html">bmp280_params_t</a> *</td>          <td class="paramname"><span class="paramname"><em>params</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize BMP280/BME280 module. </p>
+<p>Probes for the device, soft resets the device, reads the calibration constants, and configures the device using the supplied parameters.</p>
+<p>The I2C address is assumed to have been initialized in the dev, and may be either BMP280_I2C_ADDRESS_0 or BMP280_I2C_ADDRESS_1. If the I2C address is unknown then try initializing each in turn.</p>
+<p>This may be called again to soft reset the device and initialize it again.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dev</td><td>Driver handle with I2C handle and address already set. </td></tr>
+    <tr><td class="paramname">params</td><td>Sensor configuration parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> on successful initialization. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8c_source.html#l00146">146</a> pliku <a class="el" href="bmp280_8c_source.html">bmp280.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="bmp280_8h_source.html#l00119">BMP280_HandleTypedef::addr</a>, <a class="el" href="bmp280_8h_source.html#l00033">BME280_CHIP_ID</a>, <a class="el" href="bmp280_8h_source.html#l00031">BMP280_CHIP_ID</a>, <a class="el" href="bmp280_8h_source.html#l00026">BMP280_I2C_ADDRESS_0</a>, <a class="el" href="bmp280_8h_source.html#l00028">BMP280_I2C_ADDRESS_1</a>, <a class="el" href="bmp280_8h_source.html#l00086">bmp280_params_t::filter</a>, <a class="el" href="bmp280_8h_source.html#l00125">BMP280_HandleTypedef::id</a>, <a class="el" href="bmp280_8h_source.html#l00085">bmp280_params_t::mode</a>, <a class="el" href="bmp280_8h_source.html#l00089">bmp280_params_t::oversampling_humidity</a>, <a class="el" href="bmp280_8h_source.html#l00087">bmp280_params_t::oversampling_pressure</a>, <a class="el" href="bmp280_8h_source.html#l00088">bmp280_params_t::oversampling_temperature</a> i <a class="el" href="bmp280_8h_source.html#l00090">bmp280_params_t::standby</a>.</p>
+
+</div>
+</div>
+<a id="ae36e8912e8a4ad47a5b6bcd4939db6aa" name="ae36e8912e8a4ad47a5b6bcd4939db6aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae36e8912e8a4ad47a5b6bcd4939db6aa">&#9670;&#160;</a></span>bmp280_init_default_params()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void bmp280_init_default_params </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structbmp280__params__t.html">bmp280_params_t</a> *</td>          <td class="paramname"><span class="paramname"><em>params</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize default BMP280 parameters. </p>
+<p>Default configuration:</p><ul>
+<li>mode: NORMAL</li>
+<li>filter: OFF</li>
+<li>oversampling: x4</li>
+<li>standby time: 250ms</li>
+</ul>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">params</td><td>[out] Parameter structure to initialize. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8c_source.html#l00056">56</a> pliku <a class="el" href="bmp280_8c_source.html">bmp280.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="bmp280_8h_source.html#l00047">BMP280_FILTER_OFF</a>, <a class="el" href="bmp280_8h_source.html#l00086">bmp280_params_t::filter</a>, <a class="el" href="bmp280_8h_source.html#l00085">bmp280_params_t::mode</a>, <a class="el" href="bmp280_8h_source.html#l00089">bmp280_params_t::oversampling_humidity</a>, <a class="el" href="bmp280_8h_source.html#l00087">bmp280_params_t::oversampling_pressure</a>, <a class="el" href="bmp280_8h_source.html#l00088">bmp280_params_t::oversampling_temperature</a> i <a class="el" href="bmp280_8h_source.html#l00090">bmp280_params_t::standby</a>.</p>
+
+</div>
+</div>
+<a id="aefa90b756a2bbd97ea580ff6527bca53" name="aefa90b756a2bbd97ea580ff6527bca53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefa90b756a2bbd97ea580ff6527bca53">&#9670;&#160;</a></span>bmp280_is_measuring()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool bmp280_is_measuring </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *</td>          <td class="paramname"><span class="paramname"><em>dev</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check whether BMP280 is busy measuring temperature or pressure. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dev</td><td>Driver handle. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when the sensor is currently measuring. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8c_source.html#l00223">223</a> pliku <a class="el" href="bmp280_8c_source.html">bmp280.c</a>.</p>
+
+</div>
+</div>
+<a id="a648fe1b52d4a2ed15023d5efb1702256" name="a648fe1b52d4a2ed15023d5efb1702256"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a648fe1b52d4a2ed15023d5efb1702256">&#9670;&#160;</a></span>bmp280_read_fixed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool bmp280_read_fixed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *</td>          <td class="paramname"><span class="paramname"><em>dev</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int32_t *</td>          <td class="paramname"><span class="paramname"><em>temperature</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>pressure</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>humidity</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read compensated fixed-point temperature, pressure and optional humidity. </p>
+<p>Temperature in degrees Celsius times 100.</p>
+<p>Pressure in Pascals in fixed point 24 bit integer 8 bit fraction format.</p>
+<p>Humidity is optional and only read for the BME280, in percent relative humidity as a fixed point 22 bit integer and 10 bit fraction format.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dev</td><td>Driver handle. </td></tr>
+    <tr><td class="paramname">temperature</td><td>[out] Temperature in centi-degrees Celsius. </td></tr>
+    <tr><td class="paramname">pressure</td><td>[out] Pressure in Pa using 24.8 fixed-point format. </td></tr>
+    <tr><td class="paramname">humidity</td><td>[out] Optional humidity in BME280 fixed-point format. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when data was read and compensated. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8c_source.html#l00306">306</a> pliku <a class="el" href="bmp280_8c_source.html">bmp280.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="bmp280_8h_source.html#l00033">BME280_CHIP_ID</a> i <a class="el" href="bmp280_8h_source.html#l00125">BMP280_HandleTypedef::id</a>.</p>
+
+</div>
+</div>
+<a id="a7150453ab8fb9ae57ed7b89d0a4fa4d9" name="a7150453ab8fb9ae57ed7b89d0a4fa4d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7150453ab8fb9ae57ed7b89d0a4fa4d9">&#9670;&#160;</a></span>bmp280_read_float()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool bmp280_read_float </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structBMP280__HandleTypedef.html">BMP280_HandleTypedef</a> *</td>          <td class="paramname"><span class="paramname"><em>dev</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *</td>          <td class="paramname"><span class="paramname"><em>temperature</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *</td>          <td class="paramname"><span class="paramname"><em>pressure</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *</td>          <td class="paramname"><span class="paramname"><em>humidity</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read compensated floating-point temperature, pressure and optional humidity. </p>
+<p>Temperature in degrees Celsius. Pressure in Pascals. Humidity is optional and only read for the BME280, in percent relative humidity.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dev</td><td>Driver handle. </td></tr>
+    <tr><td class="paramname">temperature</td><td>[out] Temperature in degrees Celsius. </td></tr>
+    <tr><td class="paramname">pressure</td><td>[out] Pressure in Pascals. </td></tr>
+    <tr><td class="paramname">humidity</td><td>[out] Optional relative humidity in percent. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> when data was read and compensated. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="bmp280_8c_source.html#l00340">340</a> pliku <a class="el" href="bmp280_8c_source.html">bmp280.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><b>bmp280_lib</b></li><li class="navelem"><a href="bmp280_8h.html">bmp280.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,401 @@
+  % Handle batch mode
+  \batchmode
+  % to overcome problems with too many open files
+  \let\mypdfximage\pdfximage\def\pdfximage{\immediate\mypdfximage}
+  \RequirePackage{iftex}
+  \ifLuaTeX
+    \directlua{pdf.setminorversion(7)}
+  \fi
+  \ifXeTeX
+    \special{pdf:minorversion 7}
+  \fi
+  \ifPDFTeX
+    \pdfminorversion=7
+  \fi
+  % Set document class depending on configuration
+  \documentclass[twoside]{book}
+  % Packages required by doxygen
+  \makeatletter
+  \providecommand\IfFormatAtLeastTF{\@ifl@t@r\fmtversion}
+  % suppress package identification of infwarerr as it contains the word "warning"
+  \let\@@protected@wlog\protected@wlog
+  \def\protected@wlog#1{\wlog{package info suppressed}}
+  \RequirePackage{infwarerr}
+  \let\protected@wlog\@@protected@wlog
+  \makeatother
+  \IfFormatAtLeastTF{2016/01/01}{}{\usepackage{fixltx2e}} % for \textsubscript
+  \ifPDFTeX
+    \IfFormatAtLeastTF{2015/01/01}{\pdfsuppresswarningpagegroup=1}{}
+  \fi
+  \usepackage{doxygen}
+  \usepackage{graphicx}
+  \iftutex
+    \usepackage{fontspec}
+    \defaultfontfeatures{Ligatures={TeX}}
+    \usepackage{unicode-math}
+  \else
+    \usepackage[utf8]{inputenc}
+  \fi
+  \usepackage{makeidx}
+  \PassOptionsToPackage{warn}{textcomp}
+  \usepackage{textcomp}
+  \usepackage[nointegrals]{wasysym}
+  \usepackage{ifxetex}
+  % NLS support packages
+  \usepackage[polish]{babel}
+\let\lll\undefined
+  % Define default fonts
+  % Font selection
+  \iftutex
+  \else
+    \usepackage[T1]{fontenc}
+  \fi
+  % set main and monospaced font
+  \usepackage[scaled=.90]{helvet}
+\usepackage{courier}
+\renewcommand{\familydefault}{\sfdefault}
+  \doxyallsectionsfont{%
+    \fontseries{bc}\selectfont%
+    \color{darkgray}%
+  }
+  \renewcommand{\DoxyLabelFont}{%
+    \fontseries{bc}\selectfont%
+    \color{darkgray}%
+  }
+  \newcommand{\+}{\discretionary{\mbox{\scriptsize$\hookleftarrow$}}{}{}}
+   % Arguments of doxygenemoji:
+   % 1) ':<text>:' form of the emoji, already LaTeX-escaped
+   % 2) file with the name of the emoji without the .png extension
+   % in case image exist use this otherwise use the ':<text>:' form
+   \newcommand{\doxygenemoji}[2]{%
+     \IfFileExists{./#2.png}{\raisebox{-0.1em}{\includegraphics[height=0.9em]{./#2.png}}}{#1}%
+   }
+  % Page & text layout
+  \usepackage{geometry}
+  \geometry{%
+    a4paper,%
+    top=2.5cm,%
+    bottom=2.5cm,%
+    left=2.5cm,%
+    right=2.5cm%
+  }
+  \usepackage{changepage}
+  % Allow a bit of overflow to go unnoticed by other means
+  \tolerance=750
+  \hfuzz=15pt
+  \hbadness=750
+  \setlength{\emergencystretch}{15pt}
+  \setlength{\parindent}{0cm}
+  \newcommand{\doxynormalparskip}{\setlength{\parskip}{3ex plus 2ex minus 2ex}}
+  \newcommand{\doxytocparskip}{\setlength{\parskip}{1ex plus 0ex minus 0ex}}
+  \doxynormalparskip
+  % Redefine paragraph/subparagraph environments, using sectsty fonts
+  \makeatletter
+  \renewcommand{\paragraph}{%
+    \@startsection{paragraph}{4}{0ex}{-1.0ex}{1.0ex}{%
+      \normalfont\normalsize\bfseries\SS@parafont%
+    }%
+  }
+  \renewcommand{\subparagraph}{%
+    \@startsection{subparagraph}{5}{0ex}{-1.0ex}{1.0ex}{%
+      \normalfont\normalsize\bfseries\SS@subparafont%
+    }%
+  }
+  \makeatother
+  \makeatletter
+  \newcommand\hrulefilll{\leavevmode\leaders\hrule\hskip 0pt plus 1filll\kern\z@}
+  \makeatother
+  % Headers & footers
+  \usepackage{fancyhdr}
+  \pagestyle{fancyplain}
+  \renewcommand{\footrulewidth}{0.4pt}
+  \fancypagestyle{fancyplain}{
+    \fancyhf{}
+    \fancyhead[LE, RO]{\bfseries\thepage}
+    \fancyhead[LO]{\bfseries\rightmark}
+    \fancyhead[RE]{\bfseries\leftmark}
+    \fancyfoot[LO, RE]{\bfseries\scriptsize Wygenerowano za pomocą Doxygen }
+  }
+  \fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyfoot[LO, RE]{\bfseries\scriptsize Wygenerowano za pomocą Doxygen }
+    \renewcommand{\headrulewidth}{0pt}
+  }
+  \pagestyle{fancyplain}
+  \renewcommand{\chaptermark}[1]{%
+    \markboth{#1}{}%
+  }
+  \renewcommand{\sectionmark}[1]{%
+    \markright{\thesection\ #1}%
+  }
+  % ToC, LoF, LoT, bibliography, and index
+  % Indices & bibliography
+  \usepackage[numbers]{natbib}
+  \usepackage[titles]{tocloft}
+  \setcounter{tocdepth}{3}
+  \setcounter{secnumdepth}{5}
+  % creating indexes
+  \makeindex
+  \ifPDFTeX
+\usepackage{newunicodechar}
+  \makeatletter
+    \def\doxynewunicodechar#1#2{%
+    \@tempswafalse
+    \edef\nuc@tempa{\detokenize{#1}}%
+    \if\relax\nuc@tempa\relax
+      \nuc@emptyargerr
+    \else
+      \edef\@tempb{\expandafter\@car\nuc@tempa\@nil}%
+      \nuc@check
+      \if@tempswa
+        \@namedef{u8:\nuc@tempa}{#2}%
+      \fi
+    \fi
+  }
+  \makeatother
+  \doxynewunicodechar{⁻}{${}^{-}$}% Superscript minus
+  \doxynewunicodechar{²}{${}^{2}$}% Superscript two
+  \doxynewunicodechar{³}{${}^{3}$}% Superscript three
+\fi
+  % Hyperlinks
+    % Hyperlinks (required, but should be loaded last)
+    \ifPDFTeX
+      \usepackage[pdftex,pagebackref=true]{hyperref}
+    \else
+      \ifXeTeX
+        \usepackage[xetex,pagebackref=true]{hyperref}
+      \else
+        \ifLuaTeX
+          \usepackage[luatex,pagebackref=true]{hyperref}
+        \else
+          \usepackage[ps2pdf,pagebackref=true]{hyperref}
+        \fi
+      \fi
+    \fi
+    \hypersetup{%
+      colorlinks=true,%
+      linkcolor=blue,%
+      citecolor=blue,%
+      unicode,%
+      pdftitle={BEKO Pager Firmware},%
+      pdfsubject={STM32 firmware for BEKO pager node}%
+    }
+  % Custom commands used by the header
+  % Custom commands
+  \newcommand{\clearemptydoublepage}{%
+    \newpage{\pagestyle{empty}\cleardoublepage}%
+  }
+  % caption style definition
+  \usepackage{caption}
+  \captionsetup{labelsep=space,justification=centering,font={bf},singlelinecheck=off,skip=4pt,position=top}
+  % in page table of contents
+  \IfFormatAtLeastTF{2023/05/01}{\usepackage[deeplevels]{etoc}}{\usepackage[deeplevels]{etoc_doxygen}}
+  \etocsettocstyle{\doxytocparskip}{\doxynormalparskip}
+  \etocsetlevel{subsubsubsection}{4}
+  \etocsetlevel{subsubsubsubsection}{5}
+  \etocsetlevel{subsubsubsubsubsection}{6}
+  \etocsetlevel{subsubsubsubsubsubsection}{7}
+  \etocsetlevel{paragraph}{8}
+  \etocsetlevel{subparagraph}{9}
+  % prevent numbers overlap the titles in toc
+  \renewcommand{\numberline}[1]{#1~}
+% End of preamble, now comes the document contents
+%===== C O N T E N T S =====
+\begin{document}
+  \raggedbottom
+  % Titlepage & ToC
+    % To avoid duplicate page anchors due to reuse of same numbers for
+    % the index (be it as roman numbers)
+    \hypersetup{pageanchor=false,
+                bookmarksnumbered=true,
+                pdfencoding=unicode
+               }
+  \pagenumbering{alph}
+  \begin{titlepage}
+  \vspace*{7cm}
+  \begin{center}%
+  {\Large BEKO Pager Firmware}\\
+  \vspace*{1cm}
+  {\large Wygenerowano za pomocą Doxygen 1.15.0}\\
+  \end{center}
+  \end{titlepage}
+  \clearemptydoublepage
+  \pagenumbering{roman}
+  \tableofcontents
+  \clearemptydoublepage
+  \pagenumbering{arabic}
+  % re-enable anchors again
+  \hypersetup{pageanchor=true}
+%--- Begin generated contents ---
+\input{index}
+\input{md_README}
+\input{md_Core_2App_2security_2SECURITY__ARCHITECTURE}
+\input{md_Core_2App_2security_2STRIDE__CIA__ANALYSIS}
+\input{md_Core_2App_2security_2THREAT__MODEL}
+\input{md_Core_2App_2security_2TODO}
+\chapter{Struktura katalogów}
+\input{dirs}
+\chapter{Indeks struktur danych}
+\input{annotated}
+\chapter{Indeks plików}
+\input{files}
+\chapter{Dokumentacja katalogów}
+\input{dir_358a96ec289b26a3ec39132274b023b0}
+\input{dir_b491a55cf3c9ae3ce781f510095cd424}
+\input{dir_45024123d6afdc05bb9645902c1ec7cc}
+\input{dir_a2e8606bee7d2eaf4a9e334d73381ef3}
+\input{dir_3aa3598b8fe5b4c76a427191eb55bc88}
+\input{dir_4708a5e97be5c562a34184c0e9880bf6}
+\chapter{Dokumentacja struktur danych}
+\input{structbmp280__api__data__t}
+\input{structBMP280__HandleTypedef}
+\input{structbmp280__params__t}
+\input{structbutton__hw__t}
+\input{structbutton__state__t}
+\input{structi2c__mem__store__cfg__t}
+\input{structi2c__mem__store__log__record__t}
+\input{structi2c__mem__store__meta__wire__t}
+\input{structi2c__mem__store__t}
+\input{structi2c__mem__store__trusted__device__t}
+\input{structlaviet__frame__t}
+\input{structlaviet__sha256__ctx__t}
+\input{structlcd__main__msg__t}
+\input{structlcd__state__t}
+\input{structled__array__ctx__t}
+\input{structmenu__item__t}
+\input{structmenu__notification__t}
+\input{structmenu__page__t}
+\input{structmenu__radio__action__binding__t}
+\input{structmenu__state__t}
+\input{structradio__context__t}
+\input{structradio__fsk__cfg__t}
+\input{structradio__fsk__context__t}
+\input{structradio__gpio__t}
+\input{structradio__hw__cfg__t}
+\input{structradio__lora__cfg__t}
+\input{structradio__main__cmd__sync__t}
+\input{structradio__main__cmd__t}
+\input{structradio__main__ctx__t}
+\input{structradio__main__fsk__cfg__t}
+\input{structradio__main__ook__cfg__t}
+\input{structradio__main__runtime__cfg__t}
+\input{structradio__ook__cfg__t}
+\input{structradio__ook__context__t}
+\input{structradio__packet__t}
+\input{structsecurity__cmd__sync__t}
+\input{structsecurity__cmd__t}
+\input{structsecurity__key__wire__t}
+\input{structsecurity__radio__store__wire__t}
+\input{structsecurity__runtime__cfg__t}
+\input{structsecurity__settings__wire__t}
+\input{structsecurity__store__wire__t}
+\input{structsecurity__trusted__entry__t}
+\input{structst33ktpm2x__cfg__t}
+\input{structst33ktpm2x__t}
+\input{structsx1276__bus__t}
+\input{structtrusted__info__t}
+\chapter{Dokumentacja plików}
+\input{app_8c_source}
+\input{app_8h}
+\input{app_8h_source}
+\input{bmp280_8c_source}
+\input{bmp280_8h}
+\input{bmp280_8h_source}
+\input{bmp280__api_8c_source}
+\input{bmp280__api_8h}
+\input{bmp280__api_8h_source}
+\input{bmp280__main_8c_source}
+\input{bmp280__main_8h}
+\input{bmp280__main_8h_source}
+\input{button__main_8c_source}
+\input{button__main_8h}
+\input{button__main_8h_source}
+\input{i2c__mem__store_8c}
+\input{i2c__mem__store_8c_source}
+\input{i2c__mem__store_8h}
+\input{i2c__mem__store_8h_source}
+\input{laviet__crypto_8c}
+\input{laviet__crypto_8c_source}
+\input{laviet__crypto_8h}
+\input{laviet__crypto_8h_source}
+\input{laviet__frame_8c}
+\input{laviet__frame_8c_source}
+\input{laviet__frame_8h}
+\input{laviet__frame_8h_source}
+\input{lcd_8c_source}
+\input{lcd_8h}
+\input{lcd_8h_source}
+\input{lcd__main_8c_source}
+\input{lcd__main_8h}
+\input{lcd__main_8h_source}
+\input{led__array__lib_8c}
+\input{led__array__lib_8c_source}
+\input{led__array__lib_8h}
+\input{led__array__lib_8h_source}
+\input{led__array__lib__config_8h}
+\input{led__array__lib__config_8h_source}
+\input{led__array__main_8c_source}
+\input{led__array__main_8h}
+\input{led__array__main_8h_source}
+\input{menu__main_8c_source}
+\input{menu__main_8h}
+\input{menu__main_8h_source}
+\input{pager__config_8h}
+\input{pager__config_8h_source}
+\input{radio__sx1276_8c}
+\input{radio__sx1276_8c_source}
+\input{radio__sx1276_8h}
+\input{radio__sx1276_8h_source}
+\input{radio__sx1276__regs_8h}
+\input{radio__sx1276__regs_8h_source}
+\input{radio__fsk_8c}
+\input{radio__fsk_8c_source}
+\input{radio__fsk_8h}
+\input{radio__fsk_8h_source}
+\input{radio__lora_8c}
+\input{radio__lora_8c_source}
+\input{radio__lora_8h}
+\input{radio__lora_8h_source}
+\input{radio__ook_8c}
+\input{radio__ook_8c_source}
+\input{radio__ook_8h}
+\input{radio__ook_8h_source}
+\input{radio__lib_8c}
+\input{radio__lib_8c_source}
+\input{radio__lib_8h}
+\input{radio__lib_8h_source}
+\input{radio__lib__config_8h}
+\input{radio__lib__config_8h_source}
+\input{radio__test_8c}
+\input{radio__test_8c_source}
+\input{radio__test_8h}
+\input{radio__test_8h_source}
+\input{radio__main_8c_source}
+\input{radio__main_8h}
+\input{radio__main_8h_source}
+\input{security__main_8c_source}
+\input{security__main_8h}
+\input{security__main_8h_source}
+\input{service_8c_source}
+\input{service_8h}
+\input{service_8h_source}
+\input{st33ktpm2x_8c}
+\input{st33ktpm2x_8c_source}
+\input{st33ktpm2x_8h}
+\input{st33ktpm2x_8h_source}
+\input{tof__main_8c_source}
+\input{tof__main_8h}
+\input{tof__main_8h_source}
+\input{vl53l3cx__lib_8c_source}
+\input{vl53l3cx__lib_8h}
+\input{vl53l3cx__lib_8h_source}
+%--- End generated contents ---
+% Index
+  \backmatter
+  \newpage
+  \phantomsection
+  \clearemptydoublepage
+  \addcontentsline{toc}{chapter}{\indexname}
+  \printindex
+% Required for some languages (in combination with latexdocumentpre from the header)
+\end{document}

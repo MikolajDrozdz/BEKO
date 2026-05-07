@@ -1,0 +1,63 @@
+\doxysection{app.\+h}
+\hypertarget{app_8h_source}{}\label{app_8h_source}\index{Core/App/app.h@{Core/App/app.h}}
+\mbox{\hyperlink{app_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00006}00006\ \textcolor{preprocessor}{\#ifndef\ APP\_APP\_H\_}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00007}00007\ \textcolor{preprocessor}{\#define\ APP\_APP\_H\_}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00010}00010\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00011}00011\ \textcolor{preprocessor}{\#include\ "{}stm32u5xx\_hal.h"{}}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00016}00016\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00017}00017\ \mbox{\hyperlink{app_8h_add3190cf715f513666f4be42874d91e2}{app\_init}}(\ \textcolor{keywordtype}{void}\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00022}00022\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00023}00023\ \mbox{\hyperlink{app_8h_a630544a7f0a2cc40d8a7fefab7e2fe70}{app\_main}}(\ \textcolor{keywordtype}{void}\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00028}00028\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00029}00029\ \mbox{\hyperlink{app_8h_a61b6a4129efaad641ca7419e58f81ef1}{app\_freertos\_init}}(\ \textcolor{keywordtype}{void}\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00030}00030\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00036}00036\ \textcolor{keywordtype}{bool}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00037}00037\ \mbox{\hyperlink{app_8h_aa82573ffda4dca2a87da84b374c20ab8}{app\_i2c\_lock}}(\ uint32\_t\ timeout\_ms\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00042}00042\ \textcolor{keywordtype}{void}}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00043}00043\ \mbox{\hyperlink{app_8h_af477839583a45714e98bfc804c2efa27}{app\_i2c\_unlock}}(\ \textcolor{keywordtype}{void}\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00054}00054\ HAL\_StatusTypeDef}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00055}00055\ \mbox{\hyperlink{app_8h_a4cffe8ca6c33d33a23f0213c1d462217}{app\_i2c\_master\_transmit}}(\ I2C\_HandleTypeDef\ *hi2c,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00056}00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ device\_address,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00057}00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00058}00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ size,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00059}00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ timeout\_ms\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00070}00070\ HAL\_StatusTypeDef}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00071}00071\ \mbox{\hyperlink{app_8h_ab36ecf7abe8a18d604c9ffc89f5a3c90}{app\_i2c\_master\_receive}}(\ I2C\_HandleTypeDef\ *hi2c,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ device\_address,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ size,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ timeout\_ms\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00076}00076\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00088}00088\ HAL\_StatusTypeDef}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00089}00089\ \mbox{\hyperlink{app_8h_a981e237b1eac69791e1186fda8ec68f8}{app\_i2c\_mem\_write}}(\ I2C\_HandleTypeDef\ *hi2c,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00090}00090\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ device\_address,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00091}00091\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ mem\_address,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00092}00092\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ mem\_address\_size,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00093}00093\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00094}00094\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ size,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00095}00095\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ timeout\_ms\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00108}00108\ HAL\_StatusTypeDef}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00109}00109\ \mbox{\hyperlink{app_8h_a695e2060bf156392e15c58447fa076b3}{app\_i2c\_mem\_read}}(\ I2C\_HandleTypeDef\ *hi2c,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00110}00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ device\_address,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00111}00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ mem\_address,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00112}00112\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ mem\_address\_size,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00113}00113\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00114}00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ size,}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00115}00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ timeout\_ms\ );}
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00116}00116\ }
+\DoxyCodeLine{\Hypertarget{app_8h_source_l00117}00117\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_APP\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

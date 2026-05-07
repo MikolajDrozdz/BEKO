@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Plik źródłowy Core/App/security_main.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('security__main_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">security_main.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="security__main_8h.html">Idź do dokumentacji tego pliku.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#ifndef APP_SECURITY_MAIN_H_</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#define APP_SECURITY_MAIN_H_</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="radio__main_8h.html">radio_main.h</a>&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;stdbool.h&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;stdint.h&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span></div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="};">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html">   17</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>{</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html#a5fa2415cf4f32993c965647b559b544f">   19</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structtrusted__info__t.html#a5fa2415cf4f32993c965647b559b544f">in_use</a>; </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html#a12bd386fd523eeda642820413dcece10">   20</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structtrusted__info__t.html#a12bd386fd523eeda642820413dcece10">is_master</a>; </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html#abd6923907520cb194caaf1ef43073364">   21</a></span>    uint8_t <a class="code hl_variable" href="structtrusted__info__t.html#abd6923907520cb194caaf1ef43073364">slot</a>; </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html#aeb02690c9f9b8cdaee2d1f546263eb2b">   22</a></span>    uint32_t <a class="code hl_variable" href="structtrusted__info__t.html#aeb02690c9f9b8cdaee2d1f546263eb2b">node_id</a>; </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html#a2fbe1761f7fe2c66b75b515f06b2f76b">   23</a></span>    uint8_t <a class="code hl_variable" href="structtrusted__info__t.html#a2fbe1761f7fe2c66b75b515f06b2f76b">code_len</a>; </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structtrusted__info__t.html#af0fca81fca4f230cae5cf3db78893128">   24</a></span>    uint8_t <a class="code hl_variable" href="structtrusted__info__t.html#af0fca81fca4f230cae5cf3db78893128">code</a>[8]; </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>} <a class="code hl_struct" href="structtrusted__info__t.html">trusted_info_t</a>;</div>
+</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span></div>
+<div class="foldopen" id="foldopen00030" data-start="{" data-end="};">
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">   30</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>{</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134">   32</a></span>    <a class="code hl_enumvalue" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134">SECURITY_NOTIFY_POPUP</a> = 0, </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa">   33</a></span>    <a class="code hl_enumvalue" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa">SECURITY_NOTIFY_BADGE</a> = 1 </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>} <a class="code hl_enumeration" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a>;</div>
+</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span></div>
+<div class="foldopen" id="foldopen00039" data-start="{" data-end="};">
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771">   39</a></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5">   41</a></span>    <a class="code hl_enumvalue" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5">SECURITY_FRAME_KEY_MODE_SHARED</a> = 0, </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684">   42</a></span>    <a class="code hl_enumvalue" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684">SECURITY_FRAME_KEY_MODE_PAIR_V1_32</a> = 1 </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>} <a class="code hl_enumeration" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771">security_frame_key_mode_t</a>;</div>
+</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span></div>
+<div class="foldopen" id="foldopen00048" data-start="{" data-end="};">
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html">   48</a></span><span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>{</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a2dbe7463349f84d116c1f25e2e9ba027">   50</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a2dbe7463349f84d116c1f25e2e9ba027">coding_enabled</a>; </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#adbfd578d8f0882cb768e8bedb10b3bdd">   51</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#adbfd578d8f0882cb768e8bedb10b3bdd">fh_enabled</a>; </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#acf4e54f09cb7da3404f3a21971c4edaa">   52</a></span>    uint32_t <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#acf4e54f09cb7da3404f3a21971c4edaa">fh_period_ms</a>; </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a0ab9ab1cc0a38c67d09c9ebfebe670eb">   53</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a0ab9ab1cc0a38c67d09c9ebfebe670eb">auto_ping_enabled</a>; </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a654ffd1797b943c53db8e2aecfb61898">   54</a></span>    uint32_t <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a654ffd1797b943c53db8e2aecfb61898">auto_ping_period_ms</a>; </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a836268a1850253e7f0d5aab38fe96ab9">   55</a></span>    <a class="code hl_enumeration" href="radio__main_8h.html#a924b68fe454425e6115096a3568341b6">radio_main_auto_ping_mode_t</a> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a836268a1850253e7f0d5aab38fe96ab9">auto_ping_mode</a>; </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#adf9cf796c526ed33659d841a00d35447">   56</a></span>    <a class="code hl_enumeration" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#adf9cf796c526ed33659d841a00d35447">notify_mode</a>; </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a27deaae71af67200235a6f06a9a3d84a">   57</a></span>    uint8_t <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a27deaae71af67200235a6f06a9a3d84a">lora_preset</a>; </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a6ea64e49878b3e18a540e1b0ff2bda34">   58</a></span>    <a class="code hl_enumeration" href="radio__main_8h.html#a94aa5079cc936bd8622c2615177ee6e1">radio_main_modulation_t</a> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a6ea64e49878b3e18a540e1b0ff2bda34">active_modulation</a>; </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#abfa0ce16882adff3981a56126ba5f6d4">   59</a></span>    <a class="code hl_struct" href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#abfa0ce16882adff3981a56126ba5f6d4">lora</a>; </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#ac0efdc06c007576c76335b661b576217">   60</a></span>    <a class="code hl_struct" href="structradio__main__fsk__cfg__t.html">radio_main_fsk_cfg_t</a> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#ac0efdc06c007576c76335b661b576217">fsk</a>; </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#aac2ddfcf83fbd0fe477f54d1cc57a55a">   61</a></span>    <a class="code hl_struct" href="structradio__main__ook__cfg__t.html">radio_main_ook_cfg_t</a> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#aac2ddfcf83fbd0fe477f54d1cc57a55a">ook</a>; </div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structsecurity__runtime__cfg__t.html#a661a780c148d7641dc2ab54556577842">   62</a></span>    <span class="keywordtype">bool</span> <a class="code hl_variable" href="structsecurity__runtime__cfg__t.html#a661a780c148d7641dc2ab54556577842">radio_profiles_persisted</a>; </div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>} <a class="code hl_struct" href="structsecurity__runtime__cfg__t.html">security_runtime_cfg_t</a>;</div>
+</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">void</span> <a class="code hl_function" href="security__main_8h.html#a5e5d1fd009639cd21d5d6a03b5b2e45e">security_main_create_task</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a425bac2da999ce76947e64ec50f72ef9">security_main_cmd_add_device</a>(uint32_t node_id, <span class="keyword">const</span> uint8_t *code, uint8_t len);</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#af37f0b84768bbd0296afc2f093762eb4">security_main_cmd_add_gateway</a>(uint32_t node_id, <span class="keyword">const</span> uint8_t *code, uint8_t len);</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a2a00c6cfe296e91d3415fbe32bde165b">security_main_cmd_delete_device</a>(uint32_t node_id);</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span></div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#aeffd0652df1bd5ef3405f17fde25ee46">security_main_cmd_get_device</a>(uint8_t idx, <a class="code hl_struct" href="structtrusted__info__t.html">trusted_info_t</a> *out);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a445f2ffa986d1d58a8e12156b707dcef">security_main_cmd_set_coding</a>(<span class="keywordtype">bool</span> enabled);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a30ef1a7f5c57b29e2a7e407a7b5a0547">security_main_cmd_rotate_key</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span></div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a4d4763228cbd3a88becf8d04e3cfa787">security_main_cmd_set_fh</a>(<span class="keywordtype">bool</span> enabled);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span></div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a31ab4ad96996bd450ebb874fafbb8c69">security_main_cmd_set_fh_period</a>(uint32_t period_ms);</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span></div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#afdc76a209f710b0d82c527f1aa02a0bf">security_main_cmd_set_notify_mode</a>(<a class="code hl_enumeration" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a> mode);</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#ac2726382f442cef00240e4a26e8b2435">security_main_cmd_set_lora_preset</a>(uint8_t preset_id);</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a6c986cdc0094108d8a80d2a914e8b92c">security_main_cmd_set_auto_ping</a>(<span class="keywordtype">bool</span> enabled);</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#af14139ea0f2c92859a7b507da14478d9">security_main_cmd_set_auto_ping_period</a>(uint32_t period_ms);</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span></div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a907918d943b589ec9a6e1a053793525d">security_main_cmd_set_auto_ping_mode</a>(<a class="code hl_enumeration" href="radio__main_8h.html#a924b68fe454425e6115096a3568341b6">radio_main_auto_ping_mode_t</a> mode);</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span></div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a77c76eb3074f4d6ffd848f1644d59b54">security_main_cmd_set_radio_runtime_cfg</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structradio__main__runtime__cfg__t.html">radio_main_runtime_cfg_t</a> *cfg);</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span></div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a3f302ce6a78b4a956b7d00324729c1f2">security_main_cmd_get_runtime_cfg</a>(<a class="code hl_struct" href="structsecurity__runtime__cfg__t.html">security_runtime_cfg_t</a> *cfg_out);</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a4a1e053738c3cce21920f949c108e268">security_main_get_network_key</a>(uint8_t key_out[16]);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span></div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a795e3bb5f5fcabb53835162f95d67256">security_main_get_peer_link_key</a>(uint32_t local_node_id, uint32_t peer_node_id, uint8_t key_out[16]);</div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span></div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#aa4189d6354ce14afa54109f0c4b313e7">security_main_get_frame_keys_mode</a>(uint16_t local_id,</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>                                       uint16_t peer_id,</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>                                       <a class="code hl_enumeration" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771">security_frame_key_mode_t</a> mode,</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                                       uint8_t enc_key_out[16],</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                                       uint8_t hmac_key_out[32]);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span></div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a6a23f7cd61ee62ef92636d6278d0cad8">security_main_get_frame_keys_for_code</a>(uint16_t local_id,</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>                                           uint16_t peer_id,</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>                                           <a class="code hl_enumeration" href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771">security_frame_key_mode_t</a> mode,</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                                           <span class="keyword">const</span> uint8_t *code,</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                                           uint8_t code_len,</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                                           uint8_t enc_key_out[16],</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                                           uint8_t hmac_key_out[32]);</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a62501ee7d71d2d76a2475b161c86a88d">security_main_get_frame_keys</a>(uint16_t local_id,</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                                  uint16_t peer_id,</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                                  <span class="keywordtype">bool</span> use_pair_link,</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                                  uint8_t enc_key_out[16],</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>                                  uint8_t hmac_key_out[32]);</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span></div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a94c9da553ec4db79b7fcf2a9d65ec40d">security_main_get_gateway_counter</a>(uint32_t *rx_counter_out, uint32_t *tx_counter_out);</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span></div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a9654b4edf718ae5c617a46ad4b32de8d">security_main_commit_gateway_counter</a>(uint32_t rx_counter, uint32_t tx_counter);</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span></div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#a3a298bb9b01e50a594a79a3018a7eb66">security_main_log_message</a>(int16_t rssi_dbm, <span class="keyword">const</span> uint8_t *payload, uint8_t payload_len);</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span></div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="keywordtype">bool</span> <a class="code hl_function" href="security__main_8h.html#ae37167b38ba5dda48e8bbdd7dda5ff59">security_main_get_tpm_ready</a>(<span class="keywordtype">bool</span> *ready_out);</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="preprocessor">#endif </span><span class="comment">/* APP_SECURITY_MAIN_H_ */</span><span class="preprocessor"></span></div>
+<div class="ttc" id="aradio__main_8h_html"><div class="ttname"><a href="radio__main_8h.html">radio_main.h</a></div><div class="ttdoc">Application radio task, runtime profile and command API.</div></div>
+<div class="ttc" id="aradio__main_8h_html_a924b68fe454425e6115096a3568341b6"><div class="ttname"><a href="radio__main_8h.html#a924b68fe454425e6115096a3568341b6">radio_main_auto_ping_mode_t</a></div><div class="ttdeci">radio_main_auto_ping_mode_t</div><div class="ttdoc">Encoding used for the periodic automatic ping feature.</div><div class="ttdef"><b>Definicja</b> <a href="radio__main_8h_source.html#l00030">radio_main.h:31</a></div></div>
+<div class="ttc" id="aradio__main_8h_html_a94aa5079cc936bd8622c2615177ee6e1"><div class="ttname"><a href="radio__main_8h.html#a94aa5079cc936bd8622c2615177ee6e1">radio_main_modulation_t</a></div><div class="ttdeci">radio_main_modulation_t</div><div class="ttdoc">Rodziny modulacji zarządzane przez warstwę aplikacyjną.</div><div class="ttdef"><b>Definicja</b> <a href="radio__main_8h_source.html#l00020">radio_main.h:21</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a2a00c6cfe296e91d3415fbe32bde165b"><div class="ttname"><a href="security__main_8h.html#a2a00c6cfe296e91d3415fbe32bde165b">security_main_cmd_delete_device</a></div><div class="ttdeci">bool security_main_cmd_delete_device(uint32_t node_id)</div><div class="ttdoc">Delete a trusted device entry by node identifier.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00441">security_main.c:441</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a30ef1a7f5c57b29e2a7e407a7b5a0547"><div class="ttname"><a href="security__main_8h.html#a30ef1a7f5c57b29e2a7e407a7b5a0547">security_main_cmd_rotate_key</a></div><div class="ttdeci">bool security_main_cmd_rotate_key(void)</div><div class="ttdoc">Rotate the current network key seed.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00487">security_main.c:487</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a31ab4ad96996bd450ebb874fafbb8c69"><div class="ttname"><a href="security__main_8h.html#a31ab4ad96996bd450ebb874fafbb8c69">security_main_cmd_set_fh_period</a></div><div class="ttdeci">bool security_main_cmd_set_fh_period(uint32_t period_ms)</div><div class="ttdoc">Persist the frequency hopping period.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00508">security_main.c:508</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a34060fea8432016b9cd4d2912e574771"><div class="ttname"><a href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771">security_frame_key_mode_t</a></div><div class="ttdeci">security_frame_key_mode_t</div><div class="ttdoc">Key derivation mode used for LAVIET frame encryption and MAC keys.</div><div class="ttdef"><b>Definicja</b> <a href="#l00039">security_main.h:40</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5"><div class="ttname"><a href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771aa5fefa8f1935b99b57f28956e9f68ec5">SECURITY_FRAME_KEY_MODE_SHARED</a></div><div class="ttdeci">@ SECURITY_FRAME_KEY_MODE_SHARED</div><div class="ttdoc">Use the shared frame root key.</div><div class="ttdef"><b>Definicja</b> <a href="#l00041">security_main.h:41</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684"><div class="ttname"><a href="security__main_8h.html#a34060fea8432016b9cd4d2912e574771abcc4533a0a387e6de0c83a46fe99b684">SECURITY_FRAME_KEY_MODE_PAIR_V1_32</a></div><div class="ttdeci">@ SECURITY_FRAME_KEY_MODE_PAIR_V1_32</div><div class="ttdoc">Derive keys from a 32-bit pair code.</div><div class="ttdef"><b>Definicja</b> <a href="#l00042">security_main.h:42</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a3a298bb9b01e50a594a79a3018a7eb66"><div class="ttname"><a href="security__main_8h.html#a3a298bb9b01e50a594a79a3018a7eb66">security_main_log_message</a></div><div class="ttdeci">bool security_main_log_message(int16_t rssi_dbm, const uint8_t *payload, uint8_t payload_len)</div><div class="ttdoc">Append a received message to the protected message log.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00879">security_main.c:879</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a3f302ce6a78b4a956b7d00324729c1f2"><div class="ttname"><a href="security__main_8h.html#a3f302ce6a78b4a956b7d00324729c1f2">security_main_cmd_get_runtime_cfg</a></div><div class="ttdeci">bool security_main_cmd_get_runtime_cfg(security_runtime_cfg_t *cfg_out)</div><div class="ttdoc">Read the current security runtime configuration.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00590">security_main.c:590</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a425bac2da999ce76947e64ec50f72ef9"><div class="ttname"><a href="security__main_8h.html#a425bac2da999ce76947e64ec50f72ef9">security_main_cmd_add_device</a></div><div class="ttdeci">bool security_main_cmd_add_device(uint32_t node_id, const uint8_t *code, uint8_t len)</div><div class="ttdoc">Add or update a trusted device entry.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00405">security_main.c:405</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a445f2ffa986d1d58a8e12156b707dcef"><div class="ttname"><a href="security__main_8h.html#a445f2ffa986d1d58a8e12156b707dcef">security_main_cmd_set_coding</a></div><div class="ttdeci">bool security_main_cmd_set_coding(bool enabled)</div><div class="ttdoc">Persist and apply protected/coded traffic setting.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00476">security_main.c:476</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a4a1e053738c3cce21920f949c108e268"><div class="ttname"><a href="security__main_8h.html#a4a1e053738c3cce21920f949c108e268">security_main_get_network_key</a></div><div class="ttdeci">bool security_main_get_network_key(uint8_t key_out[16])</div><div class="ttdoc">Copy the active 128-bit network key.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00612">security_main.c:612</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a4d4763228cbd3a88becf8d04e3cfa787"><div class="ttname"><a href="security__main_8h.html#a4d4763228cbd3a88becf8d04e3cfa787">security_main_cmd_set_fh</a></div><div class="ttdeci">bool security_main_cmd_set_fh(bool enabled)</div><div class="ttdoc">Persist and apply frequency hopping setting.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00497">security_main.c:497</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a5e5d1fd009639cd21d5d6a03b5b2e45e"><div class="ttname"><a href="security__main_8h.html#a5e5d1fd009639cd21d5d6a03b5b2e45e">security_main_create_task</a></div><div class="ttdeci">void security_main_create_task(void)</div><div class="ttdoc">Create the security task and command queue.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00367">security_main.c:367</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a62501ee7d71d2d76a2475b161c86a88d"><div class="ttname"><a href="security__main_8h.html#a62501ee7d71d2d76a2475b161c86a88d">security_main_get_frame_keys</a></div><div class="ttdeci">bool security_main_get_frame_keys(uint16_t local_id, uint16_t peer_id, bool use_pair_link, uint8_t enc_key_out[16], uint8_t hmac_key_out[32])</div><div class="ttdoc">Derive frame keys using either shared or pair-link material.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00816">security_main.c:816</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a6a23f7cd61ee62ef92636d6278d0cad8"><div class="ttname"><a href="security__main_8h.html#a6a23f7cd61ee62ef92636d6278d0cad8">security_main_get_frame_keys_for_code</a></div><div class="ttdeci">bool security_main_get_frame_keys_for_code(uint16_t local_id, uint16_t peer_id, security_frame_key_mode_t mode, const uint8_t *code, uint8_t code_len, uint8_t enc_key_out[16], uint8_t hmac_key_out[32])</div><div class="ttdoc">Derive frame keys from an explicit pairing code.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00798">security_main.c:798</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a6c986cdc0094108d8a80d2a914e8b92c"><div class="ttname"><a href="security__main_8h.html#a6c986cdc0094108d8a80d2a914e8b92c">security_main_cmd_set_auto_ping</a></div><div class="ttdeci">bool security_main_cmd_set_auto_ping(bool enabled)</div><div class="ttdoc">Persist and apply automatic ping enable state.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00541">security_main.c:541</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a77c76eb3074f4d6ffd848f1644d59b54"><div class="ttname"><a href="security__main_8h.html#a77c76eb3074f4d6ffd848f1644d59b54">security_main_cmd_set_radio_runtime_cfg</a></div><div class="ttdeci">bool security_main_cmd_set_radio_runtime_cfg(const radio_main_runtime_cfg_t *cfg)</div><div class="ttdoc">Persist a full radio runtime configuration snapshot.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00574">security_main.c:574</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a795e3bb5f5fcabb53835162f95d67256"><div class="ttname"><a href="security__main_8h.html#a795e3bb5f5fcabb53835162f95d67256">security_main_get_peer_link_key</a></div><div class="ttdeci">bool security_main_get_peer_link_key(uint32_t local_node_id, uint32_t peer_node_id, uint8_t key_out[16])</div><div class="ttdoc">Derive a peer link key for two node identifiers.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00676">security_main.c:676</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a907918d943b589ec9a6e1a053793525d"><div class="ttname"><a href="security__main_8h.html#a907918d943b589ec9a6e1a053793525d">security_main_cmd_set_auto_ping_mode</a></div><div class="ttdeci">bool security_main_cmd_set_auto_ping_mode(radio_main_auto_ping_mode_t mode)</div><div class="ttdoc">Persist the automatic ping payload mode.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00563">security_main.c:563</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a94c9da553ec4db79b7fcf2a9d65ec40d"><div class="ttname"><a href="security__main_8h.html#a94c9da553ec4db79b7fcf2a9d65ec40d">security_main_get_gateway_counter</a></div><div class="ttdeci">bool security_main_get_gateway_counter(uint32_t *rx_counter_out, uint32_t *tx_counter_out)</div><div class="ttdoc">Read persisted gateway RX/TX counters.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00832">security_main.c:832</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_a9654b4edf718ae5c617a46ad4b32de8d"><div class="ttname"><a href="security__main_8h.html#a9654b4edf718ae5c617a46ad4b32de8d">security_main_commit_gateway_counter</a></div><div class="ttdeci">bool security_main_commit_gateway_counter(uint32_t rx_counter, uint32_t tx_counter)</div><div class="ttdoc">Persist gateway RX/TX counters after successful frame processing.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00852">security_main.c:852</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_aa4189d6354ce14afa54109f0c4b313e7"><div class="ttname"><a href="security__main_8h.html#aa4189d6354ce14afa54109f0c4b313e7">security_main_get_frame_keys_mode</a></div><div class="ttdeci">bool security_main_get_frame_keys_mode(uint16_t local_id, uint16_t peer_id, security_frame_key_mode_t mode, uint8_t enc_key_out[16], uint8_t hmac_key_out[32])</div><div class="ttdoc">Derive frame encryption and HMAC keys using a selected mode.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00782">security_main.c:782</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_ac2726382f442cef00240e4a26e8b2435"><div class="ttname"><a href="security__main_8h.html#ac2726382f442cef00240e4a26e8b2435">security_main_cmd_set_lora_preset</a></div><div class="ttdeci">bool security_main_cmd_set_lora_preset(uint8_t preset_id)</div><div class="ttdoc">Persist the selected LoRa preset.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00530">security_main.c:530</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_adab8fef5f7716a7e73c831dc6ddd18ae"><div class="ttname"><a href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a></div><div class="ttdeci">security_notify_mode_t</div><div class="ttdoc">UI delivery mode for security notifications.</div><div class="ttdef"><b>Definicja</b> <a href="#l00030">security_main.h:31</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa"><div class="ttname"><a href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18aea0905360040976ee02ba4f0cb3b3203fa">SECURITY_NOTIFY_BADGE</a></div><div class="ttdeci">@ SECURITY_NOTIFY_BADGE</div><div class="ttdoc">Prefer compact badge/status notifications.</div><div class="ttdef"><b>Definicja</b> <a href="#l00033">security_main.h:33</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134"><div class="ttname"><a href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18aea2df1d40fff17b461bda049cd3ff4a134">SECURITY_NOTIFY_POPUP</a></div><div class="ttdeci">@ SECURITY_NOTIFY_POPUP</div><div class="ttdoc">Show notifications as popups.</div><div class="ttdef"><b>Definicja</b> <a href="#l00032">security_main.h:32</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_ae37167b38ba5dda48e8bbdd7dda5ff59"><div class="ttname"><a href="security__main_8h.html#ae37167b38ba5dda48e8bbdd7dda5ff59">security_main_get_tpm_ready</a></div><div class="ttdeci">bool security_main_get_tpm_ready(bool *ready_out)</div><div class="ttdoc">Read whether TPM-backed services are ready.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00908">security_main.c:908</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_aeffd0652df1bd5ef3405f17fde25ee46"><div class="ttname"><a href="security__main_8h.html#aeffd0652df1bd5ef3405f17fde25ee46">security_main_cmd_get_device</a></div><div class="ttdeci">bool security_main_cmd_get_device(uint8_t idx, trusted_info_t *out)</div><div class="ttdoc">Read one trusted device entry.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00453">security_main.c:453</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_af14139ea0f2c92859a7b507da14478d9"><div class="ttname"><a href="security__main_8h.html#af14139ea0f2c92859a7b507da14478d9">security_main_cmd_set_auto_ping_period</a></div><div class="ttdeci">bool security_main_cmd_set_auto_ping_period(uint32_t period_ms)</div><div class="ttdoc">Persist the automatic ping period.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00552">security_main.c:552</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_af37f0b84768bbd0296afc2f093762eb4"><div class="ttname"><a href="security__main_8h.html#af37f0b84768bbd0296afc2f093762eb4">security_main_cmd_add_gateway</a></div><div class="ttdeci">bool security_main_cmd_add_gateway(uint32_t node_id, const uint8_t *code, uint8_t len)</div><div class="ttdoc">Add or update the gateway/master trusted entry.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00423">security_main.c:423</a></div></div>
+<div class="ttc" id="asecurity__main_8h_html_afdc76a209f710b0d82c527f1aa02a0bf"><div class="ttname"><a href="security__main_8h.html#afdc76a209f710b0d82c527f1aa02a0bf">security_main_cmd_set_notify_mode</a></div><div class="ttdeci">bool security_main_cmd_set_notify_mode(security_notify_mode_t mode)</div><div class="ttdoc">Persist the preferred security notification mode.</div><div class="ttdef"><b>Definicja</b> <a href="security__main_8c_source.html#l00519">security_main.c:519</a></div></div>
+<div class="ttc" id="astructradio__lora__cfg__t_html"><div class="ttname"><a href="structradio__lora__cfg__t.html">radio_lora_cfg_t</a></div><div class="ttdoc">Konfiguracja profilu LoRa.</div><div class="ttdef"><b>Definicja</b> <a href="radio__lib_8h_source.html#l00106">radio_lib.h:107</a></div></div>
+<div class="ttc" id="astructradio__main__fsk__cfg__t_html"><div class="ttname"><a href="structradio__main__fsk__cfg__t.html">radio_main_fsk_cfg_t</a></div><div class="ttdoc">Profil rodziny FSK/GFSK/MSK/GMSK trzymany przez warstwę aplikacji.</div><div class="ttdef"><b>Definicja</b> <a href="radio__main_8h_source.html#l00152">radio_main.h:153</a></div></div>
+<div class="ttc" id="astructradio__main__ook__cfg__t_html"><div class="ttname"><a href="structradio__main__ook__cfg__t.html">radio_main_ook_cfg_t</a></div><div class="ttdoc">Profil rodziny OOK przechowywany przez warstwę aplikacji.</div><div class="ttdef"><b>Definicja</b> <a href="radio__main_8h_source.html#l00171">radio_main.h:172</a></div></div>
+<div class="ttc" id="astructradio__main__runtime__cfg__t_html"><div class="ttname"><a href="structradio__main__runtime__cfg__t.html">radio_main_runtime_cfg_t</a></div><div class="ttdoc">Snapshot pełnej konfiguracji radiowej widzianej przez aplikację.</div><div class="ttdef"><b>Definicja</b> <a href="radio__main_8h_source.html#l00187">radio_main.h:188</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html">security_runtime_cfg_t</a></div><div class="ttdoc">Persistent and runtime security settings snapshot.</div><div class="ttdef"><b>Definicja</b> <a href="#l00048">security_main.h:49</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a0ab9ab1cc0a38c67d09c9ebfebe670eb"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a0ab9ab1cc0a38c67d09c9ebfebe670eb">security_runtime_cfg_t::auto_ping_enabled</a></div><div class="ttdeci">bool auto_ping_enabled</div><div class="ttdoc">Automatic ping setting.</div><div class="ttdef"><b>Definicja</b> <a href="#l00053">security_main.h:53</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a27deaae71af67200235a6f06a9a3d84a"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a27deaae71af67200235a6f06a9a3d84a">security_runtime_cfg_t::lora_preset</a></div><div class="ttdeci">uint8_t lora_preset</div><div class="ttdoc">Selected LoRa preset.</div><div class="ttdef"><b>Definicja</b> <a href="#l00057">security_main.h:57</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a2dbe7463349f84d116c1f25e2e9ba027"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a2dbe7463349f84d116c1f25e2e9ba027">security_runtime_cfg_t::coding_enabled</a></div><div class="ttdeci">bool coding_enabled</div><div class="ttdoc">Protected/coded traffic setting.</div><div class="ttdef"><b>Definicja</b> <a href="#l00050">security_main.h:50</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a654ffd1797b943c53db8e2aecfb61898"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a654ffd1797b943c53db8e2aecfb61898">security_runtime_cfg_t::auto_ping_period_ms</a></div><div class="ttdeci">uint32_t auto_ping_period_ms</div><div class="ttdoc">Automatic ping period in milliseconds.</div><div class="ttdef"><b>Definicja</b> <a href="#l00054">security_main.h:54</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a661a780c148d7641dc2ab54556577842"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a661a780c148d7641dc2ab54556577842">security_runtime_cfg_t::radio_profiles_persisted</a></div><div class="ttdeci">bool radio_profiles_persisted</div><div class="ttdoc">true when radio profiles were loaded from store.</div><div class="ttdef"><b>Definicja</b> <a href="#l00062">security_main.h:62</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a6ea64e49878b3e18a540e1b0ff2bda34"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a6ea64e49878b3e18a540e1b0ff2bda34">security_runtime_cfg_t::active_modulation</a></div><div class="ttdeci">radio_main_modulation_t active_modulation</div><div class="ttdoc">Active modulation family.</div><div class="ttdef"><b>Definicja</b> <a href="#l00058">security_main.h:58</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_a836268a1850253e7f0d5aab38fe96ab9"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#a836268a1850253e7f0d5aab38fe96ab9">security_runtime_cfg_t::auto_ping_mode</a></div><div class="ttdeci">radio_main_auto_ping_mode_t auto_ping_mode</div><div class="ttdoc">Automatic ping payload mode.</div><div class="ttdef"><b>Definicja</b> <a href="#l00055">security_main.h:55</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_aac2ddfcf83fbd0fe477f54d1cc57a55a"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#aac2ddfcf83fbd0fe477f54d1cc57a55a">security_runtime_cfg_t::ook</a></div><div class="ttdeci">radio_main_ook_cfg_t ook</div><div class="ttdoc">Persisted OOK profile.</div><div class="ttdef"><b>Definicja</b> <a href="#l00061">security_main.h:61</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_abfa0ce16882adff3981a56126ba5f6d4"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#abfa0ce16882adff3981a56126ba5f6d4">security_runtime_cfg_t::lora</a></div><div class="ttdeci">radio_lora_cfg_t lora</div><div class="ttdoc">Persisted LoRa profile.</div><div class="ttdef"><b>Definicja</b> <a href="#l00059">security_main.h:59</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_ac0efdc06c007576c76335b661b576217"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#ac0efdc06c007576c76335b661b576217">security_runtime_cfg_t::fsk</a></div><div class="ttdeci">radio_main_fsk_cfg_t fsk</div><div class="ttdoc">Persisted FSK profile.</div><div class="ttdef"><b>Definicja</b> <a href="#l00060">security_main.h:60</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_acf4e54f09cb7da3404f3a21971c4edaa"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#acf4e54f09cb7da3404f3a21971c4edaa">security_runtime_cfg_t::fh_period_ms</a></div><div class="ttdeci">uint32_t fh_period_ms</div><div class="ttdoc">Frequency hopping period in milliseconds.</div><div class="ttdef"><b>Definicja</b> <a href="#l00052">security_main.h:52</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_adbfd578d8f0882cb768e8bedb10b3bdd"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#adbfd578d8f0882cb768e8bedb10b3bdd">security_runtime_cfg_t::fh_enabled</a></div><div class="ttdeci">bool fh_enabled</div><div class="ttdoc">Frequency hopping setting.</div><div class="ttdef"><b>Definicja</b> <a href="#l00051">security_main.h:51</a></div></div>
+<div class="ttc" id="astructsecurity__runtime__cfg__t_html_adf9cf796c526ed33659d841a00d35447"><div class="ttname"><a href="structsecurity__runtime__cfg__t.html#adf9cf796c526ed33659d841a00d35447">security_runtime_cfg_t::notify_mode</a></div><div class="ttdeci">security_notify_mode_t notify_mode</div><div class="ttdoc">Security notification display mode.</div><div class="ttdef"><b>Definicja</b> <a href="#l00056">security_main.h:56</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html"><div class="ttname"><a href="structtrusted__info__t.html">trusted_info_t</a></div><div class="ttdoc">Public descriptor of one trusted pairing entry.</div><div class="ttdef"><b>Definicja</b> <a href="#l00017">security_main.h:18</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html_a12bd386fd523eeda642820413dcece10"><div class="ttname"><a href="structtrusted__info__t.html#a12bd386fd523eeda642820413dcece10">trusted_info_t::is_master</a></div><div class="ttdeci">bool is_master</div><div class="ttdoc">Entry represents the gateway/master slot.</div><div class="ttdef"><b>Definicja</b> <a href="#l00020">security_main.h:20</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html_a2fbe1761f7fe2c66b75b515f06b2f76b"><div class="ttname"><a href="structtrusted__info__t.html#a2fbe1761f7fe2c66b75b515f06b2f76b">trusted_info_t::code_len</a></div><div class="ttdeci">uint8_t code_len</div><div class="ttdoc">Number of valid bytes in code.</div><div class="ttdef"><b>Definicja</b> <a href="#l00023">security_main.h:23</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html_a5fa2415cf4f32993c965647b559b544f"><div class="ttname"><a href="structtrusted__info__t.html#a5fa2415cf4f32993c965647b559b544f">trusted_info_t::in_use</a></div><div class="ttdeci">bool in_use</div><div class="ttdoc">Slot contains a valid trusted entry.</div><div class="ttdef"><b>Definicja</b> <a href="#l00019">security_main.h:19</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html_abd6923907520cb194caaf1ef43073364"><div class="ttname"><a href="structtrusted__info__t.html#abd6923907520cb194caaf1ef43073364">trusted_info_t::slot</a></div><div class="ttdeci">uint8_t slot</div><div class="ttdoc">Logical trusted-entry slot index.</div><div class="ttdef"><b>Definicja</b> <a href="#l00021">security_main.h:21</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html_aeb02690c9f9b8cdaee2d1f546263eb2b"><div class="ttname"><a href="structtrusted__info__t.html#aeb02690c9f9b8cdaee2d1f546263eb2b">trusted_info_t::node_id</a></div><div class="ttdeci">uint32_t node_id</div><div class="ttdoc">Trusted node identifier.</div><div class="ttdef"><b>Definicja</b> <a href="#l00022">security_main.h:22</a></div></div>
+<div class="ttc" id="astructtrusted__info__t_html_af0fca81fca4f230cae5cf3db78893128"><div class="ttname"><a href="structtrusted__info__t.html#af0fca81fca4f230cae5cf3db78893128">trusted_info_t::code</a></div><div class="ttdeci">uint8_t code[8]</div><div class="ttdoc">Pairing/service code bytes.</div><div class="ttdef"><b>Definicja</b> <a href="#l00024">security_main.h:24</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="security__main_8h.html">security_main.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

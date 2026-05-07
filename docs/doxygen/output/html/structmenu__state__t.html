@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury menu_state_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structmenu__state__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury menu_state_t</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a191996e1c21694aff233dc1d9d655455" id="r_a191996e1c21694aff233dc1d9d655455"><td class="memItemLeft" align="right" valign="top">menu_page_id_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a191996e1c21694aff233dc1d9d655455">current_page</a></td></tr>
+<tr class="memitem:ab3dff52fa4866e11e4749c1eb85a5ee9" id="r_ab3dff52fa4866e11e4749c1eb85a5ee9"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab3dff52fa4866e11e4749c1eb85a5ee9">selected_idx</a></td></tr>
+<tr class="memitem:adb98a4d8d31f51c5d6d535cce5f090f5" id="r_adb98a4d8d31f51c5d6d535cce5f090f5"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb98a4d8d31f51c5d6d535cce5f090f5">led_mode</a></td></tr>
+<tr class="memitem:a39d825036aae30dc9a1a3fc360f11790" id="r_a39d825036aae30dc9a1a3fc360f11790"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39d825036aae30dc9a1a3fc360f11790">selected_device_slot</a></td></tr>
+<tr class="memitem:a5f67b1170b4c5c58f7211fc3ba06c8ba" id="r_a5f67b1170b4c5c58f7211fc3ba06c8ba"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f67b1170b4c5c58f7211fc3ba06c8ba">pending_target_node_id</a></td></tr>
+<tr class="memitem:aca2c30ec27efce5355bbc5c77947a526" id="r_aca2c30ec27efce5355bbc5c77947a526"><td class="memItemLeft" align="right" valign="top">menu_action_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aca2c30ec27efce5355bbc5c77947a526">send_target_action</a></td></tr>
+<tr class="memitem:a85f60cf1a7384d3a53253505370bf224" id="r_a85f60cf1a7384d3a53253505370bf224"><td class="memItemLeft" align="right" valign="top">menu_page_id_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a85f60cf1a7384d3a53253505370bf224">transient_parent_page</a></td></tr>
+<tr class="memitem:a7ee053da2f629917cbb1a91dbaff9558" id="r_a7ee053da2f629917cbb1a91dbaff9558"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7ee053da2f629917cbb1a91dbaff9558">pairing_network_mode</a></td></tr>
+<tr class="memitem:acf1bcd1abe81e8c69c21c72c91d705ec" id="r_acf1bcd1abe81e8c69c21c72c91d705ec"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acf1bcd1abe81e8c69c21c72c91d705ec">quick_reply_src_id</a></td></tr>
+<tr class="memitem:aa815b5e01b6a123daa64fd510abdf960" id="r_aa815b5e01b6a123daa64fd510abdf960"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa815b5e01b6a123daa64fd510abdf960">quick_reply_deadline_ms</a></td></tr>
+<tr class="memitem:ac636545f480283f3f0a4fff5639b3298" id="r_ac636545f480283f3f0a4fff5639b3298"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac636545f480283f3f0a4fff5639b3298">quick_reply_last_seconds</a></td></tr>
+<tr class="memitem:a4cc51ff1b791029ac253f4710ef30831" id="r_a4cc51ff1b791029ac253f4710ef30831"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cc51ff1b791029ac253f4710ef30831">quick_reply_text</a> [MENU_LINE_BUF_SIZE]</td></tr>
+<tr class="memitem:af096d16ffb20f95b3f73876b6af39ba9" id="r_af096d16ffb20f95b3f73876b6af39ba9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af096d16ffb20f95b3f73876b6af39ba9">tx_ack_waiting</a></td></tr>
+<tr class="memitem:aeda75b733d854a666596e16b0350422d" id="r_aeda75b733d854a666596e16b0350422d"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeda75b733d854a666596e16b0350422d">tx_sent_text</a> [MENU_LINE_BUF_SIZE]</td></tr>
+<tr class="memitem:a7a0932fe039d4fdade76b1b1b697a55e" id="r_a7a0932fe039d4fdade76b1b1b697a55e"><td class="memItemLeft" align="right" valign="top">menu_page_id_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a0932fe039d4fdade76b1b1b697a55e">pending_auth_page</a></td></tr>
+<tr class="memitem:ae74cffa7bda01ad7480a2ca622e38c2e" id="r_ae74cffa7bda01ad7480a2ca622e38c2e"><td class="memItemLeft" align="right" valign="top">menu_auth_level_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae74cffa7bda01ad7480a2ca622e38c2e">pending_auth_level</a></td></tr>
+<tr class="memitem:a5e8b6ac50138f10f963a05bc20d14a58" id="r_a5e8b6ac50138f10f963a05bc20d14a58"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e8b6ac50138f10f963a05bc20d14a58">pin_digits</a> [MENU_SETTINGS_PIN_LEN]</td></tr>
+<tr class="memitem:a9afb6021affc2a853022fab7262e26c1" id="r_a9afb6021affc2a853022fab7262e26c1"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9afb6021affc2a853022fab7262e26c1">pin_index</a></td></tr>
+<tr class="memitem:a6e8a3e83af3fa5e095358a405a0e758f" id="r_a6e8a3e83af3fa5e095358a405a0e758f"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e8a3e83af3fa5e095358a405a0e758f">operator_unlock_until_ms</a></td></tr>
+<tr class="memitem:a76b1d17a3da5e19eb2f17c9a4217d416" id="r_a76b1d17a3da5e19eb2f17c9a4217d416"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a76b1d17a3da5e19eb2f17c9a4217d416">admin_unlock_until_ms</a></td></tr>
+<tr class="memitem:a01c3155ef125eb9e4c0d81aca2f093b9" id="r_a01c3155ef125eb9e4c0d81aca2f093b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01c3155ef125eb9e4c0d81aca2f093b9">popup_enabled</a></td></tr>
+<tr class="memitem:a512698495fbf8f0226fee6c084b43776" id="r_a512698495fbf8f0226fee6c084b43776"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a512698495fbf8f0226fee6c084b43776">last_input_ms</a></td></tr>
+<tr class="memitem:a2b1b073508cfb2f145b466adb059bf5f" id="r_a2b1b073508cfb2f145b466adb059bf5f"><td class="memItemLeft" align="right" valign="top">menu_modal_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b1b073508cfb2f145b466adb059bf5f">modal</a></td></tr>
+<tr class="memitem:a5b87e536dd863f415f7a68c77730733a" id="r_a5b87e536dd863f415f7a68c77730733a"><td class="memItemLeft" align="right" valign="top">menu_action_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5b87e536dd863f415f7a68c77730733a">pending_action</a></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock">
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00370">370</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a76b1d17a3da5e19eb2f17c9a4217d416" name="a76b1d17a3da5e19eb2f17c9a4217d416"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76b1d17a3da5e19eb2f17c9a4217d416">&#9670;&#160;</a></span>admin_unlock_until_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::admin_unlock_until_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00391">391</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a191996e1c21694aff233dc1d9d655455" name="a191996e1c21694aff233dc1d9d655455"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a191996e1c21694aff233dc1d9d655455">&#9670;&#160;</a></span>current_page</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_page_id_t menu_state_t::current_page</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00372">372</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a512698495fbf8f0226fee6c084b43776" name="a512698495fbf8f0226fee6c084b43776"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a512698495fbf8f0226fee6c084b43776">&#9670;&#160;</a></span>last_input_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::last_input_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00393">393</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="adb98a4d8d31f51c5d6d535cce5f090f5" name="adb98a4d8d31f51c5d6d535cce5f090f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb98a4d8d31f51c5d6d535cce5f090f5">&#9670;&#160;</a></span>led_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t menu_state_t::led_mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00374">374</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a2b1b073508cfb2f145b466adb059bf5f" name="a2b1b073508cfb2f145b466adb059bf5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b1b073508cfb2f145b466adb059bf5f">&#9670;&#160;</a></span>modal</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_modal_t menu_state_t::modal</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00394">394</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a6e8a3e83af3fa5e095358a405a0e758f" name="a6e8a3e83af3fa5e095358a405a0e758f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e8a3e83af3fa5e095358a405a0e758f">&#9670;&#160;</a></span>operator_unlock_until_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::operator_unlock_until_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00390">390</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a7ee053da2f629917cbb1a91dbaff9558" name="a7ee053da2f629917cbb1a91dbaff9558"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ee053da2f629917cbb1a91dbaff9558">&#9670;&#160;</a></span>pairing_network_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool menu_state_t::pairing_network_mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00379">379</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a5b87e536dd863f415f7a68c77730733a" name="a5b87e536dd863f415f7a68c77730733a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b87e536dd863f415f7a68c77730733a">&#9670;&#160;</a></span>pending_action</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_action_t menu_state_t::pending_action</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00395">395</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ae74cffa7bda01ad7480a2ca622e38c2e" name="ae74cffa7bda01ad7480a2ca622e38c2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae74cffa7bda01ad7480a2ca622e38c2e">&#9670;&#160;</a></span>pending_auth_level</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_auth_level_t menu_state_t::pending_auth_level</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00387">387</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a7a0932fe039d4fdade76b1b1b697a55e" name="a7a0932fe039d4fdade76b1b1b697a55e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a0932fe039d4fdade76b1b1b697a55e">&#9670;&#160;</a></span>pending_auth_page</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_page_id_t menu_state_t::pending_auth_page</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00386">386</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a5f67b1170b4c5c58f7211fc3ba06c8ba" name="a5f67b1170b4c5c58f7211fc3ba06c8ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f67b1170b4c5c58f7211fc3ba06c8ba">&#9670;&#160;</a></span>pending_target_node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::pending_target_node_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00376">376</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a5e8b6ac50138f10f963a05bc20d14a58" name="a5e8b6ac50138f10f963a05bc20d14a58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e8b6ac50138f10f963a05bc20d14a58">&#9670;&#160;</a></span>pin_digits</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t menu_state_t::pin_digits[MENU_SETTINGS_PIN_LEN]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00388">388</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a9afb6021affc2a853022fab7262e26c1" name="a9afb6021affc2a853022fab7262e26c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9afb6021affc2a853022fab7262e26c1">&#9670;&#160;</a></span>pin_index</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t menu_state_t::pin_index</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00389">389</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a01c3155ef125eb9e4c0d81aca2f093b9" name="a01c3155ef125eb9e4c0d81aca2f093b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01c3155ef125eb9e4c0d81aca2f093b9">&#9670;&#160;</a></span>popup_enabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool menu_state_t::popup_enabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00392">392</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aa815b5e01b6a123daa64fd510abdf960" name="aa815b5e01b6a123daa64fd510abdf960"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa815b5e01b6a123daa64fd510abdf960">&#9670;&#160;</a></span>quick_reply_deadline_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::quick_reply_deadline_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00381">381</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ac636545f480283f3f0a4fff5639b3298" name="ac636545f480283f3f0a4fff5639b3298"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac636545f480283f3f0a4fff5639b3298">&#9670;&#160;</a></span>quick_reply_last_seconds</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::quick_reply_last_seconds</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00382">382</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="acf1bcd1abe81e8c69c21c72c91d705ec" name="acf1bcd1abe81e8c69c21c72c91d705ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf1bcd1abe81e8c69c21c72c91d705ec">&#9670;&#160;</a></span>quick_reply_src_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_state_t::quick_reply_src_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00380">380</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a4cc51ff1b791029ac253f4710ef30831" name="a4cc51ff1b791029ac253f4710ef30831"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cc51ff1b791029ac253f4710ef30831">&#9670;&#160;</a></span>quick_reply_text</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char menu_state_t::quick_reply_text[MENU_LINE_BUF_SIZE]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00383">383</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a39d825036aae30dc9a1a3fc360f11790" name="a39d825036aae30dc9a1a3fc360f11790"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39d825036aae30dc9a1a3fc360f11790">&#9670;&#160;</a></span>selected_device_slot</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t menu_state_t::selected_device_slot</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00375">375</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ab3dff52fa4866e11e4749c1eb85a5ee9" name="ab3dff52fa4866e11e4749c1eb85a5ee9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3dff52fa4866e11e4749c1eb85a5ee9">&#9670;&#160;</a></span>selected_idx</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t menu_state_t::selected_idx</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00373">373</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aca2c30ec27efce5355bbc5c77947a526" name="aca2c30ec27efce5355bbc5c77947a526"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca2c30ec27efce5355bbc5c77947a526">&#9670;&#160;</a></span>send_target_action</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_action_t menu_state_t::send_target_action</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00377">377</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a85f60cf1a7384d3a53253505370bf224" name="a85f60cf1a7384d3a53253505370bf224"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85f60cf1a7384d3a53253505370bf224">&#9670;&#160;</a></span>transient_parent_page</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">menu_page_id_t menu_state_t::transient_parent_page</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00378">378</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="af096d16ffb20f95b3f73876b6af39ba9" name="af096d16ffb20f95b3f73876b6af39ba9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af096d16ffb20f95b3f73876b6af39ba9">&#9670;&#160;</a></span>tx_ack_waiting</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool menu_state_t::tx_ack_waiting</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00384">384</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aeda75b733d854a666596e16b0350422d" name="aeda75b733d854a666596e16b0350422d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeda75b733d854a666596e16b0350422d">&#9670;&#160;</a></span>tx_sent_text</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char menu_state_t::tx_sent_text[MENU_LINE_BUF_SIZE]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8c_source.html#l00385">385</a> pliku <a class="el" href="menu__main_8c_source.html">menu_main.c</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="menu__main_8c_source.html">menu_main.c</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structmenu__state__t.html">menu_state_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

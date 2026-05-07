@@ -1,0 +1,271 @@
+\doxysection{Dokumentacja struktury radio\+\_\+fsk\+\_\+cfg\+\_\+t}
+\hypertarget{structradio__fsk__cfg__t}{}\label{structradio__fsk__cfg__t}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+
+
+Konfiguracja backendu FSK/\+GFSK/\+MSK/\+GMSK.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/radio\+\_\+lib/radio\+\_\+lib.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__fsk__cfg__t_a2f3ac2a93a0f3e80f2b4bb19f4201be4}{frequency\+\_\+hz}}
+\begin{DoxyCompactList}\small\item\em Częstotliwość RF \mbox{[}Hz\mbox{]}. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__fsk__cfg__t_af9e1018f3050027e324b54016c5dfb24}{bitrate\+\_\+bps}}
+\begin{DoxyCompactList}\small\item\em Bitrate \mbox{[}bps\mbox{]}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_a227ddbfeda5a2c2c4cbe5ab3bde9b6cd}{radio\+\_\+lora\+\_\+bw\+\_\+t}} \mbox{\hyperlink{structradio__fsk__cfg__t_a34fde4b1daf682dec204301b121a3130}{rx\+\_\+bandwidth}}
+\begin{DoxyCompactList}\small\item\em Szerokość pasma RX zakodowana tym samym enumem co w Lo\+Ra. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_a8f5d0079fa3953459eba6bbce9b417cb}{radio\+\_\+fsk\+\_\+shaping\+\_\+t}} \mbox{\hyperlink{structradio__fsk__cfg__t_adfbf5d8d4c4f35ce394589182d9cc28b}{shaping}}
+\begin{DoxyCompactList}\small\item\em Odmiana/kanał shapingu modulacji. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_aa1fffd53496074eea43b15c754d11b8c}{radio\+\_\+fsk\+\_\+filter\+\_\+t}} \mbox{\hyperlink{structradio__fsk__cfg__t_aae88a9a6518e6b8ec04b6b41eb60b4a2}{filter}}
+\begin{DoxyCompactList}\small\item\em Typ filtra BT dla wariantów gaussowskich. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{structradio__fsk__cfg__t_aa66e764c40359f0b8ee7e426e720d352}{tx\+\_\+power\+\_\+dbm}}
+\begin{DoxyCompactList}\small\item\em Moc TX \mbox{[}d\+Bm\mbox{]}. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structradio__fsk__cfg__t_aee39b3e3153684fb6eeba0a2fe3dd132}{preamble\+\_\+len}}
+\begin{DoxyCompactList}\small\item\em Długość preambuły \mbox{[}B\mbox{]}. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structradio__fsk__cfg__t_ab5c1822492d822f6049e1050dc4fb1b2}{sync\+\_\+word\+\_\+len}}
+\begin{DoxyCompactList}\small\item\em Długość słowa synchronizacji \mbox{[}B\mbox{]}. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structradio__fsk__cfg__t_addbaf97073aa2f36f08a5067afce80d9}{sync\+\_\+word}}
+\begin{DoxyCompactList}\small\item\em Wzorzec sync word, używane najmłodsze {\ttfamily \doxylink{structradio__fsk__cfg__t_ab5c1822492d822f6049e1050dc4fb1b2}{sync\+\_\+word\+\_\+len}} bajtów. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_af7547c58e390a035fdcac378bc75b455}{radio\+\_\+address\+\_\+filter\+\_\+t}} \mbox{\hyperlink{structradio__fsk__cfg__t_a28c3584880f9b3988bd7179f9c30bfba}{address\+\_\+filter}}
+\begin{DoxyCompactList}\small\item\em Filtrowanie adresowe packet engine. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__lib_8h_a1226502377d5e0372e1069714b8c7fbd}{radio\+\_\+packet\+\_\+crc\+\_\+t}} \mbox{\hyperlink{structradio__fsk__cfg__t_a26d6452de81c352e5e84c7e283c52801}{crc\+\_\+type}}
+\begin{DoxyCompactList}\small\item\em Typ CRC packet engine. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structradio__fsk__cfg__t_a130bb81886de7e6bc9cfc6448793a88e}{data\+\_\+whitening}}
+\begin{DoxyCompactList}\small\item\em Włączenie whitening-\/u danych. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Konfiguracja backendu FSK/\+GFSK/\+MSK/\+GMSK. 
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00177}{177}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structradio__fsk__cfg__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structradio__fsk__cfg__t_a28c3584880f9b3988bd7179f9c30bfba}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!address\_filter@{address\_filter}}
+\index{address\_filter@{address\_filter}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{address\_filter}{address\_filter}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_a28c3584880f9b3988bd7179f9c30bfba} 
+\mbox{\hyperlink{radio__lib_8h_af7547c58e390a035fdcac378bc75b455}{radio\+\_\+address\+\_\+filter\+\_\+t}} radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::address\+\_\+filter}
+
+
+
+Filtrowanie adresowe packet engine. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00188}{188}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00208}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_af9e1018f3050027e324b54016c5dfb24}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!bitrate\_bps@{bitrate\_bps}}
+\index{bitrate\_bps@{bitrate\_bps}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{bitrate\_bps}{bitrate\_bps}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_af9e1018f3050027e324b54016c5dfb24} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::bitrate\+\_\+bps}
+
+
+
+Bitrate \mbox{[}bps\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00180}{180}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00162}{radio\+\_\+get\+\_\+frequency\+\_\+deviation()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_a26d6452de81c352e5e84c7e283c52801}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!crc\_type@{crc\_type}}
+\index{crc\_type@{crc\_type}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{crc\_type}{crc\_type}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_a26d6452de81c352e5e84c7e283c52801} 
+\mbox{\hyperlink{radio__lib_8h_a1226502377d5e0372e1069714b8c7fbd}{radio\+\_\+packet\+\_\+crc\+\_\+t}} radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::crc\+\_\+type}
+
+
+
+Typ CRC packet engine. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00189}{189}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00208}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_a130bb81886de7e6bc9cfc6448793a88e}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!data\_whitening@{data\_whitening}}
+\index{data\_whitening@{data\_whitening}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{data\_whitening}{data\_whitening}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_a130bb81886de7e6bc9cfc6448793a88e} 
+bool radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::data\+\_\+whitening}
+
+
+
+Włączenie whitening-\/u danych. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00190}{190}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00208}{radio\+\_\+get\+\_\+packet\+\_\+config\+\_\+1()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_aae88a9a6518e6b8ec04b6b41eb60b4a2}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!filter@{filter}}
+\index{filter@{filter}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{filter}{filter}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_aae88a9a6518e6b8ec04b6b41eb60b4a2} 
+\mbox{\hyperlink{radio__lib_8h_aa1fffd53496074eea43b15c754d11b8c}{radio\+\_\+fsk\+\_\+filter\+\_\+t}} radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::filter}
+
+
+
+Typ filtra BT dla wariantów gaussowskich. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00183}{183}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_a2f3ac2a93a0f3e80f2b4bb19f4201be4}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!frequency\_hz@{frequency\_hz}}
+\index{frequency\_hz@{frequency\_hz}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{frequency\_hz}{frequency\_hz}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_a2f3ac2a93a0f3e80f2b4bb19f4201be4} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::frequency\+\_\+hz}
+
+
+
+Częstotliwość RF \mbox{[}Hz\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00179}{179}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}} i \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_aee39b3e3153684fb6eeba0a2fe3dd132}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!preamble\_len@{preamble\_len}}
+\index{preamble\_len@{preamble\_len}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{preamble\_len}{preamble\_len}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_aee39b3e3153684fb6eeba0a2fe3dd132} 
+uint16\+\_\+t radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::preamble\+\_\+len}
+
+
+
+Długość preambuły \mbox{[}B\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00185}{185}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}} i \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_a34fde4b1daf682dec204301b121a3130}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!rx\_bandwidth@{rx\_bandwidth}}
+\index{rx\_bandwidth@{rx\_bandwidth}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{rx\_bandwidth}{rx\_bandwidth}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_a34fde4b1daf682dec204301b121a3130} 
+\mbox{\hyperlink{radio__lib_8h_a227ddbfeda5a2c2c4cbe5ab3bde9b6cd}{radio\+\_\+lora\+\_\+bw\+\_\+t}} radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::rx\+\_\+bandwidth}
+
+
+
+Szerokość pasma RX zakodowana tym samym enumem co w Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00181}{181}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}} i \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_adfbf5d8d4c4f35ce394589182d9cc28b}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!shaping@{shaping}}
+\index{shaping@{shaping}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{shaping}{shaping}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_adfbf5d8d4c4f35ce394589182d9cc28b} 
+\mbox{\hyperlink{radio__lib_8h_a8f5d0079fa3953459eba6bbce9b417cb}{radio\+\_\+fsk\+\_\+shaping\+\_\+t}} radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::shaping}
+
+
+
+Odmiana/kanał shapingu modulacji. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00182}{182}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00162}{radio\+\_\+get\+\_\+frequency\+\_\+deviation()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00131}{radio\+\_\+get\+\_\+shaping\+\_\+bits()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_addbaf97073aa2f36f08a5067afce80d9}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!sync\_word@{sync\_word}}
+\index{sync\_word@{sync\_word}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{sync\_word}{sync\_word}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_addbaf97073aa2f36f08a5067afce80d9} 
+uint32\+\_\+t radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word}
+
+
+
+Wzorzec sync word, używane najmłodsze {\ttfamily \doxylink{structradio__fsk__cfg__t_ab5c1822492d822f6049e1050dc4fb1b2}{sync\+\_\+word\+\_\+len}} bajtów. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00187}{187}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00250}{radio\+\_\+write\+\_\+sync\+\_\+word()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_ab5c1822492d822f6049e1050dc4fb1b2}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!sync\_word\_len@{sync\_word\_len}}
+\index{sync\_word\_len@{sync\_word\_len}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{sync\_word\_len}{sync\_word\_len}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_ab5c1822492d822f6049e1050dc4fb1b2} 
+uint8\+\_\+t radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::sync\+\_\+word\+\_\+len}
+
+
+
+Długość słowa synchronizacji \mbox{[}B\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00186}{186}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00071}{radio\+\_\+cfg\+\_\+valid()}}, \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}} i \mbox{\hyperlink{radio__fsk_8c_source_l00250}{radio\+\_\+write\+\_\+sync\+\_\+word()}}.
+
+\Hypertarget{structradio__fsk__cfg__t_aa66e764c40359f0b8ee7e426e720d352}\index{radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}!tx\_power\_dbm@{tx\_power\_dbm}}
+\index{tx\_power\_dbm@{tx\_power\_dbm}!radio\_fsk\_cfg\_t@{radio\_fsk\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{tx\_power\_dbm}{tx\_power\_dbm}}
+{\footnotesize\ttfamily \label{structradio__fsk__cfg__t_aa66e764c40359f0b8ee7e426e720d352} 
+int8\+\_\+t radio\+\_\+fsk\+\_\+cfg\+\_\+t\+::tx\+\_\+power\+\_\+dbm}
+
+
+
+Moc TX \mbox{[}d\+Bm\mbox{]}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib_8h_source_l00184}{184}} pliku \mbox{\hyperlink{radio__lib_8h_source}{radio\+\_\+lib.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}} i \mbox{\hyperlink{radio__lib_8c_source_l00039}{radio\+\_\+default\+\_\+fsk\+\_\+cfg()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+lib/\mbox{\hyperlink{radio__lib_8h}{radio\+\_\+lib.\+h}}\end{DoxyCompactItemize}

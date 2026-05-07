@@ -1,0 +1,70 @@
+\doxysection{Dokumentacja pliku Core/\+App/bmp280\+\_\+main.h}
+\hypertarget{bmp280__main_8h}{}\label{bmp280__main_8h}\index{Core/App/bmp280\_main.h@{Core/App/bmp280\_main.h}}
+
+
+RTOS task facade for periodic BMP280 measurements.  
+
+
+{\ttfamily \#include "{}bmp280\+\_\+lib/bmp280\+\_\+api.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{bmp280__main_8h_a3bc6ff102da579107271228ecd7e8503}{bmp280\+\_\+main\+\_\+create\+\_\+task}} (void)
+\begin{DoxyCompactList}\small\item\em Create the BMP280 sampling task when the sensor is enabled for the board. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280__main_8h_a08830ecb372b100860821945c78e144e}{bmp280\+\_\+main\+\_\+get\+\_\+last}} (\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}} \texorpdfstring{$\ast$}{*}out\+\_\+data)
+\begin{DoxyCompactList}\small\item\em Read the last cached BMP280 measurement from the task layer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+RTOS task facade for periodic BMP280 measurements. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{bmp280__main_8h_source}{bmp280\+\_\+main.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{bmp280__main_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{bmp280__main_8h_a3bc6ff102da579107271228ecd7e8503}\index{bmp280\_main.h@{bmp280\_main.h}!bmp280\_main\_create\_task@{bmp280\_main\_create\_task}}
+\index{bmp280\_main\_create\_task@{bmp280\_main\_create\_task}!bmp280\_main.h@{bmp280\_main.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_main\_create\_task()}{bmp280\_main\_create\_task()}}
+{\footnotesize\ttfamily \label{bmp280__main_8h_a3bc6ff102da579107271228ecd7e8503} 
+void bmp280\+\_\+main\+\_\+create\+\_\+task (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create the BMP280 sampling task when the sensor is enabled for the board. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__main_8c_source_l00056}{56}} pliku \mbox{\hyperlink{bmp280__main_8c_source}{bmp280\+\_\+main.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00057}{app\+\_\+freertos\+\_\+init()}}.
+
+\Hypertarget{bmp280__main_8h_a08830ecb372b100860821945c78e144e}\index{bmp280\_main.h@{bmp280\_main.h}!bmp280\_main\_get\_last@{bmp280\_main\_get\_last}}
+\index{bmp280\_main\_get\_last@{bmp280\_main\_get\_last}!bmp280\_main.h@{bmp280\_main.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_main\_get\_last()}{bmp280\_main\_get\_last()}}
+{\footnotesize\ttfamily \label{bmp280__main_8h_a08830ecb372b100860821945c78e144e} 
+bool bmp280\+\_\+main\+\_\+get\+\_\+last (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{out\+\_\+data}{}\end{DoxyParamCaption})}
+
+
+
+Read the last cached BMP280 measurement from the task layer. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em out\+\_\+data} & \mbox{[}out\mbox{]} Destination for the cached measurement. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when valid cached data was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__main_8c_source_l00077}{77}} pliku \mbox{\hyperlink{bmp280__main_8c_source}{bmp280\+\_\+main.\+c}}.
+

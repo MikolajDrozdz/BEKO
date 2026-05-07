@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Bezpieczenstwo</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('doxygen_security.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Bezpieczenstwo </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><h1 class="doxsection"><a class="anchor" id="security_frame"></a>
+LAVIET_FRAME_V1</h1>
+<p>Ramka LAVIET zawiera:</p>
+<ul>
+<li>wersje i typ,</li>
+<li>flagi,</li>
+<li>identyfikatory zrodla i celu,</li>
+<li><span class="tt">msg_id</span>,</li>
+<li>licznik anti-replay,</li>
+<li>payload do 16 bajtow,</li>
+<li>32-bajtowy <span class="tt">mac_tag</span>.</li>
+</ul>
+<p>Szczegoly API sa w <span class="tt"><a class="el" href="laviet__frame_8h.html" title="LAVIET_FRAME_V1 wire protocol helpers.">laviet_frame.h</a></span>.</p>
+<h1 class="doxsection"><a class="anchor" id="security_crypto"></a>
+Kryptografia</h1>
+<p><span class="tt">laviet_crypto</span> udostepnia:</p>
+<ul>
+<li>HMAC-SHA256 dla integralnosci i autentycznosci ramek,</li>
+<li>AES-CTR dla szyfrowania payloadu bez paddingu,</li>
+<li>staly czas porownania MAC przez <span class="tt"><a class="el" href="laviet__crypto_8c.html#aa31879cc3e98740ffee1f73912c6c88a" title="Compare two MAC tags without data-dependent early exit.">laviet_mac_equal()</a></span>,</li>
+<li>bezpieczne czyszczenie buforow przez <span class="tt"><a class="el" href="laviet__crypto_8c.html#ad8181b01dd76111b6f493f92d9a8f2b4" title="Clear sensitive memory through a volatile byte pointer.">laviet_secure_zero()</a></span>.</li>
+</ul>
+<p>Modul probuje uzyc sprzetowych blokow HASH/CRYP, ale zachowuje software fallback, gdy sprzetowy self-test nie przejdzie.</p>
+<h1 class="doxsection"><a class="anchor" id="security_tpm"></a>
+TPM</h1>
+<p><span class="tt">st33ktpm2x</span> implementuje transport ST33KTPM2X przez I2C/TIS/FIFO i podstawowe komendy TPM2. <span class="tt">security_main</span> uzywa TPM jako punktu zaufania dla root seed, materialu kluczowego i operacji wymagajacych Physical Presence.</p>
+<h1 class="doxsection"><a class="anchor" id="security_storage"></a>
+Storage</h1>
+<p><span class="tt">i2c_mem_store</span> dzieli zewnetrzna pamiec I2C na:</p>
+<ul>
+<li>ring log odebranych wiadomosci,</li>
+<li>szyfrowane sloty sekretow/trusted devices.</li>
+</ul>
+<p>Sekretne payloady sa chronione przez XTEA-CTR i CRC w warstwie storage. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">BEKO Pager Firmware</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

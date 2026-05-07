@@ -1,0 +1,462 @@
+\doxysection{Dokumentacja pliku Core/\+App/laviet\+\_\+frame.c}
+\hypertarget{laviet__frame_8c}{}\label{laviet__frame_8c}\index{Core/App/laviet\_frame.c@{Core/App/laviet\_frame.c}}
+
+
+LAVIET\+\_\+\+FRAME\+\_\+\+V1 parser, serializer and cheap validation.  
+
+
+{\ttfamily \#include "{}laviet\+\_\+frame.\+h"{}}\newline
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{laviet__frame_8c_af2b4e39297b09f5e4846836e2c22a829}{laviet\+\_\+be16\+\_\+write}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}dst, uint16\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_af2b4e39297b09f5e4846836e2c22a829}{laviet\+\_\+be16\+\_\+write}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__frame_8c_ac02cf8c0fe2ea0df90ecec7690c7fa86}{laviet\+\_\+be32\+\_\+write}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}dst, uint32\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_ac02cf8c0fe2ea0df90ecec7690c7fa86}{laviet\+\_\+be32\+\_\+write}}. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{laviet__frame_8c_a55687296aee50be46a5516fbe450a75b}{laviet\+\_\+be16\+\_\+read}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}src)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_a55687296aee50be46a5516fbe450a75b}{laviet\+\_\+be16\+\_\+read}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{laviet__frame_8c_a9f62c3d8335b3991ade03916c951e234}{laviet\+\_\+be32\+\_\+read}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}src)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_a9f62c3d8335b3991ade03916c951e234}{laviet\+\_\+be32\+\_\+read}}. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{laviet__frame_8c_aa2ee0153820cb3d03e711936dae0926e}{laviet\+\_\+frame\+\_\+version\+\_\+from\+\_\+ver\+\_\+type}} (uint8\+\_\+t ver\+\_\+type)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_aa2ee0153820cb3d03e711936dae0926e}{laviet\+\_\+frame\+\_\+version\+\_\+from\+\_\+ver\+\_\+type}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__frame_8c_aeeebecb22f3195149752e27549634ad9}{laviet\+\_\+frame\+\_\+type\+\_\+known}} (\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\+\_\+frame\+\_\+type\+\_\+t}} type)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_aeeebecb22f3195149752e27549634ad9}{laviet\+\_\+frame\+\_\+type\+\_\+known}}. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{laviet__frame_8c_ac3ba36c6c1790bf1a5e8a3624be46201}{laviet\+\_\+frame\+\_\+ver\+\_\+type}} (\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\+\_\+frame\+\_\+type\+\_\+t}} type)
+\begin{DoxyCompactList}\small\item\em Compose the version/type byte for a frame type. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\+\_\+frame\+\_\+type\+\_\+t}} \mbox{\hyperlink{laviet__frame_8c_a0c4799d9ab27acb8e329da925fa382bd}{laviet\+\_\+frame\+\_\+type}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame)
+\begin{DoxyCompactList}\small\item\em Extract the low-\/nibble frame type from a parsed frame. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__frame_8c_a48545bbdd416df64d1880430fe61498e}{laviet\+\_\+frame\+\_\+is\+\_\+broadcast}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame)
+\begin{DoxyCompactList}\small\item\em Check whether a frame targets the broadcast address. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{laviet__frame_8c_a58d0b229430a6d71b5f09e953192db3d}{laviet\+\_\+local\+\_\+node\+\_\+id}} (void)
+\begin{DoxyCompactList}\small\item\em Derive a stable local node identifier from STM32 unique ID words. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\+\_\+frame\+\_\+status\+\_\+t}} \mbox{\hyperlink{laviet__frame_8c_a9df225dfc1501016db4186285f38f71e}{laviet\+\_\+frame\+\_\+validate\+\_\+plain}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame)
+\begin{DoxyCompactList}\small\item\em Validate parsed frame fields before encryption/\+MAC checks. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\+\_\+frame\+\_\+status\+\_\+t}} \mbox{\hyperlink{laviet__frame_8c_adbb7c581bf1ab54461d5a7ba3595a9b6}{laviet\+\_\+frame\+\_\+encode}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out, uint8\+\_\+t out\+\_\+capacity, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Serialize a parsed frame into wire format. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\+\_\+frame\+\_\+status\+\_\+t}} \mbox{\hyperlink{laviet__frame_8c_a0cbbd31fc9d8057a33552174c8ca7b07}{laviet\+\_\+frame\+\_\+decode}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}in, uint8\+\_\+t in\+\_\+len, \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame\+\_\+out)
+\begin{DoxyCompactList}\small\item\em Parse a serialized wire frame into a frame structure. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__frame_8c_af39d27eb077be2b724a9b89e172ea79c}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out, uint8\+\_\+t out\+\_\+capacity, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Build the canonical byte sequence covered by the frame MAC. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__frame_8c_a24b2cd573fc3274f8a92b86b3433b3b0}{laviet\+\_\+frame\+\_\+write\+\_\+ack\+\_\+payload}} (uint16\+\_\+t acked\+\_\+msg\+\_\+id, uint32\+\_\+t acked\+\_\+counter, uint8\+\_\+t out\mbox{[}\mbox{\hyperlink{laviet__frame_8h_afad0b33d1c1fe2b9810ba02be7f7c498}{LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Encode an ACK payload. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__frame_8c_a2870d34c9f2c9274fd637a115a977b64}{laviet\+\_\+frame\+\_\+read\+\_\+ack\+\_\+payload}} (const uint8\+\_\+t payload\mbox{[}\mbox{\hyperlink{laviet__frame_8h_afad0b33d1c1fe2b9810ba02be7f7c498}{LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN}}\mbox{]}, uint16\+\_\+t \texorpdfstring{$\ast$}{*}acked\+\_\+msg\+\_\+id, uint32\+\_\+t \texorpdfstring{$\ast$}{*}acked\+\_\+counter)
+\begin{DoxyCompactList}\small\item\em Decode an ACK payload. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+LAVIET\+\_\+\+FRAME\+\_\+\+V1 parser, serializer and cheap validation. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{laviet__frame_8c_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{laviet__frame_8c_a55687296aee50be46a5516fbe450a75b}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_be16\_read@{laviet\_be16\_read}}
+\index{laviet\_be16\_read@{laviet\_be16\_read}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_be16\_read()}{laviet\_be16\_read()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a55687296aee50be46a5516fbe450a75b} 
+uint16\+\_\+t laviet\+\_\+be16\+\_\+read (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{src}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_a55687296aee50be46a5516fbe450a75b}{laviet\+\_\+be16\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00029}{29}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00429}{laviet\+\_\+frame\+\_\+read\+\_\+ack\+\_\+payload()}}.
+
+\Hypertarget{laviet__frame_8c_af2b4e39297b09f5e4846836e2c22a829}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_be16\_write@{laviet\_be16\_write}}
+\index{laviet\_be16\_write@{laviet\_be16\_write}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_be16\_write()}{laviet\_be16\_write()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_af2b4e39297b09f5e4846836e2c22a829} 
+void laviet\+\_\+be16\+\_\+write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{dst}{, }\item[{uint16\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_af2b4e39297b09f5e4846836e2c22a829}{laviet\+\_\+be16\+\_\+write}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00013}{13}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00415}{laviet\+\_\+frame\+\_\+write\+\_\+ack\+\_\+payload()}}.
+
+\Hypertarget{laviet__frame_8c_a9f62c3d8335b3991ade03916c951e234}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_be32\_read@{laviet\_be32\_read}}
+\index{laviet\_be32\_read@{laviet\_be32\_read}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_be32\_read()}{laviet\_be32\_read()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a9f62c3d8335b3991ade03916c951e234} 
+uint32\+\_\+t laviet\+\_\+be32\+\_\+read (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{src}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_a9f62c3d8335b3991ade03916c951e234}{laviet\+\_\+be32\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00035}{35}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00429}{laviet\+\_\+frame\+\_\+read\+\_\+ack\+\_\+payload()}}.
+
+\Hypertarget{laviet__frame_8c_ac02cf8c0fe2ea0df90ecec7690c7fa86}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_be32\_write@{laviet\_be32\_write}}
+\index{laviet\_be32\_write@{laviet\_be32\_write}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_be32\_write()}{laviet\_be32\_write()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_ac02cf8c0fe2ea0df90ecec7690c7fa86} 
+void laviet\+\_\+be32\+\_\+write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{dst}{, }\item[{uint32\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_ac02cf8c0fe2ea0df90ecec7690c7fa86}{laviet\+\_\+be32\+\_\+write}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00020}{20}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00415}{laviet\+\_\+frame\+\_\+write\+\_\+ack\+\_\+payload()}}.
+
+\Hypertarget{laviet__frame_8c_af39d27eb077be2b724a9b89e172ea79c}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_build\_mac\_input@{laviet\_frame\_build\_mac\_input}}
+\index{laviet\_frame\_build\_mac\_input@{laviet\_frame\_build\_mac\_input}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_build\_mac\_input()}{laviet\_frame\_build\_mac\_input()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_af39d27eb077be2b724a9b89e172ea79c} 
+bool laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out}{, }\item[{uint8\+\_\+t}]{out\+\_\+capacity}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Build the canonical byte sequence covered by the frame MAC. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frame} & Frame whose header and payload are used. \\
+\hline
+{\em out} & Output buffer. \\
+\hline
+{\em out\+\_\+capacity} & Output buffer capacity. \\
+\hline
+{\em out\+\_\+len} & \mbox{[}out\mbox{]} MAC input length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the MAC input was built. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00378}{378}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00102}{laviet\+\_\+frame\+\_\+t\+::counter}}, \mbox{\hyperlink{laviet__frame_8h_source_l00100}{laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00098}{laviet\+\_\+frame\+\_\+t\+::flags}}, \mbox{\hyperlink{laviet__frame_8c_source_l00013}{laviet\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00020}{laviet\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00023}{LAVIET\+\_\+\+FRAME\+\_\+\+HEADER\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00019}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{laviet__frame_8h_source_l00101}{laviet\+\_\+frame\+\_\+t\+::msg\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00104}{laviet\+\_\+frame\+\_\+t\+::payload}}, \mbox{\hyperlink{laviet__frame_8h_source_l00103}{laviet\+\_\+frame\+\_\+t\+::payload\+\_\+len}}, \mbox{\hyperlink{laviet__frame_8h_source_l00099}{laviet\+\_\+frame\+\_\+t\+::src\+\_\+id}} i \mbox{\hyperlink{laviet__frame_8h_source_l00097}{laviet\+\_\+frame\+\_\+t\+::ver\+\_\+type}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00739}{laviet\+\_\+frame\+\_\+hmac\+\_\+sha256()}}.
+
+\Hypertarget{laviet__frame_8c_a0cbbd31fc9d8057a33552174c8ca7b07}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_decode@{laviet\_frame\_decode}}
+\index{laviet\_frame\_decode@{laviet\_frame\_decode}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_decode()}{laviet\_frame\_decode()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a0cbbd31fc9d8057a33552174c8ca7b07} 
+\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\+\_\+frame\+\_\+status\+\_\+t}} laviet\+\_\+frame\+\_\+decode (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{in}{, }\item[{uint8\+\_\+t}]{in\+\_\+len}{, }\item[{\mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame\+\_\+out}{}\end{DoxyParamCaption})}
+
+
+
+Parse a serialized wire frame into a frame structure. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em in} & Serialized frame bytes. \\
+\hline
+{\em in\+\_\+len} & Serialized frame length. \\
+\hline
+{\em frame\+\_\+out} & \mbox{[}out\mbox{]} Parsed frame. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Decode status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00328}{328}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00102}{laviet\+\_\+frame\+\_\+t\+::counter}}, \mbox{\hyperlink{laviet__frame_8h_source_l00100}{laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00098}{laviet\+\_\+frame\+\_\+t\+::flags}}, \mbox{\hyperlink{laviet__frame_8c_source_l00029}{laviet\+\_\+be16\+\_\+read()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00035}{laviet\+\_\+be32\+\_\+read()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00023}{LAVIET\+\_\+\+FRAME\+\_\+\+HEADER\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00027}{LAVIET\+\_\+\+FRAME\+\_\+\+MAX\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00025}{LAVIET\+\_\+\+FRAME\+\_\+\+MIN\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00021}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00019}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{laviet__frame_8h_source_l00084}{LAVIET\+\_\+\+STATUS\+\_\+\+LENGTH}}, \mbox{\hyperlink{laviet__frame_8h_source_l00083}{LAVIET\+\_\+\+STATUS\+\_\+\+NULL}}, \mbox{\hyperlink{laviet__frame_8h_source_l00082}{LAVIET\+\_\+\+STATUS\+\_\+\+OK}}, \mbox{\hyperlink{laviet__frame_8h_source_l00089}{LAVIET\+\_\+\+STATUS\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{laviet__frame_8h_source_l00105}{laviet\+\_\+frame\+\_\+t\+::mac\+\_\+tag}}, \mbox{\hyperlink{laviet__frame_8h_source_l00101}{laviet\+\_\+frame\+\_\+t\+::msg\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00104}{laviet\+\_\+frame\+\_\+t\+::payload}}, \mbox{\hyperlink{laviet__frame_8h_source_l00103}{laviet\+\_\+frame\+\_\+t\+::payload\+\_\+len}}, \mbox{\hyperlink{laviet__frame_8h_source_l00099}{laviet\+\_\+frame\+\_\+t\+::src\+\_\+id}} i \mbox{\hyperlink{laviet__frame_8h_source_l00097}{laviet\+\_\+frame\+\_\+t\+::ver\+\_\+type}}.
+
+\Hypertarget{laviet__frame_8c_adbb7c581bf1ab54461d5a7ba3595a9b6}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_encode@{laviet\_frame\_encode}}
+\index{laviet\_frame\_encode@{laviet\_frame\_encode}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_encode()}{laviet\_frame\_encode()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_adbb7c581bf1ab54461d5a7ba3595a9b6} 
+\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\+\_\+frame\+\_\+status\+\_\+t}} laviet\+\_\+frame\+\_\+encode (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out}{, }\item[{uint8\+\_\+t}]{out\+\_\+capacity}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Serialize a parsed frame into wire format. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frame} & Frame to serialize. \\
+\hline
+{\em out} & Output buffer. \\
+\hline
+{\em out\+\_\+capacity} & Output buffer capacity. \\
+\hline
+{\em out\+\_\+len} & \mbox{[}out\mbox{]} Serialized frame length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Encode status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00287}{287}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00102}{laviet\+\_\+frame\+\_\+t\+::counter}}, \mbox{\hyperlink{laviet__frame_8h_source_l00100}{laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00098}{laviet\+\_\+frame\+\_\+t\+::flags}}, \mbox{\hyperlink{laviet__frame_8c_source_l00013}{laviet\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00020}{laviet\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00023}{LAVIET\+\_\+\+FRAME\+\_\+\+HEADER\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00021}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00084}{LAVIET\+\_\+\+STATUS\+\_\+\+LENGTH}}, \mbox{\hyperlink{laviet__frame_8h_source_l00083}{LAVIET\+\_\+\+STATUS\+\_\+\+NULL}}, \mbox{\hyperlink{laviet__frame_8h_source_l00082}{LAVIET\+\_\+\+STATUS\+\_\+\+OK}}, \mbox{\hyperlink{laviet__frame_8h_source_l00105}{laviet\+\_\+frame\+\_\+t\+::mac\+\_\+tag}}, \mbox{\hyperlink{laviet__frame_8h_source_l00101}{laviet\+\_\+frame\+\_\+t\+::msg\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00104}{laviet\+\_\+frame\+\_\+t\+::payload}}, \mbox{\hyperlink{laviet__frame_8h_source_l00103}{laviet\+\_\+frame\+\_\+t\+::payload\+\_\+len}}, \mbox{\hyperlink{laviet__frame_8h_source_l00099}{laviet\+\_\+frame\+\_\+t\+::src\+\_\+id}} i \mbox{\hyperlink{laviet__frame_8h_source_l00097}{laviet\+\_\+frame\+\_\+t\+::ver\+\_\+type}}.
+
+\Hypertarget{laviet__frame_8c_a48545bbdd416df64d1880430fe61498e}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_is\_broadcast@{laviet\_frame\_is\_broadcast}}
+\index{laviet\_frame\_is\_broadcast@{laviet\_frame\_is\_broadcast}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_is\_broadcast()}{laviet\_frame\_is\_broadcast()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a48545bbdd416df64d1880430fe61498e} 
+bool laviet\+\_\+frame\+\_\+is\+\_\+broadcast (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{}\end{DoxyParamCaption})}
+
+
+
+Check whether a frame targets the broadcast address. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frame} & Frame object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when {\ttfamily dst\+\_\+id} equals {\ttfamily \doxylink{laviet__frame_8h_a340f56ba04216b9995f4ef4da36b68b4}{LAVIET\+\_\+\+BROADCAST\+\_\+\+ID}}. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00070}{70}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00100}{laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}} i \mbox{\hyperlink{laviet__frame_8h_source_l00032}{LAVIET\+\_\+\+BROADCAST\+\_\+\+ID}}.
+
+\Hypertarget{laviet__frame_8c_a2870d34c9f2c9274fd637a115a977b64}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_read\_ack\_payload@{laviet\_frame\_read\_ack\_payload}}
+\index{laviet\_frame\_read\_ack\_payload@{laviet\_frame\_read\_ack\_payload}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_read\_ack\_payload()}{laviet\_frame\_read\_ack\_payload()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a2870d34c9f2c9274fd637a115a977b64} 
+bool laviet\+\_\+frame\+\_\+read\+\_\+ack\+\_\+payload (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{payload}{\mbox{[}\+LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN\mbox{]}, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{acked\+\_\+msg\+\_\+id}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{acked\+\_\+counter}{}\end{DoxyParamCaption})}
+
+
+
+Decode an ACK payload. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em payload} & ACK payload bytes. \\
+\hline
+{\em acked\+\_\+msg\+\_\+id} & \mbox{[}out\mbox{]} Decoded message identifier. \\
+\hline
+{\em acked\+\_\+counter} & \mbox{[}out\mbox{]} Decoded counter value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the payload was decoded. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00429}{429}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00054}{LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8c_source_l00029}{laviet\+\_\+be16\+\_\+read()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00035}{laviet\+\_\+be32\+\_\+read()}}.
+
+\Hypertarget{laviet__frame_8c_a0c4799d9ab27acb8e329da925fa382bd}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_type@{laviet\_frame\_type}}
+\index{laviet\_frame\_type@{laviet\_frame\_type}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_type()}{laviet\_frame\_type()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a0c4799d9ab27acb8e329da925fa382bd} 
+\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\+\_\+frame\+\_\+type\+\_\+t}} laviet\+\_\+frame\+\_\+type (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{}\end{DoxyParamCaption})}
+
+
+
+Extract the low-\/nibble frame type from a parsed frame. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frame} & Frame object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Frame type or {\ttfamily \doxylink{laviet__frame_8h_a7acce13de228087ca80104996d64165da71c4c5c0b0721abee982dceb51b8651e}{LAVIET\+\_\+\+TYPE\+\_\+\+NONE}} for a null frame. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00060}{60}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00065}{LAVIET\+\_\+\+TYPE\+\_\+\+NONE}} i \mbox{\hyperlink{laviet__frame_8h_source_l00097}{laviet\+\_\+frame\+\_\+t\+::ver\+\_\+type}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}.
+
+\Hypertarget{laviet__frame_8c_aeeebecb22f3195149752e27549634ad9}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_type\_known@{laviet\_frame\_type\_known}}
+\index{laviet\_frame\_type\_known@{laviet\_frame\_type\_known}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_type\_known()}{laviet\_frame\_type\_known()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_aeeebecb22f3195149752e27549634ad9} 
+bool laviet\+\_\+frame\+\_\+type\+\_\+known (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\+\_\+frame\+\_\+type\+\_\+t}}}]{type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_aeeebecb22f3195149752e27549634ad9}{laviet\+\_\+frame\+\_\+type\+\_\+known}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00050}{50}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00066}{LAVIET\+\_\+\+TYPE\+\_\+\+DATA}} i \mbox{\hyperlink{laviet__frame_8h_source_l00074}{LAVIET\+\_\+\+TYPE\+\_\+\+ERROR}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}.
+
+\Hypertarget{laviet__frame_8c_a9df225dfc1501016db4186285f38f71e}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_validate\_plain@{laviet\_frame\_validate\_plain}}
+\index{laviet\_frame\_validate\_plain@{laviet\_frame\_validate\_plain}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_validate\_plain()}{laviet\_frame\_validate\_plain()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a9df225dfc1501016db4186285f38f71e} 
+\mbox{\hyperlink{laviet__frame_8h_a94f44491f7aa364ec4349aeb9120d6a7}{laviet\+\_\+frame\+\_\+status\+\_\+t}} laviet\+\_\+frame\+\_\+validate\+\_\+plain (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{}\end{DoxyParamCaption})}
+
+
+
+Validate parsed frame fields before encryption/\+MAC checks. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frame} & Frame object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Validation status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00120}{120}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00100}{laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00098}{laviet\+\_\+frame\+\_\+t\+::flags}}, \mbox{\hyperlink{laviet__frame_8h_source_l00054}{LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00032}{LAVIET\+\_\+\+BROADCAST\+\_\+\+ID}}, \mbox{\hyperlink{laviet__frame_8h_source_l00056}{LAVIET\+\_\+\+COUNTER\+\_\+\+SYNC\+\_\+\+PAYLOAD\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00058}{LAVIET\+\_\+\+ERROR\+\_\+\+PAYLOAD\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00037}{LAVIET\+\_\+\+FLAG\+\_\+\+ACK\+\_\+\+REQUIRED}}, \mbox{\hyperlink{laviet__frame_8h_source_l00045}{LAVIET\+\_\+\+FLAG\+\_\+\+BROADCAST}}, \mbox{\hyperlink{laviet__frame_8h_source_l00043}{LAVIET\+\_\+\+FLAG\+\_\+\+CONFIG\+\_\+\+ACCESS}}, \mbox{\hyperlink{laviet__frame_8h_source_l00047}{LAVIET\+\_\+\+FLAG\+\_\+\+COUNTER\+\_\+\+OVERRIDE}}, \mbox{\hyperlink{laviet__frame_8h_source_l00035}{LAVIET\+\_\+\+FLAG\+\_\+\+ENCRYPTED}}, \mbox{\hyperlink{laviet__frame_8h_source_l00039}{LAVIET\+\_\+\+FLAG\+\_\+\+IS\+\_\+\+ACK}}, \mbox{\hyperlink{laviet__frame_8h_source_l00049}{LAVIET\+\_\+\+FLAG\+\_\+\+KEY\+\_\+\+UPDATE}}, \mbox{\hyperlink{laviet__frame_8h_source_l00041}{LAVIET\+\_\+\+FLAG\+\_\+\+PAIRING}}, \mbox{\hyperlink{laviet__frame_8c_source_l00060}{laviet\+\_\+frame\+\_\+type()}}, \mbox{\hyperlink{laviet__frame_8c_source_l00050}{laviet\+\_\+frame\+\_\+type\+\_\+known()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00017}{LAVIET\+\_\+\+FRAME\+\_\+\+VERSION}}, \mbox{\hyperlink{laviet__frame_8c_source_l00044}{laviet\+\_\+frame\+\_\+version\+\_\+from\+\_\+ver\+\_\+type()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00030}{LAVIET\+\_\+\+GATEWAY\+\_\+\+ID}}, \mbox{\hyperlink{laviet__frame_8h_source_l00019}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{laviet__frame_8h_source_l00052}{LAVIET\+\_\+\+PAIR\+\_\+\+PAYLOAD\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00088}{LAVIET\+\_\+\+STATUS\+\_\+\+FLAGS}}, \mbox{\hyperlink{laviet__frame_8h_source_l00087}{LAVIET\+\_\+\+STATUS\+\_\+\+ID}}, \mbox{\hyperlink{laviet__frame_8h_source_l00083}{LAVIET\+\_\+\+STATUS\+\_\+\+NULL}}, \mbox{\hyperlink{laviet__frame_8h_source_l00082}{LAVIET\+\_\+\+STATUS\+\_\+\+OK}}, \mbox{\hyperlink{laviet__frame_8h_source_l00089}{LAVIET\+\_\+\+STATUS\+\_\+\+PAYLOAD}}, \mbox{\hyperlink{laviet__frame_8h_source_l00086}{LAVIET\+\_\+\+STATUS\+\_\+\+TYPE}}, \mbox{\hyperlink{laviet__frame_8h_source_l00085}{LAVIET\+\_\+\+STATUS\+\_\+\+VERSION}}, \mbox{\hyperlink{laviet__frame_8h_source_l00067}{LAVIET\+\_\+\+TYPE\+\_\+\+ACK}}, \mbox{\hyperlink{laviet__frame_8h_source_l00071}{LAVIET\+\_\+\+TYPE\+\_\+\+CFG}}, \mbox{\hyperlink{laviet__frame_8h_source_l00072}{LAVIET\+\_\+\+TYPE\+\_\+\+COUNTER\+\_\+\+SYNC}}, \mbox{\hyperlink{laviet__frame_8h_source_l00066}{LAVIET\+\_\+\+TYPE\+\_\+\+DATA}}, \mbox{\hyperlink{laviet__frame_8h_source_l00074}{LAVIET\+\_\+\+TYPE\+\_\+\+ERROR}}, \mbox{\hyperlink{laviet__frame_8h_source_l00073}{LAVIET\+\_\+\+TYPE\+\_\+\+KEY\+\_\+\+ROTATE}}, \mbox{\hyperlink{laviet__frame_8h_source_l00069}{LAVIET\+\_\+\+TYPE\+\_\+\+PAIR\+\_\+\+REQ}}, \mbox{\hyperlink{laviet__frame_8h_source_l00070}{LAVIET\+\_\+\+TYPE\+\_\+\+PAIR\+\_\+\+RESP}}, \mbox{\hyperlink{laviet__frame_8h_source_l00068}{LAVIET\+\_\+\+TYPE\+\_\+\+RESP}}, \mbox{\hyperlink{laviet__frame_8h_source_l00101}{laviet\+\_\+frame\+\_\+t\+::msg\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00103}{laviet\+\_\+frame\+\_\+t\+::payload\+\_\+len}}, \mbox{\hyperlink{laviet__frame_8h_source_l00099}{laviet\+\_\+frame\+\_\+t\+::src\+\_\+id}} i \mbox{\hyperlink{laviet__frame_8h_source_l00097}{laviet\+\_\+frame\+\_\+t\+::ver\+\_\+type}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00328}{laviet\+\_\+frame\+\_\+decode()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00287}{laviet\+\_\+frame\+\_\+encode()}}.
+
+\Hypertarget{laviet__frame_8c_ac3ba36c6c1790bf1a5e8a3624be46201}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_ver\_type@{laviet\_frame\_ver\_type}}
+\index{laviet\_frame\_ver\_type@{laviet\_frame\_ver\_type}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_ver\_type()}{laviet\_frame\_ver\_type()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_ac3ba36c6c1790bf1a5e8a3624be46201} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+ver\+\_\+type (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{laviet__frame_8h_a7acce13de228087ca80104996d64165d}{laviet\+\_\+frame\+\_\+type\+\_\+t}}}]{type}{}\end{DoxyParamCaption})}
+
+
+
+Compose the version/type byte for a frame type. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em type} & LAVIET frame type. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Encoded {\ttfamily ver\+\_\+type} byte. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00055}{55}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00017}{LAVIET\+\_\+\+FRAME\+\_\+\+VERSION}}.
+
+\Hypertarget{laviet__frame_8c_aa2ee0153820cb3d03e711936dae0926e}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_version\_from\_ver\_type@{laviet\_frame\_version\_from\_ver\_type}}
+\index{laviet\_frame\_version\_from\_ver\_type@{laviet\_frame\_version\_from\_ver\_type}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_version\_from\_ver\_type()}{laviet\_frame\_version\_from\_ver\_type()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_aa2ee0153820cb3d03e711936dae0926e} 
+uint8\+\_\+t laviet\+\_\+frame\+\_\+version\+\_\+from\+\_\+ver\+\_\+type (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{ver\+\_\+type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__frame_8c_aa2ee0153820cb3d03e711936dae0926e}{laviet\+\_\+frame\+\_\+version\+\_\+from\+\_\+ver\+\_\+type}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00044}{44}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__frame_8c_source_l00120}{laviet\+\_\+frame\+\_\+validate\+\_\+plain()}}.
+
+\Hypertarget{laviet__frame_8c_a24b2cd573fc3274f8a92b86b3433b3b0}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_frame\_write\_ack\_payload@{laviet\_frame\_write\_ack\_payload}}
+\index{laviet\_frame\_write\_ack\_payload@{laviet\_frame\_write\_ack\_payload}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_write\_ack\_payload()}{laviet\_frame\_write\_ack\_payload()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a24b2cd573fc3274f8a92b86b3433b3b0} 
+bool laviet\+\_\+frame\+\_\+write\+\_\+ack\+\_\+payload (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{acked\+\_\+msg\+\_\+id}{, }\item[{uint32\+\_\+t}]{acked\+\_\+counter}{, }\item[{uint8\+\_\+t}]{out}{\mbox{[}\+LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Encode an ACK payload. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em acked\+\_\+msg\+\_\+id} & Message identifier being acknowledged. \\
+\hline
+{\em acked\+\_\+counter} & Counter value being acknowledged. \\
+\hline
+{\em out} & \mbox{[}out\mbox{]} Fixed-\/size ACK payload buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the payload was written. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00415}{415}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00054}{LAVIET\+\_\+\+ACK\+\_\+\+PAYLOAD\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8c_source_l00013}{laviet\+\_\+be16\+\_\+write()}} i \mbox{\hyperlink{laviet__frame_8c_source_l00020}{laviet\+\_\+be32\+\_\+write()}}.
+
+\Hypertarget{laviet__frame_8c_a58d0b229430a6d71b5f09e953192db3d}\index{laviet\_frame.c@{laviet\_frame.c}!laviet\_local\_node\_id@{laviet\_local\_node\_id}}
+\index{laviet\_local\_node\_id@{laviet\_local\_node\_id}!laviet\_frame.c@{laviet\_frame.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_local\_node\_id()}{laviet\_local\_node\_id()}}
+{\footnotesize\ttfamily \label{laviet__frame_8c_a58d0b229430a6d71b5f09e953192db3d} 
+uint16\+\_\+t laviet\+\_\+local\+\_\+node\+\_\+id (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Derive a stable local node identifier from STM32 unique ID words. 
+
+\begin{DoxyReturn}{Zwraca}
+Non-\/reserved 16-\/bit node identifier. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__frame_8c_source_l00080}{80}} pliku \mbox{\hyperlink{laviet__frame_8c_source}{laviet\+\_\+frame.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00032}{LAVIET\+\_\+\+BROADCAST\+\_\+\+ID}} i \mbox{\hyperlink{laviet__frame_8h_source_l00030}{LAVIET\+\_\+\+GATEWAY\+\_\+\+ID}}.
+

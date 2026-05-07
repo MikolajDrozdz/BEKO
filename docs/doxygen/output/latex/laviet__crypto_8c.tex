@@ -1,0 +1,847 @@
+\doxysection{Dokumentacja pliku Core/\+App/laviet\+\_\+crypto.c}
+\hypertarget{laviet__crypto_8c}{}\label{laviet__crypto_8c}\index{Core/App/laviet\_crypto.c@{Core/App/laviet\_crypto.c}}
+
+
+Portable AES-\/\+CTR and HMAC-\/\+SHA256 backend for LAVIET\+\_\+\+FRAME\+\_\+\+V1.  
+
+
+{\ttfamily \#include "{}laviet\+\_\+crypto.\+h"{}}\newline
+{\ttfamily \#include "{}cmsis\+\_\+os2.\+h"{}}\newline
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{laviet__crypto_8c_a2dcd1e929e4de79575695a0ae7cbdaee}{LAVIET\+\_\+\+CRYPTO\+\_\+\+TIMEOUT\+\_\+\+MS}}~1000U
+\item 
+\#define \mbox{\hyperlink{laviet__crypto_8c_a5e530e68eeae5cf579957687c7a78f41}{LAVIET\+\_\+\+TEST\+\_\+\+FIXED\+\_\+\+FRAME\+\_\+\+MAC}}~0U
+\item 
+\#define \mbox{\hyperlink{laviet__crypto_8c_a8d8ffb52c6ca5171edce5ee476d2f2bc}{LAVIET\+\_\+\+TEST\+\_\+\+FIXED\+\_\+\+FRAME\+\_\+\+MAC\+\_\+\+BYTE}}~0x01U
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+static const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{laviet__crypto_8c_a4d52fc15b8e5265f984386a47a7ed4e8}{laviet\+\_\+hal\+\_\+status\+\_\+text}} (HAL\+\_\+\+Status\+Type\+Def status)
+\begin{DoxyCompactList}\small\item\em Convert a HAL status code to a short diagnostic string. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_abdbdc31d17e5c785c23ee5b678c4d77a}{laviet\+\_\+crypto\+\_\+log\+\_\+mismatch}} (const char \texorpdfstring{$\ast$}{*}stage, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}expected, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}actual, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Print the first byte mismatch found during crypto self-\/test comparison. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{laviet__crypto_8c_a2c9529fb75dc905c7bccf6844e89ffda}{laviet\+\_\+rotr32}} (uint32\+\_\+t value, uint8\+\_\+t bits)
+\begin{DoxyCompactList}\small\item\em Rotate a 32-\/bit word right for SHA-\/256 round functions. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a1b3dc45a4b3a19e014e5eb71573f28d3}{laviet\+\_\+sha256\+\_\+transform}} (\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const uint8\+\_\+t data\mbox{[}64\mbox{]})
+\begin{DoxyCompactList}\small\item\em Process one 512-\/bit SHA-\/256 block into the running digest state. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a770ef8fc5b5a373f664120976930feb1}{laviet\+\_\+sha256\+\_\+init}} (\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx)
+\begin{DoxyCompactList}\small\item\em Initialize the software SHA-\/256 context with the standard IV. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a57ce6f2af9b3f0ea3315b4ed5ef63ebc}{laviet\+\_\+sha256\+\_\+update}} (\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Feed bytes into the software SHA-\/256 streaming context. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_adeaaba8d629ecbe586ebf5e37fc896cf}{laviet\+\_\+sha256\+\_\+final}} (\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t hash\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a8c31159f0318d31515e6219de28b5bb4}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Finalize SHA-\/256 padding and write the 32-\/byte digest. \end{DoxyCompactList}\item 
+static uint8\+\_\+t \mbox{\hyperlink{laviet__crypto_8c_aa8792e9d4b18fe3a7cf6d560655e3b04}{laviet\+\_\+aes\+\_\+xtime}} (uint8\+\_\+t x)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_aa8792e9d4b18fe3a7cf6d560655e3b04}{laviet\+\_\+aes\+\_\+xtime}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a49eee6a0b99bd0c5977a973307c136bd}{laviet\+\_\+aes\+\_\+key\+\_\+expansion}} (const uint8\+\_\+t key\mbox{[}16\mbox{]}, uint8\+\_\+t round\+\_\+key\mbox{[}176\mbox{]})
+\begin{DoxyCompactList}\small\item\em Expand a 128-\/bit AES key into the AES-\/128 round-\/key schedule. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a2853c12b5afdbc8c441572b51f97826d}{laviet\+\_\+aes\+\_\+add\+\_\+round\+\_\+key}} (uint8\+\_\+t state\mbox{[}16\mbox{]}, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}round\+\_\+key)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a2853c12b5afdbc8c441572b51f97826d}{laviet\+\_\+aes\+\_\+add\+\_\+round\+\_\+key}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a63947fa98954d6f382f06caed608ec7f}{laviet\+\_\+aes\+\_\+sub\+\_\+bytes}} (uint8\+\_\+t state\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a63947fa98954d6f382f06caed608ec7f}{laviet\+\_\+aes\+\_\+sub\+\_\+bytes}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a2b0a51fe96ea98ffc37d4bc6b1500b35}{laviet\+\_\+aes\+\_\+shift\+\_\+rows}} (uint8\+\_\+t state\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a2b0a51fe96ea98ffc37d4bc6b1500b35}{laviet\+\_\+aes\+\_\+shift\+\_\+rows}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a0904b3d3bb692b85cbf1674ee6ad6e66}{laviet\+\_\+aes\+\_\+mix\+\_\+columns}} (uint8\+\_\+t state\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a0904b3d3bb692b85cbf1674ee6ad6e66}{laviet\+\_\+aes\+\_\+mix\+\_\+columns}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a47d9d7e57de48593c763c6020898b43f}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block}} (const uint8\+\_\+t in\mbox{[}16\mbox{]}, uint8\+\_\+t out\mbox{[}16\mbox{]}, const uint8\+\_\+t round\+\_\+key\mbox{[}176\mbox{]})
+\begin{DoxyCompactList}\small\item\em Encrypt one 16-\/byte block with the software AES-\/128 implementation. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_a922eac018383b96c079b2123bffdb5ae}{laviet\+\_\+make\+\_\+counter\+\_\+block}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame, uint16\+\_\+t block\+\_\+index, uint8\+\_\+t out\mbox{[}16\mbox{]})
+\begin{DoxyCompactList}\small\item\em Build the LAVIET-\/specific AES-\/\+CTR counter block from frame identity fields. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_af9982f34438c413419e6899e76d5d0f2}{laviet\+\_\+crypto\+\_\+lock}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_af9982f34438c413419e6899e76d5d0f2}{laviet\+\_\+crypto\+\_\+lock}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{laviet__crypto_8c_ab319e5390b4d0c58cbe891d841f3c69d}{laviet\+\_\+crypto\+\_\+unlock}} (void)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_ab319e5390b4d0c58cbe891d841f3c69d}{laviet\+\_\+crypto\+\_\+unlock}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_af1a2dcfbf35f75b6c192e5897c184935}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}key, uint16\+\_\+t key\+\_\+len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t data\+\_\+len, uint8\+\_\+t out\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a8c31159f0318d31515e6219de28b5bb4}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Software HMAC-\/\+SHA256 implementation used as the portable fallback. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_aaedfa50089bb8c5badd1e5211f579540}{laviet\+\_\+hmac\+\_\+sha256\+\_\+hw\+\_\+locked}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}key, uint16\+\_\+t key\+\_\+len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t data\+\_\+len, uint8\+\_\+t out\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a8c31159f0318d31515e6219de28b5bb4}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Hardware HASH HMAC-\/\+SHA256 path; caller must hold the crypto mutex. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__crypto_8c_a9552a8b02c48560557a81a7ff38b984e}{laviet\+\_\+frame\+\_\+hmac\+\_\+sha256}} (const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame, const uint8\+\_\+t key\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a9a4059ae3f0f42f0762b68772c88c131}{LAVIET\+\_\+\+HMAC\+\_\+\+KEY\+\_\+\+LEN}}\mbox{]}, uint8\+\_\+t out\mbox{[}\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Calculate the LAVIET frame MAC over the serialized MAC input. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_a674aed65481a6f0c1d63f711720dd37a}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len, const uint8\+\_\+t key\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a0c57a4ee6dd72fe4e62f74d48bcee4f8}{LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN}}\mbox{]}, const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame)
+\begin{DoxyCompactList}\small\item\em Software AES-\/\+CTR encrypt/decrypt routine for arbitrary LAVIET payload length. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_af5055c41b7dee63903f51e5bbf6d8107}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len, const uint8\+\_\+t key\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a0c57a4ee6dd72fe4e62f74d48bcee4f8}{LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN}}\mbox{]}, const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame)
+\begin{DoxyCompactList}\small\item\em Hardware AES-\/\+CTR path for one LAVIET payload block; caller must hold the crypto mutex. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_aa30e764093573b79f92dd069d501879b}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked}} (void)
+\begin{DoxyCompactList}\small\item\em Compare hardware crypto output against software reference vectors under the crypto mutex. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__crypto_8c_a7e6b5382044df5bf7b529c89360ac21b}{laviet\+\_\+crypto\+\_\+init}} (void)
+\begin{DoxyCompactList}\small\item\em Initialize crypto backends and run the optional hardware self-\/test. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__crypto_8c_aab7bde8133c277eb09a352c4fba812c0}{laviet\+\_\+hmac\+\_\+sha256}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}key, uint16\+\_\+t key\+\_\+len, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t data\+\_\+len, uint8\+\_\+t out\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a8c31159f0318d31515e6219de28b5bb4}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Calculate HMAC-\/\+SHA256 over an arbitrary buffer. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__crypto_8c_a762121cd96ad323f0ef8f3687daa90a4}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len, const uint8\+\_\+t key\mbox{[}\mbox{\hyperlink{laviet__crypto_8h_a0c57a4ee6dd72fe4e62f74d48bcee4f8}{LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN}}\mbox{]}, const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}frame)
+\begin{DoxyCompactList}\small\item\em Encrypt or decrypt a LAVIET payload in-\/place with AES-\/\+CTR. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{laviet__crypto_8c_aa31879cc3e98740ffee1f73912c6c88a}{laviet\+\_\+mac\+\_\+equal}} (const uint8\+\_\+t a\mbox{[}\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}\mbox{]}, const uint8\+\_\+t b\mbox{[}\mbox{\hyperlink{laviet__frame_8h_a72233f24b4fcb25ff914a443eabb4a62}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}\mbox{]})
+\begin{DoxyCompactList}\small\item\em Compare two MAC tags without data-\/dependent early exit. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{laviet__crypto_8c_ad8181b01dd76111b6f493f92d9a8f2b4}{laviet\+\_\+secure\+\_\+zero}} (void \texorpdfstring{$\ast$}{*}ptr, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Clear sensitive memory through a volatile byte pointer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Zmienne}
+\begin{DoxyCompactItemize}
+\item 
+static os\+Mutex\+Id\+\_\+t \mbox{\hyperlink{laviet__crypto_8c_a23e1e1b55fb419610bb3976543fde8c6}{s\+\_\+crypto\+\_\+mutex}} = NULL
+\item 
+static bool \mbox{\hyperlink{laviet__crypto_8c_a94d72851fb0add97478ea4bbfe4632ff}{s\+\_\+crypto\+\_\+hw\+\_\+ready}} = false
+\item 
+static const uint32\+\_\+t \mbox{\hyperlink{laviet__crypto_8c_a59bbbad2133b999c532868aa1b500478}{s\+\_\+sha256\+\_\+k}} \mbox{[}64\mbox{]}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{laviet__crypto_8c_aa0b4f7c7933a128867c98a6f72acefc8}{s\+\_\+aes\+\_\+sbox}} \mbox{[}256\mbox{]}
+\item 
+static const uint8\+\_\+t \mbox{\hyperlink{laviet__crypto_8c_ae4a6eb2ce0e3b25bcd3eb677a14a6fa8}{s\+\_\+aes\+\_\+rcon}} \mbox{[}11\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Portable AES-\/\+CTR and HMAC-\/\+SHA256 backend for LAVIET\+\_\+\+FRAME\+\_\+\+V1. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{laviet__crypto_8c_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{laviet__crypto_8c_a2dcd1e929e4de79575695a0ae7cbdaee}\index{laviet\_crypto.c@{laviet\_crypto.c}!LAVIET\_CRYPTO\_TIMEOUT\_MS@{LAVIET\_CRYPTO\_TIMEOUT\_MS}}
+\index{LAVIET\_CRYPTO\_TIMEOUT\_MS@{LAVIET\_CRYPTO\_TIMEOUT\_MS}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{LAVIET\_CRYPTO\_TIMEOUT\_MS}{LAVIET\_CRYPTO\_TIMEOUT\_MS}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a2dcd1e929e4de79575695a0ae7cbdaee} 
+\#define LAVIET\+\_\+\+CRYPTO\+\_\+\+TIMEOUT\+\_\+\+MS~1000U}
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00021}{21}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+\Hypertarget{laviet__crypto_8c_a5e530e68eeae5cf579957687c7a78f41}\index{laviet\_crypto.c@{laviet\_crypto.c}!LAVIET\_TEST\_FIXED\_FRAME\_MAC@{LAVIET\_TEST\_FIXED\_FRAME\_MAC}}
+\index{LAVIET\_TEST\_FIXED\_FRAME\_MAC@{LAVIET\_TEST\_FIXED\_FRAME\_MAC}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{LAVIET\_TEST\_FIXED\_FRAME\_MAC}{LAVIET\_TEST\_FIXED\_FRAME\_MAC}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a5e530e68eeae5cf579957687c7a78f41} 
+\#define LAVIET\+\_\+\+TEST\+\_\+\+FIXED\+\_\+\+FRAME\+\_\+\+MAC~0U}
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00022}{22}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+\Hypertarget{laviet__crypto_8c_a8d8ffb52c6ca5171edce5ee476d2f2bc}\index{laviet\_crypto.c@{laviet\_crypto.c}!LAVIET\_TEST\_FIXED\_FRAME\_MAC\_BYTE@{LAVIET\_TEST\_FIXED\_FRAME\_MAC\_BYTE}}
+\index{LAVIET\_TEST\_FIXED\_FRAME\_MAC\_BYTE@{LAVIET\_TEST\_FIXED\_FRAME\_MAC\_BYTE}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{LAVIET\_TEST\_FIXED\_FRAME\_MAC\_BYTE}{LAVIET\_TEST\_FIXED\_FRAME\_MAC\_BYTE}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a8d8ffb52c6ca5171edce5ee476d2f2bc} 
+\#define LAVIET\+\_\+\+TEST\+\_\+\+FIXED\+\_\+\+FRAME\+\_\+\+MAC\+\_\+\+BYTE~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00023}{23}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{laviet__crypto_8c_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{laviet__crypto_8c_a2853c12b5afdbc8c441572b51f97826d}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_add\_round\_key@{laviet\_aes\_add\_round\_key}}
+\index{laviet\_aes\_add\_round\_key@{laviet\_aes\_add\_round\_key}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_add\_round\_key()}{laviet\_aes\_add\_round\_key()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a2853c12b5afdbc8c441572b51f97826d} 
+void laviet\+\_\+aes\+\_\+add\+\_\+round\+\_\+key (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state}{\mbox{[}16\mbox{]}, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{round\+\_\+key}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a2853c12b5afdbc8c441572b51f97826d}{laviet\+\_\+aes\+\_\+add\+\_\+round\+\_\+key}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00469}{469}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block()}}.
+
+\Hypertarget{laviet__crypto_8c_a762121cd96ad323f0ef8f3687daa90a4}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_ctr\_crypt@{laviet\_aes\_ctr\_crypt}}
+\index{laviet\_aes\_ctr\_crypt@{laviet\_aes\_ctr\_crypt}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_ctr\_crypt()}{laviet\_aes\_ctr\_crypt()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a762121cd96ad323f0ef8f3687daa90a4} 
+bool laviet\+\_\+aes\+\_\+ctr\+\_\+crypt (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{, }\item[{const uint8\+\_\+t}]{key}{\mbox{[}\+LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN\mbox{]}, }\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{}\end{DoxyParamCaption})}
+
+
+
+Encrypt or decrypt a LAVIET payload in-\/place with AES-\/\+CTR. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em data} & Payload buffer. \\
+\hline
+{\em len} & Payload length. \\
+\hline
+{\em key} & AES-\/128 key. \\
+\hline
+{\em frame} & Frame fields used to build the CTR nonce. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the operation succeeded. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l01134}{1134}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00813}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw()}}, \mbox{\hyperlink{laviet__crypto_8h_source_l00020}{LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00592}{laviet\+\_\+crypto\+\_\+lock()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00603}{laviet\+\_\+crypto\+\_\+unlock()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}.
+
+\Hypertarget{laviet__crypto_8c_af5055c41b7dee63903f51e5bbf6d8107}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_ctr\_crypt\_hw\_locked@{laviet\_aes\_ctr\_crypt\_hw\_locked}}
+\index{laviet\_aes\_ctr\_crypt\_hw\_locked@{laviet\_aes\_ctr\_crypt\_hw\_locked}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_ctr\_crypt\_hw\_locked()}{laviet\_aes\_ctr\_crypt\_hw\_locked()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_af5055c41b7dee63903f51e5bbf6d8107} 
+bool laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{, }\item[{const uint8\+\_\+t}]{key}{\mbox{[}\+LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN\mbox{]}, }\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Hardware AES-\/\+CTR path for one LAVIET payload block; caller must hold the crypto mutex. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00813}{813}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8h_source_l00020}{LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00116}{laviet\+\_\+hal\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{laviet\+\_\+make\+\_\+counter\+\_\+block()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l01134}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked()}}.
+
+\Hypertarget{laviet__crypto_8c_a674aed65481a6f0c1d63f711720dd37a}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_ctr\_crypt\_sw@{laviet\_aes\_ctr\_crypt\_sw}}
+\index{laviet\_aes\_ctr\_crypt\_sw@{laviet\_aes\_ctr\_crypt\_sw}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_ctr\_crypt\_sw()}{laviet\_aes\_ctr\_crypt\_sw()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a674aed65481a6f0c1d63f711720dd37a} 
+bool laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{, }\item[{const uint8\+\_\+t}]{key}{\mbox{[}\+LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN\mbox{]}, }\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Software AES-\/\+CTR encrypt/decrypt routine for arbitrary LAVIET payload length. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{775}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00438}{laviet\+\_\+aes\+\_\+key\+\_\+expansion()}}, \mbox{\hyperlink{laviet__crypto_8h_source_l00020}{LAVIET\+\_\+\+AES\+\_\+\+KEY\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{laviet\+\_\+make\+\_\+counter\+\_\+block()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l01134}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked()}}.
+
+\Hypertarget{laviet__crypto_8c_a47d9d7e57de48593c763c6020898b43f}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_encrypt\_block@{laviet\_aes\_encrypt\_block}}
+\index{laviet\_aes\_encrypt\_block@{laviet\_aes\_encrypt\_block}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_encrypt\_block()}{laviet\_aes\_encrypt\_block()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a47d9d7e57de48593c763c6020898b43f} 
+void laviet\+\_\+aes\+\_\+encrypt\+\_\+block (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{in}{\mbox{[}16\mbox{]}, }\item[{uint8\+\_\+t}]{out}{\mbox{[}16\mbox{]}, }\item[{const uint8\+\_\+t}]{round\+\_\+key}{\mbox{[}176\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Encrypt one 16-\/byte block with the software AES-\/128 implementation. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{543}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00469}{laviet\+\_\+aes\+\_\+add\+\_\+round\+\_\+key()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00516}{laviet\+\_\+aes\+\_\+mix\+\_\+columns()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00491}{laviet\+\_\+aes\+\_\+shift\+\_\+rows()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00480}{laviet\+\_\+aes\+\_\+sub\+\_\+bytes()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw()}}.
+
+\Hypertarget{laviet__crypto_8c_a49eee6a0b99bd0c5977a973307c136bd}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_key\_expansion@{laviet\_aes\_key\_expansion}}
+\index{laviet\_aes\_key\_expansion@{laviet\_aes\_key\_expansion}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_key\_expansion()}{laviet\_aes\_key\_expansion()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a49eee6a0b99bd0c5977a973307c136bd} 
+void laviet\+\_\+aes\+\_\+key\+\_\+expansion (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{key}{\mbox{[}16\mbox{]}, }\item[{uint8\+\_\+t}]{round\+\_\+key}{\mbox{[}176\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Expand a 128-\/bit AES key into the AES-\/128 round-\/key schedule. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00438}{438}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw()}}.
+
+\Hypertarget{laviet__crypto_8c_a0904b3d3bb692b85cbf1674ee6ad6e66}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_mix\_columns@{laviet\_aes\_mix\_columns}}
+\index{laviet\_aes\_mix\_columns@{laviet\_aes\_mix\_columns}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_mix\_columns()}{laviet\_aes\_mix\_columns()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a0904b3d3bb692b85cbf1674ee6ad6e66} 
+void laviet\+\_\+aes\+\_\+mix\+\_\+columns (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state}{\mbox{[}16\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a0904b3d3bb692b85cbf1674ee6ad6e66}{laviet\+\_\+aes\+\_\+mix\+\_\+columns}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00516}{516}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00432}{laviet\+\_\+aes\+\_\+xtime()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block()}}.
+
+\Hypertarget{laviet__crypto_8c_a2b0a51fe96ea98ffc37d4bc6b1500b35}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_shift\_rows@{laviet\_aes\_shift\_rows}}
+\index{laviet\_aes\_shift\_rows@{laviet\_aes\_shift\_rows}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_shift\_rows()}{laviet\_aes\_shift\_rows()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a2b0a51fe96ea98ffc37d4bc6b1500b35} 
+void laviet\+\_\+aes\+\_\+shift\+\_\+rows (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state}{\mbox{[}16\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a2b0a51fe96ea98ffc37d4bc6b1500b35}{laviet\+\_\+aes\+\_\+shift\+\_\+rows}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00491}{491}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block()}}.
+
+\Hypertarget{laviet__crypto_8c_a63947fa98954d6f382f06caed608ec7f}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_sub\_bytes@{laviet\_aes\_sub\_bytes}}
+\index{laviet\_aes\_sub\_bytes@{laviet\_aes\_sub\_bytes}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_sub\_bytes()}{laviet\_aes\_sub\_bytes()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a63947fa98954d6f382f06caed608ec7f} 
+void laviet\+\_\+aes\+\_\+sub\+\_\+bytes (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{state}{\mbox{[}16\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_a63947fa98954d6f382f06caed608ec7f}{laviet\+\_\+aes\+\_\+sub\+\_\+bytes}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00480}{480}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block()}}.
+
+\Hypertarget{laviet__crypto_8c_aa8792e9d4b18fe3a7cf6d560655e3b04}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_aes\_xtime@{laviet\_aes\_xtime}}
+\index{laviet\_aes\_xtime@{laviet\_aes\_xtime}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_aes\_xtime()}{laviet\_aes\_xtime()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_aa8792e9d4b18fe3a7cf6d560655e3b04} 
+uint8\+\_\+t laviet\+\_\+aes\+\_\+xtime (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{x}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_aa8792e9d4b18fe3a7cf6d560655e3b04}{laviet\+\_\+aes\+\_\+xtime}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00432}{432}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00516}{laviet\+\_\+aes\+\_\+mix\+\_\+columns()}}.
+
+\Hypertarget{laviet__crypto_8c_a7e6b5382044df5bf7b529c89360ac21b}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_crypto\_init@{laviet\_crypto\_init}}
+\index{laviet\_crypto\_init@{laviet\_crypto\_init}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_crypto\_init()}{laviet\_crypto\_init()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a7e6b5382044df5bf7b529c89360ac21b} 
+bool laviet\+\_\+crypto\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Initialize crypto backends and run the optional hardware self-\/test. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the software fallback is usable. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l01049}{1049}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00592}{laviet\+\_\+crypto\+\_\+lock()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00603}{laviet\+\_\+crypto\+\_\+unlock()}}.
+
+\Hypertarget{laviet__crypto_8c_af9982f34438c413419e6899e76d5d0f2}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_crypto\_lock@{laviet\_crypto\_lock}}
+\index{laviet\_crypto\_lock@{laviet\_crypto\_lock}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_crypto\_lock()}{laviet\_crypto\_lock()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_af9982f34438c413419e6899e76d5d0f2} 
+bool laviet\+\_\+crypto\+\_\+lock (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_af9982f34438c413419e6899e76d5d0f2}{laviet\+\_\+crypto\+\_\+lock}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00592}{592}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l01134}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l01049}{laviet\+\_\+crypto\+\_\+init()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01109}{laviet\+\_\+hmac\+\_\+sha256()}}.
+
+\Hypertarget{laviet__crypto_8c_abdbdc31d17e5c785c23ee5b678c4d77a}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_crypto\_log\_mismatch@{laviet\_crypto\_log\_mismatch}}
+\index{laviet\_crypto\_log\_mismatch@{laviet\_crypto\_log\_mismatch}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_crypto\_log\_mismatch()}{laviet\_crypto\_log\_mismatch()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_abdbdc31d17e5c785c23ee5b678c4d77a} 
+bool laviet\+\_\+crypto\+\_\+log\+\_\+mismatch (\begin{DoxyParamCaption}\item[{const char \texorpdfstring{$\ast$}{*}}]{stage}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{expected}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{actual}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Print the first byte mismatch found during crypto self-\/test comparison. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00207}{207}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked()}}.
+
+\Hypertarget{laviet__crypto_8c_aa30e764093573b79f92dd069d501879b}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_crypto\_self\_test\_locked@{laviet\_crypto\_self\_test\_locked}}
+\index{laviet\_crypto\_self\_test\_locked@{laviet\_crypto\_self\_test\_locked}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_crypto\_self\_test\_locked()}{laviet\_crypto\_self\_test\_locked()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_aa30e764093573b79f92dd069d501879b} 
+bool laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Compare hardware crypto output against software reference vectors under the crypto mutex. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{934}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00813}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00207}{laviet\+\_\+crypto\+\_\+log\+\_\+mismatch()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00035}{LAVIET\+\_\+\+FLAG\+\_\+\+ENCRYPTED}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00665}{laviet\+\_\+hmac\+\_\+sha256\+\_\+hw\+\_\+locked()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw()}} i \mbox{\hyperlink{laviet__crypto_8h_source_l00024}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l01049}{laviet\+\_\+crypto\+\_\+init()}}.
+
+\Hypertarget{laviet__crypto_8c_ab319e5390b4d0c58cbe891d841f3c69d}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_crypto\_unlock@{laviet\_crypto\_unlock}}
+\index{laviet\_crypto\_unlock@{laviet\_crypto\_unlock}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_crypto\_unlock()}{laviet\_crypto\_unlock()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_ab319e5390b4d0c58cbe891d841f3c69d} 
+void laviet\+\_\+crypto\+\_\+unlock (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{laviet__crypto_8c_ab319e5390b4d0c58cbe891d841f3c69d}{laviet\+\_\+crypto\+\_\+unlock}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00603}{603}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l01134}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l01049}{laviet\+\_\+crypto\+\_\+init()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01109}{laviet\+\_\+hmac\+\_\+sha256()}}.
+
+\Hypertarget{laviet__crypto_8c_a9552a8b02c48560557a81a7ff38b984e}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_frame\_hmac\_sha256@{laviet\_frame\_hmac\_sha256}}
+\index{laviet\_frame\_hmac\_sha256@{laviet\_frame\_hmac\_sha256}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_frame\_hmac\_sha256()}{laviet\_frame\_hmac\_sha256()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a9552a8b02c48560557a81a7ff38b984e} 
+bool laviet\+\_\+frame\+\_\+hmac\+\_\+sha256 (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{, }\item[{const uint8\+\_\+t}]{key}{\mbox{[}\+LAVIET\+\_\+\+HMAC\+\_\+\+KEY\+\_\+\+LEN\mbox{]}, }\item[{uint8\+\_\+t}]{out}{\mbox{[}\+LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Calculate the LAVIET frame MAC over the serialized MAC input. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em frame} & Frame to authenticate. \\
+\hline
+{\em key} & HMAC key. \\
+\hline
+{\em out} & \mbox{[}out\mbox{]} MAC tag buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the MAC tag was generated. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00739}{739}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8c_source_l00378}{laviet\+\_\+frame\+\_\+build\+\_\+mac\+\_\+input()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00023}{LAVIET\+\_\+\+FRAME\+\_\+\+HEADER\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__crypto_8h_source_l00022}{LAVIET\+\_\+\+HMAC\+\_\+\+KEY\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__crypto_8c_source_l01109}{laviet\+\_\+hmac\+\_\+sha256()}}, \mbox{\hyperlink{laviet__frame_8h_source_l00021}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}, \mbox{\hyperlink{laviet__frame_8h_source_l00019}{LAVIET\+\_\+\+MAX\+\_\+\+PAYLOAD}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}.
+
+\Hypertarget{laviet__crypto_8c_a4d52fc15b8e5265f984386a47a7ed4e8}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_hal\_status\_text@{laviet\_hal\_status\_text}}
+\index{laviet\_hal\_status\_text@{laviet\_hal\_status\_text}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_hal\_status\_text()}{laviet\_hal\_status\_text()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a4d52fc15b8e5265f984386a47a7ed4e8} 
+const char \texorpdfstring{$\ast$}{*} laviet\+\_\+hal\+\_\+status\+\_\+text (\begin{DoxyParamCaption}\item[{HAL\+\_\+\+Status\+Type\+Def}]{status}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Convert a HAL status code to a short diagnostic string. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00116}{116}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00813}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00665}{laviet\+\_\+hmac\+\_\+sha256\+\_\+hw\+\_\+locked()}}.
+
+\Hypertarget{laviet__crypto_8c_aab7bde8133c277eb09a352c4fba812c0}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_hmac\_sha256@{laviet\_hmac\_sha256}}
+\index{laviet\_hmac\_sha256@{laviet\_hmac\_sha256}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_hmac\_sha256()}{laviet\_hmac\_sha256()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_aab7bde8133c277eb09a352c4fba812c0} 
+bool laviet\+\_\+hmac\+\_\+sha256 (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{key}{, }\item[{uint16\+\_\+t}]{key\+\_\+len}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{data\+\_\+len}{, }\item[{uint8\+\_\+t}]{out}{\mbox{[}\+LAVIET\+\_\+\+SHA256\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Calculate HMAC-\/\+SHA256 over an arbitrary buffer. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em key} & HMAC key bytes. \\
+\hline
+{\em key\+\_\+len} & HMAC key length. \\
+\hline
+{\em data} & Data buffer. \\
+\hline
+{\em data\+\_\+len} & Data length. \\
+\hline
+{\em out} & \mbox{[}out\mbox{]} 32-\/byte digest output. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the digest was generated. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l01109}{1109}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00592}{laviet\+\_\+crypto\+\_\+lock()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00603}{laviet\+\_\+crypto\+\_\+unlock()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00665}{laviet\+\_\+hmac\+\_\+sha256\+\_\+hw\+\_\+locked()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw()}} i \mbox{\hyperlink{laviet__crypto_8h_source_l00024}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00739}{laviet\+\_\+frame\+\_\+hmac\+\_\+sha256()}}.
+
+\Hypertarget{laviet__crypto_8c_aaedfa50089bb8c5badd1e5211f579540}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_hmac\_sha256\_hw\_locked@{laviet\_hmac\_sha256\_hw\_locked}}
+\index{laviet\_hmac\_sha256\_hw\_locked@{laviet\_hmac\_sha256\_hw\_locked}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_hmac\_sha256\_hw\_locked()}{laviet\_hmac\_sha256\_hw\_locked()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_aaedfa50089bb8c5badd1e5211f579540} 
+bool laviet\+\_\+hmac\+\_\+sha256\+\_\+hw\+\_\+locked (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{key}{, }\item[{uint16\+\_\+t}]{key\+\_\+len}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{data\+\_\+len}{, }\item[{uint8\+\_\+t}]{out}{\mbox{[}\+LAVIET\+\_\+\+SHA256\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Hardware HASH HMAC-\/\+SHA256 path; caller must hold the crypto mutex. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00665}{665}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00116}{laviet\+\_\+hal\+\_\+status\+\_\+text()}} i \mbox{\hyperlink{laviet__crypto_8h_source_l00024}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01109}{laviet\+\_\+hmac\+\_\+sha256()}}.
+
+\Hypertarget{laviet__crypto_8c_af1a2dcfbf35f75b6c192e5897c184935}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_hmac\_sha256\_sw@{laviet\_hmac\_sha256\_sw}}
+\index{laviet\_hmac\_sha256\_sw@{laviet\_hmac\_sha256\_sw}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_hmac\_sha256\_sw()}{laviet\_hmac\_sha256\_sw()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_af1a2dcfbf35f75b6c192e5897c184935} 
+bool laviet\+\_\+hmac\+\_\+sha256\+\_\+sw (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{key}{, }\item[{uint16\+\_\+t}]{key\+\_\+len}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{data\+\_\+len}{, }\item[{uint8\+\_\+t}]{out}{\mbox{[}\+LAVIET\+\_\+\+SHA256\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Software HMAC-\/\+SHA256 implementation used as the portable fallback. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{612}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{laviet\+\_\+secure\+\_\+zero()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00387}{laviet\+\_\+sha256\+\_\+final()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00349}{laviet\+\_\+sha256\+\_\+init()}}, \mbox{\hyperlink{laviet__crypto_8h_source_l00024}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00364}{laviet\+\_\+sha256\+\_\+update()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00934}{laviet\+\_\+crypto\+\_\+self\+\_\+test\+\_\+locked()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l01109}{laviet\+\_\+hmac\+\_\+sha256()}}.
+
+\Hypertarget{laviet__crypto_8c_aa31879cc3e98740ffee1f73912c6c88a}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_mac\_equal@{laviet\_mac\_equal}}
+\index{laviet\_mac\_equal@{laviet\_mac\_equal}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_mac\_equal()}{laviet\_mac\_equal()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_aa31879cc3e98740ffee1f73912c6c88a} 
+bool laviet\+\_\+mac\+\_\+equal (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t}]{a}{\mbox{[}\+LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN\mbox{]}, }\item[{const uint8\+\_\+t}]{b}{\mbox{[}\+LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Compare two MAC tags without data-\/dependent early exit. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em a} & First MAC tag. \\
+\hline
+{\em b} & Second MAC tag. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when tags are identical. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l01172}{1172}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00021}{LAVIET\+\_\+\+MAC\+\_\+\+TAG\+\_\+\+LEN}}.
+
+\Hypertarget{laviet__crypto_8c_a922eac018383b96c079b2123bffdb5ae}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_make\_counter\_block@{laviet\_make\_counter\_block}}
+\index{laviet\_make\_counter\_block@{laviet\_make\_counter\_block}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_make\_counter\_block()}{laviet\_make\_counter\_block()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a922eac018383b96c079b2123bffdb5ae} 
+void laviet\+\_\+make\+\_\+counter\+\_\+block (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structlaviet__frame__t}{laviet\+\_\+frame\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{frame}{, }\item[{uint16\+\_\+t}]{block\+\_\+index}{, }\item[{uint8\+\_\+t}]{out}{\mbox{[}16\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Build the LAVIET-\/specific AES-\/\+CTR counter block from frame identity fields. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00569}{569}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__frame_8h_source_l00102}{laviet\+\_\+frame\+\_\+t\+::counter}}, \mbox{\hyperlink{laviet__frame_8h_source_l00100}{laviet\+\_\+frame\+\_\+t\+::dst\+\_\+id}}, \mbox{\hyperlink{laviet__frame_8h_source_l00101}{laviet\+\_\+frame\+\_\+t\+::msg\+\_\+id}} i \mbox{\hyperlink{laviet__frame_8h_source_l00099}{laviet\+\_\+frame\+\_\+t\+::src\+\_\+id}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00813}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw()}}.
+
+\Hypertarget{laviet__crypto_8c_a2c9529fb75dc905c7bccf6844e89ffda}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_rotr32@{laviet\_rotr32}}
+\index{laviet\_rotr32@{laviet\_rotr32}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_rotr32()}{laviet\_rotr32()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a2c9529fb75dc905c7bccf6844e89ffda} 
+uint32\+\_\+t laviet\+\_\+rotr32 (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{value}{, }\item[{uint8\+\_\+t}]{bits}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Rotate a 32-\/bit word right for SHA-\/256 round functions. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00273}{273}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00279}{laviet\+\_\+sha256\+\_\+transform()}}.
+
+\Hypertarget{laviet__crypto_8c_ad8181b01dd76111b6f493f92d9a8f2b4}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_secure\_zero@{laviet\_secure\_zero}}
+\index{laviet\_secure\_zero@{laviet\_secure\_zero}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_secure\_zero()}{laviet\_secure\_zero()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_ad8181b01dd76111b6f493f92d9a8f2b4} 
+void laviet\+\_\+secure\+\_\+zero (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{ptr}{, }\item[{size\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Clear sensitive memory through a volatile byte pointer. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ptr} & Buffer to wipe. \\
+\hline
+{\em len} & Number of bytes to clear. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l01191}{1191}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l01134}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00813}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+hw\+\_\+locked()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00775}{laviet\+\_\+aes\+\_\+ctr\+\_\+crypt\+\_\+sw()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00543}{laviet\+\_\+aes\+\_\+encrypt\+\_\+block()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00739}{laviet\+\_\+frame\+\_\+hmac\+\_\+sha256()}}, \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw()}} i \mbox{\hyperlink{security__main_8c_source_l00676}{security\+\_\+main\+\_\+get\+\_\+peer\+\_\+link\+\_\+key()}}.
+
+\Hypertarget{laviet__crypto_8c_adeaaba8d629ecbe586ebf5e37fc896cf}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_sha256\_final@{laviet\_sha256\_final}}
+\index{laviet\_sha256\_final@{laviet\_sha256\_final}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_sha256\_final()}{laviet\_sha256\_final()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_adeaaba8d629ecbe586ebf5e37fc896cf} 
+void laviet\+\_\+sha256\+\_\+final (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{hash}{\mbox{[}\+LAVIET\+\_\+\+SHA256\+\_\+\+LEN\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Finalize SHA-\/256 padding and write the 32-\/byte digest. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00387}{387}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8h_source_l00024}{LAVIET\+\_\+\+SHA256\+\_\+\+LEN}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00279}{laviet\+\_\+sha256\+\_\+transform()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw()}}.
+
+\Hypertarget{laviet__crypto_8c_a770ef8fc5b5a373f664120976930feb1}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_sha256\_init@{laviet\_sha256\_init}}
+\index{laviet\_sha256\_init@{laviet\_sha256\_init}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_sha256\_init()}{laviet\_sha256\_init()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a770ef8fc5b5a373f664120976930feb1} 
+void laviet\+\_\+sha256\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Initialize the software SHA-\/256 context with the standard IV. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00349}{349}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw()}}.
+
+\Hypertarget{laviet__crypto_8c_a1b3dc45a4b3a19e014e5eb71573f28d3}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_sha256\_transform@{laviet\_sha256\_transform}}
+\index{laviet\_sha256\_transform@{laviet\_sha256\_transform}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_sha256\_transform()}{laviet\_sha256\_transform()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a1b3dc45a4b3a19e014e5eb71573f28d3} 
+void laviet\+\_\+sha256\+\_\+transform (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const uint8\+\_\+t}]{data}{\mbox{[}64\mbox{]}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Process one 512-\/bit SHA-\/256 block into the running digest state. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00279}{279}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00273}{laviet\+\_\+rotr32()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00387}{laviet\+\_\+sha256\+\_\+final()}} i \mbox{\hyperlink{laviet__crypto_8c_source_l00364}{laviet\+\_\+sha256\+\_\+update()}}.
+
+\Hypertarget{laviet__crypto_8c_a57ce6f2af9b3f0ea3315b4ed5ef63ebc}\index{laviet\_crypto.c@{laviet\_crypto.c}!laviet\_sha256\_update@{laviet\_sha256\_update}}
+\index{laviet\_sha256\_update@{laviet\_sha256\_update}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{laviet\_sha256\_update()}{laviet\_sha256\_update()}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a57ce6f2af9b3f0ea3315b4ed5ef63ebc} 
+void laviet\+\_\+sha256\+\_\+update (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structlaviet__sha256__ctx__t}{laviet\+\_\+sha256\+\_\+ctx\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Feed bytes into the software SHA-\/256 streaming context. 
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00364}{364}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{laviet__crypto_8c_source_l00279}{laviet\+\_\+sha256\+\_\+transform()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{laviet__crypto_8c_source_l00612}{laviet\+\_\+hmac\+\_\+sha256\+\_\+sw()}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{laviet__crypto_8c_doc-var-members}
+\doxysubsection{Dokumentacja zmiennych}
+\Hypertarget{laviet__crypto_8c_ae4a6eb2ce0e3b25bcd3eb677a14a6fa8}\index{laviet\_crypto.c@{laviet\_crypto.c}!s\_aes\_rcon@{s\_aes\_rcon}}
+\index{s\_aes\_rcon@{s\_aes\_rcon}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{s\_aes\_rcon}{s\_aes\_rcon}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_ae4a6eb2ce0e3b25bcd3eb677a14a6fa8} 
+const uint8\+\_\+t s\+\_\+aes\+\_\+rcon\mbox{[}11\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Wartość początkowa\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ 0x00U,\ 0x01U,\ 0x02U,\ 0x04U,\ 0x08U,\ 0x10U,\ 0x20U,\ 0x40U,\ 0x80U,\ 0x1BU,\ 0x36U}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00110}{110}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+\Hypertarget{laviet__crypto_8c_aa0b4f7c7933a128867c98a6f72acefc8}\index{laviet\_crypto.c@{laviet\_crypto.c}!s\_aes\_sbox@{s\_aes\_sbox}}
+\index{s\_aes\_sbox@{s\_aes\_sbox}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{s\_aes\_sbox}{s\_aes\_sbox}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_aa0b4f7c7933a128867c98a6f72acefc8} 
+const uint8\+\_\+t s\+\_\+aes\+\_\+sbox\mbox{[}256\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00074}{74}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+\Hypertarget{laviet__crypto_8c_a94d72851fb0add97478ea4bbfe4632ff}\index{laviet\_crypto.c@{laviet\_crypto.c}!s\_crypto\_hw\_ready@{s\_crypto\_hw\_ready}}
+\index{s\_crypto\_hw\_ready@{s\_crypto\_hw\_ready}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{s\_crypto\_hw\_ready}{s\_crypto\_hw\_ready}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a94d72851fb0add97478ea4bbfe4632ff} 
+bool s\+\_\+crypto\+\_\+hw\+\_\+ready = false\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00026}{26}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+\Hypertarget{laviet__crypto_8c_a23e1e1b55fb419610bb3976543fde8c6}\index{laviet\_crypto.c@{laviet\_crypto.c}!s\_crypto\_mutex@{s\_crypto\_mutex}}
+\index{s\_crypto\_mutex@{s\_crypto\_mutex}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{s\_crypto\_mutex}{s\_crypto\_mutex}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a23e1e1b55fb419610bb3976543fde8c6} 
+os\+Mutex\+Id\+\_\+t s\+\_\+crypto\+\_\+mutex = NULL\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00025}{25}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+
+\Hypertarget{laviet__crypto_8c_a59bbbad2133b999c532868aa1b500478}\index{laviet\_crypto.c@{laviet\_crypto.c}!s\_sha256\_k@{s\_sha256\_k}}
+\index{s\_sha256\_k@{s\_sha256\_k}!laviet\_crypto.c@{laviet\_crypto.c}}
+\doxysubsubsection{\texorpdfstring{s\_sha256\_k}{s\_sha256\_k}}
+{\footnotesize\ttfamily \label{laviet__crypto_8c_a59bbbad2133b999c532868aa1b500478} 
+const uint32\+\_\+t s\+\_\+sha256\+\_\+k\mbox{[}64\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Wartość początkowa\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ 0x428A2F98UL,\ 0x71374491UL,\ 0xB5C0FBCFUL,\ 0xE9B5DBA5UL,}
+\DoxyCodeLine{\ \ \ \ 0x3956C25BUL,\ 0x59F111F1UL,\ 0x923F82A4UL,\ 0xAB1C5ED5UL,}
+\DoxyCodeLine{\ \ \ \ 0xD807AA98UL,\ 0x12835B01UL,\ 0x243185BEUL,\ 0x550C7DC3UL,}
+\DoxyCodeLine{\ \ \ \ 0x72BE5D74UL,\ 0x80DEB1FEUL,\ 0x9BDC06A7UL,\ 0xC19BF174UL,}
+\DoxyCodeLine{\ \ \ \ 0xE49B69C1UL,\ 0xEFBE4786UL,\ 0x0FC19DC6UL,\ 0x240CA1CCUL,}
+\DoxyCodeLine{\ \ \ \ 0x2DE92C6FUL,\ 0x4A7484AAUL,\ 0x5CB0A9DCUL,\ 0x76F988DAUL,}
+\DoxyCodeLine{\ \ \ \ 0x983E5152UL,\ 0xA831C66DUL,\ 0xB00327C8UL,\ 0xBF597FC7UL,}
+\DoxyCodeLine{\ \ \ \ 0xC6E00BF3UL,\ 0xD5A79147UL,\ 0x06CA6351UL,\ 0x14292967UL,}
+\DoxyCodeLine{\ \ \ \ 0x27B70A85UL,\ 0x2E1B2138UL,\ 0x4D2C6DFCUL,\ 0x53380D13UL,}
+\DoxyCodeLine{\ \ \ \ 0x650A7354UL,\ 0x766A0ABBUL,\ 0x81C2C92EUL,\ 0x92722C85UL,}
+\DoxyCodeLine{\ \ \ \ 0xA2BFE8A1UL,\ 0xA81A664BUL,\ 0xC24B8B70UL,\ 0xC76C51A3UL,}
+\DoxyCodeLine{\ \ \ \ 0xD192E819UL,\ 0xD6990624UL,\ 0xF40E3585UL,\ 0x106AA070UL,}
+\DoxyCodeLine{\ \ \ \ 0x19A4C116UL,\ 0x1E376C08UL,\ 0x2748774CUL,\ 0x34B0BCB5UL,}
+\DoxyCodeLine{\ \ \ \ 0x391C0CB3UL,\ 0x4ED8AA4AUL,\ 0x5B9CCA4FUL,\ 0x682E6FF3UL,}
+\DoxyCodeLine{\ \ \ \ 0x748F82EEUL,\ 0x78A5636FUL,\ 0x84C87814UL,\ 0x8CC70208UL,}
+\DoxyCodeLine{\ \ \ \ 0x90BEFFFAUL,\ 0xA4506CEBUL,\ 0xBEF9A3F7UL,\ 0xC67178F2UL}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+Definicja w linii \mbox{\hyperlink{laviet__crypto_8c_source_l00054}{54}} pliku \mbox{\hyperlink{laviet__crypto_8c_source}{laviet\+\_\+crypto.\+c}}.
+

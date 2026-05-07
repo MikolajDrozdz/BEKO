@@ -1,0 +1,667 @@
+\doxysection{Dokumentacja pliku Core/\+App/i2c\+\_\+mem\+\_\+store\+\_\+lib/i2c\+\_\+mem\+\_\+store.h}
+\hypertarget{i2c__mem__store_8h}{}\label{i2c__mem__store_8h}\index{Core/App/i2c\_mem\_store\_lib/i2c\_mem\_store.h@{Core/App/i2c\_mem\_store\_lib/i2c\_mem\_store.h}}
+
+
+I2C NVM storage library for received messages and encrypted service codes.  
+
+
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structi2c__mem__store__log__record__t}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em One logged message record returned to caller. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Trusted-\/device object stored in encrypted partition. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Runtime configuration for external I2C memory. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Driver context. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Definicje}
+\begin{Indent}\textbf{ Defaults}\par
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ad9475529c155ab92bcc4d25904fe37e2}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+I2\+C\+\_\+\+ADDR\+\_\+\+DEFAULT}}~0x50U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ad668d5ad23a7dcfed6c345a62bb204f9}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TOTAL\+\_\+\+BYTES\+\_\+\+DEFAULT}}~128U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ad96a16e39d67082538a3b599e7d90d5e}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+PAGE\+\_\+\+BYTES\+\_\+\+DEFAULT}}~8U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_a7a3136ae201a69e761ecaeb870fee4e0}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+WRITE\+\_\+\+CYCLE\+\_\+\+MS\+\_\+\+DEFAULT}}~5U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_add7d261904ce4351f5d525043f1b5f58}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+SECRET\+\_\+\+AREA\+\_\+\+BYTES\+\_\+\+DEFAULT}}~24U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ac9e720872c895c365187297ee3f4342a}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+RECORD\+\_\+\+SIZE}}~24U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ae4c4e76be05eb127cbef108acc8e5a9c}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+PAYLOAD\+\_\+\+MAX}}~6U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ab731f0c60bb981b97b1a6f1dd8a6b65b}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+SECRET\+\_\+\+SLOT\+\_\+\+SIZE}}~24U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_ab016b3fcf8585354bd6aa59edbc534ea}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+SECRET\+\_\+\+PAYLOAD\+\_\+\+MAX}}~14U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_a94364607386c212dede01ebf8f501ded}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+ID\+\_\+\+MAX}}~6U
+\item 
+\#define \mbox{\hyperlink{i2c__mem__store_8h_af17798d62a8537eebe48a9b037e336c5}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+CODE\+\_\+\+MAX}}~8U
+\end{DoxyCompactItemize}
+\end{Indent}
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \{ \newline
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}} = 0
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba0e920d8bf38c035f20dbd90c77ba3cca}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baf613cfedd75407163d3f9b4fa4fe2213}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ESTATE}}
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4badbbd4af46fe5fe2356d98459f1bf565e}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EHAL}}
+, \newline
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baaa2004516822cd1277102956fe5eacb3}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ETIMEOUT}}
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba8351242a518f7f1ba17f2c3ff0aaa0b4}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ECRC}}
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba51ed42b2d80759797b5f7ceef9f4e367}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EPROTO}}
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba046db9226b7dd89784a3d96cf9cf96ee}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ENOTFOUND}}
+, \newline
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba54e39db55a1e11ff4338592e520cfdd2}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EOVERFLOW}}
+, \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba205ae360e9559e9f923132f63efafd65}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EFULL}}
+ \}
+\begin{DoxyCompactList}\small\item\em Return codes for I2C memory store operations. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{i2c__mem__store_8h_acfe62ca5532da23bdf82427aee292fab}{i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg}} (\mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c)
+\begin{DoxyCompactList}\small\item\em Fill configuration with safe defaults for I2\+C1 memory. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{i2c__mem__store_8h_aaba1a58ad6981efa72e2724df78236e4}{i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg\+\_\+m24c01r}} (\mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c)
+\begin{DoxyCompactList}\small\item\em Fill configuration specifically for ST M24\+C01-\/R (1 Kbit EEPROM). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a55b8dd95adc2c388e31bb8fc2b7d990a}{i2c\+\_\+mem\+\_\+store\+\_\+init}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, bool format\+\_\+if\+\_\+needed)
+\begin{DoxyCompactList}\small\item\em Initialize library, load metadata and optionally format on first use. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a705f5bf61205843198a2d0d9091a3562}{i2c\+\_\+mem\+\_\+store\+\_\+format}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx)
+\begin{DoxyCompactList}\small\item\em Format metadata and reset log/secret allocators. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a3ea434f9cae24dc0dd36ce7ce9f8692a}{i2c\+\_\+mem\+\_\+store\+\_\+append\+\_\+message}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, int16\+\_\+t rssi\+\_\+dbm, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}payload, uint8\+\_\+t payload\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Append one received message to persistent ring log. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_aa667df3ee4ef4c6f7e7ac184c6647985}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t index\+\_\+from\+\_\+latest, \mbox{\hyperlink{structi2c__mem__store__log__record__t}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t}} \texorpdfstring{$\ast$}{*}out\+\_\+record)
+\begin{DoxyCompactList}\small\item\em Read one message from log (0 = latest, 1 = previous, ...). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a790b8abd22c0d3ee7003abca90b03f43}{i2c\+\_\+mem\+\_\+store\+\_\+get\+\_\+log\+\_\+count}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t \texorpdfstring{$\ast$}{*}out\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Get number of valid records currently available in ring log. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a4831ee6dfab6cf690e7de2a5457f4126}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+write}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t slot\+\_\+id, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t data\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Store encrypted arbitrary payload in secret partition slot. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_af0d8eb773abd635c2ce25e5bffe7ad58}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+read}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t slot\+\_\+id, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data\+\_\+out, uint8\+\_\+t data\+\_\+capacity, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Read and decrypt payload from secret partition slot. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a7cf21bcdfa9e92d2ae652e9594e94663}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+erase}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t slot\+\_\+id)
+\begin{DoxyCompactList}\small\item\em Erase one secret slot (invalidate entry marker). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a82ec5a83b3b3b2f641924ad95b7175af}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t slot\+\_\+id, const \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t}} \texorpdfstring{$\ast$}{*}trusted)
+\begin{DoxyCompactList}\small\item\em Store trusted-\/device descriptor in encrypted secret slot. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} \mbox{\hyperlink{i2c__mem__store_8h_a453a0dbba1eff77aa39c7a818d16ca40}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read}} (\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t slot\+\_\+id, \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t}} \texorpdfstring{$\ast$}{*}trusted)
+\begin{DoxyCompactList}\small\item\em Read trusted-\/device descriptor from encrypted secret slot. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+I2C NVM storage library for received messages and encrypted service codes. 
+
+This library targets external I2C memory (EEPROM/\+FRAM family) connected to I2\+C1. It provides\+:
+\begin{DoxyItemize}
+\item append-\/only ring log for received radio messages,
+\item dedicated encrypted partition for trusted-\/device/service codes.
+\end{DoxyItemize}
+
+Encryption uses XTEA-\/\+CTR software cipher with a 128-\/bit key from configuration. For production security, derive/load this key from TPM-\/protected material. 
+
+Definicja w pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{i2c__mem__store_8h_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{i2c__mem__store_8h_ad9475529c155ab92bcc4d25904fe37e2}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT@{I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT}}
+\index{I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT@{I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT}{I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ad9475529c155ab92bcc4d25904fe37e2} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+I2\+C\+\_\+\+ADDR\+\_\+\+DEFAULT~0x50U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00029}{29}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_ae4c4e76be05eb127cbef108acc8e5a9c}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX@{I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX}}
+\index{I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX@{I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX}{I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ae4c4e76be05eb127cbef108acc8e5a9c} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+PAYLOAD\+\_\+\+MAX~6U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00035}{35}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_ac9e720872c895c365187297ee3f4342a}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE@{I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE}}
+\index{I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE@{I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE}{I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ac9e720872c895c365187297ee3f4342a} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+LOG\+\_\+\+RECORD\+\_\+\+SIZE~24U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00034}{34}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_ad96a16e39d67082538a3b599e7d90d5e}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT@{I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT}}
+\index{I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT@{I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT}{I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ad96a16e39d67082538a3b599e7d90d5e} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+PAGE\+\_\+\+BYTES\+\_\+\+DEFAULT~8U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00031}{31}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_add7d261904ce4351f5d525043f1b5f58}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT@{I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT}}
+\index{I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT@{I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT}{I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_add7d261904ce4351f5d525043f1b5f58} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+SECRET\+\_\+\+AREA\+\_\+\+BYTES\+\_\+\+DEFAULT~24U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00033}{33}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_ab016b3fcf8585354bd6aa59edbc534ea}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX@{I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX}}
+\index{I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX@{I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX}{I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ab016b3fcf8585354bd6aa59edbc534ea} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+SECRET\+\_\+\+PAYLOAD\+\_\+\+MAX~14U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00037}{37}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_ab731f0c60bb981b97b1a6f1dd8a6b65b}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE@{I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE}}
+\index{I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE@{I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE}{I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ab731f0c60bb981b97b1a6f1dd8a6b65b} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+SECRET\+\_\+\+SLOT\+\_\+\+SIZE~24U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00036}{36}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_ad668d5ad23a7dcfed6c345a62bb204f9}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT@{I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT}}
+\index{I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT@{I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT}{I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_ad668d5ad23a7dcfed6c345a62bb204f9} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TOTAL\+\_\+\+BYTES\+\_\+\+DEFAULT~128U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00030}{30}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_af17798d62a8537eebe48a9b037e336c5}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX@{I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX}}
+\index{I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX@{I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX}{I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_af17798d62a8537eebe48a9b037e336c5} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+CODE\+\_\+\+MAX~8U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00039}{39}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_a94364607386c212dede01ebf8f501ded}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX@{I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX}}
+\index{I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX@{I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX}{I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a94364607386c212dede01ebf8f501ded} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+TRUSTED\+\_\+\+ID\+\_\+\+MAX~6U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00038}{38}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+\Hypertarget{i2c__mem__store_8h_a7a3136ae201a69e761ecaeb870fee4e0}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT@{I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT}}
+\index{I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT@{I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT}{I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a7a3136ae201a69e761ecaeb870fee4e0} 
+\#define I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+WRITE\+\_\+\+CYCLE\+\_\+\+MS\+\_\+\+DEFAULT~5U}
+
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00032}{32}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{i2c__mem__store_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_status\_t@{i2c\_mem\_store\_status\_t}}
+\index{i2c\_mem\_store\_status\_t@{i2c\_mem\_store\_status\_t}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_status\_t}{i2c\_mem\_store\_status\_t}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b} 
+enum \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}}}
+
+
+
+Return codes for I2C memory store operations. 
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_OK@{I2C\_MEM\_STORE\_OK}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_OK@{I2C\_MEM\_STORE\_OK}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK&Success. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_EINVAL@{I2C\_MEM\_STORE\_EINVAL}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_EINVAL@{I2C\_MEM\_STORE\_EINVAL}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba0e920d8bf38c035f20dbd90c77ba3cca}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba0e920d8bf38c035f20dbd90c77ba3cca} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL&Invalid argument. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_ESTATE@{I2C\_MEM\_STORE\_ESTATE}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_ESTATE@{I2C\_MEM\_STORE\_ESTATE}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baf613cfedd75407163d3f9b4fa4fe2213}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baf613cfedd75407163d3f9b4fa4fe2213} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ESTATE&Invalid state or uninitialized context. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_EHAL@{I2C\_MEM\_STORE\_EHAL}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_EHAL@{I2C\_MEM\_STORE\_EHAL}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4badbbd4af46fe5fe2356d98459f1bf565e}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4badbbd4af46fe5fe2356d98459f1bf565e} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EHAL&HAL I2C operation failed. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_ETIMEOUT@{I2C\_MEM\_STORE\_ETIMEOUT}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_ETIMEOUT@{I2C\_MEM\_STORE\_ETIMEOUT}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baaa2004516822cd1277102956fe5eacb3}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baaa2004516822cd1277102956fe5eacb3} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ETIMEOUT&Timeout/error interpreted as timeout. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_ECRC@{I2C\_MEM\_STORE\_ECRC}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_ECRC@{I2C\_MEM\_STORE\_ECRC}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba8351242a518f7f1ba17f2c3ff0aaa0b4}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba8351242a518f7f1ba17f2c3ff0aaa0b4} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ECRC&CRC mismatch in persisted object. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_EPROTO@{I2C\_MEM\_STORE\_EPROTO}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_EPROTO@{I2C\_MEM\_STORE\_EPROTO}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba51ed42b2d80759797b5f7ceef9f4e367}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba51ed42b2d80759797b5f7ceef9f4e367} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EPROTO&Invalid record/protocol format in NVM. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_ENOTFOUND@{I2C\_MEM\_STORE\_ENOTFOUND}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_ENOTFOUND@{I2C\_MEM\_STORE\_ENOTFOUND}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba046db9226b7dd89784a3d96cf9cf96ee}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba046db9226b7dd89784a3d96cf9cf96ee} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ENOTFOUND&Requested object not found/empty. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_EOVERFLOW@{I2C\_MEM\_STORE\_EOVERFLOW}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_EOVERFLOW@{I2C\_MEM\_STORE\_EOVERFLOW}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba54e39db55a1e11ff4338592e520cfdd2}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba54e39db55a1e11ff4338592e520cfdd2} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EOVERFLOW&Buffer too small or payload too large. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{I2C\_MEM\_STORE\_EFULL@{I2C\_MEM\_STORE\_EFULL}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!I2C\_MEM\_STORE\_EFULL@{I2C\_MEM\_STORE\_EFULL}}}\Hypertarget{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba205ae360e9559e9f923132f63efafd65}\label{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba205ae360e9559e9f923132f63efafd65} 
+I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EFULL&Partition full or layout cannot fit. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8h_source_l00045}{45}} pliku \mbox{\hyperlink{i2c__mem__store_8h_source}{i2c\+\_\+mem\+\_\+store.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{i2c__mem__store_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{i2c__mem__store_8h_a3ea434f9cae24dc0dd36ce7ce9f8692a}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_append\_message@{i2c\_mem\_store\_append\_message}}
+\index{i2c\_mem\_store\_append\_message@{i2c\_mem\_store\_append\_message}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_append\_message()}{i2c\_mem\_store\_append\_message()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a3ea434f9cae24dc0dd36ce7ce9f8692a} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+append\+\_\+message (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{int16\+\_\+t}]{rssi\+\_\+dbm}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{payload}{, }\item[{uint8\+\_\+t}]{payload\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Append one received message to persistent ring log. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em rssi\+\_\+dbm} & RSSI associated with payload. \\
+\hline
+{\em payload} & Message bytes. \\
+\hline
+{\em payload\+\_\+len} & Message length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00510}{510}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8c_source_l00064}{i2c\+\_\+mem\+\_\+store\+\_\+crc16\+\_\+ccitt()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00056}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EFULL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00090}{i2c\+\_\+mem\+\_\+store\+\_\+le16\+\_\+write()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00097}{i2c\+\_\+mem\+\_\+store\+\_\+le32\+\_\+write()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00188}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+slot\+\_\+addr()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00333}{i2c\+\_\+mem\+\_\+store\+\_\+meta\+\_\+save()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00223}{i2c\+\_\+mem\+\_\+store\+\_\+write\+\_\+raw()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00107}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::next\+\_\+sequence}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00103}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::slot\+\_\+count}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00106}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::valid\+\_\+count}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00105}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::write\+\_\+slot}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00138}{radio\+\_\+test\+\_\+store\+\_\+packet\+\_\+in\+\_\+i2c\+\_\+memory()}}.
+
+\Hypertarget{i2c__mem__store_8h_acfe62ca5532da23bdf82427aee292fab}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_default\_cfg@{i2c\_mem\_store\_default\_cfg}}
+\index{i2c\_mem\_store\_default\_cfg@{i2c\_mem\_store\_default\_cfg}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_default\_cfg()}{i2c\_mem\_store\_default\_cfg()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_acfe62ca5532da23bdf82427aee292fab} 
+void i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{}\end{DoxyParamCaption})}
+
+
+
+Fill configuration with safe defaults for I2\+C1 memory. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg} & \mbox{[}out\mbox{]} Configuration object. \\
+\hline
+{\em hi2c} & I2C handle (typically {\ttfamily \&hi2c1}). \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00409}{409}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00094}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::crypto\+\_\+key}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00087}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::hi2c}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00088}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::i2c\+\_\+addr\+\_\+7bit}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00089}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::mem\+\_\+addr\+\_\+size}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00091}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::page\+\_\+bytes}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00093}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::secret\+\_\+area\+\_\+bytes}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00090}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::total\+\_\+bytes}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00092}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::write\+\_\+cycle\+\_\+ms}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00440}{i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg\+\_\+m24c01r()}}.
+
+\Hypertarget{i2c__mem__store_8h_aaba1a58ad6981efa72e2724df78236e4}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_default\_cfg\_m24c01r@{i2c\_mem\_store\_default\_cfg\_m24c01r}}
+\index{i2c\_mem\_store\_default\_cfg\_m24c01r@{i2c\_mem\_store\_default\_cfg\_m24c01r}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_default\_cfg\_m24c01r()}{i2c\_mem\_store\_default\_cfg\_m24c01r()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_aaba1a58ad6981efa72e2724df78236e4} 
+void i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg\+\_\+m24c01r (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{}\end{DoxyParamCaption})}
+
+
+
+Fill configuration specifically for ST M24\+C01-\/R (1 Kbit EEPROM). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg} & \mbox{[}out\mbox{]} Configuration object. \\
+\hline
+{\em hi2c} & I2C handle (typically {\ttfamily \&hi2c1}). \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00440}{440}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00088}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::i2c\+\_\+addr\+\_\+7bit}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00409}{i2c\+\_\+mem\+\_\+store\+\_\+default\+\_\+cfg()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00089}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::mem\+\_\+addr\+\_\+size}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00091}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::page\+\_\+bytes}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00093}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::secret\+\_\+area\+\_\+bytes}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00090}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::total\+\_\+bytes}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00092}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::write\+\_\+cycle\+\_\+ms}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00239}{radio\+\_\+test\+\_\+demo\+\_\+init()}}.
+
+\Hypertarget{i2c__mem__store_8h_a705f5bf61205843198a2d0d9091a3562}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_format@{i2c\_mem\_store\_format}}
+\index{i2c\_mem\_store\_format@{i2c\_mem\_store\_format}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_format()}{i2c\_mem\_store\_format()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a705f5bf61205843198a2d0d9091a3562} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+format (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{}\end{DoxyParamCaption})}
+
+
+
+Format metadata and reset log/secret allocators. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00496}{496}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00049}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ESTATE}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00333}{i2c\+\_\+mem\+\_\+store\+\_\+meta\+\_\+save()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00107}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::next\+\_\+sequence}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00108}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::secret\+\_\+counter}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00106}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::valid\+\_\+count}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00105}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::write\+\_\+slot}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00457}{i2c\+\_\+mem\+\_\+store\+\_\+init()}}.
+
+\Hypertarget{i2c__mem__store_8h_a790b8abd22c0d3ee7003abca90b03f43}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_get\_log\_count@{i2c\_mem\_store\_get\_log\_count}}
+\index{i2c\_mem\_store\_get\_log\_count@{i2c\_mem\_store\_get\_log\_count}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_get\_log\_count()}{i2c\_mem\_store\_get\_log\_count()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a790b8abd22c0d3ee7003abca90b03f43} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+get\+\_\+log\+\_\+count (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{out\+\_\+count}{}\end{DoxyParamCaption})}
+
+
+
+Get number of valid records currently available in ring log. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em out\+\_\+count} & \mbox{[}out\mbox{]} Record count. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00624}{624}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00106}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::valid\+\_\+count}}.
+
+\Hypertarget{i2c__mem__store_8h_a55b8dd95adc2c388e31bb8fc2b7d990a}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_init@{i2c\_mem\_store\_init}}
+\index{i2c\_mem\_store\_init@{i2c\_mem\_store\_init}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_init()}{i2c\_mem\_store\_init()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a55b8dd95adc2c388e31bb8fc2b7d990a} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{bool}]{format\+\_\+if\+\_\+needed}{}\end{DoxyParamCaption})}
+
+
+
+Initialize library, load metadata and optionally format on first use. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em cfg} & Runtime configuration. \\
+\hline
+{\em format\+\_\+if\+\_\+needed} & If {\ttfamily true}, metadata is created when invalid/missing. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00457}{457}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00102}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::cfg}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00496}{i2c\+\_\+mem\+\_\+store\+\_\+format()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00371}{i2c\+\_\+mem\+\_\+store\+\_\+layout\+\_\+valid()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00350}{i2c\+\_\+mem\+\_\+store\+\_\+meta\+\_\+load()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00104}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::secret\+\_\+slot\+\_\+count}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00103}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::slot\+\_\+count}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__test_8c_source_l00239}{radio\+\_\+test\+\_\+demo\+\_\+init()}}.
+
+\Hypertarget{i2c__mem__store_8h_aa667df3ee4ef4c6f7e7ac184c6647985}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_read\_message@{i2c\_mem\_store\_read\_message}}
+\index{i2c\_mem\_store\_read\_message@{i2c\_mem\_store\_read\_message}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_read\_message()}{i2c\_mem\_store\_read\_message()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_aa667df3ee4ef4c6f7e7ac184c6647985} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+message (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{index\+\_\+from\+\_\+latest}{, }\item[{\mbox{\hyperlink{structi2c__mem__store__log__record__t}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{out\+\_\+record}{}\end{DoxyParamCaption})}
+
+
+
+Read one message from log (0 = latest, 1 = previous, ...). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em index\+\_\+from\+\_\+latest} & Relative index from latest entry. \\
+\hline
+{\em out\+\_\+record} & \mbox{[}out\mbox{]} Decoded record. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00569}{569}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8c_source_l00064}{i2c\+\_\+mem\+\_\+store\+\_\+crc16\+\_\+ccitt()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00052}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ECRC}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00054}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ENOTFOUND}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00106}{i2c\+\_\+mem\+\_\+store\+\_\+le16\+\_\+read()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00112}{i2c\+\_\+mem\+\_\+store\+\_\+le32\+\_\+read()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00188}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+slot\+\_\+addr()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00200}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+raw()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00067}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::length}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00068}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::payload}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00066}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::rssi\+\_\+dbm}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00064}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::sequence}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00103}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::slot\+\_\+count}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00065}{i2c\+\_\+mem\+\_\+store\+\_\+log\+\_\+record\+\_\+t\+::timestamp\+\_\+ms}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00106}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::valid\+\_\+count}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00105}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::write\+\_\+slot}}.
+
+\Hypertarget{i2c__mem__store_8h_a7cf21bcdfa9e92d2ae652e9594e94663}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_secret\_erase@{i2c\_mem\_store\_secret\_erase}}
+\index{i2c\_mem\_store\_secret\_erase@{i2c\_mem\_store\_secret\_erase}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_secret\_erase()}{i2c\_mem\_store\_secret\_erase()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a7cf21bcdfa9e92d2ae652e9594e94663} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+erase (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{slot\+\_\+id}{}\end{DoxyParamCaption})}
+
+
+
+Erase one secret slot (invalidate entry marker). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em slot\+\_\+id} & Slot index in secret partition. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00746}{746}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00194}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+slot\+\_\+addr()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00223}{i2c\+\_\+mem\+\_\+store\+\_\+write\+\_\+raw()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00104}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::secret\+\_\+slot\+\_\+count}}.
+
+\Hypertarget{i2c__mem__store_8h_af0d8eb773abd635c2ce25e5bffe7ad58}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_secret\_read@{i2c\_mem\_store\_secret\_read}}
+\index{i2c\_mem\_store\_secret\_read@{i2c\_mem\_store\_secret\_read}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_secret\_read()}{i2c\_mem\_store\_secret\_read()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_af0d8eb773abd635c2ce25e5bffe7ad58} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{slot\+\_\+id}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data\+\_\+out}{, }\item[{uint8\+\_\+t}]{data\+\_\+capacity}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Read and decrypt payload from secret partition slot. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em slot\+\_\+id} & Slot index in secret partition. \\
+\hline
+{\em data\+\_\+out} & Output buffer for decrypted payload. \\
+\hline
+{\em data\+\_\+capacity} & Output buffer capacity. \\
+\hline
+{\em data\+\_\+len} & \mbox{[}out\mbox{]} Returned payload length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00683}{683}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00102}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::cfg}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00094}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::crypto\+\_\+key}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00064}{i2c\+\_\+mem\+\_\+store\+\_\+crc16\+\_\+ccitt()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00052}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ECRC}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00054}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+ENOTFOUND}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00055}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00053}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EPROTO}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00106}{i2c\+\_\+mem\+\_\+store\+\_\+le16\+\_\+read()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00112}{i2c\+\_\+mem\+\_\+store\+\_\+le32\+\_\+read()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00200}{i2c\+\_\+mem\+\_\+store\+\_\+read\+\_\+raw()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00194}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+slot\+\_\+addr()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00141}{i2c\+\_\+mem\+\_\+store\+\_\+xtea\+\_\+ctr\+\_\+crypt()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00104}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::secret\+\_\+slot\+\_\+count}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00787}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read()}}.
+
+\Hypertarget{i2c__mem__store_8h_a4831ee6dfab6cf690e7de2a5457f4126}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_secret\_write@{i2c\_mem\_store\_secret\_write}}
+\index{i2c\_mem\_store\_secret\_write@{i2c\_mem\_store\_secret\_write}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_secret\_write()}{i2c\_mem\_store\_secret\_write()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a4831ee6dfab6cf690e7de2a5457f4126} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{slot\+\_\+id}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{data\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Store encrypted arbitrary payload in secret partition slot. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em slot\+\_\+id} & Slot index in secret partition. \\
+\hline
+{\em data} & Plain payload. \\
+\hline
+{\em data\+\_\+len} & Payload length. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00635}{635}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00102}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::cfg}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00094}{i2c\+\_\+mem\+\_\+store\+\_\+cfg\+\_\+t\+::crypto\+\_\+key}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00064}{i2c\+\_\+mem\+\_\+store\+\_\+crc16\+\_\+ccitt()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00055}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00090}{i2c\+\_\+mem\+\_\+store\+\_\+le16\+\_\+write()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00097}{i2c\+\_\+mem\+\_\+store\+\_\+le32\+\_\+write()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00333}{i2c\+\_\+mem\+\_\+store\+\_\+meta\+\_\+save()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00194}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+slot\+\_\+addr()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00223}{i2c\+\_\+mem\+\_\+store\+\_\+write\+\_\+raw()}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00141}{i2c\+\_\+mem\+\_\+store\+\_\+xtea\+\_\+ctr\+\_\+crypt()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00108}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::secret\+\_\+counter}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00104}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::secret\+\_\+slot\+\_\+count}}.
+
+
+
+Odwołania w \mbox{\hyperlink{i2c__mem__store_8c_source_l00758}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write()}}.
+
+\Hypertarget{i2c__mem__store_8h_a453a0dbba1eff77aa39c7a818d16ca40}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_trusted\_device\_read@{i2c\_mem\_store\_trusted\_device\_read}}
+\index{i2c\_mem\_store\_trusted\_device\_read@{i2c\_mem\_store\_trusted\_device\_read}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_trusted\_device\_read()}{i2c\_mem\_store\_trusted\_device\_read()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a453a0dbba1eff77aa39c7a818d16ca40} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{slot\+\_\+id}{, }\item[{\mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{trusted}{}\end{DoxyParamCaption})}
+
+
+
+Read trusted-\/device descriptor from encrypted secret slot. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em slot\+\_\+id} & Slot index. \\
+\hline
+{\em trusted} & \mbox{[}out\mbox{]} Trusted-\/device object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00787}{787}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00079}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::code}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00077}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::code\+\_\+len}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00053}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EPROTO}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00047}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+OK}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00683}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+read()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00078}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::id}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00076}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::id\+\_\+len}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}.
+
+\Hypertarget{i2c__mem__store_8h_a82ec5a83b3b3b2f641924ad95b7175af}\index{i2c\_mem\_store.h@{i2c\_mem\_store.h}!i2c\_mem\_store\_trusted\_device\_write@{i2c\_mem\_store\_trusted\_device\_write}}
+\index{i2c\_mem\_store\_trusted\_device\_write@{i2c\_mem\_store\_trusted\_device\_write}!i2c\_mem\_store.h@{i2c\_mem\_store.h}}
+\doxysubsubsection{\texorpdfstring{i2c\_mem\_store\_trusted\_device\_write()}{i2c\_mem\_store\_trusted\_device\_write()}}
+{\footnotesize\ttfamily \label{i2c__mem__store_8h_a82ec5a83b3b3b2f641924ad95b7175af} 
+\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\+\_\+mem\+\_\+store\+\_\+status\+\_\+t}} i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structi2c__mem__store__t}{i2c\+\_\+mem\+\_\+store\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{slot\+\_\+id}{, }\item[{const \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{trusted}{}\end{DoxyParamCaption})}
+
+
+
+Store trusted-\/device descriptor in encrypted secret slot. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Context object. \\
+\hline
+{\em slot\+\_\+id} & Slot index. \\
+\hline
+{\em trusted} & Trusted-\/device object. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{i2c__mem__store_8c_source_l00758}{758}} pliku \mbox{\hyperlink{i2c__mem__store_8c_source}{i2c\+\_\+mem\+\_\+store.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{i2c__mem__store_8h_source_l00079}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::code}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00077}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::code\+\_\+len}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00048}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EINVAL}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00055}{I2\+C\+\_\+\+MEM\+\_\+\+STORE\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{i2c__mem__store_8c_source_l00635}{i2c\+\_\+mem\+\_\+store\+\_\+secret\+\_\+write()}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00078}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::id}}, \mbox{\hyperlink{i2c__mem__store_8h_source_l00076}{i2c\+\_\+mem\+\_\+store\+\_\+trusted\+\_\+device\+\_\+t\+::id\+\_\+len}} i \mbox{\hyperlink{i2c__mem__store_8h_source_l00109}{i2c\+\_\+mem\+\_\+store\+\_\+t\+::initialized}}.
+

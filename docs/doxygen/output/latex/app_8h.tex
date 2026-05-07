@@ -1,0 +1,275 @@
+\doxysection{Dokumentacja pliku Core/\+App/app.h}
+\hypertarget{app_8h}{}\label{app_8h}\index{Core/App/app.h@{Core/App/app.h}}
+
+
+Main application entry points and shared I2C bus helpers.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{app_8h_add3190cf715f513666f4be42874d91e2}{app\+\_\+init}} (void)
+\begin{DoxyCompactList}\small\item\em Initialize application-\/level peripherals and modules. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{app_8h_a630544a7f0a2cc40d8a7fefab7e2fe70}{app\+\_\+main}} (void)
+\begin{DoxyCompactList}\small\item\em Run the bare-\/metal application loop before the RTOS scheduler starts. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{app_8h_a61b6a4129efaad641ca7419e58f81ef1}{app\+\_\+freertos\+\_\+init}} (void)
+\begin{DoxyCompactList}\small\item\em Create application RTOS tasks and synchronization primitives. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{app_8h_aa82573ffda4dca2a87da84b374c20ab8}{app\+\_\+i2c\+\_\+lock}} (uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Lock the shared application I2C bus. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{app_8h_af477839583a45714e98bfc804c2efa27}{app\+\_\+i2c\+\_\+unlock}} (void)
+\begin{DoxyCompactList}\small\item\em Release the shared application I2C bus. \end{DoxyCompactList}\item 
+HAL\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{app_8h_a4cffe8ca6c33d33a23f0213c1d462217}{app\+\_\+i2c\+\_\+master\+\_\+transmit}} (I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c, uint16\+\_\+t device\+\_\+address, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t size, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Master\+\_\+\+Transmit}. \end{DoxyCompactList}\item 
+HAL\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{app_8h_ab36ecf7abe8a18d604c9ffc89f5a3c90}{app\+\_\+i2c\+\_\+master\+\_\+receive}} (I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c, uint16\+\_\+t device\+\_\+address, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t size, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Master\+\_\+\+Receive}. \end{DoxyCompactList}\item 
+HAL\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{app_8h_a981e237b1eac69791e1186fda8ec68f8}{app\+\_\+i2c\+\_\+mem\+\_\+write}} (I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c, uint16\+\_\+t device\+\_\+address, uint16\+\_\+t mem\+\_\+address, uint16\+\_\+t mem\+\_\+address\+\_\+size, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t size, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Mem\+\_\+\+Write}. \end{DoxyCompactList}\item 
+HAL\+\_\+\+Status\+Type\+Def \mbox{\hyperlink{app_8h_a695e2060bf156392e15c58447fa076b3}{app\+\_\+i2c\+\_\+mem\+\_\+read}} (I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c, uint16\+\_\+t device\+\_\+address, uint16\+\_\+t mem\+\_\+address, uint16\+\_\+t mem\+\_\+address\+\_\+size, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t size, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Mem\+\_\+\+Read}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Main application entry points and shared I2C bus helpers. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{app_8h_source}{app.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{app_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{app_8h_a61b6a4129efaad641ca7419e58f81ef1}\index{app.h@{app.h}!app\_freertos\_init@{app\_freertos\_init}}
+\index{app\_freertos\_init@{app\_freertos\_init}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_freertos\_init()}{app\_freertos\_init()}}
+{\footnotesize\ttfamily \label{app_8h_a61b6a4129efaad641ca7419e58f81ef1} 
+void app\+\_\+freertos\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Create application RTOS tasks and synchronization primitives. 
+
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00057}{57}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280__main_8c_source_l00056}{bmp280\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{button__main_8c_source_l00068}{button\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{lcd__main_8c_source_l00088}{lcd\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{led__array__main_8c_source_l00028}{led\+\_\+array\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{menu__main_8c_source_l01386}{menu\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{radio__main_8c_source_l00396}{radio\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{security__main_8c_source_l00367}{security\+\_\+main\+\_\+create\+\_\+task()}}, \mbox{\hyperlink{service_8c_source_l00091}{service\+\_\+uart\+\_\+create\+\_\+task()}} i \mbox{\hyperlink{tof__main_8c_source_l00030}{tof\+\_\+main\+\_\+create\+\_\+task()}}.
+
+\Hypertarget{app_8h_aa82573ffda4dca2a87da84b374c20ab8}\index{app.h@{app.h}!app\_i2c\_lock@{app\_i2c\_lock}}
+\index{app\_i2c\_lock@{app\_i2c\_lock}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_i2c\_lock()}{app\_i2c\_lock()}}
+{\footnotesize\ttfamily \label{app_8h_aa82573ffda4dca2a87da84b374c20ab8} 
+bool app\+\_\+i2c\+\_\+lock (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Lock the shared application I2C bus. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em timeout\+\_\+ms} & Timeout passed to the RTOS mutex wait. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the bus lock was acquired. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00072}{72}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+\Hypertarget{app_8h_ab36ecf7abe8a18d604c9ffc89f5a3c90}\index{app.h@{app.h}!app\_i2c\_master\_receive@{app\_i2c\_master\_receive}}
+\index{app\_i2c\_master\_receive@{app\_i2c\_master\_receive}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_i2c\_master\_receive()}{app\_i2c\_master\_receive()}}
+{\footnotesize\ttfamily \label{app_8h_ab36ecf7abe8a18d604c9ffc89f5a3c90} 
+HAL\+\_\+\+Status\+Type\+Def app\+\_\+i2c\+\_\+master\+\_\+receive (\begin{DoxyParamCaption}\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{, }\item[{uint16\+\_\+t}]{device\+\_\+address}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{size}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Master\+\_\+\+Receive}. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em hi2c} & I2C peripheral handle. \\
+\hline
+{\em device\+\_\+address} & 8-\/bit HAL device address. \\
+\hline
+{\em data} & Receive buffer. \\
+\hline
+{\em size} & Number of bytes to receive. \\
+\hline
+{\em timeout\+\_\+ms} & Transfer timeout in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+HAL transfer status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00144}{144}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{app_8c_source_l00087}{app\+\_\+i2c\+\_\+unlock()}}.
+
+\Hypertarget{app_8h_a4cffe8ca6c33d33a23f0213c1d462217}\index{app.h@{app.h}!app\_i2c\_master\_transmit@{app\_i2c\_master\_transmit}}
+\index{app\_i2c\_master\_transmit@{app\_i2c\_master\_transmit}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_i2c\_master\_transmit()}{app\_i2c\_master\_transmit()}}
+{\footnotesize\ttfamily \label{app_8h_a4cffe8ca6c33d33a23f0213c1d462217} 
+HAL\+\_\+\+Status\+Type\+Def app\+\_\+i2c\+\_\+master\+\_\+transmit (\begin{DoxyParamCaption}\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{, }\item[{uint16\+\_\+t}]{device\+\_\+address}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{size}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Master\+\_\+\+Transmit}. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em hi2c} & I2C peripheral handle. \\
+\hline
+{\em device\+\_\+address} & 8-\/bit HAL device address. \\
+\hline
+{\em data} & Data buffer to transmit. \\
+\hline
+{\em size} & Number of bytes to transmit. \\
+\hline
+{\em timeout\+\_\+ms} & Transfer timeout in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+HAL transfer status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00095}{95}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{app_8c_source_l00087}{app\+\_\+i2c\+\_\+unlock()}}.
+
+\Hypertarget{app_8h_a695e2060bf156392e15c58447fa076b3}\index{app.h@{app.h}!app\_i2c\_mem\_read@{app\_i2c\_mem\_read}}
+\index{app\_i2c\_mem\_read@{app\_i2c\_mem\_read}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_i2c\_mem\_read()}{app\_i2c\_mem\_read()}}
+{\footnotesize\ttfamily \label{app_8h_a695e2060bf156392e15c58447fa076b3} 
+HAL\+\_\+\+Status\+Type\+Def app\+\_\+i2c\+\_\+mem\+\_\+read (\begin{DoxyParamCaption}\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{, }\item[{uint16\+\_\+t}]{device\+\_\+address}{, }\item[{uint16\+\_\+t}]{mem\+\_\+address}{, }\item[{uint16\+\_\+t}]{mem\+\_\+address\+\_\+size}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{size}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Mem\+\_\+\+Read}. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em hi2c} & I2C peripheral handle. \\
+\hline
+{\em device\+\_\+address} & 8-\/bit HAL device address. \\
+\hline
+{\em mem\+\_\+address} & Memory/register address. \\
+\hline
+{\em mem\+\_\+address\+\_\+size} & HAL memory address size selector. \\
+\hline
+{\em data} & Receive buffer. \\
+\hline
+{\em size} & Number of bytes to read. \\
+\hline
+{\em timeout\+\_\+ms} & Transfer timeout in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+HAL transfer status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00244}{244}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{app_8c_source_l00087}{app\+\_\+i2c\+\_\+unlock()}}.
+
+\Hypertarget{app_8h_a981e237b1eac69791e1186fda8ec68f8}\index{app.h@{app.h}!app\_i2c\_mem\_write@{app\_i2c\_mem\_write}}
+\index{app\_i2c\_mem\_write@{app\_i2c\_mem\_write}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_i2c\_mem\_write()}{app\_i2c\_mem\_write()}}
+{\footnotesize\ttfamily \label{app_8h_a981e237b1eac69791e1186fda8ec68f8} 
+HAL\+\_\+\+Status\+Type\+Def app\+\_\+i2c\+\_\+mem\+\_\+write (\begin{DoxyParamCaption}\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{, }\item[{uint16\+\_\+t}]{device\+\_\+address}{, }\item[{uint16\+\_\+t}]{mem\+\_\+address}{, }\item[{uint16\+\_\+t}]{mem\+\_\+address\+\_\+size}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{size}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Thread-\/safe wrapper for {\ttfamily HAL\+\_\+\+I2\+C\+\_\+\+Mem\+\_\+\+Write}. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em hi2c} & I2C peripheral handle. \\
+\hline
+{\em device\+\_\+address} & 8-\/bit HAL device address. \\
+\hline
+{\em mem\+\_\+address} & Memory/register address. \\
+\hline
+{\em mem\+\_\+address\+\_\+size} & HAL memory address size selector. \\
+\hline
+{\em data} & Data buffer to write. \\
+\hline
+{\em size} & Number of bytes to write. \\
+\hline
+{\em timeout\+\_\+ms} & Transfer timeout in milliseconds. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+HAL transfer status. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00191}{191}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{app_8c_source_l00087}{app\+\_\+i2c\+\_\+unlock()}}.
+
+\Hypertarget{app_8h_af477839583a45714e98bfc804c2efa27}\index{app.h@{app.h}!app\_i2c\_unlock@{app\_i2c\_unlock}}
+\index{app\_i2c\_unlock@{app\_i2c\_unlock}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_i2c\_unlock()}{app\_i2c\_unlock()}}
+{\footnotesize\ttfamily \label{app_8h_af477839583a45714e98bfc804c2efa27} 
+void app\+\_\+i2c\+\_\+unlock (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Release the shared application I2C bus. 
+
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00087}{87}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{app_8c_source_l00144}{app\+\_\+i2c\+\_\+master\+\_\+receive()}}, \mbox{\hyperlink{app_8c_source_l00095}{app\+\_\+i2c\+\_\+master\+\_\+transmit()}}, \mbox{\hyperlink{app_8c_source_l00244}{app\+\_\+i2c\+\_\+mem\+\_\+read()}}, \mbox{\hyperlink{app_8c_source_l00191}{app\+\_\+i2c\+\_\+mem\+\_\+write()}}, \mbox{\hyperlink{lcd_8c_source_l00501}{lcd\+\_\+backlight()}}, \mbox{\hyperlink{lcd_8c_source_l00480}{lcd\+\_\+clear()}}, \mbox{\hyperlink{lcd_8c_source_l00456}{lcd\+\_\+set\+\_\+cursor()}}, \mbox{\hyperlink{lcd_8c_source_l00524}{lcd\+\_\+write\+\_\+line()}} i \mbox{\hyperlink{lcd_8c_source_l00430}{lcd\+\_\+write\+\_\+string()}}.
+
+\Hypertarget{app_8h_add3190cf715f513666f4be42874d91e2}\index{app.h@{app.h}!app\_init@{app\_init}}
+\index{app\_init@{app\_init}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_init()}{app\_init()}}
+{\footnotesize\ttfamily \label{app_8h_add3190cf715f513666f4be42874d91e2} 
+void app\+\_\+init (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Initialize application-\/level peripherals and modules. 
+
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00046}{46}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+
+\Hypertarget{app_8h_a630544a7f0a2cc40d8a7fefab7e2fe70}\index{app.h@{app.h}!app\_main@{app\_main}}
+\index{app\_main@{app\_main}!app.h@{app.h}}
+\doxysubsubsection{\texorpdfstring{app\_main()}{app\_main()}}
+{\footnotesize\ttfamily \label{app_8h_a630544a7f0a2cc40d8a7fefab7e2fe70} 
+void app\+\_\+main (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Run the bare-\/metal application loop before the RTOS scheduler starts. 
+
+
+
+Definicja w linii \mbox{\hyperlink{app_8c_source_l00051}{51}} pliku \mbox{\hyperlink{app_8c_source}{app.\+c}}.
+

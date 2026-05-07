@@ -1,0 +1,253 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+lib/radio\+\_\+lib\+\_\+config.h}
+\hypertarget{radio__lib__config_8h}{}\label{radio__lib__config_8h}\index{Core/App/radio\_lib/radio\_lib\_config.h@{Core/App/radio\_lib/radio\_lib\_config.h}}
+
+
+Konfiguracja kompilacyjna biblioteki {\ttfamily radio\+\_\+lib}.  
+
+
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}{RADIO\+\_\+\+LIB\+\_\+\+ACTIVE\+\_\+\+MODULATION}}~\mbox{\hyperlink{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+LORA}}
+\begin{DoxyCompactList}\small\item\em Aktywny backend modulacji wybierany na etapie kompilacji. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_a7bc9a0e610bda2ee7e172437c3d7805b}{RADIO\+\_\+\+LIB\+\_\+\+OWNS\+\_\+\+HAL\+\_\+\+EXTI\+\_\+\+CALLBACK}}~1
+\begin{DoxyCompactList}\small\item\em Własność callbacku EXTI. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_a9cd07b89bb78518454369f72c9acd313}{RADIO\+\_\+\+LIB\+\_\+\+SPI\+\_\+\+TIMEOUT\+\_\+\+MS}}~100U
+\begin{DoxyCompactList}\small\item\em Timeout blokujących transferów SPI (ms). \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}{RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD}}~255U
+\begin{DoxyCompactList}\small\item\em Maksymalna długość payloadu bufora pakietu. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_aeb31168bab90b0a04839cbcad56235b9}{RADIO\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+FREQ\+\_\+\+HZ}}~868500000\+UL
+\begin{DoxyCompactList}\small\item\em Domyślna częstotliwość Lo\+Ra (Hz). \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_ad84c65139cc4451b3125a7cebf8654c8}{RADIO\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+SYNC\+\_\+\+WORD}}~0x34U
+\begin{DoxyCompactList}\small\item\em Domyślny sync word Lo\+Ra. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{Indent}\textbf{ Identyfikatory backendów modulacji}\par
+{\em Stałe używane przez {\ttfamily \doxylink{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}{RADIO\+\_\+\+LIB\+\_\+\+ACTIVE\+\_\+\+MODULATION}}. }\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+LORA}}~0U
+\begin{DoxyCompactList}\small\item\em Backend Lo\+Ra. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_a346540f304c86be520a75b05d59ff4d3}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+FSK}}~1U
+\begin{DoxyCompactList}\small\item\em Backend FSK. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_a1af1af53fe6cd06bcf407c9d77549981}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+OOK}}~2U
+\begin{DoxyCompactList}\small\item\em Backend OOK. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ Filtry EXTI DIO (Lo\+Ra)}\par
+{\em Pozwala wyłączyć obsługę mniej używanych linii DIO. }\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_af4a1d20b2acdd64f095cb527283893d6}{RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO2\+\_\+\+EXTI}}~0
+\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_ae8c8069c07a45202c00e47bd4b1b6642}{RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO3\+\_\+\+EXTI}}~0
+\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_a6fa3ab0fda814b98de02f56e93ae880e}{RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO4\+\_\+\+EXTI}}~0
+\item 
+\#define \mbox{\hyperlink{radio__lib__config_8h_a6eacfcc8566f096107b4005d30102a72}{RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO5\+\_\+\+EXTI}}~0
+\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\doxysubsection{Opis szczegółowy}
+Konfiguracja kompilacyjna biblioteki {\ttfamily radio\+\_\+lib}. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{radio__lib__config_8h_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_ACTIVE\_MODULATION@{RADIO\_LIB\_ACTIVE\_MODULATION}}
+\index{RADIO\_LIB\_ACTIVE\_MODULATION@{RADIO\_LIB\_ACTIVE\_MODULATION}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_ACTIVE\_MODULATION}{RADIO\_LIB\_ACTIVE\_MODULATION}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_af5836e897b242bbe2a19e96d3832882f} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+ACTIVE\+\_\+\+MODULATION~\mbox{\hyperlink{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16}{RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+LORA}}}
+
+
+
+Aktywny backend modulacji wybierany na etapie kompilacji. 
+
+Domyślnie aktywny jest backend Lo\+Ra. 
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00027}{27}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+\Hypertarget{radio__lib__config_8h_aeb31168bab90b0a04839cbcad56235b9}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_DEFAULT\_FREQ\_HZ@{RADIO\_LIB\_DEFAULT\_FREQ\_HZ}}
+\index{RADIO\_LIB\_DEFAULT\_FREQ\_HZ@{RADIO\_LIB\_DEFAULT\_FREQ\_HZ}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_DEFAULT\_FREQ\_HZ}{RADIO\_LIB\_DEFAULT\_FREQ\_HZ}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_aeb31168bab90b0a04839cbcad56235b9} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+FREQ\+\_\+\+HZ~868500000\+UL}
+
+
+
+Domyślna częstotliwość Lo\+Ra (Hz). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00058}{58}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00347}{radio\+\_\+lora\+\_\+default\+\_\+lora\+\_\+cfg()}}.
+
+\Hypertarget{radio__lib__config_8h_ad84c65139cc4451b3125a7cebf8654c8}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_DEFAULT\_SYNC\_WORD@{RADIO\_LIB\_DEFAULT\_SYNC\_WORD}}
+\index{RADIO\_LIB\_DEFAULT\_SYNC\_WORD@{RADIO\_LIB\_DEFAULT\_SYNC\_WORD}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_DEFAULT\_SYNC\_WORD}{RADIO\_LIB\_DEFAULT\_SYNC\_WORD}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_ad84c65139cc4451b3125a7cebf8654c8} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+DEFAULT\+\_\+\+SYNC\+\_\+\+WORD~0x34U}
+
+
+
+Domyślny sync word Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00065}{65}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00347}{radio\+\_\+lora\+\_\+default\+\_\+lora\+\_\+cfg()}}.
+
+\Hypertarget{radio__lib__config_8h_af4a1d20b2acdd64f095cb527283893d6}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_ENABLE\_DIO2\_EXTI@{RADIO\_LIB\_ENABLE\_DIO2\_EXTI}}
+\index{RADIO\_LIB\_ENABLE\_DIO2\_EXTI@{RADIO\_LIB\_ENABLE\_DIO2\_EXTI}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_ENABLE\_DIO2\_EXTI}{RADIO\_LIB\_ENABLE\_DIO2\_EXTI}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_af4a1d20b2acdd64f095cb527283893d6} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO2\+\_\+\+EXTI~0}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00074}{74}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+\Hypertarget{radio__lib__config_8h_ae8c8069c07a45202c00e47bd4b1b6642}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_ENABLE\_DIO3\_EXTI@{RADIO\_LIB\_ENABLE\_DIO3\_EXTI}}
+\index{RADIO\_LIB\_ENABLE\_DIO3\_EXTI@{RADIO\_LIB\_ENABLE\_DIO3\_EXTI}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_ENABLE\_DIO3\_EXTI}{RADIO\_LIB\_ENABLE\_DIO3\_EXTI}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_ae8c8069c07a45202c00e47bd4b1b6642} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO3\+\_\+\+EXTI~0}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00078}{78}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+\Hypertarget{radio__lib__config_8h_a6fa3ab0fda814b98de02f56e93ae880e}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_ENABLE\_DIO4\_EXTI@{RADIO\_LIB\_ENABLE\_DIO4\_EXTI}}
+\index{RADIO\_LIB\_ENABLE\_DIO4\_EXTI@{RADIO\_LIB\_ENABLE\_DIO4\_EXTI}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_ENABLE\_DIO4\_EXTI}{RADIO\_LIB\_ENABLE\_DIO4\_EXTI}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_a6fa3ab0fda814b98de02f56e93ae880e} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO4\+\_\+\+EXTI~0}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00082}{82}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+\Hypertarget{radio__lib__config_8h_a6eacfcc8566f096107b4005d30102a72}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_ENABLE\_DIO5\_EXTI@{RADIO\_LIB\_ENABLE\_DIO5\_EXTI}}
+\index{RADIO\_LIB\_ENABLE\_DIO5\_EXTI@{RADIO\_LIB\_ENABLE\_DIO5\_EXTI}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_ENABLE\_DIO5\_EXTI}{RADIO\_LIB\_ENABLE\_DIO5\_EXTI}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_a6eacfcc8566f096107b4005d30102a72} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+ENABLE\+\_\+\+DIO5\+\_\+\+EXTI~0}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00086}{86}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+\Hypertarget{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_MAX\_PAYLOAD@{RADIO\_LIB\_MAX\_PAYLOAD}}
+\index{RADIO\_LIB\_MAX\_PAYLOAD@{RADIO\_LIB\_MAX\_PAYLOAD}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_MAX\_PAYLOAD}{RADIO\_LIB\_MAX\_PAYLOAD}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_ade00f2ee6e56b6b5fb58c235c4c27641} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+MAX\+\_\+\+PAYLOAD~255U}
+
+
+
+Maksymalna długość payloadu bufora pakietu. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00051}{51}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__ook_8c_source_l00197}{radio\+\_\+apply\+\_\+ook\+\_\+config()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lora_8c_source_l00507}{radio\+\_\+lora\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__ook_8c_source_l00535}{radio\+\_\+ook\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00432}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}, \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}} i \mbox{\hyperlink{radio__ook_8c_source_l00349}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__lib__config_8h_a346540f304c86be520a75b05d59ff4d3}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_MODULATION\_FSK@{RADIO\_LIB\_MODULATION\_FSK}}
+\index{RADIO\_LIB\_MODULATION\_FSK@{RADIO\_LIB\_MODULATION\_FSK}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_MODULATION\_FSK}{RADIO\_LIB\_MODULATION\_FSK}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_a346540f304c86be520a75b05d59ff4d3} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+FSK~1U}
+
+
+
+Backend FSK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00017}{17}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00119}{radio\+\_\+deinit()}}, \mbox{\hyperlink{radio__lib_8c_source_l00250}{radio\+\_\+get\+\_\+last\+\_\+packet()}}, \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8c_source_l00100}{radio\+\_\+init()}}, \mbox{\hyperlink{radio__lib_8c_source_l00017}{radio\+\_\+normalize\+\_\+backend()}}, \mbox{\hyperlink{radio__lib_8c_source_l00346}{radio\+\_\+on\+\_\+exti()}}, \mbox{\hyperlink{radio__lib_8c_source_l00215}{radio\+\_\+process()}}, \mbox{\hyperlink{radio__lib_8c_source_l00314}{radio\+\_\+raw\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00330}{radio\+\_\+raw\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__lib_8c_source_l00298}{radio\+\_\+raw\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00167}{radio\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lib_8c_source_l00199}{radio\+\_\+sleep()}}, \mbox{\hyperlink{radio__lib_8c_source_l00183}{radio\+\_\+standby()}}, \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__lib_8c_source_l00151}{radio\+\_\+start\+\_\+rx\+\_\+single()}} i \mbox{\hyperlink{radio__lib_8c_source_l00234}{radio\+\_\+take\+\_\+events()}}.
+
+\Hypertarget{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_MODULATION\_LORA@{RADIO\_LIB\_MODULATION\_LORA}}
+\index{RADIO\_LIB\_MODULATION\_LORA@{RADIO\_LIB\_MODULATION\_LORA}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_MODULATION\_LORA}{RADIO\_LIB\_MODULATION\_LORA}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_ab5567fde7ba671d7b3c02f3770dd9e16} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+LORA~0U}
+
+
+
+Backend Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00016}{16}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00119}{radio\+\_\+deinit()}}, \mbox{\hyperlink{radio__lib_8c_source_l00250}{radio\+\_\+get\+\_\+last\+\_\+packet()}}, \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8c_source_l00100}{radio\+\_\+init()}}, \mbox{\hyperlink{radio__lib_8c_source_l00017}{radio\+\_\+normalize\+\_\+backend()}}, \mbox{\hyperlink{radio__lib_8c_source_l00346}{radio\+\_\+on\+\_\+exti()}}, \mbox{\hyperlink{radio__lib_8c_source_l00215}{radio\+\_\+process()}}, \mbox{\hyperlink{radio__lib_8c_source_l00314}{radio\+\_\+raw\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00330}{radio\+\_\+raw\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__lib_8c_source_l00298}{radio\+\_\+raw\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00167}{radio\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lib_8c_source_l00199}{radio\+\_\+sleep()}}, \mbox{\hyperlink{radio__lib_8c_source_l00183}{radio\+\_\+standby()}}, \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__lib_8c_source_l00151}{radio\+\_\+start\+\_\+rx\+\_\+single()}} i \mbox{\hyperlink{radio__lib_8c_source_l00234}{radio\+\_\+take\+\_\+events()}}.
+
+\Hypertarget{radio__lib__config_8h_a1af1af53fe6cd06bcf407c9d77549981}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_MODULATION\_OOK@{RADIO\_LIB\_MODULATION\_OOK}}
+\index{RADIO\_LIB\_MODULATION\_OOK@{RADIO\_LIB\_MODULATION\_OOK}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_MODULATION\_OOK}{RADIO\_LIB\_MODULATION\_OOK}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_a1af1af53fe6cd06bcf407c9d77549981} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+MODULATION\+\_\+\+OOK~2U}
+
+
+
+Backend OOK. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00018}{18}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lib_8c_source_l00119}{radio\+\_\+deinit()}}, \mbox{\hyperlink{radio__lib_8c_source_l00250}{radio\+\_\+get\+\_\+last\+\_\+packet()}}, \mbox{\hyperlink{radio__lib_8c_source_l00266}{radio\+\_\+get\+\_\+state()}}, \mbox{\hyperlink{radio__lib_8c_source_l00100}{radio\+\_\+init()}}, \mbox{\hyperlink{radio__lib_8c_source_l00017}{radio\+\_\+normalize\+\_\+backend()}}, \mbox{\hyperlink{radio__lib_8c_source_l00346}{radio\+\_\+on\+\_\+exti()}}, \mbox{\hyperlink{radio__lib_8c_source_l00215}{radio\+\_\+process()}}, \mbox{\hyperlink{radio__lib_8c_source_l00314}{radio\+\_\+raw\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__lib_8c_source_l00282}{radio\+\_\+raw\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00330}{radio\+\_\+raw\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__lib_8c_source_l00298}{radio\+\_\+raw\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__lib_8c_source_l00167}{radio\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lib_8c_source_l00199}{radio\+\_\+sleep()}}, \mbox{\hyperlink{radio__lib_8c_source_l00183}{radio\+\_\+standby()}}, \mbox{\hyperlink{radio__lib_8c_source_l00135}{radio\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__lib_8c_source_l00151}{radio\+\_\+start\+\_\+rx\+\_\+single()}} i \mbox{\hyperlink{radio__lib_8c_source_l00234}{radio\+\_\+take\+\_\+events()}}.
+
+\Hypertarget{radio__lib__config_8h_a7bc9a0e610bda2ee7e172437c3d7805b}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK@{RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK}}
+\index{RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK@{RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK}{RADIO\_LIB\_OWNS\_HAL\_EXTI\_CALLBACK}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_a7bc9a0e610bda2ee7e172437c3d7805b} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+OWNS\+\_\+\+HAL\+\_\+\+EXTI\+\_\+\+CALLBACK~1}
+
+
+
+Własność callbacku EXTI. 
+
+Gdy ustawione na {\ttfamily 1}, biblioteka dostarcza {\ttfamily HAL\+\_\+\+GPIO\+\_\+\+EXTI\+\_\+\+Callback}. Gdy ustawione na {\ttfamily 0}, użytkownik musi sam przekazać pin do {\ttfamily \doxylink{radio__lib_8c_a63916cd84e3fdac9ef1580a469798fe6}{radio\+\_\+on\+\_\+exti}}. 
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00037}{37}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+\Hypertarget{radio__lib__config_8h_a9cd07b89bb78518454369f72c9acd313}\index{radio\_lib\_config.h@{radio\_lib\_config.h}!RADIO\_LIB\_SPI\_TIMEOUT\_MS@{RADIO\_LIB\_SPI\_TIMEOUT\_MS}}
+\index{RADIO\_LIB\_SPI\_TIMEOUT\_MS@{RADIO\_LIB\_SPI\_TIMEOUT\_MS}!radio\_lib\_config.h@{radio\_lib\_config.h}}
+\doxysubsubsection{\texorpdfstring{RADIO\_LIB\_SPI\_TIMEOUT\_MS}{RADIO\_LIB\_SPI\_TIMEOUT\_MS}}
+{\footnotesize\ttfamily \label{radio__lib__config_8h_a9cd07b89bb78518454369f72c9acd313} 
+\#define RADIO\+\_\+\+LIB\+\_\+\+SPI\+\_\+\+TIMEOUT\+\_\+\+MS~100U}
+
+
+
+Timeout blokujących transferów SPI (ms). 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__lib__config_8h_source_l00044}{44}} pliku \mbox{\hyperlink{radio__lib__config_8h_source}{radio\+\_\+lib\+\_\+config.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00317}{radio\+\_\+lora\+\_\+default\+\_\+hw\+\_\+cfg()}}.
+

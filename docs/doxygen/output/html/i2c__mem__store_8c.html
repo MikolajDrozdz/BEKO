@@ -1,0 +1,1631 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/i2c_mem_store_lib/i2c_mem_store.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('i2c__mem__store_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku i2c_mem_store.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Implementation of external I2C memory storage helper.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="app_8h_source.html">../app.h</a>&quot;</code><br />
+<code>#include &quot;app_delay.h&quot;</code><br />
+<code>#include &lt;string.h&gt;</code><br />
+</div>
+<p><a href="i2c__mem__store_8c_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Struktury danych</h2></td></tr>
+<tr class="memitem:i2c_5Fmem_5Fstore_5Fmeta_5Fwire_5Ft" id="r_i2c_5Fmem_5Fstore_5Fmeta_5Fwire_5Ft"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structi2c__mem__store__meta__wire__t.html">i2c_mem_store_meta_wire_t</a></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Definicje</h2></td></tr>
+<tr class="memitem:ab616f5d00bd36244a82ec7aa0a3ba5de" id="r_ab616f5d00bd36244a82ec7aa0a3ba5de"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab616f5d00bd36244a82ec7aa0a3ba5de">I2C_MEM_STORE_META_PRIMARY_ADDR</a>&#160;&#160;&#160;0x0000UL</td></tr>
+<tr class="memitem:ae27ccf56ff02621734d4b895dc910115" id="r_ae27ccf56ff02621734d4b895dc910115"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae27ccf56ff02621734d4b895dc910115">I2C_MEM_STORE_META_MIRROR_ADDR</a>&#160;&#160;&#160;0x0018UL</td></tr>
+<tr class="memitem:acbc5381c84909afd5112853ae490fd43" id="r_acbc5381c84909afd5112853ae490fd43"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acbc5381c84909afd5112853ae490fd43">I2C_MEM_STORE_LOG_START_ADDR</a>&#160;&#160;&#160;0x0030UL</td></tr>
+<tr class="memitem:a44f470502c2d022e0ac245a4ad616890" id="r_a44f470502c2d022e0ac245a4ad616890"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a44f470502c2d022e0ac245a4ad616890">I2C_MEM_STORE_META_MAGIC</a>&#160;&#160;&#160;0x4D533331UL</td></tr>
+<tr class="memitem:a0197654770bb38273287ed3f6deabaf5" id="r_a0197654770bb38273287ed3f6deabaf5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0197654770bb38273287ed3f6deabaf5">I2C_MEM_STORE_META_VERSION</a>&#160;&#160;&#160;0x0001U</td></tr>
+<tr class="memitem:a33ed0b2891b7e984faefa43abf499ccb" id="r_a33ed0b2891b7e984faefa43abf499ccb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a33ed0b2891b7e984faefa43abf499ccb">I2C_MEM_STORE_LOG_MAGIC</a>&#160;&#160;&#160;0xA55AU</td></tr>
+<tr class="memitem:a4cb2a0b6d36e7fd9ca7840ffe4186bc8" id="r_a4cb2a0b6d36e7fd9ca7840ffe4186bc8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4cb2a0b6d36e7fd9ca7840ffe4186bc8">I2C_MEM_STORE_SECRET_MAGIC</a>&#160;&#160;&#160;0xC0DEU</td></tr>
+<tr class="memitem:a2f918cf597084a6bbff087db60407ace" id="r_a2f918cf597084a6bbff087db60407ace"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f918cf597084a6bbff087db60407ace">I2C_MEM_STORE_LOG_HEADER_SIZE</a>&#160;&#160;&#160;16U</td></tr>
+<tr class="memitem:a0a8a9695d76881b6e7f056a81faf8279" id="r_a0a8a9695d76881b6e7f056a81faf8279"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0a8a9695d76881b6e7f056a81faf8279">I2C_MEM_STORE_LOG_CRC_OFFSET</a>&#160;&#160;&#160;(I2C_MEM_STORE_LOG_RECORD_SIZE - 2U)</td></tr>
+<tr class="memitem:a2a61070d65334ca2a70e79c26c1191d3" id="r_a2a61070d65334ca2a70e79c26c1191d3"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2a61070d65334ca2a70e79c26c1191d3">I2C_MEM_STORE_SECRET_HEADER_SIZE</a>&#160;&#160;&#160;8U</td></tr>
+<tr class="memitem:a101f9ed61749197495fe9148a5dc7384" id="r_a101f9ed61749197495fe9148a5dc7384"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a101f9ed61749197495fe9148a5dc7384">I2C_MEM_STORE_SECRET_CRC_OFFSET</a>&#160;&#160;&#160;(I2C_MEM_STORE_SECRET_SLOT_SIZE - 2U)</td></tr>
+<tr class="memitem:a8e3b7c9a025610f8869ec3c9a8d3a99c" id="r_a8e3b7c9a025610f8869ec3c9a8d3a99c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8e3b7c9a025610f8869ec3c9a8d3a99c">I2C_MEM_STORE_META_WIRE_SIZE</a>&#160;&#160;&#160;24U</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:af4b062688bd2a5ec1a849d687a92f381" id="r_af4b062688bd2a5ec1a849d687a92f381"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4b062688bd2a5ec1a849d687a92f381">i2c_mem_store_min_u16</a> (uint16_t a, uint16_t b)</td></tr>
+<tr class="memdesc:af4b062688bd2a5ec1a849d687a92f381"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#af4b062688bd2a5ec1a849d687a92f381" title="Internal helper: i2c_mem_store_min_u16.">i2c_mem_store_min_u16</a></span>.  <br /></td></tr>
+<tr class="memitem:adf29b04e475845b0057df2c6cc835348" id="r_adf29b04e475845b0057df2c6cc835348"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf29b04e475845b0057df2c6cc835348">i2c_mem_store_hal_to_status</a> (HAL_StatusTypeDef st)</td></tr>
+<tr class="memdesc:adf29b04e475845b0057df2c6cc835348"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#adf29b04e475845b0057df2c6cc835348" title="Internal helper: i2c_mem_store_hal_to_status.">i2c_mem_store_hal_to_status</a></span>.  <br /></td></tr>
+<tr class="memitem:a2db4ebb0506e562607dbdf67faacedda" id="r_a2db4ebb0506e562607dbdf67faacedda"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2db4ebb0506e562607dbdf67faacedda">i2c_mem_store_crc16_ccitt</a> (const uint8_t *data, uint16_t len)</td></tr>
+<tr class="memdesc:a2db4ebb0506e562607dbdf67faacedda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate CRC-16/CCITT used to protect metadata and stored records.  <br /></td></tr>
+<tr class="memitem:aa01f266d12b0296885c04f1a396edbd8" id="r_aa01f266d12b0296885c04f1a396edbd8"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa01f266d12b0296885c04f1a396edbd8">i2c_mem_store_le16_write</a> (uint8_t *dst, uint16_t value)</td></tr>
+<tr class="memdesc:aa01f266d12b0296885c04f1a396edbd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#aa01f266d12b0296885c04f1a396edbd8" title="Internal helper: i2c_mem_store_le16_write.">i2c_mem_store_le16_write</a></span>.  <br /></td></tr>
+<tr class="memitem:af5b0b796cbb183f685bacc4f9f8d4d52" id="r_af5b0b796cbb183f685bacc4f9f8d4d52"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af5b0b796cbb183f685bacc4f9f8d4d52">i2c_mem_store_le32_write</a> (uint8_t *dst, uint32_t value)</td></tr>
+<tr class="memdesc:af5b0b796cbb183f685bacc4f9f8d4d52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#af5b0b796cbb183f685bacc4f9f8d4d52" title="Internal helper: i2c_mem_store_le32_write.">i2c_mem_store_le32_write</a></span>.  <br /></td></tr>
+<tr class="memitem:aef840997b916a38d9a35617365389609" id="r_aef840997b916a38d9a35617365389609"><td class="memItemLeft" align="right" valign="top">static uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aef840997b916a38d9a35617365389609">i2c_mem_store_le16_read</a> (const uint8_t *src)</td></tr>
+<tr class="memdesc:aef840997b916a38d9a35617365389609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#aef840997b916a38d9a35617365389609" title="Internal helper: i2c_mem_store_le16_read.">i2c_mem_store_le16_read</a></span>.  <br /></td></tr>
+<tr class="memitem:a91b0d2708892ae651d572bff850d14af" id="r_a91b0d2708892ae651d572bff850d14af"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91b0d2708892ae651d572bff850d14af">i2c_mem_store_le32_read</a> (const uint8_t *src)</td></tr>
+<tr class="memdesc:a91b0d2708892ae651d572bff850d14af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a91b0d2708892ae651d572bff850d14af" title="Internal helper: i2c_mem_store_le32_read.">i2c_mem_store_le32_read</a></span>.  <br /></td></tr>
+<tr class="memitem:a069e0768cad75bed0e0f1eba1514a796" id="r_a069e0768cad75bed0e0f1eba1514a796"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a069e0768cad75bed0e0f1eba1514a796">i2c_mem_store_xtea_encrypt_block</a> (uint32_t v[2], const uint32_t key[4])</td></tr>
+<tr class="memdesc:a069e0768cad75bed0e0f1eba1514a796"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encrypt one 64-bit block with XTEA for the software CTR keystream.  <br /></td></tr>
+<tr class="memitem:ab7131b0ebb2c5255c74dabf6dc7c397d" id="r_ab7131b0ebb2c5255c74dabf6dc7c397d"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7131b0ebb2c5255c74dabf6dc7c397d">i2c_mem_store_xtea_ctr_crypt</a> (uint8_t *data, uint16_t len, const uint8_t key_bytes[16], uint32_t nonce)</td></tr>
+<tr class="memdesc:ab7131b0ebb2c5255c74dabf6dc7c397d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply XTEA-CTR in place to encrypt or decrypt secret-slot payload bytes.  <br /></td></tr>
+<tr class="memitem:a5108ede487c3d694864ee1fd896a8df0" id="r_a5108ede487c3d694864ee1fd896a8df0"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5108ede487c3d694864ee1fd896a8df0">i2c_mem_store_log_base_addr</a> (const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx)</td></tr>
+<tr class="memdesc:a5108ede487c3d694864ee1fd896a8df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a5108ede487c3d694864ee1fd896a8df0" title="Internal helper: i2c_mem_store_log_base_addr.">i2c_mem_store_log_base_addr</a></span>.  <br /></td></tr>
+<tr class="memitem:a501f1e1a9174695becf3ee5f57da6732" id="r_a501f1e1a9174695becf3ee5f57da6732"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a501f1e1a9174695becf3ee5f57da6732">i2c_mem_store_secret_base_addr</a> (const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx)</td></tr>
+<tr class="memdesc:a501f1e1a9174695becf3ee5f57da6732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a501f1e1a9174695becf3ee5f57da6732" title="Internal helper: i2c_mem_store_secret_base_addr.">i2c_mem_store_secret_base_addr</a></span>.  <br /></td></tr>
+<tr class="memitem:a05def2e9f2709faca7be9fc02389f743" id="r_a05def2e9f2709faca7be9fc02389f743"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05def2e9f2709faca7be9fc02389f743">i2c_mem_store_log_slot_addr</a> (const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot)</td></tr>
+<tr class="memdesc:a05def2e9f2709faca7be9fc02389f743"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a05def2e9f2709faca7be9fc02389f743" title="Internal helper: i2c_mem_store_log_slot_addr.">i2c_mem_store_log_slot_addr</a></span>.  <br /></td></tr>
+<tr class="memitem:a7cb49255f9d5c488481b4e3e555efa52" id="r_a7cb49255f9d5c488481b4e3e555efa52"><td class="memItemLeft" align="right" valign="top">static uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cb49255f9d5c488481b4e3e555efa52">i2c_mem_store_secret_slot_addr</a> (const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot)</td></tr>
+<tr class="memdesc:a7cb49255f9d5c488481b4e3e555efa52"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a7cb49255f9d5c488481b4e3e555efa52" title="Internal helper: i2c_mem_store_secret_slot_addr.">i2c_mem_store_secret_slot_addr</a></span>.  <br /></td></tr>
+<tr class="memitem:ac89909b7d5f2c05db7977cea33e52d59" id="r_ac89909b7d5f2c05db7977cea33e52d59"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac89909b7d5f2c05db7977cea33e52d59">i2c_mem_store_read_raw</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint32_t addr, uint8_t *dst, uint16_t len)</td></tr>
+<tr class="memdesc:ac89909b7d5f2c05db7977cea33e52d59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#ac89909b7d5f2c05db7977cea33e52d59" title="Internal helper: i2c_mem_store_read_raw.">i2c_mem_store_read_raw</a></span>.  <br /></td></tr>
+<tr class="memitem:a9a6873445b780cb77c58a4f08b80b934" id="r_a9a6873445b780cb77c58a4f08b80b934"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9a6873445b780cb77c58a4f08b80b934">i2c_mem_store_write_raw</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint32_t addr, const uint8_t *src, uint16_t len)</td></tr>
+<tr class="memdesc:a9a6873445b780cb77c58a4f08b80b934"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write raw bytes while respecting EEPROM page boundaries and write-cycle delay.  <br /></td></tr>
+<tr class="memitem:ae57ea218dbeaf6becc7b6b5caa023f26" id="r_ae57ea218dbeaf6becc7b6b5caa023f26"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae57ea218dbeaf6becc7b6b5caa023f26">i2c_mem_store_meta_encode</a> (const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint8_t out[I2C_MEM_STORE_META_WIRE_SIZE])</td></tr>
+<tr class="memdesc:ae57ea218dbeaf6becc7b6b5caa023f26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode runtime metadata into the fixed little-endian on-memory layout.  <br /></td></tr>
+<tr class="memitem:a4f1781d549ac6428220b33a583fa3d25" id="r_a4f1781d549ac6428220b33a583fa3d25"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4f1781d549ac6428220b33a583fa3d25">i2c_mem_store_meta_decode</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, const uint8_t in[I2C_MEM_STORE_META_WIRE_SIZE])</td></tr>
+<tr class="memdesc:a4f1781d549ac6428220b33a583fa3d25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decode and validate persisted metadata from one metadata copy.  <br /></td></tr>
+<tr class="memitem:ac05e47a4cf9adcab1920a39368fe78b3" id="r_ac05e47a4cf9adcab1920a39368fe78b3"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac05e47a4cf9adcab1920a39368fe78b3">i2c_mem_store_meta_save</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx)</td></tr>
+<tr class="memdesc:ac05e47a4cf9adcab1920a39368fe78b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#ac05e47a4cf9adcab1920a39368fe78b3" title="Internal helper: i2c_mem_store_meta_save.">i2c_mem_store_meta_save</a></span>.  <br /></td></tr>
+<tr class="memitem:add0c8b332bf6dacd703378cf22a71ff7" id="r_add0c8b332bf6dacd703378cf22a71ff7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add0c8b332bf6dacd703378cf22a71ff7">i2c_mem_store_meta_load</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx)</td></tr>
+<tr class="memdesc:add0c8b332bf6dacd703378cf22a71ff7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#add0c8b332bf6dacd703378cf22a71ff7" title="Internal helper: i2c_mem_store_meta_load.">i2c_mem_store_meta_load</a></span>.  <br /></td></tr>
+<tr class="memitem:a9bd9beaacdfeac70a1cdf2540283d437" id="r_a9bd9beaacdfeac70a1cdf2540283d437"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bd9beaacdfeac70a1cdf2540283d437">i2c_mem_store_layout_valid</a> (const <a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *cfg, uint16_t *out_slot_count, uint16_t *out_secret_slots)</td></tr>
+<tr class="memdesc:a9bd9beaacdfeac70a1cdf2540283d437"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a9bd9beaacdfeac70a1cdf2540283d437" title="Internal helper: i2c_mem_store_layout_valid.">i2c_mem_store_layout_valid</a></span>.  <br /></td></tr>
+<tr class="memitem:acfe62ca5532da23bdf82427aee292fab" id="r_acfe62ca5532da23bdf82427aee292fab"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acfe62ca5532da23bdf82427aee292fab">i2c_mem_store_default_cfg</a> (<a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *cfg, I2C_HandleTypeDef *hi2c)</td></tr>
+<tr class="memdesc:acfe62ca5532da23bdf82427aee292fab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill configuration with safe defaults for I2C1 memory.  <br /></td></tr>
+<tr class="memitem:aaba1a58ad6981efa72e2724df78236e4" id="r_aaba1a58ad6981efa72e2724df78236e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaba1a58ad6981efa72e2724df78236e4">i2c_mem_store_default_cfg_m24c01r</a> (<a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *cfg, I2C_HandleTypeDef *hi2c)</td></tr>
+<tr class="memdesc:aaba1a58ad6981efa72e2724df78236e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill configuration specifically for ST M24C01-R (1 Kbit EEPROM).  <br /></td></tr>
+<tr class="memitem:a55b8dd95adc2c388e31bb8fc2b7d990a" id="r_a55b8dd95adc2c388e31bb8fc2b7d990a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55b8dd95adc2c388e31bb8fc2b7d990a">i2c_mem_store_init</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, const <a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *cfg, bool format_if_needed)</td></tr>
+<tr class="memdesc:a55b8dd95adc2c388e31bb8fc2b7d990a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize library, load metadata and optionally format on first use.  <br /></td></tr>
+<tr class="memitem:a705f5bf61205843198a2d0d9091a3562" id="r_a705f5bf61205843198a2d0d9091a3562"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a705f5bf61205843198a2d0d9091a3562">i2c_mem_store_format</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx)</td></tr>
+<tr class="memdesc:a705f5bf61205843198a2d0d9091a3562"><td class="mdescLeft">&#160;</td><td class="mdescRight">Format metadata and reset log/secret allocators.  <br /></td></tr>
+<tr class="memitem:a3ea434f9cae24dc0dd36ce7ce9f8692a" id="r_a3ea434f9cae24dc0dd36ce7ce9f8692a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ea434f9cae24dc0dd36ce7ce9f8692a">i2c_mem_store_append_message</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, int16_t rssi_dbm, const uint8_t *payload, uint8_t payload_len)</td></tr>
+<tr class="memdesc:a3ea434f9cae24dc0dd36ce7ce9f8692a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append one received message to persistent ring log.  <br /></td></tr>
+<tr class="memitem:aa667df3ee4ef4c6f7e7ac184c6647985" id="r_aa667df3ee4ef4c6f7e7ac184c6647985"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa667df3ee4ef4c6f7e7ac184c6647985">i2c_mem_store_read_message</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t index_from_latest, <a class="el" href="structi2c__mem__store__log__record__t.html">i2c_mem_store_log_record_t</a> *out_record)</td></tr>
+<tr class="memdesc:aa667df3ee4ef4c6f7e7ac184c6647985"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read one message from log (0 = latest, 1 = previous, ...).  <br /></td></tr>
+<tr class="memitem:a790b8abd22c0d3ee7003abca90b03f43" id="r_a790b8abd22c0d3ee7003abca90b03f43"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a790b8abd22c0d3ee7003abca90b03f43">i2c_mem_store_get_log_count</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t *out_count)</td></tr>
+<tr class="memdesc:a790b8abd22c0d3ee7003abca90b03f43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of valid records currently available in ring log.  <br /></td></tr>
+<tr class="memitem:a4831ee6dfab6cf690e7de2a5457f4126" id="r_a4831ee6dfab6cf690e7de2a5457f4126"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4831ee6dfab6cf690e7de2a5457f4126">i2c_mem_store_secret_write</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot_id, const uint8_t *data, uint8_t data_len)</td></tr>
+<tr class="memdesc:a4831ee6dfab6cf690e7de2a5457f4126"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store encrypted arbitrary payload in secret partition slot.  <br /></td></tr>
+<tr class="memitem:af0d8eb773abd635c2ce25e5bffe7ad58" id="r_af0d8eb773abd635c2ce25e5bffe7ad58"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0d8eb773abd635c2ce25e5bffe7ad58">i2c_mem_store_secret_read</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot_id, uint8_t *data_out, uint8_t data_capacity, uint8_t *data_len)</td></tr>
+<tr class="memdesc:af0d8eb773abd635c2ce25e5bffe7ad58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read and decrypt payload from secret partition slot.  <br /></td></tr>
+<tr class="memitem:a7cf21bcdfa9e92d2ae652e9594e94663" id="r_a7cf21bcdfa9e92d2ae652e9594e94663"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cf21bcdfa9e92d2ae652e9594e94663">i2c_mem_store_secret_erase</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot_id)</td></tr>
+<tr class="memdesc:a7cf21bcdfa9e92d2ae652e9594e94663"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erase one secret slot (invalidate entry marker).  <br /></td></tr>
+<tr class="memitem:a82ec5a83b3b3b2f641924ad95b7175af" id="r_a82ec5a83b3b3b2f641924ad95b7175af"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82ec5a83b3b3b2f641924ad95b7175af">i2c_mem_store_trusted_device_write</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot_id, const <a class="el" href="structi2c__mem__store__trusted__device__t.html">i2c_mem_store_trusted_device_t</a> *trusted)</td></tr>
+<tr class="memdesc:a82ec5a83b3b3b2f641924ad95b7175af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store trusted-device descriptor in encrypted secret slot.  <br /></td></tr>
+<tr class="memitem:a453a0dbba1eff77aa39c7a818d16ca40" id="r_a453a0dbba1eff77aa39c7a818d16ca40"><td class="memItemLeft" align="right" valign="top"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a453a0dbba1eff77aa39c7a818d16ca40">i2c_mem_store_trusted_device_read</a> (<a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *ctx, uint16_t slot_id, <a class="el" href="structi2c__mem__store__trusted__device__t.html">i2c_mem_store_trusted_device_t</a> *trusted)</td></tr>
+<tr class="memdesc:a453a0dbba1eff77aa39c7a818d16ca40"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read trusted-device descriptor from encrypted secret slot.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Implementation of external I2C memory storage helper. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Dokumentacja definicji</h2>
+<a id="a0a8a9695d76881b6e7f056a81faf8279" name="a0a8a9695d76881b6e7f056a81faf8279"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a8a9695d76881b6e7f056a81faf8279">&#9670;&#160;</a></span>I2C_MEM_STORE_LOG_CRC_OFFSET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_LOG_CRC_OFFSET&#160;&#160;&#160;(I2C_MEM_STORE_LOG_RECORD_SIZE - 2U)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00023">23</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a2f918cf597084a6bbff087db60407ace" name="a2f918cf597084a6bbff087db60407ace"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f918cf597084a6bbff087db60407ace">&#9670;&#160;</a></span>I2C_MEM_STORE_LOG_HEADER_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_LOG_HEADER_SIZE&#160;&#160;&#160;16U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00022">22</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a33ed0b2891b7e984faefa43abf499ccb" name="a33ed0b2891b7e984faefa43abf499ccb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33ed0b2891b7e984faefa43abf499ccb">&#9670;&#160;</a></span>I2C_MEM_STORE_LOG_MAGIC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_LOG_MAGIC&#160;&#160;&#160;0xA55AU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00019">19</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="acbc5381c84909afd5112853ae490fd43" name="acbc5381c84909afd5112853ae490fd43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acbc5381c84909afd5112853ae490fd43">&#9670;&#160;</a></span>I2C_MEM_STORE_LOG_START_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_LOG_START_ADDR&#160;&#160;&#160;0x0030UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00015">15</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a44f470502c2d022e0ac245a4ad616890" name="a44f470502c2d022e0ac245a4ad616890"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44f470502c2d022e0ac245a4ad616890">&#9670;&#160;</a></span>I2C_MEM_STORE_META_MAGIC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_META_MAGIC&#160;&#160;&#160;0x4D533331UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00017">17</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="ae27ccf56ff02621734d4b895dc910115" name="ae27ccf56ff02621734d4b895dc910115"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae27ccf56ff02621734d4b895dc910115">&#9670;&#160;</a></span>I2C_MEM_STORE_META_MIRROR_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_META_MIRROR_ADDR&#160;&#160;&#160;0x0018UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00014">14</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="ab616f5d00bd36244a82ec7aa0a3ba5de" name="ab616f5d00bd36244a82ec7aa0a3ba5de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab616f5d00bd36244a82ec7aa0a3ba5de">&#9670;&#160;</a></span>I2C_MEM_STORE_META_PRIMARY_ADDR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_META_PRIMARY_ADDR&#160;&#160;&#160;0x0000UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00013">13</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a0197654770bb38273287ed3f6deabaf5" name="a0197654770bb38273287ed3f6deabaf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0197654770bb38273287ed3f6deabaf5">&#9670;&#160;</a></span>I2C_MEM_STORE_META_VERSION</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_META_VERSION&#160;&#160;&#160;0x0001U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00018">18</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a8e3b7c9a025610f8869ec3c9a8d3a99c" name="a8e3b7c9a025610f8869ec3c9a8d3a99c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e3b7c9a025610f8869ec3c9a8d3a99c">&#9670;&#160;</a></span>I2C_MEM_STORE_META_WIRE_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_META_WIRE_SIZE&#160;&#160;&#160;24U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00028">28</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a101f9ed61749197495fe9148a5dc7384" name="a101f9ed61749197495fe9148a5dc7384"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a101f9ed61749197495fe9148a5dc7384">&#9670;&#160;</a></span>I2C_MEM_STORE_SECRET_CRC_OFFSET</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_SECRET_CRC_OFFSET&#160;&#160;&#160;(I2C_MEM_STORE_SECRET_SLOT_SIZE - 2U)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00026">26</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a2a61070d65334ca2a70e79c26c1191d3" name="a2a61070d65334ca2a70e79c26c1191d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a61070d65334ca2a70e79c26c1191d3">&#9670;&#160;</a></span>I2C_MEM_STORE_SECRET_HEADER_SIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_SECRET_HEADER_SIZE&#160;&#160;&#160;8U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00025">25</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a id="a4cb2a0b6d36e7fd9ca7840ffe4186bc8" name="a4cb2a0b6d36e7fd9ca7840ffe4186bc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cb2a0b6d36e7fd9ca7840ffe4186bc8">&#9670;&#160;</a></span>I2C_MEM_STORE_SECRET_MAGIC</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define I2C_MEM_STORE_SECRET_MAGIC&#160;&#160;&#160;0xC0DEU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00020">20</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a3ea434f9cae24dc0dd36ce7ce9f8692a" name="a3ea434f9cae24dc0dd36ce7ce9f8692a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ea434f9cae24dc0dd36ce7ce9f8692a">&#9670;&#160;</a></span>i2c_mem_store_append_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_append_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int16_t</td>          <td class="paramname"><span class="paramname"><em>rssi_dbm</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>payload</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>payload_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Append one received message to persistent ring log. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">rssi_dbm</td><td>RSSI associated with payload. </td></tr>
+    <tr><td class="paramname">payload</td><td>Message bytes. </td></tr>
+    <tr><td class="paramname">payload_len</td><td>Message length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00510">510</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00064">i2c_mem_store_crc16_ccitt()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00056">I2C_MEM_STORE_EFULL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00090">i2c_mem_store_le16_write()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00097">i2c_mem_store_le32_write()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00188">i2c_mem_store_log_slot_addr()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00333">i2c_mem_store_meta_save()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00107">i2c_mem_store_t::next_sequence</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00103">i2c_mem_store_t::slot_count</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00106">i2c_mem_store_t::valid_count</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00105">i2c_mem_store_t::write_slot</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00138">radio_test_store_packet_in_i2c_memory()</a>.</p>
+
+</div>
+</div>
+<a id="a2db4ebb0506e562607dbdf67faacedda" name="a2db4ebb0506e562607dbdf67faacedda"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2db4ebb0506e562607dbdf67faacedda">&#9670;&#160;</a></span>i2c_mem_store_crc16_ccitt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_crc16_ccitt </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calculate CRC-16/CCITT used to protect metadata and stored records. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00064">64</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="acfe62ca5532da23bdf82427aee292fab" name="acfe62ca5532da23bdf82427aee292fab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfe62ca5532da23bdf82427aee292fab">&#9670;&#160;</a></span>i2c_mem_store_default_cfg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_default_cfg </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">I2C_HandleTypeDef *</td>          <td class="paramname"><span class="paramname"><em>hi2c</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fill configuration with safe defaults for I2C1 memory. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>[out] Configuration object. </td></tr>
+    <tr><td class="paramname">hi2c</td><td>I2C handle (typically <span class="tt">&amp;hi2c1</span>). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00409">409</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00094">i2c_mem_store_cfg_t::crypto_key</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00087">i2c_mem_store_cfg_t::hi2c</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00088">i2c_mem_store_cfg_t::i2c_addr_7bit</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00089">i2c_mem_store_cfg_t::mem_addr_size</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00091">i2c_mem_store_cfg_t::page_bytes</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00093">i2c_mem_store_cfg_t::secret_area_bytes</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00090">i2c_mem_store_cfg_t::total_bytes</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00092">i2c_mem_store_cfg_t::write_cycle_ms</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00440">i2c_mem_store_default_cfg_m24c01r()</a>.</p>
+
+</div>
+</div>
+<a id="aaba1a58ad6981efa72e2724df78236e4" name="aaba1a58ad6981efa72e2724df78236e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaba1a58ad6981efa72e2724df78236e4">&#9670;&#160;</a></span>i2c_mem_store_default_cfg_m24c01r()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_default_cfg_m24c01r </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">I2C_HandleTypeDef *</td>          <td class="paramname"><span class="paramname"><em>hi2c</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fill configuration specifically for ST M24C01-R (1 Kbit EEPROM). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>[out] Configuration object. </td></tr>
+    <tr><td class="paramname">hi2c</td><td>I2C handle (typically <span class="tt">&amp;hi2c1</span>). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00440">440</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00088">i2c_mem_store_cfg_t::i2c_addr_7bit</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00409">i2c_mem_store_default_cfg()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00089">i2c_mem_store_cfg_t::mem_addr_size</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00091">i2c_mem_store_cfg_t::page_bytes</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00093">i2c_mem_store_cfg_t::secret_area_bytes</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00090">i2c_mem_store_cfg_t::total_bytes</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00092">i2c_mem_store_cfg_t::write_cycle_ms</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00239">radio_test_demo_init()</a>.</p>
+
+</div>
+</div>
+<a id="a705f5bf61205843198a2d0d9091a3562" name="a705f5bf61205843198a2d0d9091a3562"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a705f5bf61205843198a2d0d9091a3562">&#9670;&#160;</a></span>i2c_mem_store_format()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_format </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Format metadata and reset log/secret allocators. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00496">496</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00049">I2C_MEM_STORE_ESTATE</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00333">i2c_mem_store_meta_save()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00107">i2c_mem_store_t::next_sequence</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00108">i2c_mem_store_t::secret_counter</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00106">i2c_mem_store_t::valid_count</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00105">i2c_mem_store_t::write_slot</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>.</p>
+
+</div>
+</div>
+<a id="a790b8abd22c0d3ee7003abca90b03f43" name="a790b8abd22c0d3ee7003abca90b03f43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a790b8abd22c0d3ee7003abca90b03f43">&#9670;&#160;</a></span>i2c_mem_store_get_log_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_get_log_count </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>out_count</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get number of valid records currently available in ring log. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">out_count</td><td>[out] Record count. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00624">624</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00106">i2c_mem_store_t::valid_count</a>.</p>
+
+</div>
+</div>
+<a id="adf29b04e475845b0057df2c6cc835348" name="adf29b04e475845b0057df2c6cc835348"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf29b04e475845b0057df2c6cc835348">&#9670;&#160;</a></span>i2c_mem_store_hal_to_status()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_hal_to_status </td>
+          <td>(</td>
+          <td class="paramtype">HAL_StatusTypeDef</td>          <td class="paramname"><span class="paramname"><em>st</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#adf29b04e475845b0057df2c6cc835348" title="Internal helper: i2c_mem_store_hal_to_status.">i2c_mem_store_hal_to_status</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00050">50</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00050">I2C_MEM_STORE_EHAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00051">I2C_MEM_STORE_ETIMEOUT</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00200">i2c_mem_store_read_raw()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>.</p>
+
+</div>
+</div>
+<a id="a55b8dd95adc2c388e31bb8fc2b7d990a" name="a55b8dd95adc2c388e31bb8fc2b7d990a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55b8dd95adc2c388e31bb8fc2b7d990a">&#9670;&#160;</a></span>i2c_mem_store_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>format_if_needed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize library, load metadata and optionally format on first use. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">cfg</td><td>Runtime configuration. </td></tr>
+    <tr><td class="paramname">format_if_needed</td><td>If <span class="tt">true</span>, metadata is created when invalid/missing. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00457">457</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00102">i2c_mem_store_t::cfg</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00371">i2c_mem_store_layout_valid()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00350">i2c_mem_store_meta_load()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00104">i2c_mem_store_t::secret_slot_count</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00103">i2c_mem_store_t::slot_count</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__test_8c_source.html#l00239">radio_test_demo_init()</a>.</p>
+
+</div>
+</div>
+<a id="a9bd9beaacdfeac70a1cdf2540283d437" name="a9bd9beaacdfeac70a1cdf2540283d437"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bd9beaacdfeac70a1cdf2540283d437">&#9670;&#160;</a></span>i2c_mem_store_layout_valid()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool i2c_mem_store_layout_valid </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>out_slot_count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>out_secret_slots</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a9bd9beaacdfeac70a1cdf2540283d437" title="Internal helper: i2c_mem_store_layout_valid.">i2c_mem_store_layout_valid</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00371">371</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00087">i2c_mem_store_cfg_t::hi2c</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00091">i2c_mem_store_cfg_t::page_bytes</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00093">i2c_mem_store_cfg_t::secret_area_bytes</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00090">i2c_mem_store_cfg_t::total_bytes</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>.</p>
+
+</div>
+</div>
+<a id="aef840997b916a38d9a35617365389609" name="aef840997b916a38d9a35617365389609"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef840997b916a38d9a35617365389609">&#9670;&#160;</a></span>i2c_mem_store_le16_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_le16_read </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>src</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#aef840997b916a38d9a35617365389609" title="Internal helper: i2c_mem_store_le16_read.">i2c_mem_store_le16_read</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00106">106</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a>.</p>
+
+</div>
+</div>
+<a id="aa01f266d12b0296885c04f1a396edbd8" name="aa01f266d12b0296885c04f1a396edbd8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa01f266d12b0296885c04f1a396edbd8">&#9670;&#160;</a></span>i2c_mem_store_le16_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_le16_write </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#aa01f266d12b0296885c04f1a396edbd8" title="Internal helper: i2c_mem_store_le16_write.">i2c_mem_store_le16_write</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00090">90</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="a91b0d2708892ae651d572bff850d14af" name="a91b0d2708892ae651d572bff850d14af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91b0d2708892ae651d572bff850d14af">&#9670;&#160;</a></span>i2c_mem_store_le32_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_le32_read </td>
+          <td>(</td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>src</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a91b0d2708892ae651d572bff850d14af" title="Internal helper: i2c_mem_store_le32_read.">i2c_mem_store_le32_read</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00112">112</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00141">i2c_mem_store_xtea_ctr_crypt()</a>.</p>
+
+</div>
+</div>
+<a id="af5b0b796cbb183f685bacc4f9f8d4d52" name="af5b0b796cbb183f685bacc4f9f8d4d52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5b0b796cbb183f685bacc4f9f8d4d52">&#9670;&#160;</a></span>i2c_mem_store_le32_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_le32_write </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#af5b0b796cbb183f685bacc4f9f8d4d52" title="Internal helper: i2c_mem_store_le32_write.">i2c_mem_store_le32_write</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00097">97</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00141">i2c_mem_store_xtea_ctr_crypt()</a>.</p>
+
+</div>
+</div>
+<a id="a5108ede487c3d694864ee1fd896a8df0" name="a5108ede487c3d694864ee1fd896a8df0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5108ede487c3d694864ee1fd896a8df0">&#9670;&#160;</a></span>i2c_mem_store_log_base_addr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_log_base_addr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a5108ede487c3d694864ee1fd896a8df0" title="Internal helper: i2c_mem_store_log_base_addr.">i2c_mem_store_log_base_addr</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00176">176</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00188">i2c_mem_store_log_slot_addr()</a>.</p>
+
+</div>
+</div>
+<a id="a05def2e9f2709faca7be9fc02389f743" name="a05def2e9f2709faca7be9fc02389f743"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05def2e9f2709faca7be9fc02389f743">&#9670;&#160;</a></span>i2c_mem_store_log_slot_addr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_log_slot_addr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a05def2e9f2709faca7be9fc02389f743" title="Internal helper: i2c_mem_store_log_slot_addr.">i2c_mem_store_log_slot_addr</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00188">188</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00176">i2c_mem_store_log_base_addr()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="a4f1781d549ac6428220b33a583fa3d25" name="a4f1781d549ac6428220b33a583fa3d25"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f1781d549ac6428220b33a583fa3d25">&#9670;&#160;</a></span>i2c_mem_store_meta_decode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool i2c_mem_store_meta_decode </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>in</em></span>[I2C_MEM_STORE_META_WIRE_SIZE]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Decode and validate persisted metadata from one metadata copy. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00293">293</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00064">i2c_mem_store_crc16_ccitt()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00106">i2c_mem_store_le16_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00112">i2c_mem_store_le32_read()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00107">i2c_mem_store_t::next_sequence</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00108">i2c_mem_store_t::secret_counter</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00103">i2c_mem_store_t::slot_count</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00106">i2c_mem_store_t::valid_count</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00105">i2c_mem_store_t::write_slot</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00350">i2c_mem_store_meta_load()</a>.</p>
+
+</div>
+</div>
+<a id="ae57ea218dbeaf6becc7b6b5caa023f26" name="ae57ea218dbeaf6becc7b6b5caa023f26"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae57ea218dbeaf6becc7b6b5caa023f26">&#9670;&#160;</a></span>i2c_mem_store_meta_encode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_meta_encode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>out</em></span>[I2C_MEM_STORE_META_WIRE_SIZE]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Encode runtime metadata into the fixed little-endian on-memory layout. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00266">266</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00064">i2c_mem_store_crc16_ccitt()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00090">i2c_mem_store_le16_write()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00097">i2c_mem_store_le32_write()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00107">i2c_mem_store_t::next_sequence</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00108">i2c_mem_store_t::secret_counter</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00106">i2c_mem_store_t::valid_count</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00105">i2c_mem_store_t::write_slot</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00333">i2c_mem_store_meta_save()</a>.</p>
+
+</div>
+</div>
+<a id="add0c8b332bf6dacd703378cf22a71ff7" name="add0c8b332bf6dacd703378cf22a71ff7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add0c8b332bf6dacd703378cf22a71ff7">&#9670;&#160;</a></span>i2c_mem_store_meta_load()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_meta_load </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#add0c8b332bf6dacd703378cf22a71ff7" title="Internal helper: i2c_mem_store_meta_load.">i2c_mem_store_meta_load</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00350">350</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00054">I2C_MEM_STORE_ENOTFOUND</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00200">i2c_mem_store_read_raw()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>.</p>
+
+</div>
+</div>
+<a id="ac05e47a4cf9adcab1920a39368fe78b3" name="ac05e47a4cf9adcab1920a39368fe78b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac05e47a4cf9adcab1920a39368fe78b3">&#9670;&#160;</a></span>i2c_mem_store_meta_save()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_meta_save </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#ac05e47a4cf9adcab1920a39368fe78b3" title="Internal helper: i2c_mem_store_meta_save.">i2c_mem_store_meta_save</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00333">333</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="af4b062688bd2a5ec1a849d687a92f381" name="af4b062688bd2a5ec1a849d687a92f381"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4b062688bd2a5ec1a849d687a92f381">&#9670;&#160;</a></span>i2c_mem_store_min_u16()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_min_u16 </td>
+          <td>(</td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>a</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>b</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#af4b062688bd2a5ec1a849d687a92f381" title="Internal helper: i2c_mem_store_min_u16.">i2c_mem_store_min_u16</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00044">44</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>.</p>
+
+</div>
+</div>
+<a id="aa667df3ee4ef4c6f7e7ac184c6647985" name="aa667df3ee4ef4c6f7e7ac184c6647985"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa667df3ee4ef4c6f7e7ac184c6647985">&#9670;&#160;</a></span>i2c_mem_store_read_message()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_read_message </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>index_from_latest</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__log__record__t.html">i2c_mem_store_log_record_t</a> *</td>          <td class="paramname"><span class="paramname"><em>out_record</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read one message from log (0 = latest, 1 = previous, ...). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">index_from_latest</td><td>Relative index from latest entry. </td></tr>
+    <tr><td class="paramname">out_record</td><td>[out] Decoded record. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00569">569</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00064">i2c_mem_store_crc16_ccitt()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00052">I2C_MEM_STORE_ECRC</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00054">I2C_MEM_STORE_ENOTFOUND</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00106">i2c_mem_store_le16_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00112">i2c_mem_store_le32_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00188">i2c_mem_store_log_slot_addr()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00200">i2c_mem_store_read_raw()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00067">i2c_mem_store_log_record_t::length</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00068">i2c_mem_store_log_record_t::payload</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00066">i2c_mem_store_log_record_t::rssi_dbm</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00064">i2c_mem_store_log_record_t::sequence</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00103">i2c_mem_store_t::slot_count</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00065">i2c_mem_store_log_record_t::timestamp_ms</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00106">i2c_mem_store_t::valid_count</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00105">i2c_mem_store_t::write_slot</a>.</p>
+
+</div>
+</div>
+<a id="ac89909b7d5f2c05db7977cea33e52d59" name="ac89909b7d5f2c05db7977cea33e52d59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac89909b7d5f2c05db7977cea33e52d59">&#9670;&#160;</a></span>i2c_mem_store_read_raw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_read_raw </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>addr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>dst</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#ac89909b7d5f2c05db7977cea33e52d59" title="Internal helper: i2c_mem_store_read_raw.">i2c_mem_store_read_raw</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00200">200</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00102">i2c_mem_store_t::cfg</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00087">i2c_mem_store_cfg_t::hi2c</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00088">i2c_mem_store_cfg_t::i2c_addr_7bit</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00050">i2c_mem_store_hal_to_status()</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00089">i2c_mem_store_cfg_t::mem_addr_size</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00350">i2c_mem_store_meta_load()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a>.</p>
+
+</div>
+</div>
+<a id="a501f1e1a9174695becf3ee5f57da6732" name="a501f1e1a9174695becf3ee5f57da6732"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a501f1e1a9174695becf3ee5f57da6732">&#9670;&#160;</a></span>i2c_mem_store_secret_base_addr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_secret_base_addr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a501f1e1a9174695becf3ee5f57da6732" title="Internal helper: i2c_mem_store_secret_base_addr.">i2c_mem_store_secret_base_addr</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00182">182</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00102">i2c_mem_store_t::cfg</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00093">i2c_mem_store_cfg_t::secret_area_bytes</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00090">i2c_mem_store_cfg_t::total_bytes</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00194">i2c_mem_store_secret_slot_addr()</a>.</p>
+
+</div>
+</div>
+<a id="a7cf21bcdfa9e92d2ae652e9594e94663" name="a7cf21bcdfa9e92d2ae652e9594e94663"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cf21bcdfa9e92d2ae652e9594e94663">&#9670;&#160;</a></span>i2c_mem_store_secret_erase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_secret_erase </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot_id</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Erase one secret slot (invalidate entry marker). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">slot_id</td><td>Slot index in secret partition. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00746">746</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00194">i2c_mem_store_secret_slot_addr()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00104">i2c_mem_store_t::secret_slot_count</a>.</p>
+
+</div>
+</div>
+<a id="af0d8eb773abd635c2ce25e5bffe7ad58" name="af0d8eb773abd635c2ce25e5bffe7ad58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0d8eb773abd635c2ce25e5bffe7ad58">&#9670;&#160;</a></span>i2c_mem_store_secret_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_secret_read </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data_out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>data_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read and decrypt payload from secret partition slot. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">slot_id</td><td>Slot index in secret partition. </td></tr>
+    <tr><td class="paramname">data_out</td><td>Output buffer for decrypted payload. </td></tr>
+    <tr><td class="paramname">data_capacity</td><td>Output buffer capacity. </td></tr>
+    <tr><td class="paramname">data_len</td><td>[out] Returned payload length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00683">683</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00102">i2c_mem_store_t::cfg</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00094">i2c_mem_store_cfg_t::crypto_key</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00064">i2c_mem_store_crc16_ccitt()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00052">I2C_MEM_STORE_ECRC</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00054">I2C_MEM_STORE_ENOTFOUND</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00055">I2C_MEM_STORE_EOVERFLOW</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00053">I2C_MEM_STORE_EPROTO</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00106">i2c_mem_store_le16_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00112">i2c_mem_store_le32_read()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00200">i2c_mem_store_read_raw()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00194">i2c_mem_store_secret_slot_addr()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00141">i2c_mem_store_xtea_ctr_crypt()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00104">i2c_mem_store_t::secret_slot_count</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00787">i2c_mem_store_trusted_device_read()</a>.</p>
+
+</div>
+</div>
+<a id="a7cb49255f9d5c488481b4e3e555efa52" name="a7cb49255f9d5c488481b4e3e555efa52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cb49255f9d5c488481b4e3e555efa52">&#9670;&#160;</a></span>i2c_mem_store_secret_slot_addr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_secret_slot_addr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a7cb49255f9d5c488481b4e3e555efa52" title="Internal helper: i2c_mem_store_secret_slot_addr.">i2c_mem_store_secret_slot_addr</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00194">194</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00182">i2c_mem_store_secret_base_addr()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00746">i2c_mem_store_secret_erase()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="a4831ee6dfab6cf690e7de2a5457f4126" name="a4831ee6dfab6cf690e7de2a5457f4126"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4831ee6dfab6cf690e7de2a5457f4126">&#9670;&#160;</a></span>i2c_mem_store_secret_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_secret_write </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Store encrypted arbitrary payload in secret partition slot. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">slot_id</td><td>Slot index in secret partition. </td></tr>
+    <tr><td class="paramname">data</td><td>Plain payload. </td></tr>
+    <tr><td class="paramname">data_len</td><td>Payload length. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00635">635</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00102">i2c_mem_store_t::cfg</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00094">i2c_mem_store_cfg_t::crypto_key</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00064">i2c_mem_store_crc16_ccitt()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00055">I2C_MEM_STORE_EOVERFLOW</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00090">i2c_mem_store_le16_write()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00097">i2c_mem_store_le32_write()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00333">i2c_mem_store_meta_save()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00194">i2c_mem_store_secret_slot_addr()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00141">i2c_mem_store_xtea_ctr_crypt()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00108">i2c_mem_store_t::secret_counter</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00104">i2c_mem_store_t::secret_slot_count</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00758">i2c_mem_store_trusted_device_write()</a>.</p>
+
+</div>
+</div>
+<a id="a453a0dbba1eff77aa39c7a818d16ca40" name="a453a0dbba1eff77aa39c7a818d16ca40"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a453a0dbba1eff77aa39c7a818d16ca40">&#9670;&#160;</a></span>i2c_mem_store_trusted_device_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_trusted_device_read </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__trusted__device__t.html">i2c_mem_store_trusted_device_t</a> *</td>          <td class="paramname"><span class="paramname"><em>trusted</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read trusted-device descriptor from encrypted secret slot. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">slot_id</td><td>Slot index. </td></tr>
+    <tr><td class="paramname">trusted</td><td>[out] Trusted-device object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00787">787</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00079">i2c_mem_store_trusted_device_t::code</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00077">i2c_mem_store_trusted_device_t::code_len</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00053">I2C_MEM_STORE_EPROTO</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00078">i2c_mem_store_trusted_device_t::id</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00076">i2c_mem_store_trusted_device_t::id_len</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>.</p>
+
+</div>
+</div>
+<a id="a82ec5a83b3b3b2f641924ad95b7175af" name="a82ec5a83b3b3b2f641924ad95b7175af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82ec5a83b3b3b2f641924ad95b7175af">&#9670;&#160;</a></span>i2c_mem_store_trusted_device_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_trusted_device_write </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>slot_id</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structi2c__mem__store__trusted__device__t.html">i2c_mem_store_trusted_device_t</a> *</td>          <td class="paramname"><span class="paramname"><em>trusted</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Store trusted-device descriptor in encrypted secret slot. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Context object. </td></tr>
+    <tr><td class="paramname">slot_id</td><td>Slot index. </td></tr>
+    <tr><td class="paramname">trusted</td><td>Trusted-device object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00758">758</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00079">i2c_mem_store_trusted_device_t::code</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00077">i2c_mem_store_trusted_device_t::code_len</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00055">I2C_MEM_STORE_EOVERFLOW</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00078">i2c_mem_store_trusted_device_t::id</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00076">i2c_mem_store_trusted_device_t::id_len</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00109">i2c_mem_store_t::initialized</a>.</p>
+
+</div>
+</div>
+<a id="a9a6873445b780cb77c58a4f08b80b934" name="a9a6873445b780cb77c58a4f08b80b934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a6873445b780cb77c58a4f08b80b934">&#9670;&#160;</a></span>i2c_mem_store_write_raw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="i2c__mem__store_8h.html#a977cb38c3a380bcf3513592448ceef4b">i2c_mem_store_status_t</a> i2c_mem_store_write_raw </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structi2c__mem__store__t.html">i2c_mem_store_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>addr</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>src</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Write raw bytes while respecting EEPROM page boundaries and write-cycle delay. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00223">223</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8h_source.html#l00102">i2c_mem_store_t::cfg</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00087">i2c_mem_store_cfg_t::hi2c</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00088">i2c_mem_store_cfg_t::i2c_addr_7bit</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00048">I2C_MEM_STORE_EINVAL</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00050">i2c_mem_store_hal_to_status()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00044">i2c_mem_store_min_u16()</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00047">I2C_MEM_STORE_OK</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00089">i2c_mem_store_cfg_t::mem_addr_size</a>, <a class="el" href="i2c__mem__store_8h_source.html#l00091">i2c_mem_store_cfg_t::page_bytes</a> i <a class="el" href="i2c__mem__store_8h_source.html#l00092">i2c_mem_store_cfg_t::write_cycle_ms</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00333">i2c_mem_store_meta_save()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00746">i2c_mem_store_secret_erase()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="ab7131b0ebb2c5255c74dabf6dc7c397d" name="ab7131b0ebb2c5255c74dabf6dc7c397d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7131b0ebb2c5255c74dabf6dc7c397d">&#9670;&#160;</a></span>i2c_mem_store_xtea_ctr_crypt()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_xtea_ctr_crypt </td>
+          <td>(</td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t</td>          <td class="paramname"><span class="paramname"><em>key_bytes</em></span>[16], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>nonce</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Apply XTEA-CTR in place to encrypt or decrypt secret-slot payload bytes. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00141">141</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="i2c__mem__store_8c_source.html#l00112">i2c_mem_store_le32_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00097">i2c_mem_store_le32_write()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00121">i2c_mem_store_xtea_encrypt_block()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="a069e0768cad75bed0e0f1eba1514a796" name="a069e0768cad75bed0e0f1eba1514a796"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a069e0768cad75bed0e0f1eba1514a796">&#9670;&#160;</a></span>i2c_mem_store_xtea_encrypt_block()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void i2c_mem_store_xtea_encrypt_block </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>v</em></span>[2], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint32_t</td>          <td class="paramname"><span class="paramname"><em>key</em></span>[4]&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Encrypt one 64-bit block with XTEA for the software CTR keystream. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8c_source.html#l00121">121</a> pliku <a class="el" href="i2c__mem__store_8c_source.html">i2c_mem_store.c</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00141">i2c_mem_store_xtea_ctr_crypt()</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_b491a55cf3c9ae3ce781f510095cd424.html">i2c_mem_store_lib</a></li><li class="navelem"><a href="i2c__mem__store_8c.html">i2c_mem_store.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

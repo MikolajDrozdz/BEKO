@@ -1,0 +1,87 @@
+\doxysection{led\+\_\+array\+\_\+lib.\+h}
+\hypertarget{led__array__lib_8h_source}{}\label{led__array__lib_8h_source}\index{Core/App/led\_array\_lib/led\_array\_lib.h@{Core/App/led\_array\_lib/led\_array\_lib.h}}
+\mbox{\hyperlink{led__array__lib_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00006}00006\ \textcolor{preprocessor}{\#ifndef\ APP\_LED\_ARRAY\_LIB\_LED\_ARRAY\_LIB\_H\_}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00007}00007\ \textcolor{preprocessor}{\#define\ APP\_LED\_ARRAY\_LIB\_LED\_ARRAY\_LIB\_H\_}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00008}00008\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00009}00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{led__array__lib__config_8h}{led\_array\_lib\_config.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00010}00010\ \textcolor{preprocessor}{\#include\ "{}stm32u5xx\_hal.h"{}}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00012}00012\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00013}00013\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00015}00015\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00016}00016\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00017}00017\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00020}\mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{00020}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00021}00021\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00022}00022\ \ \ \ \ LED\_ARRAY\_OK\ =\ 0,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00023}00023\ \ \ \ \ LED\_ARRAY\_EINVAL\ =\ -\/1,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00024}00024\ \ \ \ \ LED\_ARRAY\_ESTATE\ =\ -\/2}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00025}00025\ \}\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00028}\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0}{00028}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00029}00029\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00030}\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b}{00030}}\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a85513cad202aa4ccd55e02fdcf96a37b}{LED\_ARRAY\_LED\_1}}\ =\ (1U\ <<\ 0),\ \ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00031}\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56}{00031}}\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a1c47dbf53c56dec9fc86c8015cb26a56}{LED\_ARRAY\_LED\_2}}\ =\ (1U\ <<\ 1),\ \ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00032}\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311}{00032}}\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a166a7a21750336887543b4cb26d17311}{LED\_ARRAY\_LED\_3}}\ =\ (1U\ <<\ 2),\ \ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00033}\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95}{00033}}\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0a33ed1b7c3310bef3bb34026e08c45f95}{LED\_ARRAY\_LED\_4}}\ =\ (1U\ <<\ 3),\ \ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00034}\mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386}{00034}}\ \ \ \ \ \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0ab6b283ea22354b046271292d3844c386}{LED\_ARRAY\_LED\_5}}\ =\ (1U\ <<\ 4),\ \ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00035}00035\ \ \ \ \ LED\_ARRAY\_LED\_ALL\ =\ 0x1FU}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00036}00036\ \}\ \mbox{\hyperlink{led__array__lib_8h_a0083a15c21d41352ec80c2902fa22ad0}{led\_array\_led\_mask\_t}};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00039}\mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{00039}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00040}00040\ \{}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00041}00041\ \ \ \ \ LED\_ARRAY\_EFFECT\_NONE\ =\ 0,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00042}00042\ \ \ \ \ LED\_ARRAY\_EFFECT\_FADE\_OUT,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00043}00043\ \ \ \ \ LED\_ARRAY\_EFFECT\_BREATH,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00044}00044\ \ \ \ \ LED\_ARRAY\_EFFECT\_RAINBOW}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00045}00045\ \}\ \mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\_array\_effect\_t}};}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00051}00051\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a7aedf48c103534fea85abba0f17f9012}{led\_array\_init}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00057}00057\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a08ff52c6cbf15a79c369af6de2d35592}{led\_array\_deinit}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00058}00058\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00067}00067\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_aff750f64fbc1cad4ee19031286289115}{led\_array\_timer\_init}}(uint32\_t\ tick\_period\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00073}00073\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a547426579c247ad4d9fc522c16361ef3}{led\_array\_timer\_deinit}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00074}00074\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00081}00081\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8h_a4b6d7b6d2e6d8411ff06855ba14403f7}{led\_array\_timer\_tick}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00088}00088\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{led__array__lib_8h_ac0f4c93e8d59837943f0cefd9de4b3ed}{led\_array\_process}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00095}00095\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a4711eae3b0ed715ca346726e9c718de1}{led\_array\_on}}(uint8\_t\ mask);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00102}00102\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_aa09ac980785cb4b624aed6ba93a9cb83}{led\_array\_off}}(uint8\_t\ mask);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00103}00103\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00110}00110\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a24d4a7518fb38fd16c07b7476c0de974}{led\_array\_set\_brightness}}(uint8\_t\ mask,\ uint8\_t\ brightness\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00111}00111\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00118}00118\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a42230d1ce3ff86a197a5340d8bc3cc4f}{led\_array\_fire\_fade\_out}}(uint8\_t\ mask,\ uint16\_t\ fade\_ms);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00119}00119\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00128}00128\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_a6462145271d8ae8d9bcd1f5ccdf37ded}{led\_array\_start\_breath}}(uint8\_t\ mask,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00129}00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ period\_ms,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00130}00130\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ min\_pct,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00131}00131\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ max\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00132}00132\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00144}00144\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_ad01bd8a290236400e39c3957ea107ca0}{led\_array\_start\_rainbow}}(uint16\_t\ step\_ms,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00145}00145\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ min\_pct,}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00146}00146\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ max\_pct);}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00147}00147\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00152}00152\ \mbox{\hyperlink{led__array__lib_8h_aaca9eead06d9885bc6af30ccedec1330}{led\_array\_status\_t}}\ \mbox{\hyperlink{led__array__lib_8h_ad1d5f7b658871d0bcdc2b05bb77ba081}{led\_array\_stop\_effect}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00153}00153\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00158}00158\ \mbox{\hyperlink{led__array__lib_8h_aac3178a392f43cf39c6fdd1095ed1060}{led\_array\_effect\_t}}\ \mbox{\hyperlink{led__array__lib_8h_af738fc4dc6d91ad22d52c140604a4b58}{led\_array\_get\_effect}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00159}00159\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00164}00164\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{led__array__lib_8h_a0b3815ace1260f16636ac64ecbfc5bd0}{led\_array\_is\_initialized}}(\textcolor{keywordtype}{void});}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00165}00165\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00166}00166\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00167}00167\ \}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00168}00168\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00169}00169\ }
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00170}00170\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_LED\_ARRAY\_LIB\_LED\_ARRAY\_LIB\_H\_\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{led__array__lib_8h_source_l00171}00171\ }
+
+\end{DoxyCode}

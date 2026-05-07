@@ -1,0 +1,312 @@
+\doxysection{bmp280.\+c}
+\hypertarget{bmp280_8c_source}{}\label{bmp280_8c_source}\index{Core/App/bmp280\_lib/bmp280.c@{Core/App/bmp280\_lib/bmp280.c}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00029}00029\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{bmp280_8h}{bmp280.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00030}00030\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{app_8h}{../app.h}}"{}}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00035}00035\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_TEMP\_XLSB\ \ \ 0xFC\ }\textcolor{comment}{/*\ bits:\ 7-\/4\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00036}00036\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_TEMP\_LSB\ \ \ \ 0xFB}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00037}00037\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_TEMP\_MSB\ \ \ \ 0xFA}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00038}00038\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_TEMP\ \ \ \ \ \ \ \ (BMP280\_REG\_TEMP\_MSB)}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00039}00039\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_PRESS\_XLSB\ \ 0xF9\ }\textcolor{comment}{/*\ bits:\ 7-\/4\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00040}00040\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_PRESS\_LSB\ \ \ 0xF8}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00041}00041\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_PRESS\_MSB\ \ \ 0xF7}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00042}00042\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_PRESSURE\ \ \ \ (BMP280\_REG\_PRESS\_MSB)}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00043}00043\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_CONFIG\ \ \ \ \ \ 0xF5\ }\textcolor{comment}{/*\ bits:\ 7-\/5\ t\_sb;\ 4-\/2\ filter;\ 0\ spi3w\_en\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00044}00044\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_CTRL\ \ \ \ \ \ \ \ 0xF4\ }\textcolor{comment}{/*\ bits:\ 7-\/5\ osrs\_t;\ 4-\/2\ osrs\_p;\ 1-\/0\ mode\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00045}00045\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_STATUS\ \ \ \ \ \ 0xF3\ }\textcolor{comment}{/*\ bits:\ 3\ measuring;\ 0\ im\_update\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00046}00046\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_CTRL\_HUM\ \ \ \ 0xF2\ }\textcolor{comment}{/*\ bits:\ 2-\/0\ osrs\_h;\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00047}00047\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_RESET\ \ \ \ \ \ \ 0xE0}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00048}00048\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_ID\ \ \ \ \ \ \ \ \ \ 0xD0}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00049}00049\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_CALIB\ \ \ \ \ \ \ 0x88}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00050}00050\ \textcolor{preprocessor}{\#define\ BMP280\_REG\_HUM\_CALIB\ \ \ 0x88}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00052}00052\ \textcolor{preprocessor}{\#define\ BMP280\_RESET\_VALUE\ \ \ \ \ 0xB6}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00054}00054\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00056}\mbox{\hyperlink{bmp280_8h_ae36e8912e8a4ad47a5b6bcd4939db6aa}{00056}}\ \textcolor{keywordtype}{void}\ bmp280\_init\_default\_params(\mbox{\hyperlink{structbmp280__params__t}{bmp280\_params\_t}}\ *params)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00057}00057\ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_ac06d0db65979eb36175db959e78141b4}{mode}}\ =\ BMP280\_MODE\_NORMAL;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00058}00058\ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_ac26115a927fb56b2a5f4186153719725}{filter}}\ =\ \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2}{BMP280\_FILTER\_OFF}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00059}00059\ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_a0b0116893e93832a6f19b9f5e696bd1a}{oversampling\_pressure}}\ =\ BMP280\_STANDARD;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00060}00060\ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_aeefcc1ea563c503308a34574701b9098}{oversampling\_temperature}}\ =\ BMP280\_STANDARD;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00061}00061\ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_ab1ad856af1e4cbd91f16cd03ac5e5090}{oversampling\_humidity}}\ =\ BMP280\_STANDARD;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00062}00062\ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_a7b0b31ec38932019a846e162d3829c04}{standby}}\ =\ BMP280\_STANDBY\_250;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00063}00063\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00066}00066\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ read\_register16(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ uint8\_t\ addr,\ uint16\_t\ *value)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00067}00067\ \ \ \ \ uint16\_t\ tx\_buff;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00068}00068\ \ \ \ \ uint8\_t\ rx\_buff[2];}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00069}00069\ \ \ \ \ tx\_buff\ =\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}}\ <<\ 1);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00071}00071\ \ \ \ \ \textcolor{keywordflow}{if}\ (app\_i2c\_mem\_read(dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}{i2c}},\ tx\_buff,\ addr,\ I2C\_MEMADD\_SIZE\_8BIT,\ rx\_buff,\ 2,\ 5000)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ ==\ HAL\_OK)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00073}00073\ \ \ \ \ \ \ \ \ *value\ =\ (uint16\_t)\ ((rx\_buff[1]\ <<\ 8)\ |\ rx\_buff[0]);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00074}00074\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00075}00075\ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00076}00076\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00078}00078\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00081}00081\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ read\_data(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ uint8\_t\ addr,\ uint8\_t\ *value,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00082}00082\ \ \ \ \ \ \ \ \ uint8\_t\ len)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00083}00083\ \ \ \ \ uint16\_t\ tx\_buff;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00084}00084\ \ \ \ \ tx\_buff\ =\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}}\ <<\ 1);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00085}00085\ \ \ \ \ \textcolor{keywordflow}{if}\ (app\_i2c\_mem\_read(dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}{i2c}},\ tx\_buff,\ addr,\ I2C\_MEMADD\_SIZE\_8BIT,\ value,\ len,\ 5000)\ ==\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00087}00087\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00088}00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00090}00090\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00091}00091\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00093}00093\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ read\_calibration\_data(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00094}00094\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00095}00095\ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_register16(dev,\ 0x88,\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{dig\_T1}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00096}00096\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x8a,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4}{dig\_T2}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00097}00097\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x8c,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d}{dig\_T3}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00098}00098\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x8e,\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e}{dig\_P1}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00099}00099\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x90,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f}{dig\_P2}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00100}00100\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x92,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b}{dig\_P3}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x94,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82}{dig\_P4}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x96,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03}{dig\_P5}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x98,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b}{dig\_P6}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00104}00104\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x9a,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9}{dig\_P7}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00105}00105\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x9c,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133}{dig\_P8}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0x9e,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336}{dig\_P9}}))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00108}00108\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00109}00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00110}00110\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00111}00111\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00112}00112\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00113}00113\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00114}00114\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00116}00116\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ read\_hum\_calibration\_data(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00117}00117\ \ \ \ \ uint16\_t\ h4,\ h5;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00118}00118\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00119}00119\ \ \ \ \ \textcolor{keywordflow}{if}\ (!read\_data(dev,\ 0xa1,\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec}{dig\_H1}},\ 1)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0xe1,\ (uint16\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51}{dig\_H2}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00121}00121\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ !read\_data(dev,\ 0xe3,\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8}{dig\_H3}},\ 1)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0xe4,\ \&h4)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ read\_register16(dev,\ 0xe5,\ \&h5)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ !read\_data(dev,\ 0xe7,\ (uint8\_t\ *)\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629}{dig\_H6}},\ 1))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00125}00125\ \ \ \ \ \ \ \ \ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0}{dig\_H4}}\ =\ (h4\ \&\ 0x00ff)\ <<\ 4\ |\ (h4\ \&\ 0x0f00)\ >>\ 8;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00126}00126\ \ \ \ \ \ \ \ \ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a}{dig\_H5}}\ =\ h5\ >>\ 4;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00127}00127\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00128}00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00129}00129\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00130}00130\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00131}00131\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00132}00132\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00133}00133\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00135}00135\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ write\_register8(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ uint8\_t\ addr,\ uint8\_t\ value)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00136}00136\ \ \ \ \ uint16\_t\ tx\_buff;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00137}00137\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00138}00138\ \ \ \ \ tx\_buff\ =\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}}\ <<\ 1);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00140}00140\ \ \ \ \ \textcolor{keywordflow}{if}\ (app\_i2c\_mem\_write(dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_adb2060477f3ab7378a1886e03edb7ca4}{i2c}},\ tx\_buff,\ addr,\ I2C\_MEMADD\_SIZE\_8BIT,\ \&value,\ 1,\ 10000)\ ==\ HAL\_OK)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00141}00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00142}00142\ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00143}00143\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00144}00144\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00145}00145\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00146}\mbox{\hyperlink{bmp280_8h_ac86eef708d9f6c8a797d45cbbc360bd9}{00146}}\ \textcolor{keywordtype}{bool}\ bmp280\_init(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ \mbox{\hyperlink{structbmp280__params__t}{bmp280\_params\_t}}\ *params)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00147}00147\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00148}00148\ \ \ \ \ \textcolor{keywordflow}{if}\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}}\ !=\ \mbox{\hyperlink{bmp280_8h_aa11b925ebf4b81cf1b62232196ac1d8f}{BMP280\_I2C\_ADDRESS\_0}}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00149}00149\ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_abe76b8a4d2dad35dabbd1e8f43d58987}{addr}}\ !=\ \mbox{\hyperlink{bmp280_8h_a0b9ffea4fca103b7edef727777596909}{BMP280\_I2C\_ADDRESS\_1}})\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00150}00150\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00151}00151\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00152}00152\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00153}00153\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00154}00154\ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_data(dev,\ BMP280\_REG\_ID,\ \&dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}},\ 1))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00155}00155\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00156}00156\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00157}00157\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00158}00158\ \ \ \ \ \textcolor{keywordflow}{if}\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}}\ !=\ \mbox{\hyperlink{bmp280_8h_aa29aaafdd798a1593a4b536f0ed7c9c2}{BMP280\_CHIP\_ID}}\ \&\&\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}}\ !=\ \mbox{\hyperlink{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}{BME280\_CHIP\_ID}})\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00159}00159\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00160}00160\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00161}00161\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00162}00162\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00163}00163\ \ \ \ \ \textcolor{comment}{//\ Soft\ reset.}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00164}00164\ \ \ \ \ \textcolor{keywordflow}{if}\ (write\_register8(dev,\ BMP280\_REG\_RESET,\ BMP280\_RESET\_VALUE))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00165}00165\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00166}00166\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00167}00167\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00168}00168\ \ \ \ \ \textcolor{comment}{//\ Wait\ until\ finished\ copying\ over\ the\ NVP\ data.}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00169}00169\ \ \ \ \ \textcolor{keywordflow}{while}\ (1)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00170}00170\ \ \ \ \ \ \ \ \ uint8\_t\ status;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00171}00171\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!read\_data(dev,\ BMP280\_REG\_STATUS,\ \&status,\ 1)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00172}00172\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \&\&\ (status\ \&\ 1)\ ==\ 0)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00173}00173\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00174}00174\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00175}00175\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00176}00176\ \ \ \ \ \textcolor{keywordflow}{if}\ (!read\_calibration\_data(dev))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00177}00177\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00178}00178\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00179}00179\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00180}00180\ \ \ \ \ \textcolor{keywordflow}{if}\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}}\ ==\ \mbox{\hyperlink{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}{BME280\_CHIP\_ID}}\ \&\&\ !read\_hum\_calibration\_data(dev))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00181}00181\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00182}00182\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00183}00183\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00184}00184\ \ \ \ \ uint8\_t\ config\ =\ (params-\/>\mbox{\hyperlink{structbmp280__params__t_a7b0b31ec38932019a846e162d3829c04}{standby}}\ <<\ 5)\ |\ (params-\/>\mbox{\hyperlink{structbmp280__params__t_ac26115a927fb56b2a5f4186153719725}{filter}}\ <<\ 2);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00185}00185\ \ \ \ \ \textcolor{keywordflow}{if}\ (write\_register8(dev,\ BMP280\_REG\_CONFIG,\ config))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00186}00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00187}00187\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00188}00188\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00189}00189\ \ \ \ \ \textcolor{keywordflow}{if}\ (params-\/>\mbox{\hyperlink{structbmp280__params__t_ac06d0db65979eb36175db959e78141b4}{mode}}\ ==\ BMP280\_MODE\_FORCED)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00190}00190\ \ \ \ \ \ \ \ \ params-\/>\mbox{\hyperlink{structbmp280__params__t_ac06d0db65979eb36175db959e78141b4}{mode}}\ =\ BMP280\_MODE\_SLEEP;\ \ \textcolor{comment}{//\ initial\ mode\ for\ forced\ is\ sleep}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00191}00191\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00192}00192\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00193}00193\ \ \ \ \ uint8\_t\ ctrl\ =\ (params-\/>\mbox{\hyperlink{structbmp280__params__t_aeefcc1ea563c503308a34574701b9098}{oversampling\_temperature}}\ <<\ 5)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00194}00194\ \ \ \ \ \ \ \ \ \ \ \ \ |\ (params-\/>\mbox{\hyperlink{structbmp280__params__t_a0b0116893e93832a6f19b9f5e696bd1a}{oversampling\_pressure}}\ <<\ 2)\ |\ (params-\/>\mbox{\hyperlink{structbmp280__params__t_ac06d0db65979eb36175db959e78141b4}{mode}});}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00195}00195\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00196}00196\ \ \ \ \ \textcolor{keywordflow}{if}\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}}\ ==\ \mbox{\hyperlink{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}{BME280\_CHIP\_ID}})\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00197}00197\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Write\ crtl\ hum\ reg\ first,\ only\ active\ after\ write\ to\ BMP280\_REG\_CTRL.}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00198}00198\ \ \ \ \ \ \ \ \ uint8\_t\ ctrl\_hum\ =\ params-\/>\mbox{\hyperlink{structbmp280__params__t_ab1ad856af1e4cbd91f16cd03ac5e5090}{oversampling\_humidity}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00199}00199\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (write\_register8(dev,\ BMP280\_REG\_CTRL\_HUM,\ ctrl\_hum))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00201}00201\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00202}00202\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00203}00203\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00204}00204\ \ \ \ \ \textcolor{keywordflow}{if}\ (write\_register8(dev,\ BMP280\_REG\_CTRL,\ ctrl))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00205}00205\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00206}00206\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00207}00207\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00208}00208\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00209}00209\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00210}00210\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00211}\mbox{\hyperlink{bmp280_8h_a5bcdb981b95481059526976c23fb295e}{00211}}\ \textcolor{keywordtype}{bool}\ bmp280\_force\_measurement(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00212}00212\ \ \ \ \ uint8\_t\ ctrl;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00213}00213\ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_data(dev,\ BMP280\_REG\_CTRL,\ \&ctrl,\ 1))}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00214}00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00215}00215\ \ \ \ \ ctrl\ \&=\ \string~0b11;\ \ \textcolor{comment}{//\ clear\ two\ lower\ bits}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00216}00216\ \ \ \ \ ctrl\ |=\ BMP280\_MODE\_FORCED;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00217}00217\ \ \ \ \ \textcolor{keywordflow}{if}\ (write\_register8(dev,\ BMP280\_REG\_CTRL,\ ctrl))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00218}00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00219}00219\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00220}00220\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00221}00221\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00222}00222\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00223}\mbox{\hyperlink{bmp280_8h_aefa90b756a2bbd97ea580ff6527bca53}{00223}}\ \textcolor{keywordtype}{bool}\ bmp280\_is\_measuring(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00224}00224\ \ \ \ \ uint8\_t\ status;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00225}00225\ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_data(dev,\ BMP280\_REG\_STATUS,\ \&status,\ 1))}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00226}00226\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00227}00227\ \ \ \ \ \textcolor{keywordflow}{if}\ (status\ \&\ (1\ <<\ 3))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00228}00228\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00229}00229\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00230}00230\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00231}00231\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00232}00232\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00238}00238\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ int32\_t\ compensate\_temperature(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ int32\_t\ adc\_temp,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00239}00239\ \ \ \ \ \ \ \ \ int32\_t\ *fine\_temp)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00240}00240\ \ \ \ \ int32\_t\ var1,\ var2;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00241}00241\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00242}00242\ \ \ \ \ var1\ =\ ((((adc\_temp\ >>\ 3)\ -\/\ ((int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{dig\_T1}}\ <<\ 1)))}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00243}00243\ \ \ \ \ \ \ \ \ \ \ \ \ *\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_ada3917c530c0a64c31c513d3b9864ad4}{dig\_T2}})\ >>\ 11;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00244}00244\ \ \ \ \ var2\ =\ (((((adc\_temp\ >>\ 4)\ -\/\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{dig\_T1}})}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00245}00245\ \ \ \ \ \ \ \ \ \ \ \ \ *\ ((adc\_temp\ >>\ 4)\ -\/\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_aa735e953e421f132626e79aa2684520a}{dig\_T1}}))\ >>\ 12)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00246}00246\ \ \ \ \ \ \ \ \ \ \ \ \ *\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a16dab86ac5f369d9a471b6587b77174d}{dig\_T3}})\ >>\ 14;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00247}00247\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00248}00248\ \ \ \ \ *fine\_temp\ =\ var1\ +\ var2;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00249}00249\ \ \ \ \ \textcolor{keywordflow}{return}\ (*fine\_temp\ *\ 5\ +\ 128)\ >>\ 8;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00250}00250\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00251}00251\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00257}00257\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ uint32\_t\ compensate\_pressure(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ int32\_t\ adc\_press,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00258}00258\ \ \ \ \ \ \ \ \ int32\_t\ fine\_temp)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00259}00259\ \ \ \ \ int64\_t\ var1,\ var2,\ p;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00260}00260\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00261}00261\ \ \ \ \ var1\ =\ (int64\_t)\ fine\_temp\ -\/\ 128000;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00262}00262\ \ \ \ \ var2\ =\ var1\ *\ var1\ *\ (int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a3dc59e1a609668cc67d419d1bde5e69b}{dig\_P6}};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00263}00263\ \ \ \ \ var2\ =\ var2\ +\ ((var1\ *\ (int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a22d0714f2ece491c537b2b46555a5d03}{dig\_P5}})\ <<\ 17);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00264}00264\ \ \ \ \ var2\ =\ var2\ +\ (((int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a46b61ba5a191b29bd2dc9bd86cb64b82}{dig\_P4}})\ <<\ 35);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00265}00265\ \ \ \ \ var1\ =\ ((var1\ *\ var1\ *\ (int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_adf58ccc1046135b97c8a30437d46c81b}{dig\_P3}})\ >>\ 8)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00266}00266\ \ \ \ \ \ \ \ \ \ \ \ \ +\ ((var1\ *\ (int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a651bf87ea766cde80fa5af5696a16f4f}{dig\_P2}})\ <<\ 12);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00267}00267\ \ \ \ \ var1\ =\ (((int64\_t)\ 1\ <<\ 47)\ +\ var1)\ *\ ((int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afaff3914b7f61b145317eb9e649c7f1e}{dig\_P1}})\ >>\ 33;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00268}00268\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00269}00269\ \ \ \ \ \textcolor{keywordflow}{if}\ (var1\ ==\ 0)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00270}00270\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;\ \ \textcolor{comment}{//\ avoid\ exception\ caused\ by\ division\ by\ zero}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00271}00271\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00272}00272\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00273}00273\ \ \ \ \ p\ =\ 1048576\ -\/\ adc\_press;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00274}00274\ \ \ \ \ p\ =\ (((p\ <<\ 31)\ -\/\ var2)\ *\ 3125)\ /\ var1;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00275}00275\ \ \ \ \ var1\ =\ ((int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a5029020906a77d5b04cc0e87b8fe8336}{dig\_P9}}\ *\ (p\ >>\ 13)\ *\ (p\ >>\ 13))\ >>\ 25;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00276}00276\ \ \ \ \ var2\ =\ ((int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a46130401d002ca6b2c7b8c8e7578c133}{dig\_P8}}\ *\ p)\ >>\ 19;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00277}00277\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00278}00278\ \ \ \ \ p\ =\ ((p\ +\ var1\ +\ var2)\ >>\ 8)\ +\ ((int64\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a89e3935a76d5439c8bf94cdce70fbfb9}{dig\_P7}}\ <<\ 4);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00279}00279\ \ \ \ \ \textcolor{keywordflow}{return}\ p;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00280}00280\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00281}00281\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00287}00287\ \textcolor{keyword}{static}\ \textcolor{keyword}{inline}\ uint32\_t\ compensate\_humidity(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ int32\_t\ adc\_hum,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00288}00288\ \ \ \ \ \ \ \ \ int32\_t\ fine\_temp)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00289}00289\ \ \ \ \ int32\_t\ v\_x1\_u32r;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00290}00290\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00291}00291\ \ \ \ \ v\_x1\_u32r\ =\ fine\_temp\ -\/\ (int32\_t)\ 76800;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00292}00292\ \ \ \ \ v\_x1\_u32r\ =\ ((((adc\_hum\ <<\ 14)\ -\/\ ((int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a47e5f4db5c0382ee26b0200f2ae031c0}{dig\_H4}}\ <<\ 20)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00293}00293\ \ \ \ \ \ \ \ \ \ \ \ \ -\/\ ((int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a4678a18ab6eab1c593bf5851b2bc2e6a}{dig\_H5}}\ *\ v\_x1\_u32r))\ +\ (int32\_t)\ 16384)\ >>\ 15)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00294}00294\ \ \ \ \ \ \ \ \ \ \ \ \ *\ (((((((v\_x1\_u32r\ *\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_aae054671ec66e31d0591d7813b24e629}{dig\_H6}})\ >>\ 10)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00295}00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ (((v\_x1\_u32r\ *\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_ab8e9f5400b0f79c74020c1165c72e7d8}{dig\_H3}})\ >>\ 11)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00296}00296\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ +\ (int32\_t)\ 32768))\ >>\ 10)\ +\ (int32\_t)\ 2097152)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00297}00297\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a0293059efde2ae1d209deeaf93a47a51}{dig\_H2}}\ +\ 8192)\ >>\ 14);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00298}00298\ \ \ \ \ v\_x1\_u32r\ =\ v\_x1\_u32r}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00299}00299\ \ \ \ \ \ \ \ \ \ \ \ \ -\/\ (((((v\_x1\_u32r\ >>\ 15)\ *\ (v\_x1\_u32r\ >>\ 15))\ >>\ 7)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00300}00300\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ (int32\_t)\ dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_a7ce8a2720f39a4da4822e7ae2888a3ec}{dig\_H1}})\ >>\ 4);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00301}00301\ \ \ \ \ v\_x1\_u32r\ =\ v\_x1\_u32r\ <\ 0\ ?\ 0\ :\ v\_x1\_u32r;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00302}00302\ \ \ \ \ v\_x1\_u32r\ =\ v\_x1\_u32r\ >\ 419430400\ ?\ 419430400\ :\ v\_x1\_u32r;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00303}00303\ \ \ \ \ \textcolor{keywordflow}{return}\ v\_x1\_u32r\ >>\ 12;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00304}00304\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00305}00305\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00306}\mbox{\hyperlink{bmp280_8h_a648fe1b52d4a2ed15023d5efb1702256}{00306}}\ \textcolor{keywordtype}{bool}\ bmp280\_read\_fixed(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ int32\_t\ *temperature,\ uint32\_t\ *pressure,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00307}00307\ \ \ \ \ \ \ \ \ uint32\_t\ *humidity)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00308}00308\ \ \ \ \ int32\_t\ adc\_pressure;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00309}00309\ \ \ \ \ int32\_t\ adc\_temp;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00310}00310\ \ \ \ \ uint8\_t\ data[8];}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00311}00311\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00312}00312\ \ \ \ \ \textcolor{comment}{//\ Only\ the\ BME280\ supports\ reading\ the\ humidity.}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00313}00313\ \ \ \ \ \textcolor{keywordflow}{if}\ (dev-\/>\mbox{\hyperlink{structBMP280__HandleTypedef_afeb0f26d38b725f2bbc2e67e17b0b671}{id}}\ !=\ \mbox{\hyperlink{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}{BME280\_CHIP\_ID}})\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00314}00314\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (humidity)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00315}00315\ \ \ \ \ \ \ \ \ \ \ \ \ *humidity\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00316}00316\ \ \ \ \ \ \ \ \ humidity\ =\ NULL;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00317}00317\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00318}00318\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00319}00319\ \ \ \ \ \textcolor{comment}{//\ Need\ to\ read\ in\ one\ sequence\ to\ ensure\ they\ match.}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00320}00320\ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size\ =\ humidity\ ?\ 8\ :\ 6;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00321}00321\ \ \ \ \ \textcolor{keywordflow}{if}\ (read\_data(dev,\ 0xf7,\ data,\ size))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00322}00322\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00323}00323\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00324}00324\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00325}00325\ \ \ \ \ adc\_pressure\ =\ data[0]\ <<\ 12\ |\ data[1]\ <<\ 4\ |\ data[2]\ >>\ 4;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00326}00326\ \ \ \ \ adc\_temp\ =\ data[3]\ <<\ 12\ |\ data[4]\ <<\ 4\ |\ data[5]\ >>\ 4;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00327}00327\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00328}00328\ \ \ \ \ int32\_t\ fine\_temp;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00329}00329\ \ \ \ \ *temperature\ =\ compensate\_temperature(dev,\ adc\_temp,\ \&fine\_temp);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00330}00330\ \ \ \ \ *pressure\ =\ compensate\_pressure(dev,\ adc\_pressure,\ fine\_temp);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00331}00331\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00332}00332\ \ \ \ \ \textcolor{keywordflow}{if}\ (humidity)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00333}00333\ \ \ \ \ \ \ \ \ int32\_t\ adc\_humidity\ =\ data[6]\ <<\ 8\ |\ data[7];}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00334}00334\ \ \ \ \ \ \ \ \ *humidity\ =\ compensate\_humidity(dev,\ adc\_humidity,\ fine\_temp);}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00335}00335\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00336}00336\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00337}00337\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00338}00338\ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00339}00339\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00340}\mbox{\hyperlink{bmp280_8h_a7150453ab8fb9ae57ed7b89d0a4fa4d9}{00340}}\ \textcolor{keywordtype}{bool}\ bmp280\_read\_float(\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\_HandleTypedef}}\ *dev,\ \textcolor{keywordtype}{float}\ *temperature,\ \textcolor{keywordtype}{float}\ *pressure,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00341}00341\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ *humidity)\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00342}00342\ \ \ \ \ int32\_t\ fixed\_temperature;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00343}00343\ \ \ \ \ uint32\_t\ fixed\_pressure;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00344}00344\ \ \ \ \ uint32\_t\ fixed\_humidity;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00345}00345\ \ \ \ \ \textcolor{keywordflow}{if}\ (bmp280\_read\_fixed(dev,\ \&fixed\_temperature,\ \&fixed\_pressure,}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00346}00346\ \ \ \ \ \ \ \ \ \ \ \ \ humidity\ ?\ \&fixed\_humidity\ :\ NULL))\ \{}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00347}00347\ \ \ \ \ \ \ \ \ *temperature\ =\ (float)\ fixed\_temperature\ /\ 100;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00348}00348\ \ \ \ \ \ \ \ \ *pressure\ =\ (float)\ fixed\_pressure\ /\ 256;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00349}00349\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (humidity)}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00350}00350\ \ \ \ \ \ \ \ \ \ \ \ \ *humidity\ =\ (float)\ fixed\_humidity\ /\ 1024;}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00351}00351\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00352}00352\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00353}00353\ }
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00354}00354\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{bmp280_8c_source_l00355}00355\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,43 @@
+\doxysection{Mapa modulow }
+\hypertarget{doxygen_modules}{}\label{doxygen_modules}\index{Mapa modulow@{Mapa modulow}}
+\hypertarget{doxygen_modules_module_app}{}\doxysubsection{\texorpdfstring{Core application}{Core application}}\label{doxygen_modules_module_app}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{app_8h}{app.\+h}} -\/ inicjalizacja aplikacji, start RTOS i wrappery I2C.
+\item {\ttfamily \doxylink{pager__config_8h}{pager\+\_\+config.\+h}} -\/ przelaczniki build/board.
+\item {\ttfamily \doxylink{service_8h}{service.\+h}} -\/ opcjonalna konsola UART.
+\end{DoxyItemize}\hypertarget{doxygen_modules_module_radio}{}\doxysubsection{\texorpdfstring{Radio}{Radio}}\label{doxygen_modules_module_radio}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{radio__main_8h}{radio\+\_\+main.\+h}} -\/ wysokopoziomowe komendy\+: wysylanie, pairing, hopping, auto-\/ping i rekonfiguracja profili.
+\item {\ttfamily \doxylink{radio__lib_8h}{radio\+\_\+lib/radio\+\_\+lib.\+h}} -\/ wspolna fasada na backendy modulacji.
+\item {\ttfamily \doxylink{radio__lora_8h}{radio\+\_\+lib/modulations/lora/radio\+\_\+lora.\+h}} -\/ backend Lo\+Ra.
+\item {\ttfamily \doxylink{radio__fsk_8h}{radio\+\_\+lib/modulations/fsk/radio\+\_\+fsk.\+h}} -\/ backend FSK/\+GFSK/\+MSK/\+GMSK.
+\item {\ttfamily \doxylink{radio__ook_8h}{radio\+\_\+lib/modulations/ook/radio\+\_\+ook.\+h}} -\/ backend OOK.
+\item {\ttfamily \doxylink{radio__sx1276_8h}{radio\+\_\+lib/common/sx1276/radio\+\_\+sx1276.\+h}} -\/ niskopoziomowy dostep SPI do rejestrow SX1276.
+\end{DoxyItemize}\hypertarget{doxygen_modules_module_protocol}{}\doxysubsection{\texorpdfstring{Protocol and crypto}{Protocol and crypto}}\label{doxygen_modules_module_protocol}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{laviet__frame_8h}{laviet\+\_\+frame.\+h}} -\/ struktura, walidacja, kodowanie i dekodowanie ramki.
+\item {\ttfamily \doxylink{laviet__crypto_8h}{laviet\+\_\+crypto.\+h}} -\/ HMAC-\/\+SHA256, AES-\/\+CTR, self-\/test i software fallback.
+\end{DoxyItemize}\hypertarget{doxygen_modules_module_security}{}\doxysubsection{\texorpdfstring{Security and storage}{Security and storage}}\label{doxygen_modules_module_security}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{security__main_8h}{security\+\_\+main.\+h}} -\/ trusted devices, klucze, countery, TPM bootstrap.
+\item {\ttfamily \doxylink{st33ktpm2x_8h}{st33ktpm2x\+\_\+lib/st33ktpm2x.\+h}} -\/ sterownik TPM2/\+TIS/\+FIFO przez I2C.
+\item {\ttfamily \doxylink{i2c__mem__store_8h}{i2c\+\_\+mem\+\_\+store\+\_\+lib/i2c\+\_\+mem\+\_\+store.\+h}} -\/ EEPROM/\+FRAM log i encrypted secret slots.
+\end{DoxyItemize}\hypertarget{doxygen_modules_module_ui}{}\doxysubsection{\texorpdfstring{User interface}{User interface}}\label{doxygen_modules_module_ui}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{menu__main_8h}{menu\+\_\+main.\+h}} -\/ stan menu i notyfikacje z innych subsystemow.
+\item {\ttfamily \doxylink{lcd__main_8h}{lcd\+\_\+main.\+h}} -\/ kolejka renderowania ekranow.
+\item {\ttfamily \doxylink{lcd_8h}{lcd\+\_\+library/lcd.\+h}} -\/ driver LCD HD44780 po ekspanderze I2C.
+\item {\ttfamily \doxylink{button__main_8h}{button\+\_\+main.\+h}} -\/ polling i debounce przyciskow.
+\item {\ttfamily \doxylink{led__array__lib_8h}{led\+\_\+array\+\_\+lib/led\+\_\+array\+\_\+lib.\+h}} -\/ efekty i PWM LED.
+\end{DoxyItemize}\hypertarget{doxygen_modules_module_sensors}{}\doxysubsection{\texorpdfstring{Sensors}{Sensors}}\label{doxygen_modules_module_sensors}
+
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{bmp280_8h}{bmp280\+\_\+lib/bmp280.\+h}} -\/ niskopoziomowy driver BMP280/\+BME280.
+\item {\ttfamily \doxylink{bmp280__api_8h}{bmp280\+\_\+lib/bmp280\+\_\+api.\+h}} -\/ aplikacyjny wrapper single-\/shot.
+\item {\ttfamily \doxylink{vl53l3cx__lib_8h}{vl53l3cx\+\_\+lib/vl53l3cx\+\_\+lib.\+h}} -\/ aplikacyjny wrapper VL53\+L3\+CX. 
+\end{DoxyItemize}

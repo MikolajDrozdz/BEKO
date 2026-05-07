@@ -1,0 +1,410 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury security_cmd_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structsecurity__cmd__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury security_cmd_t</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a9b14b3bf7b26a6dcf7076b2ce2ae0a28" id="r_a9b14b3bf7b26a6dcf7076b2ce2ae0a28"><td class="memItemLeft" align="right" valign="top">security_cmd_id_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9b14b3bf7b26a6dcf7076b2ce2ae0a28">id</a></td></tr>
+<tr class="memitem:a9ab46969f77e22f3dba690df29979e34" id="r_a9ab46969f77e22f3dba690df29979e34"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structsecurity__cmd__sync__t.html">security_cmd_sync_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9ab46969f77e22f3dba690df29979e34">sync</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon"><a id="a8e53cfa6924d653054d339088c89e5c5" name="a8e53cfa6924d653054d339088c89e5c5"></a>
+union {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a1e31ca67d8d3321285b252a1a68e67d2" id="r_a1e31ca67d8d3321285b252a1a68e67d2"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a8470facba2e00171710e260d1ae89877">node_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ae01d946c20d365988843298b0b997f4e" id="r_ae01d946c20d365988843298b0b997f4e"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#af3c46b4c1efc7d1e623fd6bbc30a046a">code_len</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a733712efc09ebe6992842191c0c82ad6" id="r_a733712efc09ebe6992842191c0c82ad6"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#ae5ab226ef56b01134dd5481f40128a48">code</a> [SECURITY_CODE_MAX]&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:af1bf27a7bcde9ea64c053cd81f62e9b3" id="r_af1bf27a7bcde9ea64c053cd81f62e9b3"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="#a9096e4df827e632f1e2077f91a922d2b">gateway_slot</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a81bdb6521663e723c587d9e65a421d6c" id="r_a81bdb6521663e723c587d9e65a421d6c"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>add_device</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a37a7e030d487fb03e33ecfa1431ad66d" id="r_a37a7e030d487fb03e33ecfa1431ad66d"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a8470facba2e00171710e260d1ae89877">node_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ad9294487f6d0d766c5ee241ae0e25bdb" id="r_ad9294487f6d0d766c5ee241ae0e25bdb"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>del_device</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aadb0d89a9146637b3294827c647b33da" id="r_aadb0d89a9146637b3294827c647b33da"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a33e22aa79484cac9683d67dccc793acd">index</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ad971c299e12676adf4a3b06bfd1af42b" id="r_ad971c299e12676adf4a3b06bfd1af42b"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>get_device</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ae3d482b1e953943c168a16ae75f094b8" id="r_ae3d482b1e953943c168a16ae75f094b8"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="#a4d62a87cfd71d82c9754dc55c6e6ce9b">enabled</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a875fca17dbad09b3ea4462a9be5a20e9" id="r_a875fca17dbad09b3ea4462a9be5a20e9"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_bool</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ac0425d536a1c8031bdd0e8674d16e3f6" id="r_ac0425d536a1c8031bdd0e8674d16e3f6"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#ac4915f34b510ed377be41a2a6b2ea566">value</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a24a6304d1b456b5be86faaefcdde4aa8" id="r_a24a6304d1b456b5be86faaefcdde4aa8"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_u32</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:acf65c9f6398fa14d905cf0754250a99d" id="r_acf65c9f6398fa14d905cf0754250a99d"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a>&#160;&#160;&#160;<a class="el" href="#a1a9c9e891f98271b6a39f9b7c4746259">mode</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aca9ea5e5c451c312d88616558467af1d" id="r_aca9ea5e5c451c312d88616558467af1d"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_notify</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:afd6fa3bac34790987c06e6628031de5e" id="r_afd6fa3bac34790987c06e6628031de5e"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#aec9d94ba86cbfbc27c0abadc0716c658">preset_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a507ccebd9ede43f26d26b9eb0dbf59b6" id="r_a507ccebd9ede43f26d26b9eb0dbf59b6"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_preset</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a355dd64e87a21c509e7c4415854e5d4b" id="r_a355dd64e87a21c509e7c4415854e5d4b"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="structradio__main__runtime__cfg__t.html">radio_main_runtime_cfg_t</a>&#160;&#160;&#160;<a class="el" href="#ac964b952b6f087e0c8832b03fd31c35a">cfg</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:adbd61bda84e78f79c374c6477730b2b9" id="r_adbd61bda84e78f79c374c6477730b2b9"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_radio</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:acaed818c9faac293b42e0ad85529988e" id="r_acaed818c9faac293b42e0ad85529988e"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;int16_t&#160;&#160;&#160;<a class="el" href="#a199a3d156d5ae9a839468084eedcc411">rssi_dbm</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a8441b303971df49f7249b4d89dd6780a" id="r_a8441b303971df49f7249b4d89dd6780a"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a6bcd97aa1bd7d9949bf97fdddb428e89">len</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aab0d986680bb05c6afbb259e067749d0" id="r_aab0d986680bb05c6afbb259e067749d0"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#ae5a31aaf0c1ed099295c7a430bce7ebc">payload</a> [I2C_MEM_STORE_LOG_PAYLOAD_MAX]&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ac8a2db9983fbc01b642347d1118b0e90" id="r_ac8a2db9983fbc01b642347d1118b0e90"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>log_msg</b></td></tr>
+<tr class="memitem:a8e53cfa6924d653054d339088c89e5c5" id="r_a8e53cfa6924d653054d339088c89e5c5"><td class="memItemLeft anonEnd" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><b>u</b></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock">
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00100">100</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="ac964b952b6f087e0c8832b03fd31c35a" name="ac964b952b6f087e0c8832b03fd31c35a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac964b952b6f087e0c8832b03fd31c35a">&#9670;&#160;</a></span>cfg</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__main__runtime__cfg__t.html">radio_main_runtime_cfg_t</a> security_cmd_t::cfg</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00139">139</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ae5ab226ef56b01134dd5481f40128a48" name="ae5ab226ef56b01134dd5481f40128a48"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5ab226ef56b01134dd5481f40128a48">&#9670;&#160;</a></span>code</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_cmd_t::code[SECURITY_CODE_MAX]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00110">110</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="af3c46b4c1efc7d1e623fd6bbc30a046a" name="af3c46b4c1efc7d1e623fd6bbc30a046a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af3c46b4c1efc7d1e623fd6bbc30a046a">&#9670;&#160;</a></span>code_len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_cmd_t::code_len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00109">109</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a4d62a87cfd71d82c9754dc55c6e6ce9b" name="a4d62a87cfd71d82c9754dc55c6e6ce9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d62a87cfd71d82c9754dc55c6e6ce9b">&#9670;&#160;</a></span>enabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_cmd_t::enabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00123">123</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a9096e4df827e632f1e2077f91a922d2b" name="a9096e4df827e632f1e2077f91a922d2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9096e4df827e632f1e2077f91a922d2b">&#9670;&#160;</a></span>gateway_slot</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool security_cmd_t::gateway_slot</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00111">111</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a9b14b3bf7b26a6dcf7076b2ce2ae0a28" name="a9b14b3bf7b26a6dcf7076b2ce2ae0a28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b14b3bf7b26a6dcf7076b2ce2ae0a28">&#9670;&#160;</a></span>id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">security_cmd_id_t security_cmd_t::id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00102">102</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a33e22aa79484cac9683d67dccc793acd" name="a33e22aa79484cac9683d67dccc793acd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33e22aa79484cac9683d67dccc793acd">&#9670;&#160;</a></span>index</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_cmd_t::index</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00119">119</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a6bcd97aa1bd7d9949bf97fdddb428e89" name="a6bcd97aa1bd7d9949bf97fdddb428e89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bcd97aa1bd7d9949bf97fdddb428e89">&#9670;&#160;</a></span>len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_cmd_t::len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00144">144</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a1a9c9e891f98271b6a39f9b7c4746259" name="a1a9c9e891f98271b6a39f9b7c4746259"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a9c9e891f98271b6a39f9b7c4746259">&#9670;&#160;</a></span>mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="security__main_8h.html#adab8fef5f7716a7e73c831dc6ddd18ae">security_notify_mode_t</a> security_cmd_t::mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00131">131</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a8470facba2e00171710e260d1ae89877" name="a8470facba2e00171710e260d1ae89877"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8470facba2e00171710e260d1ae89877">&#9670;&#160;</a></span>node_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t security_cmd_t::node_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00108">108</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ae5a31aaf0c1ed099295c7a430bce7ebc" name="ae5a31aaf0c1ed099295c7a430bce7ebc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5a31aaf0c1ed099295c7a430bce7ebc">&#9670;&#160;</a></span>payload</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_cmd_t::payload[I2C_MEM_STORE_LOG_PAYLOAD_MAX]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00145">145</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aec9d94ba86cbfbc27c0abadc0716c658" name="aec9d94ba86cbfbc27c0abadc0716c658"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec9d94ba86cbfbc27c0abadc0716c658">&#9670;&#160;</a></span>preset_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t security_cmd_t::preset_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00135">135</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a199a3d156d5ae9a839468084eedcc411" name="a199a3d156d5ae9a839468084eedcc411"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a199a3d156d5ae9a839468084eedcc411">&#9670;&#160;</a></span>rssi_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t security_cmd_t::rssi_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00143">143</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a9ab46969f77e22f3dba690df29979e34" name="a9ab46969f77e22f3dba690df29979e34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ab46969f77e22f3dba690df29979e34">&#9670;&#160;</a></span>sync</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structsecurity__cmd__sync__t.html">security_cmd_sync_t</a>* security_cmd_t::sync</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00103">103</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ac4915f34b510ed377be41a2a6b2ea566" name="ac4915f34b510ed377be41a2a6b2ea566"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4915f34b510ed377be41a2a6b2ea566">&#9670;&#160;</a></span>value</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t security_cmd_t::value</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="security__main_8c_source.html#l00127">127</a> pliku <a class="el" href="security__main_8c_source.html">security_main.c</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="security__main_8c_source.html">security_main.c</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structsecurity__cmd__t.html">security_cmd_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

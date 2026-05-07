@@ -1,0 +1,72 @@
+\doxysection{Dokumentacja pliku Core/\+App/pager\+\_\+config.h}
+\hypertarget{pager__config_8h}{}\label{pager__config_8h}\index{Core/App/pager\_config.h@{Core/App/pager\_config.h}}
+
+
+Application-\/level build and board configuration switches.  
+
+
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{pager__config_8h_a6176f7b270798f1eb48d2d02c68dc4f3}{PAGER\+\_\+\+CONFIG\+\_\+\+UART\+\_\+\+SENSITIVE\+\_\+\+LOGS}}~0
+\begin{DoxyCompactList}\small\item\em Enable verbose UART logs for sensitive secure/control payloads. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{pager__config_8h_a21bbb23ee7ea271943e1976af0f7aae4}{SERVICE\+\_\+\+UART}}~1
+\begin{DoxyCompactList}\small\item\em Build the UART service console task. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{pager__config_8h_a10ed3759e08d8cfedd3f3f76e8332f04}{PAGER\+\_\+\+CONFIG\+\_\+\+BMP280\+\_\+\+MOUNTED}}~0
+\begin{DoxyCompactList}\small\item\em Board-\/level presence flag for BMP280/\+BME280. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Application-\/level build and board configuration switches. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{pager__config_8h_source}{pager\+\_\+config.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{pager__config_8h_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{pager__config_8h_a10ed3759e08d8cfedd3f3f76e8332f04}\index{pager\_config.h@{pager\_config.h}!PAGER\_CONFIG\_BMP280\_MOUNTED@{PAGER\_CONFIG\_BMP280\_MOUNTED}}
+\index{PAGER\_CONFIG\_BMP280\_MOUNTED@{PAGER\_CONFIG\_BMP280\_MOUNTED}!pager\_config.h@{pager\_config.h}}
+\doxysubsubsection{\texorpdfstring{PAGER\_CONFIG\_BMP280\_MOUNTED}{PAGER\_CONFIG\_BMP280\_MOUNTED}}
+{\footnotesize\ttfamily \label{pager__config_8h_a10ed3759e08d8cfedd3f3f76e8332f04} 
+\#define PAGER\+\_\+\+CONFIG\+\_\+\+BMP280\+\_\+\+MOUNTED~0}
+
+
+
+Board-\/level presence flag for BMP280/\+BME280. 
+
+Current board variant has no sensor mounted. Keep the driver code in tree for future variants, but do not start the RTOS task on this hardware. 
+
+Definicja w linii \mbox{\hyperlink{pager__config_8h_source_l00033}{33}} pliku \mbox{\hyperlink{pager__config_8h_source}{pager\+\_\+config.\+h}}.
+
+\Hypertarget{pager__config_8h_a6176f7b270798f1eb48d2d02c68dc4f3}\index{pager\_config.h@{pager\_config.h}!PAGER\_CONFIG\_UART\_SENSITIVE\_LOGS@{PAGER\_CONFIG\_UART\_SENSITIVE\_LOGS}}
+\index{PAGER\_CONFIG\_UART\_SENSITIVE\_LOGS@{PAGER\_CONFIG\_UART\_SENSITIVE\_LOGS}!pager\_config.h@{pager\_config.h}}
+\doxysubsubsection{\texorpdfstring{PAGER\_CONFIG\_UART\_SENSITIVE\_LOGS}{PAGER\_CONFIG\_UART\_SENSITIVE\_LOGS}}
+{\footnotesize\ttfamily \label{pager__config_8h_a6176f7b270798f1eb48d2d02c68dc4f3} 
+\#define PAGER\+\_\+\+CONFIG\+\_\+\+UART\+\_\+\+SENSITIVE\+\_\+\+LOGS~0}
+
+
+
+Enable verbose UART logs for sensitive secure/control payloads. 
+
+Keep this disabled in production because these logs can expose pairing data and protected LAVIET\+\_\+\+FRAME\+\_\+\+V1 payloads. 
+
+Definicja w linii \mbox{\hyperlink{pager__config_8h_source_l00015}{15}} pliku \mbox{\hyperlink{pager__config_8h_source}{pager\+\_\+config.\+h}}.
+
+\Hypertarget{pager__config_8h_a21bbb23ee7ea271943e1976af0f7aae4}\index{pager\_config.h@{pager\_config.h}!SERVICE\_UART@{SERVICE\_UART}}
+\index{SERVICE\_UART@{SERVICE\_UART}!pager\_config.h@{pager\_config.h}}
+\doxysubsubsection{\texorpdfstring{SERVICE\_UART}{SERVICE\_UART}}
+{\footnotesize\ttfamily \label{pager__config_8h_a21bbb23ee7ea271943e1976af0f7aae4} 
+\#define SERVICE\+\_\+\+UART~1}
+
+
+
+Build the UART service console task. 
+
+Set to 0 to remove the command service while leaving normal printf diagnostics intact. 
+
+Definicja w linii \mbox{\hyperlink{pager__config_8h_source_l00024}{24}} pliku \mbox{\hyperlink{pager__config_8h_source}{pager\+\_\+config.\+h}}.
+

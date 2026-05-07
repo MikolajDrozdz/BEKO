@@ -1,0 +1,1087 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/radio_lib/common/sx1276/radio_sx1276.c</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('radio__sx1276_8c.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku radio_sx1276.c</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Implementacja niskopoziomowego dostępu do rejestrów SX1276.  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;<a class="el" href="radio__sx1276_8h_source.html">radio_sx1276.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="radio__sx1276__regs_8h_source.html">radio_sx1276_regs.h</a>&quot;</code><br />
+</div>
+<p><a href="radio__sx1276_8c_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:a4ccf5a83fddc14fce931ac8b4a2ac49e" id="r_a4ccf5a83fddc14fce931ac8b4a2ac49e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ccf5a83fddc14fce931ac8b4a2ac49e">sx1276_select</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus)</td></tr>
+<tr class="memdesc:a4ccf5a83fddc14fce931ac8b4a2ac49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#a4ccf5a83fddc14fce931ac8b4a2ac49e" title="Internal helper: sx1276_select.">sx1276_select</a></span>.  <br /></td></tr>
+<tr class="memitem:aed1991f0585fe20a964b799ebc3c811a" id="r_aed1991f0585fe20a964b799ebc3c811a"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed1991f0585fe20a964b799ebc3c811a">sx1276_deselect</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus)</td></tr>
+<tr class="memdesc:aed1991f0585fe20a964b799ebc3c811a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal helper: <span class="tt"><a class="el" href="#aed1991f0585fe20a964b799ebc3c811a" title="Internal helper: sx1276_deselect.">sx1276_deselect</a></span>.  <br /></td></tr>
+<tr class="memitem:a0be3807ba48f424c293c3e6312e4b004" id="r_a0be3807ba48f424c293c3e6312e4b004"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0be3807ba48f424c293c3e6312e4b004">sx1276_read_reg</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t reg, uint8_t *value)</td></tr>
+<tr class="memdesc:a0be3807ba48f424c293c3e6312e4b004"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje pojedynczy rejestr SX1276.  <br /></td></tr>
+<tr class="memitem:af20d56d667bf340216eff31602a31c85" id="r_af20d56d667bf340216eff31602a31c85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af20d56d667bf340216eff31602a31c85">sx1276_write_reg</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t reg, uint8_t value)</td></tr>
+<tr class="memdesc:af20d56d667bf340216eff31602a31c85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zapisuje pojedynczy rejestr SX1276.  <br /></td></tr>
+<tr class="memitem:adc74dc514898113c4e43bc5fbc8b280b" id="r_adc74dc514898113c4e43bc5fbc8b280b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adc74dc514898113c4e43bc5fbc8b280b">sx1276_read_burst</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t reg, uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:adc74dc514898113c4e43bc5fbc8b280b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje sekwencję bajtów od rejestru startowego.  <br /></td></tr>
+<tr class="memitem:a3a3c532ff762f574aac721fe906acd85" id="r_a3a3c532ff762f574aac721fe906acd85"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3a3c532ff762f574aac721fe906acd85">sx1276_write_burst</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t reg, const uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:a3a3c532ff762f574aac721fe906acd85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zapisuje sekwencję bajtów od rejestru startowego.  <br /></td></tr>
+<tr class="memitem:ae308f754e1ef59472e61b1cba0b26d6d" id="r_ae308f754e1ef59472e61b1cba0b26d6d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae308f754e1ef59472e61b1cba0b26d6d">sx1276_get_version</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t *version)</td></tr>
+<tr class="memdesc:ae308f754e1ef59472e61b1cba0b26d6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje identyfikator wersji układu SX1276.  <br /></td></tr>
+<tr class="memitem:a2d735690e49eb3453479d5c70f9cdd20" id="r_a2d735690e49eb3453479d5c70f9cdd20"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d735690e49eb3453479d5c70f9cdd20">sx1276_set_op_mode</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t op_mode)</td></tr>
+<tr class="memdesc:a2d735690e49eb3453479d5c70f9cdd20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia rejestr trybu pracy <span class="tt">RegOpMode</span>.  <br /></td></tr>
+<tr class="memitem:a7726c49e402b455d667895cc37ac8ec8" id="r_a7726c49e402b455d667895cc37ac8ec8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7726c49e402b455d667895cc37ac8ec8">sx1276_set_frequency</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint32_t frequency_hz)</td></tr>
+<tr class="memdesc:a7726c49e402b455d667895cc37ac8ec8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia częstotliwość nośną RF.  <br /></td></tr>
+<tr class="memitem:a7f6da27f88d9e1ee14012e7fc01a06c5" id="r_a7f6da27f88d9e1ee14012e7fc01a06c5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f6da27f88d9e1ee14012e7fc01a06c5">sx1276_set_pa_output_power</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, int8_t tx_power_dbm)</td></tr>
+<tr class="memdesc:a7f6da27f88d9e1ee14012e7fc01a06c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia moc nadajnika dla toru PA_BOOST.  <br /></td></tr>
+<tr class="memitem:a114bd1113c90a7d2f7875d1776f2ec8e" id="r_a114bd1113c90a7d2f7875d1776f2ec8e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a114bd1113c90a7d2f7875d1776f2ec8e">sx1276_set_lora_modem</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t bandwidth_code, uint8_t spreading_factor, uint8_t coding_rate_denominator, bool implicit_header, bool crc_on, bool low_datarate_optimize)</td></tr>
+<tr class="memdesc:a114bd1113c90a7d2f7875d1776f2ec8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Konfiguruje parametry modemu LoRa.  <br /></td></tr>
+<tr class="memitem:a6487ef0d55e681a5e50e3d7354886753" id="r_a6487ef0d55e681a5e50e3d7354886753"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6487ef0d55e681a5e50e3d7354886753">sx1276_set_symbol_timeout</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint16_t symbol_timeout)</td></tr>
+<tr class="memdesc:a6487ef0d55e681a5e50e3d7354886753"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia timeout symbolowy dla odbioru pojedynczego.  <br /></td></tr>
+<tr class="memitem:a2bb5199c2391aa24e194d8a4d4ac2157" id="r_a2bb5199c2391aa24e194d8a4d4ac2157"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2bb5199c2391aa24e194d8a4d4ac2157">sx1276_set_preamble</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint16_t preamble_len)</td></tr>
+<tr class="memdesc:a2bb5199c2391aa24e194d8a4d4ac2157"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia długość preambuły LoRa.  <br /></td></tr>
+<tr class="memitem:a74e72da97dcdd90a7e071af8504a4f04" id="r_a74e72da97dcdd90a7e071af8504a4f04"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a74e72da97dcdd90a7e071af8504a4f04">sx1276_set_sync_word</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t sync_word)</td></tr>
+<tr class="memdesc:a74e72da97dcdd90a7e071af8504a4f04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia sync word LoRa.  <br /></td></tr>
+<tr class="memitem:af8c0cb076e901b4aa2d4ff6959dc71a3" id="r_af8c0cb076e901b4aa2d4ff6959dc71a3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8c0cb076e901b4aa2d4ff6959dc71a3">sx1276_set_invert_iq</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, bool invert_iq)</td></tr>
+<tr class="memdesc:af8c0cb076e901b4aa2d4ff6959dc71a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Włącza lub wyłącza inwersję IQ.  <br /></td></tr>
+<tr class="memitem:a2c71c2e3d5c9a8404ccd9388fd3276d3" id="r_a2c71c2e3d5c9a8404ccd9388fd3276d3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c71c2e3d5c9a8404ccd9388fd3276d3">sx1276_set_fifo_base_addrs</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t tx_base, uint8_t rx_base)</td></tr>
+<tr class="memdesc:a2c71c2e3d5c9a8404ccd9388fd3276d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia bazowe adresy FIFO dla TX i RX.  <br /></td></tr>
+<tr class="memitem:ac768a620c5104a7cc1e932e0fd41e5bb" id="r_ac768a620c5104a7cc1e932e0fd41e5bb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac768a620c5104a7cc1e932e0fd41e5bb">sx1276_set_fifo_addr_ptr</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t addr)</td></tr>
+<tr class="memdesc:ac768a620c5104a7cc1e932e0fd41e5bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia wskaźnik bieżącego adresu FIFO.  <br /></td></tr>
+<tr class="memitem:aeb0a3f646a276aed07c4e23dfabff75c" id="r_aeb0a3f646a276aed07c4e23dfabff75c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeb0a3f646a276aed07c4e23dfabff75c">sx1276_write_fifo</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, const uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:aeb0a3f646a276aed07c4e23dfabff75c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zapisuje payload do FIFO.  <br /></td></tr>
+<tr class="memitem:ab173599c491a7a6b761c9e4c685843af" id="r_ab173599c491a7a6b761c9e4c685843af"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab173599c491a7a6b761c9e4c685843af">sx1276_read_fifo</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t *data, uint8_t len)</td></tr>
+<tr class="memdesc:ab173599c491a7a6b761c9e4c685843af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje payload z FIFO.  <br /></td></tr>
+<tr class="memitem:a62348eb179378aacf27663c00ea490c1" id="r_a62348eb179378aacf27663c00ea490c1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a62348eb179378aacf27663c00ea490c1">sx1276_set_payload_length</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t len)</td></tr>
+<tr class="memdesc:a62348eb179378aacf27663c00ea490c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia długość payloadu LoRa.  <br /></td></tr>
+<tr class="memitem:a3c52ec2e93ac86e40f504021db364208" id="r_a3c52ec2e93ac86e40f504021db364208"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c52ec2e93ac86e40f504021db364208">sx1276_get_rx_current_addr</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t *addr)</td></tr>
+<tr class="memdesc:a3c52ec2e93ac86e40f504021db364208"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje adres początku aktualnego pakietu RX w FIFO.  <br /></td></tr>
+<tr class="memitem:a3675f7d7f297d0c053ede0812830844e" id="r_a3675f7d7f297d0c053ede0812830844e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3675f7d7f297d0c053ede0812830844e">sx1276_get_rx_nb_bytes</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t *len)</td></tr>
+<tr class="memdesc:a3675f7d7f297d0c053ede0812830844e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje liczbę odebranych bajtów pakietu.  <br /></td></tr>
+<tr class="memitem:a5ef2d8fcef425e0f53703b2181b66930" id="r_a5ef2d8fcef425e0f53703b2181b66930"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ef2d8fcef425e0f53703b2181b66930">sx1276_get_packet_snr_raw</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, int8_t *snr_raw)</td></tr>
+<tr class="memdesc:a5ef2d8fcef425e0f53703b2181b66930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje surowy rejestr SNR pakietu.  <br /></td></tr>
+<tr class="memitem:a4623abcf4ecce80c86b787491dd35bd2" id="r_a4623abcf4ecce80c86b787491dd35bd2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4623abcf4ecce80c86b787491dd35bd2">sx1276_get_packet_rssi_raw</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t *rssi_raw)</td></tr>
+<tr class="memdesc:a4623abcf4ecce80c86b787491dd35bd2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje surowy rejestr RSSI pakietu.  <br /></td></tr>
+<tr class="memitem:a038d9ebac1fb9c451ebb19d717d72959" id="r_a038d9ebac1fb9c451ebb19d717d72959"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a038d9ebac1fb9c451ebb19d717d72959">sx1276_get_irq_flags</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t *flags)</td></tr>
+<tr class="memdesc:a038d9ebac1fb9c451ebb19d717d72959"><td class="mdescLeft">&#160;</td><td class="mdescRight">Odczytuje flagi IRQ LoRa.  <br /></td></tr>
+<tr class="memitem:a8b3de4da7603cdd8c1de0b1519a0a96f" id="r_a8b3de4da7603cdd8c1de0b1519a0a96f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b3de4da7603cdd8c1de0b1519a0a96f">sx1276_clear_irq_flags</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t flags_to_clear)</td></tr>
+<tr class="memdesc:a8b3de4da7603cdd8c1de0b1519a0a96f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Czyści wskazane flagi IRQ LoRa.  <br /></td></tr>
+<tr class="memitem:a71f3f213995c99ce1cf7ef22ddefed79" id="r_a71f3f213995c99ce1cf7ef22ddefed79"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a71f3f213995c99ce1cf7ef22ddefed79">sx1276_map_dio</a> (const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *bus, uint8_t dio_mapping1, uint8_t dio_mapping2)</td></tr>
+<tr class="memdesc:a71f3f213995c99ce1cf7ef22ddefed79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ustawia mapowanie funkcji dla linii DIO.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Implementacja niskopoziomowego dostępu do rejestrów SX1276. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+</div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="a8b3de4da7603cdd8c1de0b1519a0a96f" name="a8b3de4da7603cdd8c1de0b1519a0a96f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b3de4da7603cdd8c1de0b1519a0a96f">&#9670;&#160;</a></span>sx1276_clear_irq_flags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_clear_irq_flags </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>flags_to_clear</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Czyści wskazane flagi IRQ LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00352">352</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00580">radio_lora_process()</a>, <a class="el" href="radio__lora_8c_source.html#l00507">radio_lora_send_async()</a>, <a class="el" href="radio__lora_8c_source.html#l00452">radio_lora_start_rx_continuous()</a> i <a class="el" href="radio__lora_8c_source.html#l00476">radio_lora_start_rx_single()</a>.</p>
+
+</div>
+</div>
+<a id="aed1991f0585fe20a964b799ebc3c811a" name="aed1991f0585fe20a964b799ebc3c811a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed1991f0585fe20a964b799ebc3c811a">&#9670;&#160;</a></span>sx1276_deselect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sx1276_deselect </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#aed1991f0585fe20a964b799ebc3c811a" title="Internal helper: sx1276_deselect.">sx1276_deselect</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00022">22</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8h_source.html#l00021">sx1276_bus_t::nss_pin</a> i <a class="el" href="radio__sx1276_8h_source.html#l00020">sx1276_bus_t::nss_port</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__sx1276_8c_source.html#l00073">sx1276_read_burst()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+</div>
+</div>
+<a id="a038d9ebac1fb9c451ebb19d717d72959" name="a038d9ebac1fb9c451ebb19d717d72959"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a038d9ebac1fb9c451ebb19d717d72959">&#9670;&#160;</a></span>sx1276_get_irq_flags()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_get_irq_flags </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>flags</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje flagi IRQ LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00347">347</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00067">radio_read_irq_flags_retry()</a> i <a class="el" href="radio__lora_8c_source.html#l00179">radio_wait_for_tx_enter_or_done()</a>.</p>
+
+</div>
+</div>
+<a id="a4623abcf4ecce80c86b787491dd35bd2" name="a4623abcf4ecce80c86b787491dd35bd2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4623abcf4ecce80c86b787491dd35bd2">&#9670;&#160;</a></span>sx1276_get_packet_rssi_raw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_get_packet_rssi_raw </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>rssi_raw</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje surowy rejestr RSSI pakietu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00342">342</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a5ef2d8fcef425e0f53703b2181b66930" name="a5ef2d8fcef425e0f53703b2181b66930"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ef2d8fcef425e0f53703b2181b66930">&#9670;&#160;</a></span>sx1276_get_packet_snr_raw()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_get_packet_snr_raw </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t *</td>          <td class="paramname"><span class="paramname"><em>snr_raw</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje surowy rejestr SNR pakietu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00329">329</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a3c52ec2e93ac86e40f504021db364208" name="a3c52ec2e93ac86e40f504021db364208"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c52ec2e93ac86e40f504021db364208">&#9670;&#160;</a></span>sx1276_get_rx_current_addr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_get_rx_current_addr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>addr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje adres początku aktualnego pakietu RX w FIFO. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00319">319</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a3675f7d7f297d0c053ede0812830844e" name="a3675f7d7f297d0c053ede0812830844e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3675f7d7f297d0c053ede0812830844e">&#9670;&#160;</a></span>sx1276_get_rx_nb_bytes()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_get_rx_nb_bytes </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje liczbę odebranych bajtów pakietu. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00324">324</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="ae308f754e1ef59472e61b1cba0b26d6d" name="ae308f754e1ef59472e61b1cba0b26d6d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae308f754e1ef59472e61b1cba0b26d6d">&#9670;&#160;</a></span>sx1276_get_version()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_get_version </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>version</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje identyfikator wersji układu SX1276. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00125">125</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00489">radio_fsk_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a> i <a class="el" href="radio__ook_8c_source.html#l00406">radio_ook_init()</a>.</p>
+
+</div>
+</div>
+<a id="a71f3f213995c99ce1cf7ef22ddefed79" name="a71f3f213995c99ce1cf7ef22ddefed79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71f3f213995c99ce1cf7ef22ddefed79">&#9670;&#160;</a></span>sx1276_map_dio()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_map_dio </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>dio_mapping1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>dio_mapping2</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia mapowanie funkcji dla linii DIO. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00357">357</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00155">radio_config_dio_for_rx()</a> i <a class="el" href="radio__lora_8c_source.html#l00164">radio_config_dio_for_tx()</a>.</p>
+
+</div>
+</div>
+<a id="adc74dc514898113c4e43bc5fbc8b280b" name="adc74dc514898113c4e43bc5fbc8b280b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc74dc514898113c4e43bc5fbc8b280b">&#9670;&#160;</a></span>sx1276_read_burst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_read_burst </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje sekwencję bajtów od rejestru startowego. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bus</td><td>Kontekst magistrali SPI. </td></tr>
+    <tr><td class="paramname">reg</td><td>Adres startowy. </td></tr>
+    <tr><td class="paramname">data</td><td>[out] Bufor danych. </td></tr>
+    <tr><td class="paramname">len</td><td>Liczba bajtów do odczytu. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> gdy transfer się powiódł. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00073">73</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8h_source.html#l00019">sx1276_bus_t::hspi</a>, <a class="el" href="radio__sx1276_8h_source.html#l00022">sx1276_bus_t::spi_timeout_ms</a>, <a class="el" href="radio__sx1276_8c_source.html#l00022">sx1276_deselect()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00870">radio_fsk_raw_read_burst()</a>, <a class="el" href="radio__lora_8c_source.html#l00760">radio_lora_raw_read_burst()</a>, <a class="el" href="radio__ook_8c_source.html#l00779">radio_ook_raw_read_burst()</a>, <a class="el" href="radio__fsk_8c_source.html#l00432">radio_read_rx_packet()</a>, <a class="el" href="radio__ook_8c_source.html#l00349">radio_read_rx_packet()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00309">sx1276_read_fifo()</a>.</p>
+
+</div>
+</div>
+<a id="ab173599c491a7a6b761c9e4c685843af" name="ab173599c491a7a6b761c9e4c685843af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab173599c491a7a6b761c9e4c685843af">&#9670;&#160;</a></span>sx1276_read_fifo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_read_fifo </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje payload z FIFO. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00309">309</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00073">sx1276_read_burst()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a0be3807ba48f424c293c3e6312e4b004" name="a0be3807ba48f424c293c3e6312e4b004"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0be3807ba48f424c293c3e6312e4b004">&#9670;&#160;</a></span>sx1276_read_reg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_read_reg </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Odczytuje pojedynczy rejestr SX1276. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bus</td><td>Kontekst magistrali SPI. </td></tr>
+    <tr><td class="paramname">reg</td><td>Adres rejestru. </td></tr>
+    <tr><td class="paramname">value</td><td>[out] Odczytana wartość. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> gdy transfer się powiódł. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00027">27</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8h_source.html#l00019">sx1276_bus_t::hspi</a>, <a class="el" href="radio__sx1276_8h_source.html#l00022">sx1276_bus_t::spi_timeout_ms</a>, <a class="el" href="radio__sx1276_8c_source.html#l00022">sx1276_deselect()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00705">radio_fsk_process()</a>, <a class="el" href="radio__fsk_8c_source.html#l00850">radio_fsk_raw_read_reg()</a>, <a class="el" href="radio__lora_8c_source.html#l00580">radio_lora_process()</a>, <a class="el" href="radio__lora_8c_source.html#l00740">radio_lora_raw_read_reg()</a>, <a class="el" href="radio__ook_8c_source.html#l00622">radio_ook_process()</a>, <a class="el" href="radio__ook_8c_source.html#l00759">radio_ook_raw_read_reg()</a>, <a class="el" href="radio__fsk_8c_source.html#l00432">radio_read_rx_packet()</a>, <a class="el" href="radio__ook_8c_source.html#l00349">radio_read_rx_packet()</a>, <a class="el" href="radio__lora_8c_source.html#l00179">radio_wait_for_tx_enter_or_done()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00347">sx1276_get_irq_flags()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00342">sx1276_get_packet_rssi_raw()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00329">sx1276_get_packet_snr_raw()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00319">sx1276_get_rx_current_addr()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00324">sx1276_get_rx_nb_bytes()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00125">sx1276_get_version()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00268">sx1276_set_invert_iq()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00184">sx1276_set_lora_modem()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00241">sx1276_set_symbol_timeout()</a>.</p>
+
+</div>
+</div>
+<a id="a4ccf5a83fddc14fce931ac8b4a2ac49e" name="a4ccf5a83fddc14fce931ac8b4a2ac49e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ccf5a83fddc14fce931ac8b4a2ac49e">&#9670;&#160;</a></span>sx1276_select()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_select </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal helper: <span class="tt"><a class="el" href="#a4ccf5a83fddc14fce931ac8b4a2ac49e" title="Internal helper: sx1276_select.">sx1276_select</a></span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00010">10</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8h_source.html#l00019">sx1276_bus_t::hspi</a>, <a class="el" href="radio__sx1276_8h_source.html#l00021">sx1276_bus_t::nss_pin</a> i <a class="el" href="radio__sx1276_8h_source.html#l00020">sx1276_bus_t::nss_port</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__sx1276_8c_source.html#l00073">sx1276_read_burst()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+</div>
+</div>
+<a id="ac768a620c5104a7cc1e932e0fd41e5bb" name="ac768a620c5104a7cc1e932e0fd41e5bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac768a620c5104a7cc1e932e0fd41e5bb">&#9670;&#160;</a></span>sx1276_set_fifo_addr_ptr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_fifo_addr_ptr </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>addr</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia wskaźnik bieżącego adresu FIFO. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00299">299</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00507">radio_lora_send_async()</a> i <a class="el" href="radio__lora_8c_source.html#l00255">radio_read_rx_packet()</a>.</p>
+
+</div>
+</div>
+<a id="a2c71c2e3d5c9a8404ccd9388fd3276d3" name="a2c71c2e3d5c9a8404ccd9388fd3276d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c71c2e3d5c9a8404ccd9388fd3276d3">&#9670;&#160;</a></span>sx1276_set_fifo_base_addrs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_fifo_base_addrs </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>tx_base</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>rx_base</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia bazowe adresy FIFO dla TX i RX. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00293">293</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>.</p>
+
+</div>
+</div>
+<a id="a7726c49e402b455d667895cc37ac8ec8" name="a7726c49e402b455d667895cc37ac8ec8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7726c49e402b455d667895cc37ac8ec8">&#9670;&#160;</a></span>sx1276_set_frequency()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_frequency </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>frequency_hz</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia częstotliwość nośną RF. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00135">135</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a> i <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>.</p>
+
+</div>
+</div>
+<a id="af8c0cb076e901b4aa2d4ff6959dc71a3" name="af8c0cb076e901b4aa2d4ff6959dc71a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8c0cb076e901b4aa2d4ff6959dc71a3">&#9670;&#160;</a></span>sx1276_set_invert_iq()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_invert_iq </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>invert_iq</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Włącza lub wyłącza inwersję IQ. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00268">268</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>.</p>
+
+</div>
+</div>
+<a id="a114bd1113c90a7d2f7875d1776f2ec8e" name="a114bd1113c90a7d2f7875d1776f2ec8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a114bd1113c90a7d2f7875d1776f2ec8e">&#9670;&#160;</a></span>sx1276_set_lora_modem()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_lora_modem </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>bandwidth_code</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>spreading_factor</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>coding_rate_denominator</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>implicit_header</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>crc_on</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>low_datarate_optimize</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Konfiguruje parametry modemu LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00184">184</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>.</p>
+
+</div>
+</div>
+<a id="a2d735690e49eb3453479d5c70f9cdd20" name="a2d735690e49eb3453479d5c70f9cdd20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d735690e49eb3453479d5c70f9cdd20">&#9670;&#160;</a></span>sx1276_set_op_mode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_op_mode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>op_mode</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia rejestr trybu pracy <span class="tt">RegOpMode</span>. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00130">130</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00618">radio_fsk_send_async()</a>, <a class="el" href="radio__fsk_8c_source.html#l00563">radio_fsk_start_rx_continuous()</a>, <a class="el" href="radio__fsk_8c_source.html#l00588">radio_fsk_start_rx_single()</a>, <a class="el" href="radio__lora_8c_source.html#l00368">radio_lora_init()</a>, <a class="el" href="radio__lora_8c_source.html#l00507">radio_lora_send_async()</a>, <a class="el" href="radio__lora_8c_source.html#l00564">radio_lora_sleep()</a>, <a class="el" href="radio__lora_8c_source.html#l00548">radio_lora_standby()</a>, <a class="el" href="radio__lora_8c_source.html#l00452">radio_lora_start_rx_continuous()</a>, <a class="el" href="radio__lora_8c_source.html#l00476">radio_lora_start_rx_single()</a>, <a class="el" href="radio__ook_8c_source.html#l00535">radio_ook_send_async()</a>, <a class="el" href="radio__ook_8c_source.html#l00480">radio_ook_start_rx_continuous()</a>, <a class="el" href="radio__ook_8c_source.html#l00505">radio_ook_start_rx_single()</a>, <a class="el" href="radio__fsk_8c_source.html#l00324">radio_resume_after_tx()</a> i <a class="el" href="radio__ook_8c_source.html#l00243">radio_resume_after_tx()</a>.</p>
+
+</div>
+</div>
+<a id="a7f6da27f88d9e1ee14012e7fc01a06c5" name="a7f6da27f88d9e1ee14012e7fc01a06c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f6da27f88d9e1ee14012e7fc01a06c5">&#9670;&#160;</a></span>sx1276_set_pa_output_power()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_pa_output_power </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t</td>          <td class="paramname"><span class="paramname"><em>tx_power_dbm</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia moc nadajnika dla toru PA_BOOST. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00152">152</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a> i <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>.</p>
+
+</div>
+</div>
+<a id="a62348eb179378aacf27663c00ea490c1" name="a62348eb179378aacf27663c00ea490c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62348eb179378aacf27663c00ea490c1">&#9670;&#160;</a></span>sx1276_set_payload_length()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_payload_length </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia długość payloadu LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00314">314</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a> i <a class="el" href="radio__lora_8c_source.html#l00507">radio_lora_send_async()</a>.</p>
+
+</div>
+</div>
+<a id="a2bb5199c2391aa24e194d8a4d4ac2157" name="a2bb5199c2391aa24e194d8a4d4ac2157"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bb5199c2391aa24e194d8a4d4ac2157">&#9670;&#160;</a></span>sx1276_set_preamble()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_preamble </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>preamble_len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia długość preambuły LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00257">257</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>.</p>
+
+</div>
+</div>
+<a id="a6487ef0d55e681a5e50e3d7354886753" name="a6487ef0d55e681a5e50e3d7354886753"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6487ef0d55e681a5e50e3d7354886753">&#9670;&#160;</a></span>sx1276_set_symbol_timeout()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_symbol_timeout </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>symbol_timeout</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia timeout symbolowy dla odbioru pojedynczego. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00241">241</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00027">sx1276_read_reg()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00452">radio_lora_start_rx_continuous()</a> i <a class="el" href="radio__lora_8c_source.html#l00476">radio_lora_start_rx_single()</a>.</p>
+
+</div>
+</div>
+<a id="a74e72da97dcdd90a7e071af8504a4f04" name="a74e72da97dcdd90a7e071af8504a4f04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74e72da97dcdd90a7e071af8504a4f04">&#9670;&#160;</a></span>sx1276_set_sync_word()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_set_sync_word </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>sync_word</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Ustawia sync word LoRa. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00263">263</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00051">sx1276_write_reg()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>.</p>
+
+</div>
+</div>
+<a id="a3a3c532ff762f574aac721fe906acd85" name="a3a3c532ff762f574aac721fe906acd85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a3c532ff762f574aac721fe906acd85">&#9670;&#160;</a></span>sx1276_write_burst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_write_burst </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zapisuje sekwencję bajtów od rejestru startowego. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bus</td><td>Kontekst magistrali SPI. </td></tr>
+    <tr><td class="paramname">reg</td><td>Adres startowy. </td></tr>
+    <tr><td class="paramname">data</td><td>Bufor danych do zapisu. </td></tr>
+    <tr><td class="paramname">len</td><td>Liczba bajtów do zapisu. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> gdy transfer się powiódł. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00099">99</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8h_source.html#l00019">sx1276_bus_t::hspi</a>, <a class="el" href="radio__sx1276_8h_source.html#l00022">sx1276_bus_t::spi_timeout_ms</a>, <a class="el" href="radio__sx1276_8c_source.html#l00022">sx1276_deselect()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00885">radio_fsk_raw_write_burst()</a>, <a class="el" href="radio__fsk_8c_source.html#l00618">radio_fsk_send_async()</a>, <a class="el" href="radio__lora_8c_source.html#l00775">radio_lora_raw_write_burst()</a>, <a class="el" href="radio__ook_8c_source.html#l00794">radio_ook_raw_write_burst()</a>, <a class="el" href="radio__ook_8c_source.html#l00535">radio_ook_send_async()</a>, <a class="el" href="radio__fsk_8c_source.html#l00250">radio_write_sync_word()</a>, <a class="el" href="radio__ook_8c_source.html#l00125">radio_write_sync_word()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00304">sx1276_write_fifo()</a>.</p>
+
+</div>
+</div>
+<a id="aeb0a3f646a276aed07c4e23dfabff75c" name="aeb0a3f646a276aed07c4e23dfabff75c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb0a3f646a276aed07c4e23dfabff75c">&#9670;&#160;</a></span>sx1276_write_fifo()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_write_fifo </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>len</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zapisuje payload do FIFO. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00304">304</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8c_source.html#l00099">sx1276_write_burst()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__lora_8c_source.html#l00507">radio_lora_send_async()</a>.</p>
+
+</div>
+</div>
+<a id="af20d56d667bf340216eff31602a31c85" name="af20d56d667bf340216eff31602a31c85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af20d56d667bf340216eff31602a31c85">&#9670;&#160;</a></span>sx1276_write_reg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sx1276_write_reg </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structsx1276__bus__t.html">sx1276_bus_t</a> *</td>          <td class="paramname"><span class="paramname"><em>bus</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>reg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>value</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zapisuje pojedynczy rejestr SX1276. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bus</td><td>Kontekst magistrali SPI. </td></tr>
+    <tr><td class="paramname">reg</td><td>Adres rejestru. </td></tr>
+    <tr><td class="paramname">value</td><td>Wartość do zapisu. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd><span class="tt">true</span> gdy transfer się powiódł. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="radio__sx1276_8c_source.html#l00051">51</a> pliku <a class="el" href="radio__sx1276_8c_source.html">radio_sx1276.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="radio__sx1276_8h_source.html#l00019">sx1276_bus_t::hspi</a>, <a class="el" href="radio__sx1276_8h_source.html#l00022">sx1276_bus_t::spi_timeout_ms</a>, <a class="el" href="radio__sx1276_8c_source.html#l00022">sx1276_deselect()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00010">sx1276_select()</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="radio__fsk_8c_source.html#l00271">radio_apply_fsk_config()</a>, <a class="el" href="radio__lora_8c_source.html#l00127">radio_apply_lora_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00197">radio_apply_ook_config()</a>, <a class="el" href="radio__ook_8c_source.html#l00178">radio_apply_threshold()</a>, <a class="el" href="radio__fsk_8c_source.html#l00860">radio_fsk_raw_write_reg()</a>, <a class="el" href="radio__fsk_8c_source.html#l00618">radio_fsk_send_async()</a>, <a class="el" href="radio__fsk_8c_source.html#l00563">radio_fsk_start_rx_continuous()</a>, <a class="el" href="radio__fsk_8c_source.html#l00588">radio_fsk_start_rx_single()</a>, <a class="el" href="radio__lora_8c_source.html#l00750">radio_lora_raw_write_reg()</a>, <a class="el" href="radio__ook_8c_source.html#l00769">radio_ook_raw_write_reg()</a>, <a class="el" href="radio__ook_8c_source.html#l00535">radio_ook_send_async()</a>, <a class="el" href="radio__ook_8c_source.html#l00480">radio_ook_start_rx_continuous()</a>, <a class="el" href="radio__ook_8c_source.html#l00505">radio_ook_start_rx_single()</a>, <a class="el" href="radio__fsk_8c_source.html#l00250">radio_write_sync_word()</a>, <a class="el" href="radio__ook_8c_source.html#l00125">radio_write_sync_word()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00352">sx1276_clear_irq_flags()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00357">sx1276_map_dio()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00299">sx1276_set_fifo_addr_ptr()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00293">sx1276_set_fifo_base_addrs()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00135">sx1276_set_frequency()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00268">sx1276_set_invert_iq()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00184">sx1276_set_lora_modem()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00130">sx1276_set_op_mode()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00152">sx1276_set_pa_output_power()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00314">sx1276_set_payload_length()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00257">sx1276_set_preamble()</a>, <a class="el" href="radio__sx1276_8c_source.html#l00241">sx1276_set_symbol_timeout()</a> i <a class="el" href="radio__sx1276_8c_source.html#l00263">sx1276_set_sync_word()</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_a2e8606bee7d2eaf4a9e334d73381ef3.html">radio_lib</a></li><li class="navelem"><b>common</b></li><li class="navelem"><b>sx1276</b></li><li class="navelem"><a href="radio__sx1276_8c.html">radio_sx1276.c</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

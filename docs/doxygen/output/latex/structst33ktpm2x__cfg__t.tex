@@ -1,0 +1,331 @@
+\doxysection{Dokumentacja struktury st33ktpm2x\+\_\+cfg\+\_\+t}
+\hypertarget{structst33ktpm2x__cfg__t}{}\label{structst33ktpm2x__cfg__t}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+
+
+Runtime configuration for ST33\+KTPM2X instance.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/st33ktpm2x\+\_\+lib/st33ktpm2x.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structst33ktpm2x__cfg__t_a5581d1eb24d540f816f7fb2e11a4f0a2}{hi2c}}
+\begin{DoxyCompactList}\small\item\em I2C handle (use I2\+C3 in this project). \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_acf5c96b4c39be6128ba53ca0b36c059f}{i2c\+\_\+addr\+\_\+7bit}}
+\begin{DoxyCompactList}\small\item\em 7-\/bit I2C address of TPM. \end{DoxyCompactList}\item 
+GPIO\+\_\+\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structst33ktpm2x__cfg__t_a05ca32ecc70df950ffede987065808e8}{reset\+\_\+port}}
+\begin{DoxyCompactList}\small\item\em Reset GPIO port (PB0 in your setup). \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_aed3eda53ce8a8e9bc6402e2312998d45}{reset\+\_\+pin}}
+\begin{DoxyCompactList}\small\item\em Reset GPIO pin. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_ae1442745f4560354f87204c73ec12083}{reset\+\_\+pulse\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Reset low pulse width. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_ad9bae73c932dc35cb72077578a3c69c9}{reset\+\_\+recovery\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Delay after reset release. \end{DoxyCompactList}\item 
+GPIO\+\_\+\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structst33ktpm2x__cfg__t_a412f791ea50816105ef19b134751b77d}{davint\+\_\+port}}
+\begin{DoxyCompactList}\small\item\em Optional TPM\+\_\+\+DAVINT\# / PIRQ port. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_ab33e66f8530c64155baec5d3699040ad}{davint\+\_\+pin}}
+\begin{DoxyCompactList}\small\item\em Optional TPM\+\_\+\+DAVINT\# / PIRQ pin. \end{DoxyCompactList}\item 
+GPIO\+\_\+\+Pin\+State \mbox{\hyperlink{structst33ktpm2x__cfg__t_a2a5df8c1e0010406513378fbe9b4c0f9}{davint\+\_\+active\+\_\+state}}
+\begin{DoxyCompactList}\small\item\em Logical active level for DAVINT\# (normally low). \end{DoxyCompactList}\item 
+GPIO\+\_\+\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structst33ktpm2x__cfg__t_a1e6ad17855125cbc0bee74e28b55c518}{pp\+\_\+port}}
+\begin{DoxyCompactList}\small\item\em Optional Physical Presence button port. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_a3548c5014d3fad21120d400170a67e1b}{pp\+\_\+pin}}
+\begin{DoxyCompactList}\small\item\em Optional Physical Presence button pin. \end{DoxyCompactList}\item 
+GPIO\+\_\+\+Pin\+State \mbox{\hyperlink{structst33ktpm2x__cfg__t_a646118757e1c1cde8697cad591546870}{pp\+\_\+active\+\_\+state}}
+\begin{DoxyCompactList}\small\item\em Logical active level for PP button. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_a2cfddf1d71235781e4ae3828b2e8c118}{io\+\_\+timeout\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em I2C transfer timeout. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_a848246b32bac62d50d8a2a66e3f397d3}{locality\+\_\+timeout\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Timeout for locality acquisition. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structst33ktpm2x__cfg__t_a3f0a421d756e84a5ab532407f7f1a74e}{burst\+\_\+timeout\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Timeout for burst/data availability. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Runtime configuration for ST33\+KTPM2X instance. 
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00083}{83}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structst33ktpm2x__cfg__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structst33ktpm2x__cfg__t_a3f0a421d756e84a5ab532407f7f1a74e}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!burst\_timeout\_ms@{burst\_timeout\_ms}}
+\index{burst\_timeout\_ms@{burst\_timeout\_ms}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{burst\_timeout\_ms}{burst\_timeout\_ms}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a3f0a421d756e84a5ab532407f7f1a74e} 
+uint32\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::burst\+\_\+timeout\+\_\+ms}
+
+
+
+Timeout for burst/data availability. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00103}{103}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{st33\+\_\+wait\+\_\+burst()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a2a5df8c1e0010406513378fbe9b4c0f9}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!davint\_active\_state@{davint\_active\_state}}
+\index{davint\_active\_state@{davint\_active\_state}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{davint\_active\_state}{davint\_active\_state}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a2a5df8c1e0010406513378fbe9b4c0f9} 
+GPIO\+\_\+\+Pin\+State st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+active\+\_\+state}
+
+
+
+Logical active level for DAVINT\# (normally low). 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00095}{95}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00605}{st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_ab33e66f8530c64155baec5d3699040ad}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!davint\_pin@{davint\_pin}}
+\index{davint\_pin@{davint\_pin}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{davint\_pin}{davint\_pin}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_ab33e66f8530c64155baec5d3699040ad} 
+uint16\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+pin}
+
+
+
+Optional TPM\+\_\+\+DAVINT\# / PIRQ pin. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00094}{94}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00605}{st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a412f791ea50816105ef19b134751b77d}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!davint\_port@{davint\_port}}
+\index{davint\_port@{davint\_port}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{davint\_port}{davint\_port}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a412f791ea50816105ef19b134751b77d} 
+GPIO\+\_\+\+Type\+Def\texorpdfstring{$\ast$}{*} st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+port}
+
+
+
+Optional TPM\+\_\+\+DAVINT\# / PIRQ port. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00093}{93}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00605}{st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a5581d1eb24d540f816f7fb2e11a4f0a2}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!hi2c@{hi2c}}
+\index{hi2c@{hi2c}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{hi2c}{hi2c}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a5581d1eb24d540f816f7fb2e11a4f0a2} 
+I2\+C\+\_\+\+Handle\+Type\+Def\texorpdfstring{$\ast$}{*} st33ktpm2x\+\_\+cfg\+\_\+t\+::hi2c}
+
+
+
+I2C handle (use I2\+C3 in this project). 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00085}{85}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00547}{st33ktpm2x\+\_\+init()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_acf5c96b4c39be6128ba53ca0b36c059f}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!i2c\_addr\_7bit@{i2c\_addr\_7bit}}
+\index{i2c\_addr\_7bit@{i2c\_addr\_7bit}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{i2c\_addr\_7bit}{i2c\_addr\_7bit}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_acf5c96b4c39be6128ba53ca0b36c059f} 
+uint16\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::i2c\+\_\+addr\+\_\+7bit}
+
+
+
+7-\/bit I2C address of TPM. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00086}{86}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a2cfddf1d71235781e4ae3828b2e8c118}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!io\_timeout\_ms@{io\_timeout\_ms}}
+\index{io\_timeout\_ms@{io\_timeout\_ms}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{io\_timeout\_ms}{io\_timeout\_ms}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a2cfddf1d71235781e4ae3828b2e8c118} 
+uint32\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::io\+\_\+timeout\+\_\+ms}
+
+
+
+I2C transfer timeout. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00101}{101}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a848246b32bac62d50d8a2a66e3f397d3}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!locality\_timeout\_ms@{locality\_timeout\_ms}}
+\index{locality\_timeout\_ms@{locality\_timeout\_ms}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{locality\_timeout\_ms}{locality\_timeout\_ms}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a848246b32bac62d50d8a2a66e3f397d3} 
+uint32\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::locality\+\_\+timeout\+\_\+ms}
+
+
+
+Timeout for locality acquisition. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00102}{102}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a646118757e1c1cde8697cad591546870}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!pp\_active\_state@{pp\_active\_state}}
+\index{pp\_active\_state@{pp\_active\_state}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{pp\_active\_state}{pp\_active\_state}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a646118757e1c1cde8697cad591546870} 
+GPIO\+\_\+\+Pin\+State st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+active\+\_\+state}
+
+
+
+Logical active level for PP button. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00099}{99}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a3548c5014d3fad21120d400170a67e1b}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!pp\_pin@{pp\_pin}}
+\index{pp\_pin@{pp\_pin}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{pp\_pin}{pp\_pin}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a3548c5014d3fad21120d400170a67e1b} 
+uint16\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+pin}
+
+
+
+Optional Physical Presence button pin. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00098}{98}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a1e6ad17855125cbc0bee74e28b55c518}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!pp\_port@{pp\_port}}
+\index{pp\_port@{pp\_port}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{pp\_port}{pp\_port}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a1e6ad17855125cbc0bee74e28b55c518} 
+GPIO\+\_\+\+Type\+Def\texorpdfstring{$\ast$}{*} st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+port}
+
+
+
+Optional Physical Presence button port. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00097}{97}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_aed3eda53ce8a8e9bc6402e2312998d45}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!reset\_pin@{reset\_pin}}
+\index{reset\_pin@{reset\_pin}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{reset\_pin}{reset\_pin}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_aed3eda53ce8a8e9bc6402e2312998d45} 
+uint16\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pin}
+
+
+
+Reset GPIO pin. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00089}{89}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00547}{st33ktpm2x\+\_\+init()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_a05ca32ecc70df950ffede987065808e8}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!reset\_port@{reset\_port}}
+\index{reset\_port@{reset\_port}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{reset\_port}{reset\_port}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_a05ca32ecc70df950ffede987065808e8} 
+GPIO\+\_\+\+Type\+Def\texorpdfstring{$\ast$}{*} st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+port}
+
+
+
+Reset GPIO port (PB0 in your setup). 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00088}{88}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00547}{st33ktpm2x\+\_\+init()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_ae1442745f4560354f87204c73ec12083}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!reset\_pulse\_ms@{reset\_pulse\_ms}}
+\index{reset\_pulse\_ms@{reset\_pulse\_ms}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{reset\_pulse\_ms}{reset\_pulse\_ms}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_ae1442745f4560354f87204c73ec12083} 
+uint32\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pulse\+\_\+ms}
+
+
+
+Reset low pulse width. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00090}{90}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}}.
+
+\Hypertarget{structst33ktpm2x__cfg__t_ad9bae73c932dc35cb72077578a3c69c9}\index{st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}!reset\_recovery\_ms@{reset\_recovery\_ms}}
+\index{reset\_recovery\_ms@{reset\_recovery\_ms}!st33ktpm2x\_cfg\_t@{st33ktpm2x\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{reset\_recovery\_ms}{reset\_recovery\_ms}}
+{\footnotesize\ttfamily \label{structst33ktpm2x__cfg__t_ad9bae73c932dc35cb72077578a3c69c9} 
+uint32\+\_\+t st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+recovery\+\_\+ms}
+
+
+
+Delay after reset release. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8h_source_l00091}{91}} pliku \mbox{\hyperlink{st33ktpm2x_8h_source}{st33ktpm2x.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{st33ktpm2x\+\_\+default\+\_\+cfg()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/st33ktpm2x\+\_\+lib/\mbox{\hyperlink{st33ktpm2x_8h}{st33ktpm2x.\+h}}\end{DoxyCompactItemize}

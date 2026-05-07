@@ -1,0 +1,1728 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+lib/common/sx1276/radio\+\_\+sx1276\+\_\+regs.h}
+\hypertarget{radio__sx1276__regs_8h}{}\label{radio__sx1276__regs_8h}\index{Core/App/radio\_lib/common/sx1276/radio\_sx1276\_regs.h@{Core/App/radio\_lib/common/sx1276/radio\_sx1276\_regs.h}}
+
+
+Mapa rejestrów SX1276 i definicje bitów używane w bibliotece.  
+
+
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a197daf1173f5058b442df27639ff5dc2}{SX1276\+\_\+\+REG\+\_\+\+FIFO}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a69c0f732512b573a09dfe43bd30c66a6}{SX1276\+\_\+\+REG\+\_\+\+OP\+\_\+\+MODE}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a09f8d24c65861b3910c85ee3c5a68fe1}{SX1276\+\_\+\+REG\+\_\+\+BITRATE\+\_\+\+MSB}}~0x02U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aeb3e0c01ece23c32ca19f2dfe1b9790e}{SX1276\+\_\+\+REG\+\_\+\+BITRATE\+\_\+\+LSB}}~0x03U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a4e592bf3ea2ef3f89fb29ebfbbda29fd}{SX1276\+\_\+\+REG\+\_\+\+FDEV\+\_\+\+MSB}}~0x04U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a514331635527b55009f5fbe631799d34}{SX1276\+\_\+\+REG\+\_\+\+FDEV\+\_\+\+LSB}}~0x05U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ab0a9d78cc4b75af2dc3269d2402be6ad}{SX1276\+\_\+\+REG\+\_\+\+FRF\+\_\+\+MSB}}~0x06U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a10dbc8577c9c208e5578e9536452c873}{SX1276\+\_\+\+REG\+\_\+\+FRF\+\_\+\+MID}}~0x07U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a87e2dae1189c733261c5187812de0105}{SX1276\+\_\+\+REG\+\_\+\+FRF\+\_\+\+LSB}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a34c16f8ebdc6f416cb37e92e7f9a6dd0}{SX1276\+\_\+\+REG\+\_\+\+PA\+\_\+\+CONFIG}}~0x09U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a728679957d90c599061990dc03033315}{SX1276\+\_\+\+REG\+\_\+\+LNA}}~0x0\+CU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa8afbbd417b764665465507474a8dd6c}{SX1276\+\_\+\+REG\+\_\+\+RX\+\_\+\+CONFIG}}~0x0\+DU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ac24dd517d581b1c0595bf5d56ac146f6}{SX1276\+\_\+\+REG\+\_\+\+RSSI\+\_\+\+CONFIG}}~0x0\+EU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ab6a9a8408e7a5bfa042558ec07250b46}{SX1276\+\_\+\+REG\+\_\+\+RSSI\+\_\+\+VALUE\+\_\+\+FSK}}~0x11U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a2e07891c3bf6661af5d5f22649a10781}{SX1276\+\_\+\+REG\+\_\+\+RX\+\_\+\+BW}}~0x12U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a2cd0ee3d05272f40793e5b4ad3d568b1}{SX1276\+\_\+\+REG\+\_\+\+AFC\+\_\+\+BW}}~0x13U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a03b66bcc5c36ea36a7b9c2badc1ae824}{SX1276\+\_\+\+REG\+\_\+\+OOK\+\_\+\+PEAK}}~0x14U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a6e7163ee29d52edb7288724572e23ca1}{SX1276\+\_\+\+REG\+\_\+\+OOK\+\_\+\+FIX}}~0x15U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ac82856dad04b9d26d7260540144ac48d}{SX1276\+\_\+\+REG\+\_\+\+OOK\+\_\+\+AVG}}~0x16U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a5bd9596ecd31541aa53cc9670a640017}{SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+ADDR\+\_\+\+PTR}}~0x0\+DU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a19aca47fa2915b5fb1cb382e3288e14a}{SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+TX\+\_\+\+BASE\+\_\+\+ADDR}}~0x0\+EU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ac371d2ff579a340177fd004b8647cdc0}{SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+RX\+\_\+\+BASE\+\_\+\+ADDR}}~0x0\+FU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a380c4b9415d3a70e9ff1eff9091835e4}{SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+RX\+\_\+\+CURRENT\+\_\+\+ADDR}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa955ad200a53923f9c785c51f4a81d00}{SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS\+\_\+\+MASK}}~0x11U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a6ddf0378bad2ab21ffae2d1c7e3828f0}{SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS}}~0x12U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ab016a04625461bc5cdedcd615239f1bf}{SX1276\+\_\+\+REG\+\_\+\+RX\+\_\+\+NB\+\_\+\+BYTES}}~0x13U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ab9178f72a1e5ca435104a74c8c0166b7}{SX1276\+\_\+\+REG\+\_\+\+PKT\+\_\+\+SNR\+\_\+\+VALUE}}~0x19U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a77f951cd01aeed0d43ea715fd55fdfbd}{SX1276\+\_\+\+REG\+\_\+\+PKT\+\_\+\+RSSI\+\_\+\+VALUE}}~0x1\+AU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a5dcc0e802d590db68abb629efbd16e1d}{SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+DETECT}}~0x1\+FU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a64940ab11fa01837f964631e180f9104}{SX1276\+\_\+\+REG\+\_\+\+MODEM\+\_\+\+CONFIG\+\_\+1}}~0x1\+DU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a17421691cc61dadd5d6fdc6f8acab9de}{SX1276\+\_\+\+REG\+\_\+\+MODEM\+\_\+\+CONFIG\+\_\+2}}~0x1\+EU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a5f324f0c491c57c3426b483142697714}{SX1276\+\_\+\+REG\+\_\+\+SYMB\+\_\+\+TIMEOUT\+\_\+\+LSB}}~0x1\+FU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a762dcf817391c74a6a7f7c1bed4da3bb}{SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+MSB}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a99c76515a1bda1b9cd38d5df6e1ab481}{SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+LSB}}~0x21U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae79732e3dc6e692772b67cc7f6d84e74}{SX1276\+\_\+\+REG\+\_\+\+PAYLOAD\+\_\+\+LENGTH}}~0x22U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a6f07ab86f4ea434b72b6645474bbab18}{SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+MSB\+\_\+\+FSK}}~0x25U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_afb6ef591e5c0dd9b47c88782ba14554d}{SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+LSB\+\_\+\+FSK}}~0x26U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ad259467013560a7a240386f601faeabe}{SX1276\+\_\+\+REG\+\_\+\+SYNC\+\_\+\+CONFIG}}~0x27U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a166ac4acac1667e626be8221b52110f5}{SX1276\+\_\+\+REG\+\_\+\+SYNC\+\_\+\+VALUE\+\_\+1}}~0x28U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae2baad239b355bd736d3476eb4f0d803}{SX1276\+\_\+\+REG\+\_\+\+MODEM\+\_\+\+CONFIG\+\_\+3}}~0x26U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a18591134b18fcead9d52d18f0fd71a87}{SX1276\+\_\+\+REG\+\_\+\+PACKET\+\_\+\+CONFIG\+\_\+1}}~0x30U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a4b78315f77e35ac9bf0bc67e6bd5ea28}{SX1276\+\_\+\+REG\+\_\+\+PACKET\+\_\+\+CONFIG\+\_\+2}}~0x31U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a154a07d4ba364dc3731ea64797a7d6e5}{SX1276\+\_\+\+REG\+\_\+\+PAYLOAD\+\_\+\+LENGTH\+\_\+\+FSK}}~0x32U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a2902a72404916bf9c9165d261759fa1a}{SX1276\+\_\+\+REG\+\_\+\+NODE\+\_\+\+ADDRESS}}~0x33U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a5332ef909cb280e7d7aa54e520446537}{SX1276\+\_\+\+REG\+\_\+\+BROADCAST\+\_\+\+ADDRESS}}~0x34U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aca5b4090d6524f460b0ddf691dcbc632}{SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+THRESH}}~0x35U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af757ec5ea0c01620684a3c6be380c5ba}{SX1276\+\_\+\+REG\+\_\+\+DETECTION\+\_\+\+OPTIMIZE}}~0x31U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae5281fd20c7b872762cdc90d8e709788}{SX1276\+\_\+\+REG\+\_\+\+INVERT\+\_\+\+IQ}}~0x33U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_acf3b381154e86da44db144a331e3d6b0}{SX1276\+\_\+\+REG\+\_\+\+DETECTION\+\_\+\+THRESHOLD}}~0x37U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a7d3724e50f816db0efb6a91d30a8960f}{SX1276\+\_\+\+REG\+\_\+\+SYNC\+\_\+\+WORD}}~0x39U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af2e7ff9d4fe9c5e69195570daed57892}{SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS\+\_\+1}}~0x3\+EU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ace4d246e0fdf8b218a04a16100f2f42f}{SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS\+\_\+2}}~0x3\+FU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a28313439438c3700106b9b0c04f1524c}{SX1276\+\_\+\+REG\+\_\+\+INVERT\+\_\+\+IQ2}}~0x3\+BU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa6b737cd6f47c60c55b3a3f00bbba7c9}{SX1276\+\_\+\+REG\+\_\+\+DIO\+\_\+\+MAPPING\+\_\+1}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a728f1e3266c13ff6db2c4a4b9e56f1e3}{SX1276\+\_\+\+REG\+\_\+\+DIO\+\_\+\+MAPPING\+\_\+2}}~0x41U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a99a158df582a50d6bb2dcb330836da75}{SX1276\+\_\+\+REG\+\_\+\+VERSION}}~0x42U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a8177b74124aa491c1a1eb8981c7999a3}{SX1276\+\_\+\+REG\+\_\+\+PA\+\_\+\+DAC}}~0x4\+DU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a220c509d71239314bf628ee5d813ab24}{SX1276\+\_\+\+SPI\+\_\+\+WRITE\+\_\+\+MASK}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af79c43036a1a3a6678bee3007c5a4e54}{SX1276\+\_\+\+SPI\+\_\+\+READ\+\_\+\+MASK}}~0x7\+FU
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a8b4b6f68f343a1804ddaa84aa5397ff7}{SX1276\+\_\+\+VERSION\+\_\+\+ID}}~0x12U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a877686a01a0afdc90e16ad112ff04168}{SX1276\+\_\+\+OPMODE\+\_\+\+LONG\+\_\+\+RANGE\+\_\+\+MODE}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a5176cb239995893222f579b808d57a1f}{SX1276\+\_\+\+OPMODE\+\_\+\+ACCESS\+\_\+\+SHARED\+\_\+\+REG}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a459780c44cb366953c8e3eaf2b900d43}{SX1276\+\_\+\+OPMODE\+\_\+\+MODULATION\+\_\+\+MASK}}~0x60U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ad97233e36a5e44debff4db8784a45800}{SX1276\+\_\+\+OPMODE\+\_\+\+MODULATION\+\_\+\+FSK}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae40ac781e0a7f992c1ca68520e1b8062}{SX1276\+\_\+\+OPMODE\+\_\+\+MODULATION\+\_\+\+OOK}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a2af2a3265adb621fdcbf9c1222791dd6}{SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+MASK}}~0x18U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a992d75a7518a9f4f72c8c71ed4e510cc}{SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+NONE}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ad8373207dd80c2a83a487a5a9dec7154}{SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+FSK\+\_\+\+BT10}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ab81c72570dca52a07e5cb062777643e0}{SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+FSK\+\_\+\+BT05}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a038242203df2c9f2c93163a1541bba16}{SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+FSK\+\_\+\+BT03}}~0x18U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a72c45e027cda27250cde352a47bbd777}{SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+OOK\+\_\+\+FILTER}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a00d4b5d9923186dff9e21fea5958616a}{SX1276\+\_\+\+OPMODE\+\_\+\+LOW\+\_\+\+FREQ\+\_\+\+MODE\+\_\+\+ON}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a3dcea886a0397db135527bfd11d4a3da}{SX1276\+\_\+\+OPMODE\+\_\+\+MODE\+\_\+\+MASK}}~0x07U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a8cc075ec415707fbc2c74f1799dac78c}{SX1276\+\_\+\+MODE\+\_\+\+SLEEP}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af495a1aa91eab42126b30925aca30e1e}{SX1276\+\_\+\+MODE\+\_\+\+STDBY}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a368886c0c4b3d767c3fccba004da49bf}{SX1276\+\_\+\+MODE\+\_\+\+FSTX}}~0x02U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a3d85c560f8c7fe6042a80d8054e52d5c}{SX1276\+\_\+\+MODE\+\_\+\+TX}}~0x03U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ac929e12ca0742494e6908f33e408f654}{SX1276\+\_\+\+MODE\+\_\+\+FSRX}}~0x04U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a36047e7b4f10609d82979c4386baa859}{SX1276\+\_\+\+MODE\+\_\+\+RXCONTINUOUS}}~0x05U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a8ebd93ae1fe8ddccbf2a405603cc8978}{SX1276\+\_\+\+MODE\+\_\+\+RXSINGLE}}~0x06U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af3183d2c35027accbda82f62331a966f}{SX1276\+\_\+\+MODE\+\_\+\+CAD}}~0x07U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_afaaf43b29cf23fbc08b22a9b71b41e88}{SX1276\+\_\+\+IRQ\+\_\+\+RX\+\_\+\+TIMEOUT}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa531fb351fd8dbf3df4f15e536eed586}{SX1276\+\_\+\+IRQ\+\_\+\+RX\+\_\+\+DONE}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a572ac14260a1b0a23edb5707015c642b}{SX1276\+\_\+\+IRQ\+\_\+\+PAYLOAD\+\_\+\+CRC\+\_\+\+ERROR}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a3a17f04ffdd915d4f792f58e9a8b2b12}{SX1276\+\_\+\+IRQ\+\_\+\+VALID\+\_\+\+HEADER}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ad1075afbe65634167541f18142a4d2b3}{SX1276\+\_\+\+IRQ\+\_\+\+TX\+\_\+\+DONE}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af8d920eaafe6dfd6d8e46aa61d455947}{SX1276\+\_\+\+IRQ\+\_\+\+CAD\+\_\+\+DONE}}~0x04U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af76dc20d75b5566cd5cc5094834e3cfe}{SX1276\+\_\+\+IRQ\+\_\+\+FHSS\+\_\+\+CHANGE\+\_\+\+CHANNEL}}~0x02U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a1beb9c0885a3db54399ede5a3086f3d3}{SX1276\+\_\+\+IRQ\+\_\+\+CAD\+\_\+\+DETECTED}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a69a43bad95ed270e01ae419fc85e89e9}{SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+RX\+\_\+\+DONE}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a14c645e9d09a41c1a9c6bbcef51a63b1}{SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+TX\+\_\+\+DONE}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a0828a20d45cfd500465d31294bcaf9a2}{SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+CAD\+\_\+\+DONE}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae8d2b7078a64c6348112163250912ece}{SX1276\+\_\+\+DIO1\+\_\+\+MAP\+\_\+\+RX\+\_\+\+TIMEOUT}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a4124f604f1b8ba38bfa1fd23f5af6854}{SX1276\+\_\+\+DIO1\+\_\+\+MAP\+\_\+\+FHSS\+\_\+\+CHANGE}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a047bb16e3fca7c6a24d95d63720b576a}{SX1276\+\_\+\+DIO1\+\_\+\+MAP\+\_\+\+CAD\+\_\+\+DETECTED}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a0983883292e24b867d9660172b81d07e}{SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+FSK\+\_\+\+PAYLOAD\+\_\+\+READY}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a26582065b543a6887d63863bc676a4e4}{SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+FSK\+\_\+\+PACKET\+\_\+\+SENT}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a1f330206d9d648d29e1c712580fdf4ae}{SX1276\+\_\+\+PACKET\+\_\+\+FORMAT\+\_\+\+FIXED}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aeebac48dd6523687a43e9ca4dcc6bd95}{SX1276\+\_\+\+PACKET\+\_\+\+FORMAT\+\_\+\+VARIABLE}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a15adb7e5f8bb13e9b000982f9e4706a5}{SX1276\+\_\+\+PACKET\+\_\+\+DC\+\_\+\+FREE\+\_\+\+NONE}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a5be3d293f84bffb3e37a41a7e353fc48}{SX1276\+\_\+\+PACKET\+\_\+\+DC\+\_\+\+FREE\+\_\+\+WHITENING}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa537e1d77837ae967ca341d93a5ee8d7}{SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+ON}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a22af29fe46bc4aab35f5f278042cf057}{SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+OFF}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a60e76df2484b831d2654ee79488c8a17}{SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+WHITENING\+\_\+\+IBM}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a1781a771b7b8c3bff674ddfe21a4f60b}{SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+WHITENING\+\_\+\+CCITT}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a7c9edfcf5705ea8fb61c41374997c830}{SX1276\+\_\+\+PACKET\+\_\+\+ADDR\+\_\+\+FILTER\+\_\+\+OFF}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a74365c1e7e26386385eb427a610d8a87}{SX1276\+\_\+\+PACKET\+\_\+\+ADDR\+\_\+\+FILTER\+\_\+\+NODE}}~0x02U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a8a078c6225cdc9044690d76dea3fc9cd}{SX1276\+\_\+\+PACKET\+\_\+\+ADDR\+\_\+\+FILTER\+\_\+\+NODE\+\_\+\+BC}}~0x04U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a7d27352f35a34f07e3663ce466b95dc4}{SX1276\+\_\+\+SYNC\+\_\+\+AUTO\+\_\+\+RESTART\+\_\+\+OFF}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae76d99a9fe9aef6b5eeb23c46df4da15}{SX1276\+\_\+\+SYNC\+\_\+\+AUTO\+\_\+\+RESTART\+\_\+\+NO\+\_\+\+PLL}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ad024112f717b7e95f78a3f8b094c2768}{SX1276\+\_\+\+SYNC\+\_\+\+AUTO\+\_\+\+RESTART\+\_\+\+PLL}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a7735f51ca6ca107da5af6d3a9d6940fb}{SX1276\+\_\+\+SYNC\+\_\+\+PREAMBLE\+\_\+\+POLARITY\+\_\+\+AA}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a7316be0c27ca5d44534679e55c97dbec}{SX1276\+\_\+\+SYNC\+\_\+\+PREAMBLE\+\_\+\+POLARITY\+\_\+55}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a783adffad700bcd10cf539c4d2ae7f5c}{SX1276\+\_\+\+SYNC\+\_\+\+ON}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af854c1f4509bef2f5cac9f0a90fcb195}{SX1276\+\_\+\+SYNC\+\_\+\+OFF}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_abfb7f4f65ee0198e7420a35c8eff4a2f}{SX1276\+\_\+\+SYNC\+\_\+\+FIFOFILL\+\_\+\+AUTO}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ac9eefacdfe4b3b18a1d7173ae62af9d6}{SX1276\+\_\+\+SYNC\+\_\+\+FIFOFILL\+\_\+\+MANUAL}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a42cf46935c3a61e88957d5900369f291}{SX1276\+\_\+\+PACKET\+\_\+\+DATA\+\_\+\+MODE\+\_\+\+CONTINUOUS}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af83a607a2dd53dc4ecdfb64d4726618a}{SX1276\+\_\+\+PACKET\+\_\+\+DATA\+\_\+\+MODE\+\_\+\+PACKET}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa0bacbb9669989bfb087140d50d9e0a4}{SX1276\+\_\+\+RXCONFIG\+\_\+\+RESTART\+\_\+\+RX\+\_\+\+NO\+\_\+\+PLL\+\_\+\+LOCK}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ad653ba3d4dce45ad5f42846d4c6bdc88}{SX1276\+\_\+\+RXCONFIG\+\_\+\+AFC\+\_\+\+AUTO\+\_\+\+ON}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae3adc02fd891c2969815c3261351a17b}{SX1276\+\_\+\+RXCONFIG\+\_\+\+AGC\+\_\+\+AUTO\+\_\+\+ON}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ac6ca4807af0bc37bbbe5397f52577c9c}{SX1276\+\_\+\+RXCONFIG\+\_\+\+TRIGGER\+\_\+\+RSSI}}~0x00U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ada3cdbc95de9bc9645d0f634c4a9cb65}{SX1276\+\_\+\+FIFO\+\_\+\+THRESH\+\_\+\+TX\+\_\+\+START\+\_\+\+NOT\+\_\+\+EMPTY}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aef984862d0eb74b1dab00818592f7892}{SX1276\+\_\+\+IRQ1\+\_\+\+MODE\+\_\+\+READY}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a0a0b9ce1f4c97655e575f5324d7e7962}{SX1276\+\_\+\+IRQ1\+\_\+\+RX\+\_\+\+READY}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_aa53b00fcc9a1f05bef7c5d4e0685ca8f}{SX1276\+\_\+\+IRQ1\+\_\+\+TX\+\_\+\+READY}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a572d40f70e2a3ba25c0afb01e04849aa}{SX1276\+\_\+\+IRQ1\+\_\+\+PLL\+\_\+\+LOCK}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_acdfcffc386fe53a487e08c8423902291}{SX1276\+\_\+\+IRQ1\+\_\+\+RSSI}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a97cd7d3e3b843911af9031dbd119ae49}{SX1276\+\_\+\+IRQ1\+\_\+\+TIMEOUT}}~0x04U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ab11f114686154c826270838ac5a88f27}{SX1276\+\_\+\+IRQ1\+\_\+\+PREAMBLE\+\_\+\+DETECT}}~0x02U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_af94816060c8befc1f637797dbfb51dbe}{SX1276\+\_\+\+IRQ1\+\_\+\+SYNC\+\_\+\+ADDRESS\+\_\+\+MATCH}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a4ec7040830898b7c00bcf25500fbb713}{SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+FULL}}~0x80U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a4004f09b1f8f763fb68c049463c41586}{SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+NOT\+\_\+\+EMPTY}}~0x40U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a2f5b354e63768689a80afe5e13c6b9e4}{SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+LEVEL}}~0x20U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a1d2addecb7b44b104bf4f46e4d9da330}{SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+OVERRUN}}~0x10U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a370409aaed1bbacfcce09602fe335cf3}{SX1276\+\_\+\+IRQ2\+\_\+\+PACKET\+\_\+\+SENT}}~0x08U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_ae4407249f5a739793b8d1924b154dca9}{SX1276\+\_\+\+IRQ2\+\_\+\+PAYLOAD\+\_\+\+READY}}~0x04U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a85d8b23f782402fed711c2e7cfc0367f}{SX1276\+\_\+\+IRQ2\+\_\+\+CRC\+\_\+\+OK}}~0x02U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a76fc20293b196f902aa7f2a79e8fc6c2}{SX1276\+\_\+\+IRQ2\+\_\+\+LOW\+\_\+\+BAT}}~0x01U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a8ac67470658902111060be4dfa9c54e1}{SX1276\+\_\+\+PA\+\_\+\+DAC\+\_\+\+ENABLE\+\_\+20\+DBM}}~0x87U
+\item 
+\#define \mbox{\hyperlink{radio__sx1276__regs_8h_a69eb0f2f6b28017e91dc579552476676}{SX1276\+\_\+\+PA\+\_\+\+DAC\+\_\+\+DISABLE\+\_\+17\+DBM}}~0x84U
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Mapa rejestrów SX1276 i definicje bitów używane w bibliotece. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{radio__sx1276__regs_8h_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{radio__sx1276__regs_8h_a0828a20d45cfd500465d31294bcaf9a2}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO0\_MAP\_CAD\_DONE@{SX1276\_DIO0\_MAP\_CAD\_DONE}}
+\index{SX1276\_DIO0\_MAP\_CAD\_DONE@{SX1276\_DIO0\_MAP\_CAD\_DONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO0\_MAP\_CAD\_DONE}{SX1276\_DIO0\_MAP\_CAD\_DONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a0828a20d45cfd500465d31294bcaf9a2} 
+\#define SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+CAD\+\_\+\+DONE~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00111}{111}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a26582065b543a6887d63863bc676a4e4}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO0\_MAP\_FSK\_PACKET\_SENT@{SX1276\_DIO0\_MAP\_FSK\_PACKET\_SENT}}
+\index{SX1276\_DIO0\_MAP\_FSK\_PACKET\_SENT@{SX1276\_DIO0\_MAP\_FSK\_PACKET\_SENT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO0\_MAP\_FSK\_PACKET\_SENT}{SX1276\_DIO0\_MAP\_FSK\_PACKET\_SENT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a26582065b543a6887d63863bc676a4e4} 
+\#define SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+FSK\+\_\+\+PACKET\+\_\+\+SENT~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00119}{119}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a0983883292e24b867d9660172b81d07e}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO0\_MAP\_FSK\_PAYLOAD\_READY@{SX1276\_DIO0\_MAP\_FSK\_PAYLOAD\_READY}}
+\index{SX1276\_DIO0\_MAP\_FSK\_PAYLOAD\_READY@{SX1276\_DIO0\_MAP\_FSK\_PAYLOAD\_READY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO0\_MAP\_FSK\_PAYLOAD\_READY}{SX1276\_DIO0\_MAP\_FSK\_PAYLOAD\_READY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a0983883292e24b867d9660172b81d07e} 
+\#define SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+FSK\+\_\+\+PAYLOAD\+\_\+\+READY~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00118}{118}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a69a43bad95ed270e01ae419fc85e89e9}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO0\_MAP\_RX\_DONE@{SX1276\_DIO0\_MAP\_RX\_DONE}}
+\index{SX1276\_DIO0\_MAP\_RX\_DONE@{SX1276\_DIO0\_MAP\_RX\_DONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO0\_MAP\_RX\_DONE}{SX1276\_DIO0\_MAP\_RX\_DONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a69a43bad95ed270e01ae419fc85e89e9} 
+\#define SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+RX\+\_\+\+DONE~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00109}{109}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a14c645e9d09a41c1a9c6bbcef51a63b1}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO0\_MAP\_TX\_DONE@{SX1276\_DIO0\_MAP\_TX\_DONE}}
+\index{SX1276\_DIO0\_MAP\_TX\_DONE@{SX1276\_DIO0\_MAP\_TX\_DONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO0\_MAP\_TX\_DONE}{SX1276\_DIO0\_MAP\_TX\_DONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a14c645e9d09a41c1a9c6bbcef51a63b1} 
+\#define SX1276\+\_\+\+DIO0\+\_\+\+MAP\+\_\+\+TX\+\_\+\+DONE~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00110}{110}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a047bb16e3fca7c6a24d95d63720b576a}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO1\_MAP\_CAD\_DETECTED@{SX1276\_DIO1\_MAP\_CAD\_DETECTED}}
+\index{SX1276\_DIO1\_MAP\_CAD\_DETECTED@{SX1276\_DIO1\_MAP\_CAD\_DETECTED}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO1\_MAP\_CAD\_DETECTED}{SX1276\_DIO1\_MAP\_CAD\_DETECTED}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a047bb16e3fca7c6a24d95d63720b576a} 
+\#define SX1276\+\_\+\+DIO1\+\_\+\+MAP\+\_\+\+CAD\+\_\+\+DETECTED~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00115}{115}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a4124f604f1b8ba38bfa1fd23f5af6854}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO1\_MAP\_FHSS\_CHANGE@{SX1276\_DIO1\_MAP\_FHSS\_CHANGE}}
+\index{SX1276\_DIO1\_MAP\_FHSS\_CHANGE@{SX1276\_DIO1\_MAP\_FHSS\_CHANGE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO1\_MAP\_FHSS\_CHANGE}{SX1276\_DIO1\_MAP\_FHSS\_CHANGE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a4124f604f1b8ba38bfa1fd23f5af6854} 
+\#define SX1276\+\_\+\+DIO1\+\_\+\+MAP\+\_\+\+FHSS\+\_\+\+CHANGE~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00114}{114}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae8d2b7078a64c6348112163250912ece}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_DIO1\_MAP\_RX\_TIMEOUT@{SX1276\_DIO1\_MAP\_RX\_TIMEOUT}}
+\index{SX1276\_DIO1\_MAP\_RX\_TIMEOUT@{SX1276\_DIO1\_MAP\_RX\_TIMEOUT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_DIO1\_MAP\_RX\_TIMEOUT}{SX1276\_DIO1\_MAP\_RX\_TIMEOUT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae8d2b7078a64c6348112163250912ece} 
+\#define SX1276\+\_\+\+DIO1\+\_\+\+MAP\+\_\+\+RX\+\_\+\+TIMEOUT~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00113}{113}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ada3cdbc95de9bc9645d0f634c4a9cb65}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_FIFO\_THRESH\_TX\_START\_NOT\_EMPTY@{SX1276\_FIFO\_THRESH\_TX\_START\_NOT\_EMPTY}}
+\index{SX1276\_FIFO\_THRESH\_TX\_START\_NOT\_EMPTY@{SX1276\_FIFO\_THRESH\_TX\_START\_NOT\_EMPTY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_FIFO\_THRESH\_TX\_START\_NOT\_EMPTY}{SX1276\_FIFO\_THRESH\_TX\_START\_NOT\_EMPTY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ada3cdbc95de9bc9645d0f634c4a9cb65} 
+\#define SX1276\+\_\+\+FIFO\+\_\+\+THRESH\+\_\+\+TX\+\_\+\+START\+\_\+\+NOT\+\_\+\+EMPTY~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00156}{156}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aef984862d0eb74b1dab00818592f7892}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_MODE\_READY@{SX1276\_IRQ1\_MODE\_READY}}
+\index{SX1276\_IRQ1\_MODE\_READY@{SX1276\_IRQ1\_MODE\_READY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_MODE\_READY}{SX1276\_IRQ1\_MODE\_READY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aef984862d0eb74b1dab00818592f7892} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+MODE\+\_\+\+READY~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00159}{159}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a572d40f70e2a3ba25c0afb01e04849aa}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_PLL\_LOCK@{SX1276\_IRQ1\_PLL\_LOCK}}
+\index{SX1276\_IRQ1\_PLL\_LOCK@{SX1276\_IRQ1\_PLL\_LOCK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_PLL\_LOCK}{SX1276\_IRQ1\_PLL\_LOCK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a572d40f70e2a3ba25c0afb01e04849aa} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+PLL\+\_\+\+LOCK~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00162}{162}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ab11f114686154c826270838ac5a88f27}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_PREAMBLE\_DETECT@{SX1276\_IRQ1\_PREAMBLE\_DETECT}}
+\index{SX1276\_IRQ1\_PREAMBLE\_DETECT@{SX1276\_IRQ1\_PREAMBLE\_DETECT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_PREAMBLE\_DETECT}{SX1276\_IRQ1\_PREAMBLE\_DETECT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ab11f114686154c826270838ac5a88f27} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+PREAMBLE\+\_\+\+DETECT~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00165}{165}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_acdfcffc386fe53a487e08c8423902291}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_RSSI@{SX1276\_IRQ1\_RSSI}}
+\index{SX1276\_IRQ1\_RSSI@{SX1276\_IRQ1\_RSSI}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_RSSI}{SX1276\_IRQ1\_RSSI}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_acdfcffc386fe53a487e08c8423902291} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+RSSI~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00163}{163}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a0a0b9ce1f4c97655e575f5324d7e7962}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_RX\_READY@{SX1276\_IRQ1\_RX\_READY}}
+\index{SX1276\_IRQ1\_RX\_READY@{SX1276\_IRQ1\_RX\_READY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_RX\_READY}{SX1276\_IRQ1\_RX\_READY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a0a0b9ce1f4c97655e575f5324d7e7962} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+RX\+\_\+\+READY~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00160}{160}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af94816060c8befc1f637797dbfb51dbe}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_SYNC\_ADDRESS\_MATCH@{SX1276\_IRQ1\_SYNC\_ADDRESS\_MATCH}}
+\index{SX1276\_IRQ1\_SYNC\_ADDRESS\_MATCH@{SX1276\_IRQ1\_SYNC\_ADDRESS\_MATCH}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_SYNC\_ADDRESS\_MATCH}{SX1276\_IRQ1\_SYNC\_ADDRESS\_MATCH}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af94816060c8befc1f637797dbfb51dbe} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+SYNC\+\_\+\+ADDRESS\+\_\+\+MATCH~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00166}{166}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a97cd7d3e3b843911af9031dbd119ae49}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_TIMEOUT@{SX1276\_IRQ1\_TIMEOUT}}
+\index{SX1276\_IRQ1\_TIMEOUT@{SX1276\_IRQ1\_TIMEOUT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_TIMEOUT}{SX1276\_IRQ1\_TIMEOUT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a97cd7d3e3b843911af9031dbd119ae49} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+TIMEOUT~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00164}{164}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa53b00fcc9a1f05bef7c5d4e0685ca8f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ1\_TX\_READY@{SX1276\_IRQ1\_TX\_READY}}
+\index{SX1276\_IRQ1\_TX\_READY@{SX1276\_IRQ1\_TX\_READY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ1\_TX\_READY}{SX1276\_IRQ1\_TX\_READY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa53b00fcc9a1f05bef7c5d4e0685ca8f} 
+\#define SX1276\+\_\+\+IRQ1\+\_\+\+TX\+\_\+\+READY~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00161}{161}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a85d8b23f782402fed711c2e7cfc0367f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_CRC\_OK@{SX1276\_IRQ2\_CRC\_OK}}
+\index{SX1276\_IRQ2\_CRC\_OK@{SX1276\_IRQ2\_CRC\_OK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_CRC\_OK}{SX1276\_IRQ2\_CRC\_OK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a85d8b23f782402fed711c2e7cfc0367f} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+CRC\+\_\+\+OK~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00175}{175}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a4ec7040830898b7c00bcf25500fbb713}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_FIFO\_FULL@{SX1276\_IRQ2\_FIFO\_FULL}}
+\index{SX1276\_IRQ2\_FIFO\_FULL@{SX1276\_IRQ2\_FIFO\_FULL}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_FIFO\_FULL}{SX1276\_IRQ2\_FIFO\_FULL}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a4ec7040830898b7c00bcf25500fbb713} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+FULL~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00169}{169}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a2f5b354e63768689a80afe5e13c6b9e4}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_FIFO\_LEVEL@{SX1276\_IRQ2\_FIFO\_LEVEL}}
+\index{SX1276\_IRQ2\_FIFO\_LEVEL@{SX1276\_IRQ2\_FIFO\_LEVEL}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_FIFO\_LEVEL}{SX1276\_IRQ2\_FIFO\_LEVEL}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a2f5b354e63768689a80afe5e13c6b9e4} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+LEVEL~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00171}{171}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a4004f09b1f8f763fb68c049463c41586}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_FIFO\_NOT\_EMPTY@{SX1276\_IRQ2\_FIFO\_NOT\_EMPTY}}
+\index{SX1276\_IRQ2\_FIFO\_NOT\_EMPTY@{SX1276\_IRQ2\_FIFO\_NOT\_EMPTY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_FIFO\_NOT\_EMPTY}{SX1276\_IRQ2\_FIFO\_NOT\_EMPTY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a4004f09b1f8f763fb68c049463c41586} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+NOT\+\_\+\+EMPTY~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00170}{170}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a1d2addecb7b44b104bf4f46e4d9da330}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_FIFO\_OVERRUN@{SX1276\_IRQ2\_FIFO\_OVERRUN}}
+\index{SX1276\_IRQ2\_FIFO\_OVERRUN@{SX1276\_IRQ2\_FIFO\_OVERRUN}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_FIFO\_OVERRUN}{SX1276\_IRQ2\_FIFO\_OVERRUN}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a1d2addecb7b44b104bf4f46e4d9da330} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+FIFO\+\_\+\+OVERRUN~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00172}{172}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a76fc20293b196f902aa7f2a79e8fc6c2}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_LOW\_BAT@{SX1276\_IRQ2\_LOW\_BAT}}
+\index{SX1276\_IRQ2\_LOW\_BAT@{SX1276\_IRQ2\_LOW\_BAT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_LOW\_BAT}{SX1276\_IRQ2\_LOW\_BAT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a76fc20293b196f902aa7f2a79e8fc6c2} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+LOW\+\_\+\+BAT~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00176}{176}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a370409aaed1bbacfcce09602fe335cf3}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_PACKET\_SENT@{SX1276\_IRQ2\_PACKET\_SENT}}
+\index{SX1276\_IRQ2\_PACKET\_SENT@{SX1276\_IRQ2\_PACKET\_SENT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_PACKET\_SENT}{SX1276\_IRQ2\_PACKET\_SENT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a370409aaed1bbacfcce09602fe335cf3} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+PACKET\+\_\+\+SENT~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00173}{173}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae4407249f5a739793b8d1924b154dca9}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ2\_PAYLOAD\_READY@{SX1276\_IRQ2\_PAYLOAD\_READY}}
+\index{SX1276\_IRQ2\_PAYLOAD\_READY@{SX1276\_IRQ2\_PAYLOAD\_READY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ2\_PAYLOAD\_READY}{SX1276\_IRQ2\_PAYLOAD\_READY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae4407249f5a739793b8d1924b154dca9} 
+\#define SX1276\+\_\+\+IRQ2\+\_\+\+PAYLOAD\+\_\+\+READY~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00174}{174}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a1beb9c0885a3db54399ede5a3086f3d3}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_CAD\_DETECTED@{SX1276\_IRQ\_CAD\_DETECTED}}
+\index{SX1276\_IRQ\_CAD\_DETECTED@{SX1276\_IRQ\_CAD\_DETECTED}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_CAD\_DETECTED}{SX1276\_IRQ\_CAD\_DETECTED}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a1beb9c0885a3db54399ede5a3086f3d3} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+CAD\+\_\+\+DETECTED~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00106}{106}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af8d920eaafe6dfd6d8e46aa61d455947}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_CAD\_DONE@{SX1276\_IRQ\_CAD\_DONE}}
+\index{SX1276\_IRQ\_CAD\_DONE@{SX1276\_IRQ\_CAD\_DONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_CAD\_DONE}{SX1276\_IRQ\_CAD\_DONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af8d920eaafe6dfd6d8e46aa61d455947} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+CAD\+\_\+\+DONE~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00104}{104}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af76dc20d75b5566cd5cc5094834e3cfe}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_FHSS\_CHANGE\_CHANNEL@{SX1276\_IRQ\_FHSS\_CHANGE\_CHANNEL}}
+\index{SX1276\_IRQ\_FHSS\_CHANGE\_CHANNEL@{SX1276\_IRQ\_FHSS\_CHANGE\_CHANNEL}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_FHSS\_CHANGE\_CHANNEL}{SX1276\_IRQ\_FHSS\_CHANGE\_CHANNEL}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af76dc20d75b5566cd5cc5094834e3cfe} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+FHSS\+\_\+\+CHANGE\+\_\+\+CHANNEL~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00105}{105}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a572ac14260a1b0a23edb5707015c642b}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_PAYLOAD\_CRC\_ERROR@{SX1276\_IRQ\_PAYLOAD\_CRC\_ERROR}}
+\index{SX1276\_IRQ\_PAYLOAD\_CRC\_ERROR@{SX1276\_IRQ\_PAYLOAD\_CRC\_ERROR}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_PAYLOAD\_CRC\_ERROR}{SX1276\_IRQ\_PAYLOAD\_CRC\_ERROR}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a572ac14260a1b0a23edb5707015c642b} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+PAYLOAD\+\_\+\+CRC\+\_\+\+ERROR~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00101}{101}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa531fb351fd8dbf3df4f15e536eed586}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_RX\_DONE@{SX1276\_IRQ\_RX\_DONE}}
+\index{SX1276\_IRQ\_RX\_DONE@{SX1276\_IRQ\_RX\_DONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_RX\_DONE}{SX1276\_IRQ\_RX\_DONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa531fb351fd8dbf3df4f15e536eed586} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+RX\+\_\+\+DONE~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00100}{100}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_afaaf43b29cf23fbc08b22a9b71b41e88}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_RX\_TIMEOUT@{SX1276\_IRQ\_RX\_TIMEOUT}}
+\index{SX1276\_IRQ\_RX\_TIMEOUT@{SX1276\_IRQ\_RX\_TIMEOUT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_RX\_TIMEOUT}{SX1276\_IRQ\_RX\_TIMEOUT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_afaaf43b29cf23fbc08b22a9b71b41e88} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+RX\+\_\+\+TIMEOUT~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00099}{99}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ad1075afbe65634167541f18142a4d2b3}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_TX\_DONE@{SX1276\_IRQ\_TX\_DONE}}
+\index{SX1276\_IRQ\_TX\_DONE@{SX1276\_IRQ\_TX\_DONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_TX\_DONE}{SX1276\_IRQ\_TX\_DONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ad1075afbe65634167541f18142a4d2b3} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+TX\+\_\+\+DONE~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00103}{103}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a3a17f04ffdd915d4f792f58e9a8b2b12}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_IRQ\_VALID\_HEADER@{SX1276\_IRQ\_VALID\_HEADER}}
+\index{SX1276\_IRQ\_VALID\_HEADER@{SX1276\_IRQ\_VALID\_HEADER}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_IRQ\_VALID\_HEADER}{SX1276\_IRQ\_VALID\_HEADER}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a3a17f04ffdd915d4f792f58e9a8b2b12} 
+\#define SX1276\+\_\+\+IRQ\+\_\+\+VALID\+\_\+\+HEADER~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00102}{102}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af3183d2c35027accbda82f62331a966f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_CAD@{SX1276\_MODE\_CAD}}
+\index{SX1276\_MODE\_CAD@{SX1276\_MODE\_CAD}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_CAD}{SX1276\_MODE\_CAD}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af3183d2c35027accbda82f62331a966f} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+CAD~0x07U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00096}{96}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ac929e12ca0742494e6908f33e408f654}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_FSRX@{SX1276\_MODE\_FSRX}}
+\index{SX1276\_MODE\_FSRX@{SX1276\_MODE\_FSRX}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_FSRX}{SX1276\_MODE\_FSRX}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ac929e12ca0742494e6908f33e408f654} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+FSRX~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00093}{93}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a368886c0c4b3d767c3fccba004da49bf}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_FSTX@{SX1276\_MODE\_FSTX}}
+\index{SX1276\_MODE\_FSTX@{SX1276\_MODE\_FSTX}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_FSTX}{SX1276\_MODE\_FSTX}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a368886c0c4b3d767c3fccba004da49bf} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+FSTX~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00091}{91}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a36047e7b4f10609d82979c4386baa859}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_RXCONTINUOUS@{SX1276\_MODE\_RXCONTINUOUS}}
+\index{SX1276\_MODE\_RXCONTINUOUS@{SX1276\_MODE\_RXCONTINUOUS}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_RXCONTINUOUS}{SX1276\_MODE\_RXCONTINUOUS}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a36047e7b4f10609d82979c4386baa859} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+RXCONTINUOUS~0x05U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00094}{94}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a8ebd93ae1fe8ddccbf2a405603cc8978}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_RXSINGLE@{SX1276\_MODE\_RXSINGLE}}
+\index{SX1276\_MODE\_RXSINGLE@{SX1276\_MODE\_RXSINGLE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_RXSINGLE}{SX1276\_MODE\_RXSINGLE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a8ebd93ae1fe8ddccbf2a405603cc8978} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+RXSINGLE~0x06U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00095}{95}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a8cc075ec415707fbc2c74f1799dac78c}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_SLEEP@{SX1276\_MODE\_SLEEP}}
+\index{SX1276\_MODE\_SLEEP@{SX1276\_MODE\_SLEEP}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_SLEEP}{SX1276\_MODE\_SLEEP}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a8cc075ec415707fbc2c74f1799dac78c} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+SLEEP~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00089}{89}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af495a1aa91eab42126b30925aca30e1e}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_STDBY@{SX1276\_MODE\_STDBY}}
+\index{SX1276\_MODE\_STDBY@{SX1276\_MODE\_STDBY}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_STDBY}{SX1276\_MODE\_STDBY}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af495a1aa91eab42126b30925aca30e1e} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+STDBY~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00090}{90}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a3d85c560f8c7fe6042a80d8054e52d5c}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_MODE\_TX@{SX1276\_MODE\_TX}}
+\index{SX1276\_MODE\_TX@{SX1276\_MODE\_TX}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_MODE\_TX}{SX1276\_MODE\_TX}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a3d85c560f8c7fe6042a80d8054e52d5c} 
+\#define SX1276\+\_\+\+MODE\+\_\+\+TX~0x03U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00092}{92}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a5176cb239995893222f579b808d57a1f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_ACCESS\_SHARED\_REG@{SX1276\_OPMODE\_ACCESS\_SHARED\_REG}}
+\index{SX1276\_OPMODE\_ACCESS\_SHARED\_REG@{SX1276\_OPMODE\_ACCESS\_SHARED\_REG}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_ACCESS\_SHARED\_REG}{SX1276\_OPMODE\_ACCESS\_SHARED\_REG}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a5176cb239995893222f579b808d57a1f} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+ACCESS\+\_\+\+SHARED\+\_\+\+REG~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00077}{77}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a877686a01a0afdc90e16ad112ff04168}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_LONG\_RANGE\_MODE@{SX1276\_OPMODE\_LONG\_RANGE\_MODE}}
+\index{SX1276\_OPMODE\_LONG\_RANGE\_MODE@{SX1276\_OPMODE\_LONG\_RANGE\_MODE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_LONG\_RANGE\_MODE}{SX1276\_OPMODE\_LONG\_RANGE\_MODE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a877686a01a0afdc90e16ad112ff04168} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+LONG\+\_\+\+RANGE\+\_\+\+MODE~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00076}{76}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a00d4b5d9923186dff9e21fea5958616a}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_LOW\_FREQ\_MODE\_ON@{SX1276\_OPMODE\_LOW\_FREQ\_MODE\_ON}}
+\index{SX1276\_OPMODE\_LOW\_FREQ\_MODE\_ON@{SX1276\_OPMODE\_LOW\_FREQ\_MODE\_ON}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_LOW\_FREQ\_MODE\_ON}{SX1276\_OPMODE\_LOW\_FREQ\_MODE\_ON}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a00d4b5d9923186dff9e21fea5958616a} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+LOW\+\_\+\+FREQ\+\_\+\+MODE\+\_\+\+ON~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00087}{87}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a3dcea886a0397db135527bfd11d4a3da}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_MODE\_MASK@{SX1276\_OPMODE\_MODE\_MASK}}
+\index{SX1276\_OPMODE\_MODE\_MASK@{SX1276\_OPMODE\_MODE\_MASK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_MODE\_MASK}{SX1276\_OPMODE\_MODE\_MASK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a3dcea886a0397db135527bfd11d4a3da} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+MODE\+\_\+\+MASK~0x07U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00088}{88}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ad97233e36a5e44debff4db8784a45800}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_MODULATION\_FSK@{SX1276\_OPMODE\_MODULATION\_FSK}}
+\index{SX1276\_OPMODE\_MODULATION\_FSK@{SX1276\_OPMODE\_MODULATION\_FSK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_MODULATION\_FSK}{SX1276\_OPMODE\_MODULATION\_FSK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ad97233e36a5e44debff4db8784a45800} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+MODULATION\+\_\+\+FSK~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00079}{79}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a459780c44cb366953c8e3eaf2b900d43}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_MODULATION\_MASK@{SX1276\_OPMODE\_MODULATION\_MASK}}
+\index{SX1276\_OPMODE\_MODULATION\_MASK@{SX1276\_OPMODE\_MODULATION\_MASK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_MODULATION\_MASK}{SX1276\_OPMODE\_MODULATION\_MASK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a459780c44cb366953c8e3eaf2b900d43} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+MODULATION\+\_\+\+MASK~0x60U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00078}{78}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae40ac781e0a7f992c1ca68520e1b8062}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_MODULATION\_OOK@{SX1276\_OPMODE\_MODULATION\_OOK}}
+\index{SX1276\_OPMODE\_MODULATION\_OOK@{SX1276\_OPMODE\_MODULATION\_OOK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_MODULATION\_OOK}{SX1276\_OPMODE\_MODULATION\_OOK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae40ac781e0a7f992c1ca68520e1b8062} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+MODULATION\+\_\+\+OOK~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00080}{80}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a038242203df2c9f2c93163a1541bba16}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_SHAPING\_FSK\_BT03@{SX1276\_OPMODE\_SHAPING\_FSK\_BT03}}
+\index{SX1276\_OPMODE\_SHAPING\_FSK\_BT03@{SX1276\_OPMODE\_SHAPING\_FSK\_BT03}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_SHAPING\_FSK\_BT03}{SX1276\_OPMODE\_SHAPING\_FSK\_BT03}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a038242203df2c9f2c93163a1541bba16} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+FSK\+\_\+\+BT03~0x18U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00085}{85}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ab81c72570dca52a07e5cb062777643e0}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_SHAPING\_FSK\_BT05@{SX1276\_OPMODE\_SHAPING\_FSK\_BT05}}
+\index{SX1276\_OPMODE\_SHAPING\_FSK\_BT05@{SX1276\_OPMODE\_SHAPING\_FSK\_BT05}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_SHAPING\_FSK\_BT05}{SX1276\_OPMODE\_SHAPING\_FSK\_BT05}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ab81c72570dca52a07e5cb062777643e0} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+FSK\+\_\+\+BT05~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00084}{84}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ad8373207dd80c2a83a487a5a9dec7154}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_SHAPING\_FSK\_BT10@{SX1276\_OPMODE\_SHAPING\_FSK\_BT10}}
+\index{SX1276\_OPMODE\_SHAPING\_FSK\_BT10@{SX1276\_OPMODE\_SHAPING\_FSK\_BT10}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_SHAPING\_FSK\_BT10}{SX1276\_OPMODE\_SHAPING\_FSK\_BT10}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ad8373207dd80c2a83a487a5a9dec7154} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+FSK\+\_\+\+BT10~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00083}{83}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a2af2a3265adb621fdcbf9c1222791dd6}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_SHAPING\_MASK@{SX1276\_OPMODE\_SHAPING\_MASK}}
+\index{SX1276\_OPMODE\_SHAPING\_MASK@{SX1276\_OPMODE\_SHAPING\_MASK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_SHAPING\_MASK}{SX1276\_OPMODE\_SHAPING\_MASK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a2af2a3265adb621fdcbf9c1222791dd6} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+MASK~0x18U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00081}{81}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a992d75a7518a9f4f72c8c71ed4e510cc}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_SHAPING\_NONE@{SX1276\_OPMODE\_SHAPING\_NONE}}
+\index{SX1276\_OPMODE\_SHAPING\_NONE@{SX1276\_OPMODE\_SHAPING\_NONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_SHAPING\_NONE}{SX1276\_OPMODE\_SHAPING\_NONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a992d75a7518a9f4f72c8c71ed4e510cc} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+NONE~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00082}{82}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a72c45e027cda27250cde352a47bbd777}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_OPMODE\_SHAPING\_OOK\_FILTER@{SX1276\_OPMODE\_SHAPING\_OOK\_FILTER}}
+\index{SX1276\_OPMODE\_SHAPING\_OOK\_FILTER@{SX1276\_OPMODE\_SHAPING\_OOK\_FILTER}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_OPMODE\_SHAPING\_OOK\_FILTER}{SX1276\_OPMODE\_SHAPING\_OOK\_FILTER}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a72c45e027cda27250cde352a47bbd777} 
+\#define SX1276\+\_\+\+OPMODE\+\_\+\+SHAPING\+\_\+\+OOK\+\_\+\+FILTER~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00086}{86}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a69eb0f2f6b28017e91dc579552476676}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PA\_DAC\_DISABLE\_17DBM@{SX1276\_PA\_DAC\_DISABLE\_17DBM}}
+\index{SX1276\_PA\_DAC\_DISABLE\_17DBM@{SX1276\_PA\_DAC\_DISABLE\_17DBM}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PA\_DAC\_DISABLE\_17DBM}{SX1276\_PA\_DAC\_DISABLE\_17DBM}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a69eb0f2f6b28017e91dc579552476676} 
+\#define SX1276\+\_\+\+PA\+\_\+\+DAC\+\_\+\+DISABLE\+\_\+17\+DBM~0x84U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00180}{180}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a8ac67470658902111060be4dfa9c54e1}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PA\_DAC\_ENABLE\_20DBM@{SX1276\_PA\_DAC\_ENABLE\_20DBM}}
+\index{SX1276\_PA\_DAC\_ENABLE\_20DBM@{SX1276\_PA\_DAC\_ENABLE\_20DBM}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PA\_DAC\_ENABLE\_20DBM}{SX1276\_PA\_DAC\_ENABLE\_20DBM}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a8ac67470658902111060be4dfa9c54e1} 
+\#define SX1276\+\_\+\+PA\+\_\+\+DAC\+\_\+\+ENABLE\+\_\+20\+DBM~0x87U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00179}{179}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a74365c1e7e26386385eb427a610d8a87}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_ADDR\_FILTER\_NODE@{SX1276\_PACKET\_ADDR\_FILTER\_NODE}}
+\index{SX1276\_PACKET\_ADDR\_FILTER\_NODE@{SX1276\_PACKET\_ADDR\_FILTER\_NODE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_ADDR\_FILTER\_NODE}{SX1276\_PACKET\_ADDR\_FILTER\_NODE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a74365c1e7e26386385eb427a610d8a87} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+ADDR\+\_\+\+FILTER\+\_\+\+NODE~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00131}{131}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a8a078c6225cdc9044690d76dea3fc9cd}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_ADDR\_FILTER\_NODE\_BC@{SX1276\_PACKET\_ADDR\_FILTER\_NODE\_BC}}
+\index{SX1276\_PACKET\_ADDR\_FILTER\_NODE\_BC@{SX1276\_PACKET\_ADDR\_FILTER\_NODE\_BC}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_ADDR\_FILTER\_NODE\_BC}{SX1276\_PACKET\_ADDR\_FILTER\_NODE\_BC}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a8a078c6225cdc9044690d76dea3fc9cd} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+ADDR\+\_\+\+FILTER\+\_\+\+NODE\+\_\+\+BC~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00132}{132}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a7c9edfcf5705ea8fb61c41374997c830}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_ADDR\_FILTER\_OFF@{SX1276\_PACKET\_ADDR\_FILTER\_OFF}}
+\index{SX1276\_PACKET\_ADDR\_FILTER\_OFF@{SX1276\_PACKET\_ADDR\_FILTER\_OFF}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_ADDR\_FILTER\_OFF}{SX1276\_PACKET\_ADDR\_FILTER\_OFF}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a7c9edfcf5705ea8fb61c41374997c830} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+ADDR\+\_\+\+FILTER\+\_\+\+OFF~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00130}{130}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a22af29fe46bc4aab35f5f278042cf057}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_CRC\_OFF@{SX1276\_PACKET\_CRC\_OFF}}
+\index{SX1276\_PACKET\_CRC\_OFF@{SX1276\_PACKET\_CRC\_OFF}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_CRC\_OFF}{SX1276\_PACKET\_CRC\_OFF}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a22af29fe46bc4aab35f5f278042cf057} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+OFF~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00127}{127}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa537e1d77837ae967ca341d93a5ee8d7}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_CRC\_ON@{SX1276\_PACKET\_CRC\_ON}}
+\index{SX1276\_PACKET\_CRC\_ON@{SX1276\_PACKET\_CRC\_ON}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_CRC\_ON}{SX1276\_PACKET\_CRC\_ON}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa537e1d77837ae967ca341d93a5ee8d7} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+ON~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00126}{126}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a1781a771b7b8c3bff674ddfe21a4f60b}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_CRC\_WHITENING\_CCITT@{SX1276\_PACKET\_CRC\_WHITENING\_CCITT}}
+\index{SX1276\_PACKET\_CRC\_WHITENING\_CCITT@{SX1276\_PACKET\_CRC\_WHITENING\_CCITT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_CRC\_WHITENING\_CCITT}{SX1276\_PACKET\_CRC\_WHITENING\_CCITT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a1781a771b7b8c3bff674ddfe21a4f60b} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+WHITENING\+\_\+\+CCITT~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00129}{129}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a60e76df2484b831d2654ee79488c8a17}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_CRC\_WHITENING\_IBM@{SX1276\_PACKET\_CRC\_WHITENING\_IBM}}
+\index{SX1276\_PACKET\_CRC\_WHITENING\_IBM@{SX1276\_PACKET\_CRC\_WHITENING\_IBM}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_CRC\_WHITENING\_IBM}{SX1276\_PACKET\_CRC\_WHITENING\_IBM}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a60e76df2484b831d2654ee79488c8a17} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+CRC\+\_\+\+WHITENING\+\_\+\+IBM~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00128}{128}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a42cf46935c3a61e88957d5900369f291}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_DATA\_MODE\_CONTINUOUS@{SX1276\_PACKET\_DATA\_MODE\_CONTINUOUS}}
+\index{SX1276\_PACKET\_DATA\_MODE\_CONTINUOUS@{SX1276\_PACKET\_DATA\_MODE\_CONTINUOUS}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_DATA\_MODE\_CONTINUOUS}{SX1276\_PACKET\_DATA\_MODE\_CONTINUOUS}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a42cf46935c3a61e88957d5900369f291} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+DATA\+\_\+\+MODE\+\_\+\+CONTINUOUS~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00146}{146}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af83a607a2dd53dc4ecdfb64d4726618a}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_DATA\_MODE\_PACKET@{SX1276\_PACKET\_DATA\_MODE\_PACKET}}
+\index{SX1276\_PACKET\_DATA\_MODE\_PACKET@{SX1276\_PACKET\_DATA\_MODE\_PACKET}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_DATA\_MODE\_PACKET}{SX1276\_PACKET\_DATA\_MODE\_PACKET}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af83a607a2dd53dc4ecdfb64d4726618a} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+DATA\+\_\+\+MODE\+\_\+\+PACKET~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00147}{147}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a15adb7e5f8bb13e9b000982f9e4706a5}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_DC\_FREE\_NONE@{SX1276\_PACKET\_DC\_FREE\_NONE}}
+\index{SX1276\_PACKET\_DC\_FREE\_NONE@{SX1276\_PACKET\_DC\_FREE\_NONE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_DC\_FREE\_NONE}{SX1276\_PACKET\_DC\_FREE\_NONE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a15adb7e5f8bb13e9b000982f9e4706a5} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+DC\+\_\+\+FREE\+\_\+\+NONE~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00124}{124}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a5be3d293f84bffb3e37a41a7e353fc48}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_DC\_FREE\_WHITENING@{SX1276\_PACKET\_DC\_FREE\_WHITENING}}
+\index{SX1276\_PACKET\_DC\_FREE\_WHITENING@{SX1276\_PACKET\_DC\_FREE\_WHITENING}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_DC\_FREE\_WHITENING}{SX1276\_PACKET\_DC\_FREE\_WHITENING}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a5be3d293f84bffb3e37a41a7e353fc48} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+DC\+\_\+\+FREE\+\_\+\+WHITENING~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00125}{125}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a1f330206d9d648d29e1c712580fdf4ae}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_FORMAT\_FIXED@{SX1276\_PACKET\_FORMAT\_FIXED}}
+\index{SX1276\_PACKET\_FORMAT\_FIXED@{SX1276\_PACKET\_FORMAT\_FIXED}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_FORMAT\_FIXED}{SX1276\_PACKET\_FORMAT\_FIXED}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a1f330206d9d648d29e1c712580fdf4ae} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+FORMAT\+\_\+\+FIXED~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00122}{122}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aeebac48dd6523687a43e9ca4dcc6bd95}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_PACKET\_FORMAT\_VARIABLE@{SX1276\_PACKET\_FORMAT\_VARIABLE}}
+\index{SX1276\_PACKET\_FORMAT\_VARIABLE@{SX1276\_PACKET\_FORMAT\_VARIABLE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_PACKET\_FORMAT\_VARIABLE}{SX1276\_PACKET\_FORMAT\_VARIABLE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aeebac48dd6523687a43e9ca4dcc6bd95} 
+\#define SX1276\+\_\+\+PACKET\+\_\+\+FORMAT\+\_\+\+VARIABLE~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00123}{123}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a2cd0ee3d05272f40793e5b4ad3d568b1}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_AFC\_BW@{SX1276\_REG\_AFC\_BW}}
+\index{SX1276\_REG\_AFC\_BW@{SX1276\_REG\_AFC\_BW}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_AFC\_BW}{SX1276\_REG\_AFC\_BW}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a2cd0ee3d05272f40793e5b4ad3d568b1} 
+\#define SX1276\+\_\+\+REG\+\_\+\+AFC\+\_\+\+BW~0x13U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00025}{25}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aeb3e0c01ece23c32ca19f2dfe1b9790e}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_BITRATE\_LSB@{SX1276\_REG\_BITRATE\_LSB}}
+\index{SX1276\_REG\_BITRATE\_LSB@{SX1276\_REG\_BITRATE\_LSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_BITRATE\_LSB}{SX1276\_REG\_BITRATE\_LSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aeb3e0c01ece23c32ca19f2dfe1b9790e} 
+\#define SX1276\+\_\+\+REG\+\_\+\+BITRATE\+\_\+\+LSB~0x03U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00013}{13}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a09f8d24c65861b3910c85ee3c5a68fe1}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_BITRATE\_MSB@{SX1276\_REG\_BITRATE\_MSB}}
+\index{SX1276\_REG\_BITRATE\_MSB@{SX1276\_REG\_BITRATE\_MSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_BITRATE\_MSB}{SX1276\_REG\_BITRATE\_MSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a09f8d24c65861b3910c85ee3c5a68fe1} 
+\#define SX1276\+\_\+\+REG\+\_\+\+BITRATE\+\_\+\+MSB~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00012}{12}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a5332ef909cb280e7d7aa54e520446537}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_BROADCAST\_ADDRESS@{SX1276\_REG\_BROADCAST\_ADDRESS}}
+\index{SX1276\_REG\_BROADCAST\_ADDRESS@{SX1276\_REG\_BROADCAST\_ADDRESS}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_BROADCAST\_ADDRESS}{SX1276\_REG\_BROADCAST\_ADDRESS}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a5332ef909cb280e7d7aa54e520446537} 
+\#define SX1276\+\_\+\+REG\+\_\+\+BROADCAST\+\_\+\+ADDRESS~0x34U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00054}{54}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af757ec5ea0c01620684a3c6be380c5ba}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_DETECTION\_OPTIMIZE@{SX1276\_REG\_DETECTION\_OPTIMIZE}}
+\index{SX1276\_REG\_DETECTION\_OPTIMIZE@{SX1276\_REG\_DETECTION\_OPTIMIZE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_DETECTION\_OPTIMIZE}{SX1276\_REG\_DETECTION\_OPTIMIZE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af757ec5ea0c01620684a3c6be380c5ba} 
+\#define SX1276\+\_\+\+REG\+\_\+\+DETECTION\+\_\+\+OPTIMIZE~0x31U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00056}{56}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_acf3b381154e86da44db144a331e3d6b0}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_DETECTION\_THRESHOLD@{SX1276\_REG\_DETECTION\_THRESHOLD}}
+\index{SX1276\_REG\_DETECTION\_THRESHOLD@{SX1276\_REG\_DETECTION\_THRESHOLD}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_DETECTION\_THRESHOLD}{SX1276\_REG\_DETECTION\_THRESHOLD}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_acf3b381154e86da44db144a331e3d6b0} 
+\#define SX1276\+\_\+\+REG\+\_\+\+DETECTION\+\_\+\+THRESHOLD~0x37U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00058}{58}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa6b737cd6f47c60c55b3a3f00bbba7c9}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_DIO\_MAPPING\_1@{SX1276\_REG\_DIO\_MAPPING\_1}}
+\index{SX1276\_REG\_DIO\_MAPPING\_1@{SX1276\_REG\_DIO\_MAPPING\_1}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_DIO\_MAPPING\_1}{SX1276\_REG\_DIO\_MAPPING\_1}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa6b737cd6f47c60c55b3a3f00bbba7c9} 
+\#define SX1276\+\_\+\+REG\+\_\+\+DIO\+\_\+\+MAPPING\+\_\+1~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00063}{63}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a728f1e3266c13ff6db2c4a4b9e56f1e3}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_DIO\_MAPPING\_2@{SX1276\_REG\_DIO\_MAPPING\_2}}
+\index{SX1276\_REG\_DIO\_MAPPING\_2@{SX1276\_REG\_DIO\_MAPPING\_2}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_DIO\_MAPPING\_2}{SX1276\_REG\_DIO\_MAPPING\_2}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a728f1e3266c13ff6db2c4a4b9e56f1e3} 
+\#define SX1276\+\_\+\+REG\+\_\+\+DIO\+\_\+\+MAPPING\+\_\+2~0x41U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00064}{64}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a514331635527b55009f5fbe631799d34}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FDEV\_LSB@{SX1276\_REG\_FDEV\_LSB}}
+\index{SX1276\_REG\_FDEV\_LSB@{SX1276\_REG\_FDEV\_LSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FDEV\_LSB}{SX1276\_REG\_FDEV\_LSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a514331635527b55009f5fbe631799d34} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FDEV\+\_\+\+LSB~0x05U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00015}{15}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a4e592bf3ea2ef3f89fb29ebfbbda29fd}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FDEV\_MSB@{SX1276\_REG\_FDEV\_MSB}}
+\index{SX1276\_REG\_FDEV\_MSB@{SX1276\_REG\_FDEV\_MSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FDEV\_MSB}{SX1276\_REG\_FDEV\_MSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a4e592bf3ea2ef3f89fb29ebfbbda29fd} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FDEV\+\_\+\+MSB~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00014}{14}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a197daf1173f5058b442df27639ff5dc2}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FIFO@{SX1276\_REG\_FIFO}}
+\index{SX1276\_REG\_FIFO@{SX1276\_REG\_FIFO}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FIFO}{SX1276\_REG\_FIFO}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a197daf1173f5058b442df27639ff5dc2} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FIFO~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00010}{10}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a5bd9596ecd31541aa53cc9670a640017}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FIFO\_ADDR\_PTR@{SX1276\_REG\_FIFO\_ADDR\_PTR}}
+\index{SX1276\_REG\_FIFO\_ADDR\_PTR@{SX1276\_REG\_FIFO\_ADDR\_PTR}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FIFO\_ADDR\_PTR}{SX1276\_REG\_FIFO\_ADDR\_PTR}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a5bd9596ecd31541aa53cc9670a640017} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+ADDR\+\_\+\+PTR~0x0\+DU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00029}{29}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ac371d2ff579a340177fd004b8647cdc0}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FIFO\_RX\_BASE\_ADDR@{SX1276\_REG\_FIFO\_RX\_BASE\_ADDR}}
+\index{SX1276\_REG\_FIFO\_RX\_BASE\_ADDR@{SX1276\_REG\_FIFO\_RX\_BASE\_ADDR}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FIFO\_RX\_BASE\_ADDR}{SX1276\_REG\_FIFO\_RX\_BASE\_ADDR}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ac371d2ff579a340177fd004b8647cdc0} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+RX\+\_\+\+BASE\+\_\+\+ADDR~0x0\+FU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00031}{31}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a380c4b9415d3a70e9ff1eff9091835e4}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR@{SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR}}
+\index{SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR@{SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR}{SX1276\_REG\_FIFO\_RX\_CURRENT\_ADDR}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a380c4b9415d3a70e9ff1eff9091835e4} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+RX\+\_\+\+CURRENT\+\_\+\+ADDR~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00032}{32}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aca5b4090d6524f460b0ddf691dcbc632}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FIFO\_THRESH@{SX1276\_REG\_FIFO\_THRESH}}
+\index{SX1276\_REG\_FIFO\_THRESH@{SX1276\_REG\_FIFO\_THRESH}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FIFO\_THRESH}{SX1276\_REG\_FIFO\_THRESH}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aca5b4090d6524f460b0ddf691dcbc632} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+THRESH~0x35U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00055}{55}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a19aca47fa2915b5fb1cb382e3288e14a}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FIFO\_TX\_BASE\_ADDR@{SX1276\_REG\_FIFO\_TX\_BASE\_ADDR}}
+\index{SX1276\_REG\_FIFO\_TX\_BASE\_ADDR@{SX1276\_REG\_FIFO\_TX\_BASE\_ADDR}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FIFO\_TX\_BASE\_ADDR}{SX1276\_REG\_FIFO\_TX\_BASE\_ADDR}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a19aca47fa2915b5fb1cb382e3288e14a} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FIFO\+\_\+\+TX\+\_\+\+BASE\+\_\+\+ADDR~0x0\+EU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00030}{30}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a87e2dae1189c733261c5187812de0105}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FRF\_LSB@{SX1276\_REG\_FRF\_LSB}}
+\index{SX1276\_REG\_FRF\_LSB@{SX1276\_REG\_FRF\_LSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FRF\_LSB}{SX1276\_REG\_FRF\_LSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a87e2dae1189c733261c5187812de0105} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FRF\+\_\+\+LSB~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00018}{18}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a10dbc8577c9c208e5578e9536452c873}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FRF\_MID@{SX1276\_REG\_FRF\_MID}}
+\index{SX1276\_REG\_FRF\_MID@{SX1276\_REG\_FRF\_MID}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FRF\_MID}{SX1276\_REG\_FRF\_MID}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a10dbc8577c9c208e5578e9536452c873} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FRF\+\_\+\+MID~0x07U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00017}{17}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ab0a9d78cc4b75af2dc3269d2402be6ad}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_FRF\_MSB@{SX1276\_REG\_FRF\_MSB}}
+\index{SX1276\_REG\_FRF\_MSB@{SX1276\_REG\_FRF\_MSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_FRF\_MSB}{SX1276\_REG\_FRF\_MSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ab0a9d78cc4b75af2dc3269d2402be6ad} 
+\#define SX1276\+\_\+\+REG\+\_\+\+FRF\+\_\+\+MSB~0x06U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00016}{16}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae5281fd20c7b872762cdc90d8e709788}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_INVERT\_IQ@{SX1276\_REG\_INVERT\_IQ}}
+\index{SX1276\_REG\_INVERT\_IQ@{SX1276\_REG\_INVERT\_IQ}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_INVERT\_IQ}{SX1276\_REG\_INVERT\_IQ}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae5281fd20c7b872762cdc90d8e709788} 
+\#define SX1276\+\_\+\+REG\+\_\+\+INVERT\+\_\+\+IQ~0x33U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00057}{57}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a28313439438c3700106b9b0c04f1524c}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_INVERT\_IQ2@{SX1276\_REG\_INVERT\_IQ2}}
+\index{SX1276\_REG\_INVERT\_IQ2@{SX1276\_REG\_INVERT\_IQ2}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_INVERT\_IQ2}{SX1276\_REG\_INVERT\_IQ2}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a28313439438c3700106b9b0c04f1524c} 
+\#define SX1276\+\_\+\+REG\+\_\+\+INVERT\+\_\+\+IQ2~0x3\+BU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00062}{62}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a6ddf0378bad2ab21ffae2d1c7e3828f0}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_IRQ\_FLAGS@{SX1276\_REG\_IRQ\_FLAGS}}
+\index{SX1276\_REG\_IRQ\_FLAGS@{SX1276\_REG\_IRQ\_FLAGS}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_IRQ\_FLAGS}{SX1276\_REG\_IRQ\_FLAGS}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a6ddf0378bad2ab21ffae2d1c7e3828f0} 
+\#define SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS~0x12U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00034}{34}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af2e7ff9d4fe9c5e69195570daed57892}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_IRQ\_FLAGS\_1@{SX1276\_REG\_IRQ\_FLAGS\_1}}
+\index{SX1276\_REG\_IRQ\_FLAGS\_1@{SX1276\_REG\_IRQ\_FLAGS\_1}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_IRQ\_FLAGS\_1}{SX1276\_REG\_IRQ\_FLAGS\_1}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af2e7ff9d4fe9c5e69195570daed57892} 
+\#define SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS\+\_\+1~0x3\+EU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00060}{60}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ace4d246e0fdf8b218a04a16100f2f42f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_IRQ\_FLAGS\_2@{SX1276\_REG\_IRQ\_FLAGS\_2}}
+\index{SX1276\_REG\_IRQ\_FLAGS\_2@{SX1276\_REG\_IRQ\_FLAGS\_2}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_IRQ\_FLAGS\_2}{SX1276\_REG\_IRQ\_FLAGS\_2}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ace4d246e0fdf8b218a04a16100f2f42f} 
+\#define SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS\+\_\+2~0x3\+FU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00061}{61}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa955ad200a53923f9c785c51f4a81d00}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_IRQ\_FLAGS\_MASK@{SX1276\_REG\_IRQ\_FLAGS\_MASK}}
+\index{SX1276\_REG\_IRQ\_FLAGS\_MASK@{SX1276\_REG\_IRQ\_FLAGS\_MASK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_IRQ\_FLAGS\_MASK}{SX1276\_REG\_IRQ\_FLAGS\_MASK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa955ad200a53923f9c785c51f4a81d00} 
+\#define SX1276\+\_\+\+REG\+\_\+\+IRQ\+\_\+\+FLAGS\+\_\+\+MASK~0x11U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00033}{33}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a728679957d90c599061990dc03033315}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_LNA@{SX1276\_REG\_LNA}}
+\index{SX1276\_REG\_LNA@{SX1276\_REG\_LNA}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_LNA}{SX1276\_REG\_LNA}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a728679957d90c599061990dc03033315} 
+\#define SX1276\+\_\+\+REG\+\_\+\+LNA~0x0\+CU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00020}{20}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a64940ab11fa01837f964631e180f9104}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_MODEM\_CONFIG\_1@{SX1276\_REG\_MODEM\_CONFIG\_1}}
+\index{SX1276\_REG\_MODEM\_CONFIG\_1@{SX1276\_REG\_MODEM\_CONFIG\_1}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_MODEM\_CONFIG\_1}{SX1276\_REG\_MODEM\_CONFIG\_1}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a64940ab11fa01837f964631e180f9104} 
+\#define SX1276\+\_\+\+REG\+\_\+\+MODEM\+\_\+\+CONFIG\+\_\+1~0x1\+DU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00039}{39}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a17421691cc61dadd5d6fdc6f8acab9de}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_MODEM\_CONFIG\_2@{SX1276\_REG\_MODEM\_CONFIG\_2}}
+\index{SX1276\_REG\_MODEM\_CONFIG\_2@{SX1276\_REG\_MODEM\_CONFIG\_2}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_MODEM\_CONFIG\_2}{SX1276\_REG\_MODEM\_CONFIG\_2}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a17421691cc61dadd5d6fdc6f8acab9de} 
+\#define SX1276\+\_\+\+REG\+\_\+\+MODEM\+\_\+\+CONFIG\+\_\+2~0x1\+EU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00040}{40}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae2baad239b355bd736d3476eb4f0d803}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_MODEM\_CONFIG\_3@{SX1276\_REG\_MODEM\_CONFIG\_3}}
+\index{SX1276\_REG\_MODEM\_CONFIG\_3@{SX1276\_REG\_MODEM\_CONFIG\_3}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_MODEM\_CONFIG\_3}{SX1276\_REG\_MODEM\_CONFIG\_3}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae2baad239b355bd736d3476eb4f0d803} 
+\#define SX1276\+\_\+\+REG\+\_\+\+MODEM\+\_\+\+CONFIG\+\_\+3~0x26U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00049}{49}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a2902a72404916bf9c9165d261759fa1a}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_NODE\_ADDRESS@{SX1276\_REG\_NODE\_ADDRESS}}
+\index{SX1276\_REG\_NODE\_ADDRESS@{SX1276\_REG\_NODE\_ADDRESS}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_NODE\_ADDRESS}{SX1276\_REG\_NODE\_ADDRESS}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a2902a72404916bf9c9165d261759fa1a} 
+\#define SX1276\+\_\+\+REG\+\_\+\+NODE\+\_\+\+ADDRESS~0x33U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00053}{53}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ac82856dad04b9d26d7260540144ac48d}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_OOK\_AVG@{SX1276\_REG\_OOK\_AVG}}
+\index{SX1276\_REG\_OOK\_AVG@{SX1276\_REG\_OOK\_AVG}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_OOK\_AVG}{SX1276\_REG\_OOK\_AVG}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ac82856dad04b9d26d7260540144ac48d} 
+\#define SX1276\+\_\+\+REG\+\_\+\+OOK\+\_\+\+AVG~0x16U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00028}{28}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a6e7163ee29d52edb7288724572e23ca1}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_OOK\_FIX@{SX1276\_REG\_OOK\_FIX}}
+\index{SX1276\_REG\_OOK\_FIX@{SX1276\_REG\_OOK\_FIX}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_OOK\_FIX}{SX1276\_REG\_OOK\_FIX}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a6e7163ee29d52edb7288724572e23ca1} 
+\#define SX1276\+\_\+\+REG\+\_\+\+OOK\+\_\+\+FIX~0x15U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00027}{27}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a03b66bcc5c36ea36a7b9c2badc1ae824}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_OOK\_PEAK@{SX1276\_REG\_OOK\_PEAK}}
+\index{SX1276\_REG\_OOK\_PEAK@{SX1276\_REG\_OOK\_PEAK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_OOK\_PEAK}{SX1276\_REG\_OOK\_PEAK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a03b66bcc5c36ea36a7b9c2badc1ae824} 
+\#define SX1276\+\_\+\+REG\+\_\+\+OOK\+\_\+\+PEAK~0x14U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00026}{26}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a69c0f732512b573a09dfe43bd30c66a6}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_OP\_MODE@{SX1276\_REG\_OP\_MODE}}
+\index{SX1276\_REG\_OP\_MODE@{SX1276\_REG\_OP\_MODE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_OP\_MODE}{SX1276\_REG\_OP\_MODE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a69c0f732512b573a09dfe43bd30c66a6} 
+\#define SX1276\+\_\+\+REG\+\_\+\+OP\+\_\+\+MODE~0x01U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00011}{11}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a34c16f8ebdc6f416cb37e92e7f9a6dd0}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PA\_CONFIG@{SX1276\_REG\_PA\_CONFIG}}
+\index{SX1276\_REG\_PA\_CONFIG@{SX1276\_REG\_PA\_CONFIG}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PA\_CONFIG}{SX1276\_REG\_PA\_CONFIG}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a34c16f8ebdc6f416cb37e92e7f9a6dd0} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PA\+\_\+\+CONFIG~0x09U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00019}{19}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a8177b74124aa491c1a1eb8981c7999a3}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PA\_DAC@{SX1276\_REG\_PA\_DAC}}
+\index{SX1276\_REG\_PA\_DAC@{SX1276\_REG\_PA\_DAC}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PA\_DAC}{SX1276\_REG\_PA\_DAC}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a8177b74124aa491c1a1eb8981c7999a3} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PA\+\_\+\+DAC~0x4\+DU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00066}{66}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a18591134b18fcead9d52d18f0fd71a87}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PACKET\_CONFIG\_1@{SX1276\_REG\_PACKET\_CONFIG\_1}}
+\index{SX1276\_REG\_PACKET\_CONFIG\_1@{SX1276\_REG\_PACKET\_CONFIG\_1}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PACKET\_CONFIG\_1}{SX1276\_REG\_PACKET\_CONFIG\_1}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a18591134b18fcead9d52d18f0fd71a87} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PACKET\+\_\+\+CONFIG\+\_\+1~0x30U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00050}{50}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a4b78315f77e35ac9bf0bc67e6bd5ea28}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PACKET\_CONFIG\_2@{SX1276\_REG\_PACKET\_CONFIG\_2}}
+\index{SX1276\_REG\_PACKET\_CONFIG\_2@{SX1276\_REG\_PACKET\_CONFIG\_2}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PACKET\_CONFIG\_2}{SX1276\_REG\_PACKET\_CONFIG\_2}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a4b78315f77e35ac9bf0bc67e6bd5ea28} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PACKET\+\_\+\+CONFIG\+\_\+2~0x31U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00051}{51}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae79732e3dc6e692772b67cc7f6d84e74}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PAYLOAD\_LENGTH@{SX1276\_REG\_PAYLOAD\_LENGTH}}
+\index{SX1276\_REG\_PAYLOAD\_LENGTH@{SX1276\_REG\_PAYLOAD\_LENGTH}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PAYLOAD\_LENGTH}{SX1276\_REG\_PAYLOAD\_LENGTH}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae79732e3dc6e692772b67cc7f6d84e74} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PAYLOAD\+\_\+\+LENGTH~0x22U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00044}{44}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a154a07d4ba364dc3731ea64797a7d6e5}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PAYLOAD\_LENGTH\_FSK@{SX1276\_REG\_PAYLOAD\_LENGTH\_FSK}}
+\index{SX1276\_REG\_PAYLOAD\_LENGTH\_FSK@{SX1276\_REG\_PAYLOAD\_LENGTH\_FSK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PAYLOAD\_LENGTH\_FSK}{SX1276\_REG\_PAYLOAD\_LENGTH\_FSK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a154a07d4ba364dc3731ea64797a7d6e5} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PAYLOAD\+\_\+\+LENGTH\+\_\+\+FSK~0x32U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00052}{52}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a77f951cd01aeed0d43ea715fd55fdfbd}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PKT\_RSSI\_VALUE@{SX1276\_REG\_PKT\_RSSI\_VALUE}}
+\index{SX1276\_REG\_PKT\_RSSI\_VALUE@{SX1276\_REG\_PKT\_RSSI\_VALUE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PKT\_RSSI\_VALUE}{SX1276\_REG\_PKT\_RSSI\_VALUE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a77f951cd01aeed0d43ea715fd55fdfbd} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PKT\+\_\+\+RSSI\+\_\+\+VALUE~0x1\+AU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00037}{37}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ab9178f72a1e5ca435104a74c8c0166b7}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PKT\_SNR\_VALUE@{SX1276\_REG\_PKT\_SNR\_VALUE}}
+\index{SX1276\_REG\_PKT\_SNR\_VALUE@{SX1276\_REG\_PKT\_SNR\_VALUE}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PKT\_SNR\_VALUE}{SX1276\_REG\_PKT\_SNR\_VALUE}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ab9178f72a1e5ca435104a74c8c0166b7} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PKT\+\_\+\+SNR\+\_\+\+VALUE~0x19U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00036}{36}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a5dcc0e802d590db68abb629efbd16e1d}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PREAMBLE\_DETECT@{SX1276\_REG\_PREAMBLE\_DETECT}}
+\index{SX1276\_REG\_PREAMBLE\_DETECT@{SX1276\_REG\_PREAMBLE\_DETECT}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PREAMBLE\_DETECT}{SX1276\_REG\_PREAMBLE\_DETECT}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a5dcc0e802d590db68abb629efbd16e1d} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+DETECT~0x1\+FU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00038}{38}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a99c76515a1bda1b9cd38d5df6e1ab481}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PREAMBLE\_LSB@{SX1276\_REG\_PREAMBLE\_LSB}}
+\index{SX1276\_REG\_PREAMBLE\_LSB@{SX1276\_REG\_PREAMBLE\_LSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PREAMBLE\_LSB}{SX1276\_REG\_PREAMBLE\_LSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a99c76515a1bda1b9cd38d5df6e1ab481} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+LSB~0x21U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00043}{43}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_afb6ef591e5c0dd9b47c88782ba14554d}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PREAMBLE\_LSB\_FSK@{SX1276\_REG\_PREAMBLE\_LSB\_FSK}}
+\index{SX1276\_REG\_PREAMBLE\_LSB\_FSK@{SX1276\_REG\_PREAMBLE\_LSB\_FSK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PREAMBLE\_LSB\_FSK}{SX1276\_REG\_PREAMBLE\_LSB\_FSK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_afb6ef591e5c0dd9b47c88782ba14554d} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+LSB\+\_\+\+FSK~0x26U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00046}{46}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a762dcf817391c74a6a7f7c1bed4da3bb}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PREAMBLE\_MSB@{SX1276\_REG\_PREAMBLE\_MSB}}
+\index{SX1276\_REG\_PREAMBLE\_MSB@{SX1276\_REG\_PREAMBLE\_MSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PREAMBLE\_MSB}{SX1276\_REG\_PREAMBLE\_MSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a762dcf817391c74a6a7f7c1bed4da3bb} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+MSB~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00042}{42}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a6f07ab86f4ea434b72b6645474bbab18}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_PREAMBLE\_MSB\_FSK@{SX1276\_REG\_PREAMBLE\_MSB\_FSK}}
+\index{SX1276\_REG\_PREAMBLE\_MSB\_FSK@{SX1276\_REG\_PREAMBLE\_MSB\_FSK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_PREAMBLE\_MSB\_FSK}{SX1276\_REG\_PREAMBLE\_MSB\_FSK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a6f07ab86f4ea434b72b6645474bbab18} 
+\#define SX1276\+\_\+\+REG\+\_\+\+PREAMBLE\+\_\+\+MSB\+\_\+\+FSK~0x25U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00045}{45}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ac24dd517d581b1c0595bf5d56ac146f6}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_RSSI\_CONFIG@{SX1276\_REG\_RSSI\_CONFIG}}
+\index{SX1276\_REG\_RSSI\_CONFIG@{SX1276\_REG\_RSSI\_CONFIG}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_RSSI\_CONFIG}{SX1276\_REG\_RSSI\_CONFIG}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ac24dd517d581b1c0595bf5d56ac146f6} 
+\#define SX1276\+\_\+\+REG\+\_\+\+RSSI\+\_\+\+CONFIG~0x0\+EU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00022}{22}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ab6a9a8408e7a5bfa042558ec07250b46}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_RSSI\_VALUE\_FSK@{SX1276\_REG\_RSSI\_VALUE\_FSK}}
+\index{SX1276\_REG\_RSSI\_VALUE\_FSK@{SX1276\_REG\_RSSI\_VALUE\_FSK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_RSSI\_VALUE\_FSK}{SX1276\_REG\_RSSI\_VALUE\_FSK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ab6a9a8408e7a5bfa042558ec07250b46} 
+\#define SX1276\+\_\+\+REG\+\_\+\+RSSI\+\_\+\+VALUE\+\_\+\+FSK~0x11U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00023}{23}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a2e07891c3bf6661af5d5f22649a10781}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_RX\_BW@{SX1276\_REG\_RX\_BW}}
+\index{SX1276\_REG\_RX\_BW@{SX1276\_REG\_RX\_BW}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_RX\_BW}{SX1276\_REG\_RX\_BW}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a2e07891c3bf6661af5d5f22649a10781} 
+\#define SX1276\+\_\+\+REG\+\_\+\+RX\+\_\+\+BW~0x12U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00024}{24}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa8afbbd417b764665465507474a8dd6c}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_RX\_CONFIG@{SX1276\_REG\_RX\_CONFIG}}
+\index{SX1276\_REG\_RX\_CONFIG@{SX1276\_REG\_RX\_CONFIG}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_RX\_CONFIG}{SX1276\_REG\_RX\_CONFIG}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa8afbbd417b764665465507474a8dd6c} 
+\#define SX1276\+\_\+\+REG\+\_\+\+RX\+\_\+\+CONFIG~0x0\+DU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00021}{21}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ab016a04625461bc5cdedcd615239f1bf}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_RX\_NB\_BYTES@{SX1276\_REG\_RX\_NB\_BYTES}}
+\index{SX1276\_REG\_RX\_NB\_BYTES@{SX1276\_REG\_RX\_NB\_BYTES}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_RX\_NB\_BYTES}{SX1276\_REG\_RX\_NB\_BYTES}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ab016a04625461bc5cdedcd615239f1bf} 
+\#define SX1276\+\_\+\+REG\+\_\+\+RX\+\_\+\+NB\+\_\+\+BYTES~0x13U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00035}{35}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a5f324f0c491c57c3426b483142697714}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_SYMB\_TIMEOUT\_LSB@{SX1276\_REG\_SYMB\_TIMEOUT\_LSB}}
+\index{SX1276\_REG\_SYMB\_TIMEOUT\_LSB@{SX1276\_REG\_SYMB\_TIMEOUT\_LSB}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_SYMB\_TIMEOUT\_LSB}{SX1276\_REG\_SYMB\_TIMEOUT\_LSB}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a5f324f0c491c57c3426b483142697714} 
+\#define SX1276\+\_\+\+REG\+\_\+\+SYMB\+\_\+\+TIMEOUT\+\_\+\+LSB~0x1\+FU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00041}{41}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ad259467013560a7a240386f601faeabe}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_SYNC\_CONFIG@{SX1276\_REG\_SYNC\_CONFIG}}
+\index{SX1276\_REG\_SYNC\_CONFIG@{SX1276\_REG\_SYNC\_CONFIG}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_SYNC\_CONFIG}{SX1276\_REG\_SYNC\_CONFIG}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ad259467013560a7a240386f601faeabe} 
+\#define SX1276\+\_\+\+REG\+\_\+\+SYNC\+\_\+\+CONFIG~0x27U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00047}{47}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a166ac4acac1667e626be8221b52110f5}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_SYNC\_VALUE\_1@{SX1276\_REG\_SYNC\_VALUE\_1}}
+\index{SX1276\_REG\_SYNC\_VALUE\_1@{SX1276\_REG\_SYNC\_VALUE\_1}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_SYNC\_VALUE\_1}{SX1276\_REG\_SYNC\_VALUE\_1}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a166ac4acac1667e626be8221b52110f5} 
+\#define SX1276\+\_\+\+REG\+\_\+\+SYNC\+\_\+\+VALUE\+\_\+1~0x28U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00048}{48}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a7d3724e50f816db0efb6a91d30a8960f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_SYNC\_WORD@{SX1276\_REG\_SYNC\_WORD}}
+\index{SX1276\_REG\_SYNC\_WORD@{SX1276\_REG\_SYNC\_WORD}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_SYNC\_WORD}{SX1276\_REG\_SYNC\_WORD}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a7d3724e50f816db0efb6a91d30a8960f} 
+\#define SX1276\+\_\+\+REG\+\_\+\+SYNC\+\_\+\+WORD~0x39U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00059}{59}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a99a158df582a50d6bb2dcb330836da75}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_REG\_VERSION@{SX1276\_REG\_VERSION}}
+\index{SX1276\_REG\_VERSION@{SX1276\_REG\_VERSION}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_REG\_VERSION}{SX1276\_REG\_VERSION}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a99a158df582a50d6bb2dcb330836da75} 
+\#define SX1276\+\_\+\+REG\+\_\+\+VERSION~0x42U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00065}{65}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ad653ba3d4dce45ad5f42846d4c6bdc88}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_RXCONFIG\_AFC\_AUTO\_ON@{SX1276\_RXCONFIG\_AFC\_AUTO\_ON}}
+\index{SX1276\_RXCONFIG\_AFC\_AUTO\_ON@{SX1276\_RXCONFIG\_AFC\_AUTO\_ON}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_RXCONFIG\_AFC\_AUTO\_ON}{SX1276\_RXCONFIG\_AFC\_AUTO\_ON}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ad653ba3d4dce45ad5f42846d4c6bdc88} 
+\#define SX1276\+\_\+\+RXCONFIG\+\_\+\+AFC\+\_\+\+AUTO\+\_\+\+ON~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00151}{151}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae3adc02fd891c2969815c3261351a17b}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_RXCONFIG\_AGC\_AUTO\_ON@{SX1276\_RXCONFIG\_AGC\_AUTO\_ON}}
+\index{SX1276\_RXCONFIG\_AGC\_AUTO\_ON@{SX1276\_RXCONFIG\_AGC\_AUTO\_ON}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_RXCONFIG\_AGC\_AUTO\_ON}{SX1276\_RXCONFIG\_AGC\_AUTO\_ON}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae3adc02fd891c2969815c3261351a17b} 
+\#define SX1276\+\_\+\+RXCONFIG\+\_\+\+AGC\+\_\+\+AUTO\+\_\+\+ON~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00152}{152}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_aa0bacbb9669989bfb087140d50d9e0a4}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_RXCONFIG\_RESTART\_RX\_NO\_PLL\_LOCK@{SX1276\_RXCONFIG\_RESTART\_RX\_NO\_PLL\_LOCK}}
+\index{SX1276\_RXCONFIG\_RESTART\_RX\_NO\_PLL\_LOCK@{SX1276\_RXCONFIG\_RESTART\_RX\_NO\_PLL\_LOCK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_RXCONFIG\_RESTART\_RX\_NO\_PLL\_LOCK}{SX1276\_RXCONFIG\_RESTART\_RX\_NO\_PLL\_LOCK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_aa0bacbb9669989bfb087140d50d9e0a4} 
+\#define SX1276\+\_\+\+RXCONFIG\+\_\+\+RESTART\+\_\+\+RX\+\_\+\+NO\+\_\+\+PLL\+\_\+\+LOCK~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00150}{150}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ac6ca4807af0bc37bbbe5397f52577c9c}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_RXCONFIG\_TRIGGER\_RSSI@{SX1276\_RXCONFIG\_TRIGGER\_RSSI}}
+\index{SX1276\_RXCONFIG\_TRIGGER\_RSSI@{SX1276\_RXCONFIG\_TRIGGER\_RSSI}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_RXCONFIG\_TRIGGER\_RSSI}{SX1276\_RXCONFIG\_TRIGGER\_RSSI}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ac6ca4807af0bc37bbbe5397f52577c9c} 
+\#define SX1276\+\_\+\+RXCONFIG\+\_\+\+TRIGGER\+\_\+\+RSSI~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00153}{153}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af79c43036a1a3a6678bee3007c5a4e54}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SPI\_READ\_MASK@{SX1276\_SPI\_READ\_MASK}}
+\index{SX1276\_SPI\_READ\_MASK@{SX1276\_SPI\_READ\_MASK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SPI\_READ\_MASK}{SX1276\_SPI\_READ\_MASK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af79c43036a1a3a6678bee3007c5a4e54} 
+\#define SX1276\+\_\+\+SPI\+\_\+\+READ\+\_\+\+MASK~0x7\+FU}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00070}{70}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a220c509d71239314bf628ee5d813ab24}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SPI\_WRITE\_MASK@{SX1276\_SPI\_WRITE\_MASK}}
+\index{SX1276\_SPI\_WRITE\_MASK@{SX1276\_SPI\_WRITE\_MASK}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SPI\_WRITE\_MASK}{SX1276\_SPI\_WRITE\_MASK}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a220c509d71239314bf628ee5d813ab24} 
+\#define SX1276\+\_\+\+SPI\+\_\+\+WRITE\+\_\+\+MASK~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00069}{69}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ae76d99a9fe9aef6b5eeb23c46df4da15}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_AUTO\_RESTART\_NO\_PLL@{SX1276\_SYNC\_AUTO\_RESTART\_NO\_PLL}}
+\index{SX1276\_SYNC\_AUTO\_RESTART\_NO\_PLL@{SX1276\_SYNC\_AUTO\_RESTART\_NO\_PLL}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_AUTO\_RESTART\_NO\_PLL}{SX1276\_SYNC\_AUTO\_RESTART\_NO\_PLL}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ae76d99a9fe9aef6b5eeb23c46df4da15} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+AUTO\+\_\+\+RESTART\+\_\+\+NO\+\_\+\+PLL~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00136}{136}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a7d27352f35a34f07e3663ce466b95dc4}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_AUTO\_RESTART\_OFF@{SX1276\_SYNC\_AUTO\_RESTART\_OFF}}
+\index{SX1276\_SYNC\_AUTO\_RESTART\_OFF@{SX1276\_SYNC\_AUTO\_RESTART\_OFF}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_AUTO\_RESTART\_OFF}{SX1276\_SYNC\_AUTO\_RESTART\_OFF}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a7d27352f35a34f07e3663ce466b95dc4} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+AUTO\+\_\+\+RESTART\+\_\+\+OFF~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00135}{135}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ad024112f717b7e95f78a3f8b094c2768}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_AUTO\_RESTART\_PLL@{SX1276\_SYNC\_AUTO\_RESTART\_PLL}}
+\index{SX1276\_SYNC\_AUTO\_RESTART\_PLL@{SX1276\_SYNC\_AUTO\_RESTART\_PLL}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_AUTO\_RESTART\_PLL}{SX1276\_SYNC\_AUTO\_RESTART\_PLL}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ad024112f717b7e95f78a3f8b094c2768} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+AUTO\+\_\+\+RESTART\+\_\+\+PLL~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00137}{137}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_abfb7f4f65ee0198e7420a35c8eff4a2f}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_FIFOFILL\_AUTO@{SX1276\_SYNC\_FIFOFILL\_AUTO}}
+\index{SX1276\_SYNC\_FIFOFILL\_AUTO@{SX1276\_SYNC\_FIFOFILL\_AUTO}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_FIFOFILL\_AUTO}{SX1276\_SYNC\_FIFOFILL\_AUTO}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_abfb7f4f65ee0198e7420a35c8eff4a2f} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+FIFOFILL\+\_\+\+AUTO~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00142}{142}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_ac9eefacdfe4b3b18a1d7173ae62af9d6}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_FIFOFILL\_MANUAL@{SX1276\_SYNC\_FIFOFILL\_MANUAL}}
+\index{SX1276\_SYNC\_FIFOFILL\_MANUAL@{SX1276\_SYNC\_FIFOFILL\_MANUAL}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_FIFOFILL\_MANUAL}{SX1276\_SYNC\_FIFOFILL\_MANUAL}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_ac9eefacdfe4b3b18a1d7173ae62af9d6} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+FIFOFILL\+\_\+\+MANUAL~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00143}{143}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_af854c1f4509bef2f5cac9f0a90fcb195}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_OFF@{SX1276\_SYNC\_OFF}}
+\index{SX1276\_SYNC\_OFF@{SX1276\_SYNC\_OFF}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_OFF}{SX1276\_SYNC\_OFF}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_af854c1f4509bef2f5cac9f0a90fcb195} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+OFF~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00141}{141}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a783adffad700bcd10cf539c4d2ae7f5c}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_ON@{SX1276\_SYNC\_ON}}
+\index{SX1276\_SYNC\_ON@{SX1276\_SYNC\_ON}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_ON}{SX1276\_SYNC\_ON}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a783adffad700bcd10cf539c4d2ae7f5c} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+ON~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00140}{140}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a7316be0c27ca5d44534679e55c97dbec}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_PREAMBLE\_POLARITY\_55@{SX1276\_SYNC\_PREAMBLE\_POLARITY\_55}}
+\index{SX1276\_SYNC\_PREAMBLE\_POLARITY\_55@{SX1276\_SYNC\_PREAMBLE\_POLARITY\_55}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_PREAMBLE\_POLARITY\_55}{SX1276\_SYNC\_PREAMBLE\_POLARITY\_55}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a7316be0c27ca5d44534679e55c97dbec} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+PREAMBLE\+\_\+\+POLARITY\+\_\+55~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00139}{139}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a7735f51ca6ca107da5af6d3a9d6940fb}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_SYNC\_PREAMBLE\_POLARITY\_AA@{SX1276\_SYNC\_PREAMBLE\_POLARITY\_AA}}
+\index{SX1276\_SYNC\_PREAMBLE\_POLARITY\_AA@{SX1276\_SYNC\_PREAMBLE\_POLARITY\_AA}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_SYNC\_PREAMBLE\_POLARITY\_AA}{SX1276\_SYNC\_PREAMBLE\_POLARITY\_AA}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a7735f51ca6ca107da5af6d3a9d6940fb} 
+\#define SX1276\+\_\+\+SYNC\+\_\+\+PREAMBLE\+\_\+\+POLARITY\+\_\+\+AA~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00138}{138}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+
+\Hypertarget{radio__sx1276__regs_8h_a8b4b6f68f343a1804ddaa84aa5397ff7}\index{radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}!SX1276\_VERSION\_ID@{SX1276\_VERSION\_ID}}
+\index{SX1276\_VERSION\_ID@{SX1276\_VERSION\_ID}!radio\_sx1276\_regs.h@{radio\_sx1276\_regs.h}}
+\doxysubsubsection{\texorpdfstring{SX1276\_VERSION\_ID}{SX1276\_VERSION\_ID}}
+{\footnotesize\ttfamily \label{radio__sx1276__regs_8h_a8b4b6f68f343a1804ddaa84aa5397ff7} 
+\#define SX1276\+\_\+\+VERSION\+\_\+\+ID~0x12U}
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276__regs_8h_source_l00073}{73}} pliku \mbox{\hyperlink{radio__sx1276__regs_8h_source}{radio\+\_\+sx1276\+\_\+regs.\+h}}.
+

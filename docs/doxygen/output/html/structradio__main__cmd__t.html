@@ -1,0 +1,396 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury radio_main_cmd_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structradio__main__cmd__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury radio_main_cmd_t</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:ac8dae9d593cb7e9ab760d57b9f46938b" id="r_ac8dae9d593cb7e9ab760d57b9f46938b"><td class="memItemLeft" align="right" valign="top">radio_main_cmd_id_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac8dae9d593cb7e9ab760d57b9f46938b">id</a></td></tr>
+<tr class="memitem:a028c27ecec883aa259d15d53e740ac31" id="r_a028c27ecec883aa259d15d53e740ac31"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structradio__main__cmd__sync__t.html">radio_main_cmd_sync_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a028c27ecec883aa259d15d53e740ac31">sync</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon"><a id="a8dca8c670e635394a8109f8056b06c40" name="a8dca8c670e635394a8109f8056b06c40"></a>
+union {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a5752b831416ea947b8bd8c89140379ef" id="r_a5752b831416ea947b8bd8c89140379ef"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a3db4bfa4e1f064660e23216e7e44956d">group_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a80e823a92b7aac8a06575f6a9e3cfcca" id="r_a80e823a92b7aac8a06575f6a9e3cfcca"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#ae83e5bfbf6705bc9f95c2567145b6bc7">msg_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:afafe01246dc3a81e180d063110d4f19b" id="r_afafe01246dc3a81e180d063110d4f19b"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#ade83e4549427aea3c64c145b7b11f4e2">dst_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a5ea776b6169fafdd01f0b01725887fc7" id="r_a5ea776b6169fafdd01f0b01725887fc7"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>send_template</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ad3e762f99f7da60df998381c43c52a5a" id="r_ad3e762f99f7da60df998381c43c52a5a"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#ade83e4549427aea3c64c145b7b11f4e2">dst_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a11da187e4072f7b5f9ed975cd1bf4b04" id="r_a11da187e4072f7b5f9ed975cd1bf4b04"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#aadcb79bd29a30d25aad6537ef5be0e27">len</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aca58e47bf68db36439c01435277613b0" id="r_aca58e47bf68db36439c01435277613b0"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;char&#160;&#160;&#160;<a class="el" href="#a006055e73c4239dd1734c73a57edb33b">text</a> [21]&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ac157da52ff988d3fafe15e73d4babf8b" id="r_ac157da52ff988d3fafe15e73d4babf8b"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>send_text</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aa40ee37d20c2004803d1bcfd57ddb983" id="r_aa40ee37d20c2004803d1bcfd57ddb983"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;const uint8_t *&#160;&#160;&#160;<a class="el" href="#a979c365f4a36578cc2dd78d9e213ac3f">data</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a2c75adb61a0210934fa3c1a86452a300" id="r_a2c75adb61a0210934fa3c1a86452a300"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#aadcb79bd29a30d25aad6537ef5be0e27">len</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a3c74496c6bf61bd9bab0b0ed1573424f" id="r_a3c74496c6bf61bd9bab0b0ed1573424f"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>send_raw</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a25796deba7dae9cc6f59ebe64c8e40c0" id="r_a25796deba7dae9cc6f59ebe64c8e40c0"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#ad7b0747e4ddcb765c8fdb14b4ae468a6">value</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a79c3897c7c5fb197f2b6c6b97110f401" id="r_a79c3897c7c5fb197f2b6c6b97110f401"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_u8</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ae2488fd81a958321a4a2970523d8cead" id="r_ae2488fd81a958321a4a2970523d8cead"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a1412e4f88de01500e0501aa80c971adb">value</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ae3ba9643f5dc1813af46f3d114773b59" id="r_ae3ba9643f5dc1813af46f3d114773b59"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_u32</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a74f6c77da4b6f6799123ff778d203a53" id="r_a74f6c77da4b6f6799123ff778d203a53"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;<a class="el" href="radio__main_8h.html#a13f3ef3efed1bdfd60e6f3c8594790e2">radio_main_option_t</a>&#160;&#160;&#160;<a class="el" href="#a68c800a8a9c45d5796ed836c13c147b8">option</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:abeea476a1d765abe31d0413c04cb8a20" id="r_abeea476a1d765abe31d0413c04cb8a20"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a1412e4f88de01500e0501aa80c971adb">value</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ab157fe0bc18c0511b904c97f250e2841" id="r_ab157fe0bc18c0511b904c97f250e2841"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_option</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a8f77c22cc655fec25d4fb9ff708897a4" id="r_a8f77c22cc655fec25d4fb9ff708897a4"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="#a3662fbe4081080b4f794fb306021229f">enabled</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a59b150462891beb3da93abf66bf3477a" id="r_a59b150462891beb3da93abf66bf3477a"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>set_bool</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ad47dafd6353944b1b424153c93cb97e8" id="r_ad47dafd6353944b1b424153c93cb97e8"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a46523cfc47868523c5abd8215905b843">timeout_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:ad6532798eec5be49e20c7657f76ea385" id="r_ad6532798eec5be49e20c7657f76ea385"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;bool&#160;&#160;&#160;<a class="el" href="#ad892c8878581b00fb9389bcf96f1a278">network_mode</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aecad6ef1d04241e085da1a32d718e807" id="r_aecad6ef1d04241e085da1a32d718e807"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>pairing</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon">
+&#160;&#160;&#160;struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:abba27cf8b537a243b342c48b4b2892a0" id="r_abba27cf8b537a243b342c48b4b2892a0"><td class="memItemLeft anon">&#160;&#160;&#160;&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#ade83e4549427aea3c64c145b7b11f4e2">dst_id</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aec8e1763800a26597c0ce51407b73d4b" id="r_aec8e1763800a26597c0ce51407b73d4b"><td class="memItemLeft anonEnd" valign="top">&#160;&#160;&#160;}&#160;&#160;&#160;<b>to_node</b></td></tr>
+<tr class="memitem:a8dca8c670e635394a8109f8056b06c40" id="r_a8dca8c670e635394a8109f8056b06c40"><td class="memItemLeft anonEnd" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><b>u</b></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock">
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00094">94</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a979c365f4a36578cc2dd78d9e213ac3f" name="a979c365f4a36578cc2dd78d9e213ac3f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a979c365f4a36578cc2dd78d9e213ac3f">&#9670;&#160;</a></span>data</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint8_t* radio_main_cmd_t::data</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00114">114</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ade83e4549427aea3c64c145b7b11f4e2" name="ade83e4549427aea3c64c145b7b11f4e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade83e4549427aea3c64c145b7b11f4e2">&#9670;&#160;</a></span>dst_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_main_cmd_t::dst_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00104">104</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a3662fbe4081080b4f794fb306021229f" name="a3662fbe4081080b4f794fb306021229f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3662fbe4081080b4f794fb306021229f">&#9670;&#160;</a></span>enabled</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_main_cmd_t::enabled</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00132">132</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a3db4bfa4e1f064660e23216e7e44956d" name="a3db4bfa4e1f064660e23216e7e44956d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3db4bfa4e1f064660e23216e7e44956d">&#9670;&#160;</a></span>group_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_main_cmd_t::group_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00102">102</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ac8dae9d593cb7e9ab760d57b9f46938b" name="ac8dae9d593cb7e9ab760d57b9f46938b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8dae9d593cb7e9ab760d57b9f46938b">&#9670;&#160;</a></span>id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">radio_main_cmd_id_t radio_main_cmd_t::id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00096">96</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="aadcb79bd29a30d25aad6537ef5be0e27" name="aadcb79bd29a30d25aad6537ef5be0e27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aadcb79bd29a30d25aad6537ef5be0e27">&#9670;&#160;</a></span>len</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_main_cmd_t::len</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00109">109</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ae83e5bfbf6705bc9f95c2567145b6bc7" name="ae83e5bfbf6705bc9f95c2567145b6bc7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae83e5bfbf6705bc9f95c2567145b6bc7">&#9670;&#160;</a></span>msg_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_main_cmd_t::msg_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00103">103</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ad892c8878581b00fb9389bcf96f1a278" name="ad892c8878581b00fb9389bcf96f1a278"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad892c8878581b00fb9389bcf96f1a278">&#9670;&#160;</a></span>network_mode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool radio_main_cmd_t::network_mode</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00137">137</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a68c800a8a9c45d5796ed836c13c147b8" name="a68c800a8a9c45d5796ed836c13c147b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a68c800a8a9c45d5796ed836c13c147b8">&#9670;&#160;</a></span>option</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="radio__main_8h.html#a13f3ef3efed1bdfd60e6f3c8594790e2">radio_main_option_t</a> radio_main_cmd_t::option</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00127">127</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a028c27ecec883aa259d15d53e740ac31" name="a028c27ecec883aa259d15d53e740ac31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a028c27ecec883aa259d15d53e740ac31">&#9670;&#160;</a></span>sync</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structradio__main__cmd__sync__t.html">radio_main_cmd_sync_t</a>* radio_main_cmd_t::sync</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00097">97</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a006055e73c4239dd1734c73a57edb33b" name="a006055e73c4239dd1734c73a57edb33b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a006055e73c4239dd1734c73a57edb33b">&#9670;&#160;</a></span>text</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char radio_main_cmd_t::text[21]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00110">110</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a46523cfc47868523c5abd8215905b843" name="a46523cfc47868523c5abd8215905b843"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46523cfc47868523c5abd8215905b843">&#9670;&#160;</a></span>timeout_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_main_cmd_t::timeout_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00136">136</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="a1412e4f88de01500e0501aa80c971adb" name="a1412e4f88de01500e0501aa80c971adb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1412e4f88de01500e0501aa80c971adb">&#9670;&#160;</a></span>value <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t radio_main_cmd_t::value</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00123">123</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<a id="ad7b0747e4ddcb765c8fdb14b4ae468a6" name="ad7b0747e4ddcb765c8fdb14b4ae468a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad7b0747e4ddcb765c8fdb14b4ae468a6">&#9670;&#160;</a></span>value <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t radio_main_cmd_t::value</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="radio__main_8c_source.html#l00119">119</a> pliku <a class="el" href="radio__main_8c_source.html">radio_main.c</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="radio__main_8c_source.html">radio_main.c</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structradio__main__cmd__t.html">radio_main_cmd_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

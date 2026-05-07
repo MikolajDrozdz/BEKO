@@ -1,0 +1,433 @@
+\doxysection{Dokumentacja pliku Core/\+App/bmp280\+\_\+lib/bmp280.h}
+\hypertarget{bmp280_8h}{}\label{bmp280_8h}\index{Core/App/bmp280\_lib/bmp280.h@{Core/App/bmp280\_lib/bmp280.h}}
+
+
+Low-\/level BMP280/\+BME280 driver API.  
+
+
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Configuration parameters for BMP280 module. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}}
+\begin{DoxyCompactList}\small\item\em Driver handle with calibration constants and active configuration. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{bmp280_8h_aa11b925ebf4b81cf1b62232196ac1d8f}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+0}}~0x76
+\begin{DoxyCompactList}\small\item\em Ciastkolog.\+pl (\href{https://github.com/ciastkolog}{\texttt{https\+://github.\+com/ciastkolog}}). \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{bmp280_8h_a0b9ffea4fca103b7edef727777596909}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+1}}~0x77
+\begin{DoxyCompactList}\small\item\em I2C address when SDO pin is high. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{bmp280_8h_aa29aaafdd798a1593a4b536f0ed7c9c2}{BMP280\+\_\+\+CHIP\+\_\+\+ID}}~0x58
+\begin{DoxyCompactList}\small\item\em Expected BMP280 chip identifier. \end{DoxyCompactList}\item 
+\#define \mbox{\hyperlink{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}{BME280\+\_\+\+CHIP\+\_\+\+ID}}~0x60
+\begin{DoxyCompactList}\small\item\em Expected BME280 chip identifier. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Wyliczenia}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1}{BMP280\+\_\+\+Mode}} \{ {\bfseries BMP280\+\_\+\+MODE\+\_\+\+SLEEP} = 0
+, {\bfseries BMP280\+\_\+\+MODE\+\_\+\+FORCED} = 1
+, {\bfseries BMP280\+\_\+\+MODE\+\_\+\+NORMAL} = 3
+ \}
+\begin{DoxyCompactList}\small\item\em Mode of BMP280 module operation. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ce}{BMP280\+\_\+\+Filter}} \{ \newline
+\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2}{BMP280\+\_\+\+FILTER\+\_\+\+OFF}} = 0
+, \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b}{BMP280\+\_\+\+FILTER\+\_\+2}} = 1
+, \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de}{BMP280\+\_\+\+FILTER\+\_\+4}} = 2
+, \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609}{BMP280\+\_\+\+FILTER\+\_\+8}} = 3
+, \newline
+\mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e}{BMP280\+\_\+\+FILTER\+\_\+16}} = 4
+ \}
+\item 
+enum \mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{BMP280\+\_\+\+Oversampling}} \{ \newline
+{\bfseries BMP280\+\_\+\+SKIPPED} = 0
+, {\bfseries BMP280\+\_\+\+ULTRA\+\_\+\+LOW\+\_\+\+POWER} = 1
+, {\bfseries BMP280\+\_\+\+LOW\+\_\+\+POWER} = 2
+, {\bfseries BMP280\+\_\+\+STANDARD} = 3
+, \newline
+{\bfseries BMP280\+\_\+\+HIGH\+\_\+\+RES} = 4
+, {\bfseries BMP280\+\_\+\+ULTRA\+\_\+\+HIGH\+\_\+\+RES} = 5
+ \}
+\begin{DoxyCompactList}\small\item\em Pressure oversampling settings. \end{DoxyCompactList}\item 
+enum \mbox{\hyperlink{bmp280_8h_a23ebf5aa69d883165e230c488833b109}{BMP280\+\_\+\+Standby\+Time}} \{ \newline
+{\bfseries BMP280\+\_\+\+STANDBY\+\_\+05} = 0
+, {\bfseries BMP280\+\_\+\+STANDBY\+\_\+62} = 1
+, {\bfseries BMP280\+\_\+\+STANDBY\+\_\+125} = 2
+, {\bfseries BMP280\+\_\+\+STANDBY\+\_\+250} = 3
+, \newline
+{\bfseries BMP280\+\_\+\+STANDBY\+\_\+500} = 4
+, {\bfseries BMP280\+\_\+\+STANDBY\+\_\+1000} = 5
+, {\bfseries BMP280\+\_\+\+STANDBY\+\_\+2000} = 6
+, {\bfseries BMP280\+\_\+\+STANDBY\+\_\+4000} = 7
+ \}
+\begin{DoxyCompactList}\small\item\em Stand by time between measurements in normal mode. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{bmp280_8h_ae36e8912e8a4ad47a5b6bcd4939db6aa}{bmp280\+\_\+init\+\_\+default\+\_\+params}} (\mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}} \texorpdfstring{$\ast$}{*}params)
+\begin{DoxyCompactList}\small\item\em Initialize default BMP280 parameters. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280_8h_ac86eef708d9f6c8a797d45cbbc360bd9}{bmp280\+\_\+init}} (\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}dev, \mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}} \texorpdfstring{$\ast$}{*}params)
+\begin{DoxyCompactList}\small\item\em Initialize BMP280/\+BME280 module. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280_8h_a5bcdb981b95481059526976c23fb295e}{bmp280\+\_\+force\+\_\+measurement}} (\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}dev)
+\begin{DoxyCompactList}\small\item\em Start one measurement in forced mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280_8h_aefa90b756a2bbd97ea580ff6527bca53}{bmp280\+\_\+is\+\_\+measuring}} (\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}dev)
+\begin{DoxyCompactList}\small\item\em Check whether BMP280 is busy measuring temperature or pressure. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280_8h_a648fe1b52d4a2ed15023d5efb1702256}{bmp280\+\_\+read\+\_\+fixed}} (\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}dev, int32\+\_\+t \texorpdfstring{$\ast$}{*}temperature, uint32\+\_\+t \texorpdfstring{$\ast$}{*}pressure, uint32\+\_\+t \texorpdfstring{$\ast$}{*}humidity)
+\begin{DoxyCompactList}\small\item\em Read compensated fixed-\/point temperature, pressure and optional humidity. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280_8h_a7150453ab8fb9ae57ed7b89d0a4fa4d9}{bmp280\+\_\+read\+\_\+float}} (\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}dev, float \texorpdfstring{$\ast$}{*}temperature, float \texorpdfstring{$\ast$}{*}pressure, float \texorpdfstring{$\ast$}{*}humidity)
+\begin{DoxyCompactList}\small\item\em Read compensated floating-\/point temperature, pressure and optional humidity. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Low-\/level BMP280/\+BME280 driver API. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{bmp280_8h_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b}\index{bmp280.h@{bmp280.h}!BME280\_CHIP\_ID@{BME280\_CHIP\_ID}}
+\index{BME280\_CHIP\_ID@{BME280\_CHIP\_ID}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BME280\_CHIP\_ID}{BME280\_CHIP\_ID}}
+{\footnotesize\ttfamily \label{bmp280_8h_aa9471d8f9c99880c3b85360017908e6b} 
+\#define BME280\+\_\+\+CHIP\+\_\+\+ID~0x60}
+
+
+
+Expected BME280 chip identifier. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00033}{33}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280_8c_source_l00146}{bmp280\+\_\+init()}} i \mbox{\hyperlink{bmp280_8c_source_l00306}{bmp280\+\_\+read\+\_\+fixed()}}.
+
+\Hypertarget{bmp280_8h_aa29aaafdd798a1593a4b536f0ed7c9c2}\index{bmp280.h@{bmp280.h}!BMP280\_CHIP\_ID@{BMP280\_CHIP\_ID}}
+\index{BMP280\_CHIP\_ID@{BMP280\_CHIP\_ID}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_CHIP\_ID}{BMP280\_CHIP\_ID}}
+{\footnotesize\ttfamily \label{bmp280_8h_aa29aaafdd798a1593a4b536f0ed7c9c2} 
+\#define BMP280\+\_\+\+CHIP\+\_\+\+ID~0x58}
+
+
+
+Expected BMP280 chip identifier. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00031}{31}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280_8c_source_l00146}{bmp280\+\_\+init()}}.
+
+\Hypertarget{bmp280_8h_aa11b925ebf4b81cf1b62232196ac1d8f}\index{bmp280.h@{bmp280.h}!BMP280\_I2C\_ADDRESS\_0@{BMP280\_I2C\_ADDRESS\_0}}
+\index{BMP280\_I2C\_ADDRESS\_0@{BMP280\_I2C\_ADDRESS\_0}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_I2C\_ADDRESS\_0}{BMP280\_I2C\_ADDRESS\_0}}
+{\footnotesize\ttfamily \label{bmp280_8h_aa11b925ebf4b81cf1b62232196ac1d8f} 
+\#define BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+0~0x76}
+
+
+
+Ciastkolog.\+pl (\href{https://github.com/ciastkolog}{\texttt{https\+://github.\+com/ciastkolog}}). 
+
+The MIT License (MIT) Copyright (c) 2016 sheinz (\href{https://github.com/sheinz}{\texttt{https\+://github.\+com/sheinz}}) BMP280 or BME280 address is 0x77 if SDO pin is high, and is 0x76 if SDO pin is low.
+
+I2C address when SDO pin is low. 
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00026}{26}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280__api_8c_source_l00152}{bmp280\+\_\+api\+\_\+init()}} i \mbox{\hyperlink{bmp280_8c_source_l00146}{bmp280\+\_\+init()}}.
+
+\Hypertarget{bmp280_8h_a0b9ffea4fca103b7edef727777596909}\index{bmp280.h@{bmp280.h}!BMP280\_I2C\_ADDRESS\_1@{BMP280\_I2C\_ADDRESS\_1}}
+\index{BMP280\_I2C\_ADDRESS\_1@{BMP280\_I2C\_ADDRESS\_1}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_I2C\_ADDRESS\_1}{BMP280\_I2C\_ADDRESS\_1}}
+{\footnotesize\ttfamily \label{bmp280_8h_a0b9ffea4fca103b7edef727777596909} 
+\#define BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+1~0x77}
+
+
+
+I2C address when SDO pin is high. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00028}{28}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280__api_8c_source_l00152}{bmp280\+\_\+api\+\_\+init()}} i \mbox{\hyperlink{bmp280_8c_source_l00146}{bmp280\+\_\+init()}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{bmp280_8h_doc-enum-members}
+\doxysubsection{Dokumentacja typów wyliczanych}
+\Hypertarget{bmp280_8h_a806a38733a5f185f636208781ee9d6ce}\index{bmp280.h@{bmp280.h}!BMP280\_Filter@{BMP280\_Filter}}
+\index{BMP280\_Filter@{BMP280\_Filter}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_Filter}{BMP280\_Filter}}
+{\footnotesize\ttfamily \label{bmp280_8h_a806a38733a5f185f636208781ee9d6ce} 
+enum \mbox{\hyperlink{bmp280_8h_a806a38733a5f185f636208781ee9d6ce}{BMP280\+\_\+\+Filter}}}
+
+\begin{DoxyEnumFields}[2]{Wartości wyliczeń}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BMP280\_FILTER\_OFF@{BMP280\_FILTER\_OFF}!bmp280.h@{bmp280.h}}\index{bmp280.h@{bmp280.h}!BMP280\_FILTER\_OFF@{BMP280\_FILTER\_OFF}}}\Hypertarget{bmp280_8h_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2}\label{bmp280_8h_a806a38733a5f185f636208781ee9d6cea83525ce721ae5eebf638378fa3946de2} 
+BMP280\+\_\+\+FILTER\+\_\+\+OFF&IIR filter disabled. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BMP280\_FILTER\_2@{BMP280\_FILTER\_2}!bmp280.h@{bmp280.h}}\index{bmp280.h@{bmp280.h}!BMP280\_FILTER\_2@{BMP280\_FILTER\_2}}}\Hypertarget{bmp280_8h_a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b}\label{bmp280_8h_a806a38733a5f185f636208781ee9d6cea37653e95069b724a284cf13683cf097b} 
+BMP280\+\_\+\+FILTER\+\_\+2&IIR filter coefficient 2. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BMP280\_FILTER\_4@{BMP280\_FILTER\_4}!bmp280.h@{bmp280.h}}\index{bmp280.h@{bmp280.h}!BMP280\_FILTER\_4@{BMP280\_FILTER\_4}}}\Hypertarget{bmp280_8h_a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de}\label{bmp280_8h_a806a38733a5f185f636208781ee9d6cea0557eb1b090bcf453271eb9ec77104de} 
+BMP280\+\_\+\+FILTER\+\_\+4&IIR filter coefficient 4. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BMP280\_FILTER\_8@{BMP280\_FILTER\_8}!bmp280.h@{bmp280.h}}\index{bmp280.h@{bmp280.h}!BMP280\_FILTER\_8@{BMP280\_FILTER\_8}}}\Hypertarget{bmp280_8h_a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609}\label{bmp280_8h_a806a38733a5f185f636208781ee9d6ceaffc6f151af15d3112473303d5ac41609} 
+BMP280\+\_\+\+FILTER\+\_\+8&IIR filter coefficient 8. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{BMP280\_FILTER\_16@{BMP280\_FILTER\_16}!bmp280.h@{bmp280.h}}\index{bmp280.h@{bmp280.h}!BMP280\_FILTER\_16@{BMP280\_FILTER\_16}}}\Hypertarget{bmp280_8h_a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e}\label{bmp280_8h_a806a38733a5f185f636208781ee9d6cea806a97e69e59d9e2c74822a814a5575e} 
+BMP280\+\_\+\+FILTER\+\_\+16&IIR filter coefficient 16. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00046}{46}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1}\index{bmp280.h@{bmp280.h}!BMP280\_Mode@{BMP280\_Mode}}
+\index{BMP280\_Mode@{BMP280\_Mode}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_Mode}{BMP280\_Mode}}
+{\footnotesize\ttfamily \label{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1} 
+enum \mbox{\hyperlink{bmp280_8h_a271e5e83e42a13012a3b8dbab9050af1}{BMP280\+\_\+\+Mode}}}
+
+
+
+Mode of BMP280 module operation. 
+
+Forced -\/ Measurement is initiated by user. Normal -\/ Continues measurement. 
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00040}{40}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}\index{bmp280.h@{bmp280.h}!BMP280\_Oversampling@{BMP280\_Oversampling}}
+\index{BMP280\_Oversampling@{BMP280\_Oversampling}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_Oversampling}{BMP280\_Oversampling}}
+{\footnotesize\ttfamily \label{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f} 
+enum \mbox{\hyperlink{bmp280_8h_a17d17863e5caf335d19a58c4ca964e1f}{BMP280\+\_\+\+Oversampling}}}
+
+
+
+Pressure oversampling settings. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00057}{57}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+\Hypertarget{bmp280_8h_a23ebf5aa69d883165e230c488833b109}\index{bmp280.h@{bmp280.h}!BMP280\_StandbyTime@{BMP280\_StandbyTime}}
+\index{BMP280\_StandbyTime@{BMP280\_StandbyTime}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{BMP280\_StandbyTime}{BMP280\_StandbyTime}}
+{\footnotesize\ttfamily \label{bmp280_8h_a23ebf5aa69d883165e230c488833b109} 
+enum \mbox{\hyperlink{bmp280_8h_a23ebf5aa69d883165e230c488833b109}{BMP280\+\_\+\+Standby\+Time}}}
+
+
+
+Stand by time between measurements in normal mode. 
+
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8h_source_l00069}{69}} pliku \mbox{\hyperlink{bmp280_8h_source}{bmp280.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{bmp280_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{bmp280_8h_a5bcdb981b95481059526976c23fb295e}\index{bmp280.h@{bmp280.h}!bmp280\_force\_measurement@{bmp280\_force\_measurement}}
+\index{bmp280\_force\_measurement@{bmp280\_force\_measurement}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_force\_measurement()}{bmp280\_force\_measurement()}}
+{\footnotesize\ttfamily \label{bmp280_8h_a5bcdb981b95481059526976c23fb295e} 
+bool bmp280\+\_\+force\+\_\+measurement (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}}]{dev}{}\end{DoxyParamCaption})}
+
+
+
+Start one measurement in forced mode. 
+
+The module remains in forced mode after this call. Do not call this method in normal mode.
+
+
+\begin{DoxyParams}{Parametry}
+{\em dev} & Driver handle. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the measurement trigger was written. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8c_source_l00211}{211}} pliku \mbox{\hyperlink{bmp280_8c_source}{bmp280.\+c}}.
+
+\Hypertarget{bmp280_8h_ac86eef708d9f6c8a797d45cbbc360bd9}\index{bmp280.h@{bmp280.h}!bmp280\_init@{bmp280\_init}}
+\index{bmp280\_init@{bmp280\_init}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_init()}{bmp280\_init()}}
+{\footnotesize\ttfamily \label{bmp280_8h_ac86eef708d9f6c8a797d45cbbc360bd9} 
+bool bmp280\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}}]{dev}{, }\item[{\mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{params}{}\end{DoxyParamCaption})}
+
+
+
+Initialize BMP280/\+BME280 module. 
+
+Probes for the device, soft resets the device, reads the calibration constants, and configures the device using the supplied parameters.
+
+The I2C address is assumed to have been initialized in the dev, and may be either BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+0 or BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+1. If the I2C address is unknown then try initializing each in turn.
+
+This may be called again to soft reset the device and initialize it again.
+
+
+\begin{DoxyParams}{Parametry}
+{\em dev} & Driver handle with I2C handle and address already set. \\
+\hline
+{\em params} & Sensor configuration parameters. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} on successful initialization. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8c_source_l00146}{146}} pliku \mbox{\hyperlink{bmp280_8c_source}{bmp280.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280_8h_source_l00119}{BMP280\+\_\+\+Handle\+Typedef\+::addr}}, \mbox{\hyperlink{bmp280_8h_source_l00033}{BME280\+\_\+\+CHIP\+\_\+\+ID}}, \mbox{\hyperlink{bmp280_8h_source_l00031}{BMP280\+\_\+\+CHIP\+\_\+\+ID}}, \mbox{\hyperlink{bmp280_8h_source_l00026}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+0}}, \mbox{\hyperlink{bmp280_8h_source_l00028}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+1}}, \mbox{\hyperlink{bmp280_8h_source_l00086}{bmp280\+\_\+params\+\_\+t\+::filter}}, \mbox{\hyperlink{bmp280_8h_source_l00125}{BMP280\+\_\+\+Handle\+Typedef\+::id}}, \mbox{\hyperlink{bmp280_8h_source_l00085}{bmp280\+\_\+params\+\_\+t\+::mode}}, \mbox{\hyperlink{bmp280_8h_source_l00089}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+humidity}}, \mbox{\hyperlink{bmp280_8h_source_l00087}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+pressure}}, \mbox{\hyperlink{bmp280_8h_source_l00088}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+temperature}} i \mbox{\hyperlink{bmp280_8h_source_l00090}{bmp280\+\_\+params\+\_\+t\+::standby}}.
+
+\Hypertarget{bmp280_8h_ae36e8912e8a4ad47a5b6bcd4939db6aa}\index{bmp280.h@{bmp280.h}!bmp280\_init\_default\_params@{bmp280\_init\_default\_params}}
+\index{bmp280\_init\_default\_params@{bmp280\_init\_default\_params}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_init\_default\_params()}{bmp280\_init\_default\_params()}}
+{\footnotesize\ttfamily \label{bmp280_8h_ae36e8912e8a4ad47a5b6bcd4939db6aa} 
+void bmp280\+\_\+init\+\_\+default\+\_\+params (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structbmp280__params__t}{bmp280\+\_\+params\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{params}{}\end{DoxyParamCaption})}
+
+
+
+Initialize default BMP280 parameters. 
+
+Default configuration\+:
+\begin{DoxyItemize}
+\item mode\+: NORMAL
+\item filter\+: OFF
+\item oversampling\+: x4
+\item standby time\+: 250ms
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parametry}
+{\em params} & \mbox{[}out\mbox{]} Parameter structure to initialize. \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8c_source_l00056}{56}} pliku \mbox{\hyperlink{bmp280_8c_source}{bmp280.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280_8h_source_l00047}{BMP280\+\_\+\+FILTER\+\_\+\+OFF}}, \mbox{\hyperlink{bmp280_8h_source_l00086}{bmp280\+\_\+params\+\_\+t\+::filter}}, \mbox{\hyperlink{bmp280_8h_source_l00085}{bmp280\+\_\+params\+\_\+t\+::mode}}, \mbox{\hyperlink{bmp280_8h_source_l00089}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+humidity}}, \mbox{\hyperlink{bmp280_8h_source_l00087}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+pressure}}, \mbox{\hyperlink{bmp280_8h_source_l00088}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+temperature}} i \mbox{\hyperlink{bmp280_8h_source_l00090}{bmp280\+\_\+params\+\_\+t\+::standby}}.
+
+\Hypertarget{bmp280_8h_aefa90b756a2bbd97ea580ff6527bca53}\index{bmp280.h@{bmp280.h}!bmp280\_is\_measuring@{bmp280\_is\_measuring}}
+\index{bmp280\_is\_measuring@{bmp280\_is\_measuring}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_is\_measuring()}{bmp280\_is\_measuring()}}
+{\footnotesize\ttfamily \label{bmp280_8h_aefa90b756a2bbd97ea580ff6527bca53} 
+bool bmp280\+\_\+is\+\_\+measuring (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}}]{dev}{}\end{DoxyParamCaption})}
+
+
+
+Check whether BMP280 is busy measuring temperature or pressure. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em dev} & Driver handle. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the sensor is currently measuring. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8c_source_l00223}{223}} pliku \mbox{\hyperlink{bmp280_8c_source}{bmp280.\+c}}.
+
+\Hypertarget{bmp280_8h_a648fe1b52d4a2ed15023d5efb1702256}\index{bmp280.h@{bmp280.h}!bmp280\_read\_fixed@{bmp280\_read\_fixed}}
+\index{bmp280\_read\_fixed@{bmp280\_read\_fixed}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_read\_fixed()}{bmp280\_read\_fixed()}}
+{\footnotesize\ttfamily \label{bmp280_8h_a648fe1b52d4a2ed15023d5efb1702256} 
+bool bmp280\+\_\+read\+\_\+fixed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}}]{dev}{, }\item[{int32\+\_\+t \texorpdfstring{$\ast$}{*}}]{temperature}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{pressure}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{humidity}{}\end{DoxyParamCaption})}
+
+
+
+Read compensated fixed-\/point temperature, pressure and optional humidity. 
+
+Temperature in degrees Celsius times 100.
+
+Pressure in Pascals in fixed point 24 bit integer 8 bit fraction format.
+
+Humidity is optional and only read for the BME280, in percent relative humidity as a fixed point 22 bit integer and 10 bit fraction format.
+
+
+\begin{DoxyParams}{Parametry}
+{\em dev} & Driver handle. \\
+\hline
+{\em temperature} & \mbox{[}out\mbox{]} Temperature in centi-\/degrees Celsius. \\
+\hline
+{\em pressure} & \mbox{[}out\mbox{]} Pressure in Pa using 24.\+8 fixed-\/point format. \\
+\hline
+{\em humidity} & \mbox{[}out\mbox{]} Optional humidity in BME280 fixed-\/point format. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when data was read and compensated. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8c_source_l00306}{306}} pliku \mbox{\hyperlink{bmp280_8c_source}{bmp280.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280_8h_source_l00033}{BME280\+\_\+\+CHIP\+\_\+\+ID}} i \mbox{\hyperlink{bmp280_8h_source_l00125}{BMP280\+\_\+\+Handle\+Typedef\+::id}}.
+
+\Hypertarget{bmp280_8h_a7150453ab8fb9ae57ed7b89d0a4fa4d9}\index{bmp280.h@{bmp280.h}!bmp280\_read\_float@{bmp280\_read\_float}}
+\index{bmp280\_read\_float@{bmp280\_read\_float}!bmp280.h@{bmp280.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_read\_float()}{bmp280\_read\_float()}}
+{\footnotesize\ttfamily \label{bmp280_8h_a7150453ab8fb9ae57ed7b89d0a4fa4d9} 
+bool bmp280\+\_\+read\+\_\+float (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structBMP280__HandleTypedef}{BMP280\+\_\+\+Handle\+Typedef}} \texorpdfstring{$\ast$}{*}}]{dev}{, }\item[{float \texorpdfstring{$\ast$}{*}}]{temperature}{, }\item[{float \texorpdfstring{$\ast$}{*}}]{pressure}{, }\item[{float \texorpdfstring{$\ast$}{*}}]{humidity}{}\end{DoxyParamCaption})}
+
+
+
+Read compensated floating-\/point temperature, pressure and optional humidity. 
+
+Temperature in degrees Celsius. Pressure in Pascals. Humidity is optional and only read for the BME280, in percent relative humidity.
+
+
+\begin{DoxyParams}{Parametry}
+{\em dev} & Driver handle. \\
+\hline
+{\em temperature} & \mbox{[}out\mbox{]} Temperature in degrees Celsius. \\
+\hline
+{\em pressure} & \mbox{[}out\mbox{]} Pressure in Pascals. \\
+\hline
+{\em humidity} & \mbox{[}out\mbox{]} Optional relative humidity in percent. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when data was read and compensated. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280_8c_source_l00340}{340}} pliku \mbox{\hyperlink{bmp280_8c_source}{bmp280.\+c}}.
+

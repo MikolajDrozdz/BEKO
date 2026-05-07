@@ -1,0 +1,94 @@
+\doxysection{Dokumentacja katalogu Core/\+App/security}
+\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88}{}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88}\index{Dokumentacja katalogu Core/App/security@{Dokumentacja katalogu Core/App/security}}
+
+
+\doxysubsection{Opis szczegółowy}
+\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md68}{}\doxysubsection{\texorpdfstring{Security}{Security}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md68}
+Ten katalog zbiera założenia i zadania dla bezpieczeństwa komunikacji BEKO.
+
+Dokumenty pomocnicze\+:
+\begin{DoxyItemize}
+\item {\ttfamily SECURITY\+\_\+\+ARCHITECTURE.\+md} -\/ pełny opis architektury bezpieczeństwa\+: TPM, AES/\+HMAC, root seed, EEPROM, ramki, ACK, anti-\/replay, PIN i przykłady,
+\item {\ttfamily THREAT\+\_\+\+MODEL.\+md} -\/ skrócony model zagrożeń dla bieżącej architektury,
+\item {\ttfamily STRIDE\+\_\+\+CIA\+\_\+\+ANALYSIS.\+md} -\/ tabela klas ataków, obecnych zabezpieczeń i dalszych mitigacji.
+\item {\ttfamily ../../../gateway\+\_\+docs/\+SECURITY\+\_\+\+CRYPTO\+\_\+\+OVERVIEW.md} -\/ przekrojowy opis kryptografii i ochrony całego systemu, w tym gatewaya.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md69}{}\doxysubsection{\texorpdfstring{Aktualny model}{Aktualny model}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md69}
+
+\begin{DoxyItemize}
+\item {\ttfamily LAVIET\+\_\+\+FRAME\+\_\+\+V1} używa {\ttfamily src\+\_\+id}, {\ttfamily dst\+\_\+id}, {\ttfamily msg\+\_\+id}, {\ttfamily counter}, {\ttfamily payload\+\_\+len} i {\ttfamily mac\+\_\+tag}.
+\item Ramki są uwierzytelniane HMAC-\/\+SHA256, a payload może być szyfrowany AES-\/\+CTR.
+\item Relay mesh/\+TTL został usunięty z bieżącej architektury; node działa w topologii gwiazdy z gatewayem.
+\item Ochrona przed replay w pierwszym wdrożeniu używa monotonicznego {\ttfamily counter} dla relacji gateway-\/node i zapisuje go w małym slocie {\ttfamily secret} NVM.
+\item {\ttfamily TPM PP} w obecnym hardware jest podłączony do samego modułu TPM, nie do GPIO MCU. Pin TPM PP to pin {\ttfamily 7}, aktywny stanem {\ttfamily VDD}.
+\item TPM jest podłączony przez {\ttfamily I2\+C3} ({\ttfamily PC0} = SCL, {\ttfamily PC1} = SDA); reset {\ttfamily TPM\+\_\+\+RESET\#} jest na {\ttfamily PB0}, a {\ttfamily TPM\+\_\+\+DAVINT\#} / {\ttfamily PIRQ} na {\ttfamily PH0} jako {\ttfamily EXTI0}, aktywny niskim stanem.
+\item Firmware używa TPM jako źródła trwałego root seeda\+:
+\begin{DoxyItemize}
+\item główny NV index\+: {\ttfamily 0x01\+C10101},
+\item legacy read-\/only/migration index\+: {\ttfamily 0x01\+C10100},
+\item atrybuty głównego indexu\+: {\ttfamily PPWRITE}, {\ttfamily OWNERREAD}, {\ttfamily NO\+\_\+\+DA}.
+\end{DoxyItemize}
+\item Zapis lub rotacja root seeda wymaga aktywnego TPM PP. STM32 nie odczytuje tego pinu jako GPIO; wymuszenie odbywa się przez TPM authorization ({\ttfamily TPM\+\_\+\+RH\+\_\+\+PLATFORM} dla {\ttfamily NV\+\_\+\+Write}).
+\item Klucz szyfrowania sekretów EEPROM jest wyprowadzany z TPM-\/backed root seeda. Przy pierwszym starcie po zmianie firmware próbuje przepisać stare wpisy EEPROM z dawnego stałego klucza na klucz wyprowadzony z TPM.
+\item PP nie zabezpiecza jeszcze całego pairingu radiowego. Jeśli pairing albo inne operacje administracyjne mają wymagać fizycznej obecności, trzeba dodać osobne TPM policy/session albo równoważny flow oparty o TPM.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md70}{}\doxysubsection{\texorpdfstring{DoS / Flood Defense}{DoS / Flood Defense}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md70}
+Poniżej są mechanizmy, które można wdrażać warstwowo. Nie trzeba robić wszystkiego naraz.\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md71}{}\doxysubsubsection{\texorpdfstring{1. Rate limiting per source}{1. Rate limiting per source}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md71}
+
+\begin{DoxyItemize}
+\item Trzymać licznik ramek na {\ttfamily src\+\_\+id} w krótkim oknie czasu, np. {\ttfamily N / 10 s}.
+\item Po przekroczeniu limitu przestać obsługiwać ruch z tego źródła.
+\item Dla bardzo agresywnych źródeł wejść w czasowe {\ttfamily cooldown}.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md72}{}\doxysubsubsection{\texorpdfstring{2. Global TX budget}{2. Global TX budget}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md72}
+
+\begin{DoxyItemize}
+\item Osobno limitować ruch użytkownika i ruch administracyjny.
+\item Węzeł nie powinien poświęcić całego duty-\/cycle na flood control traffic.
+\item Praktycznie\+: token bucket dla TX, np. osobny budżet na minutę.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md73}{}\doxysubsubsection{\texorpdfstring{3. Separate limits for control traffic}{3. Separate limits for control traffic}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md73}
+
+\begin{DoxyItemize}
+\item {\ttfamily PAIR\+\_\+\+REQ}, {\ttfamily PAIR\+\_\+\+RESP}, {\ttfamily ERROR}, {\ttfamily CFG}, {\ttfamily COUNTER\+\_\+\+SYNC}, {\ttfamily KEY\+\_\+\+ROTATE} i {\ttfamily ACK} powinny mieć niższe limity niż zwykłe {\ttfamily DATA}.
+\item Pairing powinien działać tylko w krótkim oknie serwisowym.
+\item Powtarzane {\ttfamily PAIR\+\_\+\+REQ} od jednego źródła powinny być szybko wyciszane.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md74}{}\doxysubsubsection{\texorpdfstring{4. Replay-\/aware abuse scoring}{4. Replay-\/aware abuse scoring}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md74}
+
+\begin{DoxyItemize}
+\item Każde wykrycie replay zwiększa licznik nadużyć dla {\ttfamily src\+\_\+id}.
+\item Po kilku replayach z rzędu można\+:
+\begin{DoxyItemize}
+\item zablokować obsługę źródła,
+\item obniżyć priorytet,
+\item logować zdarzenie security.
+\end{DoxyItemize}
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md75}{}\doxysubsubsection{\texorpdfstring{5. Strict frame policy}{5. Strict frame policy}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md75}
+
+\begin{DoxyItemize}
+\item Przyjmować tylko ramki, które pasują do topologii gateway-\/node.
+\item Nie generować {\ttfamily ACK} dla broadcastu ani dla błędnego HMAC/replay.
+\item Walidować typ, flagi, {\ttfamily payload\+\_\+len}, {\ttfamily src\+\_\+id} i {\ttfamily dst\+\_\+id} przed kryptografią.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md76}{}\doxysubsubsection{\texorpdfstring{6. Bounded parsing cost}{6. Bounded parsing cost}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md76}
+
+\begin{DoxyItemize}
+\item Odrzucać ramki z nieprawidłowym {\ttfamily src\+\_\+id}, {\ttfamily dst\+\_\+id}, {\ttfamily msg\+\_\+id}, {\ttfamily counter} lub długością przed cięższą logiką.
+\item Nie robić drogich operacji kryptograficznych dla ruchu, który już wygląda na śmieciowy.
+\item Przy floodzie najtańsze filtry powinny działać jako pierwsze.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md77}{}\doxysubsubsection{\texorpdfstring{7. Queue and UI protection}{7. Queue and UI protection}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md77}
+
+\begin{DoxyItemize}
+\item Oddzielić logi security od ścieżki krytycznej UI.
+\item Nie generować popupu dla każdego zdarzenia flood/replay.
+\item Zamiast tego agregować liczniki i wyświetlać skrócony status.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md78}{}\doxysubsubsection{\texorpdfstring{8. Channel occupancy protection}{8. Channel occupancy protection}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md78}
+
+\begin{DoxyItemize}
+\item Auto-\/ping i control traffic powinny respektować duty-\/cycle i własny budżet TX.
+\item W stanie przeciążenia najpierw ograniczać ruch administracyjny/testowy, dopiero potem ruch użytkownika.
+\item Dobrze działa też adaptacyjne wydłużanie odstępów TX po wykryciu floodu.
+\end{DoxyItemize}\hypertarget{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md79}{}\doxysubsection{\texorpdfstring{Najbardziej opłacalna kolejność wdrożenia}{Najbardziej opłacalna kolejność wdrożenia}}\label{dir_3aa3598b8fe5b4c76a427191eb55bc88_autotoc_md79}
+
+\begin{DoxyEnumerate}
+\item Per-\/source rate limiting.
+\item Global TX budget.
+\item Abuse scoring dla replay/flood.
+\item Ograniczenia pairing/control traffic.
+\item Agregowane logowanie security zamiast popup spam. 
+\end{DoxyEnumerate}

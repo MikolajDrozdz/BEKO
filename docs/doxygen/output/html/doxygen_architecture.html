@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Architektura firmware</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('doxygen_architecture.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Architektura firmware </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><h1 class="doxsection"><a class="anchor" id="arch_layers"></a>
+Warstwy</h1>
+<p>Firmware jest podzielony na kilka warstw aplikacyjnych:</p>
+<ul>
+<li>warstwa startowa i wspolne zasoby: <span class="tt"><a class="el" href="app_8c_source.html">app.c</a></span>, <span class="tt"><a class="el" href="app_8h.html" title="Main application entry points and shared I2C bus helpers.">app.h</a></span>,</li>
+<li>warstwa radiowa aplikacji: <span class="tt"><a class="el" href="radio__main_8c_source.html">radio_main.c</a></span>, <span class="tt"><a class="el" href="radio__main_8h.html" title="Application radio task, runtime profile and command API.">radio_main.h</a></span>,</li>
+<li>biblioteka radiowa i backendy modulacji: <span class="tt">radio_lib/</span>,</li>
+<li>ramka i kryptografia LAVIET: <span class="tt">laviet_frame.*</span>, <span class="tt">laviet_crypto.*</span>,</li>
+<li>security i storage: <span class="tt">security_main.*</span>, <span class="tt">i2c_mem_store_lib/</span>, <span class="tt">st33ktpm2x_lib/</span>,</li>
+<li>lokalny UI: <span class="tt">menu_main.*</span>, <span class="tt">lcd_main.*</span>, <span class="tt">button_main.*</span>, <span class="tt">lcd_library/</span>,</li>
+<li>sensory i sygnalizacja: <span class="tt">bmp280_*</span>, <span class="tt">tof_*</span>, <span class="tt">led_array_*</span>,</li>
+<li>konsola serwisowa: <span class="tt">service.*</span>.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="arch_tasks"></a>
+Zadania RTOS</h1>
+<p>Glowne moduly aplikacji dzialaja jako zadania CMSIS-RTOS2/FreeRTOS:</p>
+<ul>
+<li><span class="tt"><a class="el" href="radio__main_8h.html#a306213035cbba7d1c6a53b0233651c71" title="Create the radio task and command queue.">radio_main_create_task()</a></span> tworzy zadanie radia i kolejke komend,</li>
+<li><span class="tt"><a class="el" href="security__main_8h.html#a5e5d1fd009639cd21d5d6a03b5b2e45e" title="Create the security task and command queue.">security_main_create_task()</a></span> tworzy zadanie security i kolejke komend,</li>
+<li><span class="tt"><a class="el" href="menu__main_8h.html#aec03d8598b890c15095b74efd5131325" title="Create the LCD menu task and notification queue.">menu_main_create_task()</a></span> obsluguje ekran menu oraz notyfikacje,</li>
+<li><span class="tt"><a class="el" href="lcd__main_8h.html#abb7810060d5cef86f0e368eb7970855b" title="Create the LCD task and message queue.">lcd_main_create_task()</a></span> zarzadza fizycznym odswiezaniem LCD,</li>
+<li><span class="tt"><a class="el" href="button__main_8h.html#a0c0a8612219f7db32c778f96b9522d1e" title="Create the button polling task and event queue.">button_main_create_task()</a></span> wykonuje polling/debounce przyciskow,</li>
+<li><span class="tt"><a class="el" href="service_8h.html#ad9002873ec70472fd9aa9a7ac510bd4e" title="Create the UART service task when SERVICE_UART is enabled.">service_uart_create_task()</a></span> tworzy opcjonalna konsole UART,</li>
+<li><span class="tt"><a class="el" href="bmp280__main_8h.html#a3bc6ff102da579107271228ecd7e8503" title="Create the BMP280 sampling task when the sensor is enabled for the board.">bmp280_main_create_task()</a></span>, <span class="tt"><a class="el" href="tof__main_8h.html#a47d775ca130aff0b82ff1e5ad7e12565" title="Create the ToF periodic sampling task.">tof_main_create_task()</a></span> i <span class="tt"><a class="el" href="led__array__main_8h.html#ac390ff762a9deab7592037a40a9c262d" title="Create the LED array demo/status task.">led_array_main_create_task()</a></span> uruchamiaja zadania peryferyjne.</li>
+</ul>
+<h1 class="doxsection"><a class="anchor" id="arch_shared_i2c"></a>
+Wspolna magistrala I2C</h1>
+<p>Dostep do I2C jest serializowany przez helpery z <span class="tt"><a class="el" href="app_8h.html" title="Main application entry points and shared I2C bus helpers.">app.h</a></span>. Moduly korzystaja z <span class="tt">app_i2c_master_transmit()</span>, <span class="tt">app_i2c_master_receive()</span>, <span class="tt">app_i2c_mem_write()</span> i <span class="tt">app_i2c_mem_read()</span>, zeby unikac kolizji na wspolnej magistrali oraz miec jedno miejsce odzyskiwania po bledach magistrali.</p>
+<h1 class="doxsection"><a class="anchor" id="arch_runtime"></a>
+Runtime configuration</h1>
+<p><span class="tt"><a class="el" href="structradio__main__runtime__cfg__t.html" title="Snapshot pełnej konfiguracji radiowej widzianej przez aplikację.">radio_main_runtime_cfg_t</a></span> opisuje pelny snapshot profili radiowych i flag runtime. <span class="tt"><a class="el" href="structsecurity__runtime__cfg__t.html" title="Persistent and runtime security settings snapshot.">security_runtime_cfg_t</a></span> rozszerza go o ustawienia security i dane utrwalane w magazynie. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">BEKO Pager Firmware</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

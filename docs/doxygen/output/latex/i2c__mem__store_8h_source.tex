@@ -1,0 +1,134 @@
+\doxysection{i2c\+\_\+mem\+\_\+store.\+h}
+\hypertarget{i2c__mem__store_8h_source}{}\label{i2c__mem__store_8h_source}\index{Core/App/i2c\_mem\_store\_lib/i2c\_mem\_store.h@{Core/App/i2c\_mem\_store\_lib/i2c\_mem\_store.h}}
+\mbox{\hyperlink{i2c__mem__store_8h}{Idź do dokumentacji tego pliku.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00014}00014\ \textcolor{preprocessor}{\#ifndef\ APP\_I2C\_MEM\_STORE\_LIB\_I2C\_MEM\_STORE\_H\_}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00015}00015\ \textcolor{preprocessor}{\#define\ APP\_I2C\_MEM\_STORE\_LIB\_I2C\_MEM\_STORE\_H\_}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00017}00017\ \textcolor{preprocessor}{\#include\ "{}stm32u5xx\_hal.h"{}}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00019}00019\ \textcolor{preprocessor}{\#include\ <stdbool.h>}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00020}00020\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00022}00022\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00023}00023\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}\ \{}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00024}00024\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00029}00029\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_I2C\_ADDR\_DEFAULT\ \ \ \ \ \ \ \ \ \ \ \ 0x50U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00030}00030\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_TOTAL\_BYTES\_DEFAULT\ \ \ \ \ \ \ \ \ 128U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00031}00031\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_PAGE\_BYTES\_DEFAULT\ \ \ \ \ \ \ \ \ \ 8U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00032}00032\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_WRITE\_CYCLE\_MS\_DEFAULT\ \ \ \ \ \ 5U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00033}00033\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_SECRET\_AREA\_BYTES\_DEFAULT\ \ \ 24U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00034}00034\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_LOG\_RECORD\_SIZE\ \ \ \ \ \ \ \ \ \ \ \ \ 24U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00035}00035\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX\ \ \ \ \ \ \ \ \ \ \ \ \ 6U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00036}00036\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_SECRET\_SLOT\_SIZE\ \ \ \ \ \ \ \ \ \ \ \ 24U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00037}00037\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_SECRET\_PAYLOAD\_MAX\ \ \ \ \ \ \ \ \ \ 14U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00038}00038\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX\ \ \ \ \ \ \ \ \ \ \ \ \ \ 6U}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00039}00039\ \textcolor{preprocessor}{\#define\ I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX\ \ \ \ \ \ \ \ \ \ \ \ 8U}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00045}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{00045}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{enum}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00046}00046\ \{}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00047}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c}{00047}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba6d923d03a870a70b395c81b5e318357c}{I2C\_MEM\_STORE\_OK}}\ =\ 0,\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00048}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba0e920d8bf38c035f20dbd90c77ba3cca}{00048}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba0e920d8bf38c035f20dbd90c77ba3cca}{I2C\_MEM\_STORE\_EINVAL}},\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00049}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baf613cfedd75407163d3f9b4fa4fe2213}{00049}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baf613cfedd75407163d3f9b4fa4fe2213}{I2C\_MEM\_STORE\_ESTATE}},\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00050}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4badbbd4af46fe5fe2356d98459f1bf565e}{00050}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4badbbd4af46fe5fe2356d98459f1bf565e}{I2C\_MEM\_STORE\_EHAL}},\ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00051}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baaa2004516822cd1277102956fe5eacb3}{00051}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4baaa2004516822cd1277102956fe5eacb3}{I2C\_MEM\_STORE\_ETIMEOUT}},\ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00052}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba8351242a518f7f1ba17f2c3ff0aaa0b4}{00052}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba8351242a518f7f1ba17f2c3ff0aaa0b4}{I2C\_MEM\_STORE\_ECRC}},\ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00053}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba51ed42b2d80759797b5f7ceef9f4e367}{00053}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba51ed42b2d80759797b5f7ceef9f4e367}{I2C\_MEM\_STORE\_EPROTO}},\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00054}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba046db9226b7dd89784a3d96cf9cf96ee}{00054}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba046db9226b7dd89784a3d96cf9cf96ee}{I2C\_MEM\_STORE\_ENOTFOUND}},\ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00055}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba54e39db55a1e11ff4338592e520cfdd2}{00055}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba54e39db55a1e11ff4338592e520cfdd2}{I2C\_MEM\_STORE\_EOVERFLOW}},\ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00056}\mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba205ae360e9559e9f923132f63efafd65}{00056}}\ \ \ \ \ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4ba205ae360e9559e9f923132f63efafd65}{I2C\_MEM\_STORE\_EFULL}}\ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00057}00057\ \}\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}};}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00058}00058\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00062}\mbox{\hyperlink{structi2c__mem__store__log__record__t}{00062}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00063}00063\ \{}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00064}\mbox{\hyperlink{structi2c__mem__store__log__record__t_adceeadbe1bb5b45f2c3421a7d690cfe1}{00064}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structi2c__mem__store__log__record__t_adceeadbe1bb5b45f2c3421a7d690cfe1}{sequence}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00065}\mbox{\hyperlink{structi2c__mem__store__log__record__t_ab9967eb15efbb252fcca55e2f5d7211b}{00065}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structi2c__mem__store__log__record__t_ab9967eb15efbb252fcca55e2f5d7211b}{timestamp\_ms}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00066}\mbox{\hyperlink{structi2c__mem__store__log__record__t_a6e9cf39c7f9fbd2333ad119378486542}{00066}}\ \ \ \ \ int16\_t\ \mbox{\hyperlink{structi2c__mem__store__log__record__t_a6e9cf39c7f9fbd2333ad119378486542}{rssi\_dbm}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00067}\mbox{\hyperlink{structi2c__mem__store__log__record__t_ab947d98d458ed1f09ab2d2707c62aa56}{00067}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structi2c__mem__store__log__record__t_ab947d98d458ed1f09ab2d2707c62aa56}{length}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00068}\mbox{\hyperlink{structi2c__mem__store__log__record__t_a2970dab04ffd2d81d284e0df3158c2fc}{00068}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structi2c__mem__store__log__record__t_a2970dab04ffd2d81d284e0df3158c2fc}{payload}}[I2C\_MEM\_STORE\_LOG\_PAYLOAD\_MAX];\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00069}00069\ \}\ \mbox{\hyperlink{structi2c__mem__store__log__record__t}{i2c\_mem\_store\_log\_record\_t}};}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00070}00070\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00074}\mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{00074}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00075}00075\ \{}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00076}\mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a466b53c05e71e6463b474d925ab1fcf4}{00076}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a466b53c05e71e6463b474d925ab1fcf4}{id\_len}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00077}\mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a390e7764a81895a3b039fb4d074f8318}{00077}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a390e7764a81895a3b039fb4d074f8318}{code\_len}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00078}\mbox{\hyperlink{structi2c__mem__store__trusted__device__t_a53afb90ac1bd8821a505c53e39724a64}{00078}}\ \ \ \ \ uint8\_t\ \textcolor{keywordtype}{id}[I2C\_MEM\_STORE\_TRUSTED\_ID\_MAX];\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00079}\mbox{\hyperlink{structi2c__mem__store__trusted__device__t_abe88c485bb7cee38f5c27641e77fd017}{00079}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structi2c__mem__store__trusted__device__t_abe88c485bb7cee38f5c27641e77fd017}{code}}[I2C\_MEM\_STORE\_TRUSTED\_CODE\_MAX];\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00080}00080\ \}\ \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\_mem\_store\_trusted\_device\_t}};}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00085}\mbox{\hyperlink{structi2c__mem__store__cfg__t}{00085}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00086}00086\ \{}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00087}\mbox{\hyperlink{structi2c__mem__store__cfg__t_aa0207f256ed229e48746ea68ab8dda76}{00087}}\ \ \ \ \ I2C\_HandleTypeDef\ *\mbox{\hyperlink{structi2c__mem__store__cfg__t_aa0207f256ed229e48746ea68ab8dda76}{hi2c}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00088}\mbox{\hyperlink{structi2c__mem__store__cfg__t_aae4ca9c2a99532263753068889db7b85}{00088}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_aae4ca9c2a99532263753068889db7b85}{i2c\_addr\_7bit}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00089}\mbox{\hyperlink{structi2c__mem__store__cfg__t_a6d5e39036b619aa4df087f17a1a514fe}{00089}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_a6d5e39036b619aa4df087f17a1a514fe}{mem\_addr\_size}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00090}\mbox{\hyperlink{structi2c__mem__store__cfg__t_ab0673cb3af0bfb7a14c9e008e2a018e6}{00090}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_ab0673cb3af0bfb7a14c9e008e2a018e6}{total\_bytes}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00091}\mbox{\hyperlink{structi2c__mem__store__cfg__t_af133e5c61818113105ce822f57175d8e}{00091}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_af133e5c61818113105ce822f57175d8e}{page\_bytes}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00092}\mbox{\hyperlink{structi2c__mem__store__cfg__t_a950321e2eafc4e50418aec45bc9c45b1}{00092}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_a950321e2eafc4e50418aec45bc9c45b1}{write\_cycle\_ms}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00093}\mbox{\hyperlink{structi2c__mem__store__cfg__t_a51f47e7c7d14cfcdb7bf26c037f4150a}{00093}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_a51f47e7c7d14cfcdb7bf26c037f4150a}{secret\_area\_bytes}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00094}\mbox{\hyperlink{structi2c__mem__store__cfg__t_ae7cbb3316cc05d3a8af15518e2147cbd}{00094}}\ \ \ \ \ uint8\_t\ \mbox{\hyperlink{structi2c__mem__store__cfg__t_ae7cbb3316cc05d3a8af15518e2147cbd}{crypto\_key}}[16];\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00095}00095\ \}\ \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\_mem\_store\_cfg\_t}};}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00100}\mbox{\hyperlink{structi2c__mem__store__t}{00100}}\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00101}00101\ \{}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00102}\mbox{\hyperlink{structi2c__mem__store__t_af753053033bd65164d70d7e753031ac7}{00102}}\ \ \ \ \ \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\_mem\_store\_cfg\_t}}\ \mbox{\hyperlink{structi2c__mem__store__t_af753053033bd65164d70d7e753031ac7}{cfg}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00103}\mbox{\hyperlink{structi2c__mem__store__t_a23073aa999d1ebcf6dbc365f7d0e8507}{00103}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__t_a23073aa999d1ebcf6dbc365f7d0e8507}{slot\_count}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00104}\mbox{\hyperlink{structi2c__mem__store__t_a2c0a40a8973d7810a5c01f0c83b98946}{00104}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__t_a2c0a40a8973d7810a5c01f0c83b98946}{secret\_slot\_count}};\ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00105}\mbox{\hyperlink{structi2c__mem__store__t_a8691ec86729dc76ccdac070d138ff5ee}{00105}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__t_a8691ec86729dc76ccdac070d138ff5ee}{write\_slot}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00106}\mbox{\hyperlink{structi2c__mem__store__t_a7cfef32e14e2669b30c6ee0764554529}{00106}}\ \ \ \ \ uint16\_t\ \mbox{\hyperlink{structi2c__mem__store__t_a7cfef32e14e2669b30c6ee0764554529}{valid\_count}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00107}\mbox{\hyperlink{structi2c__mem__store__t_a592ab0350a3bbf7189d8bc39514e64b2}{00107}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structi2c__mem__store__t_a592ab0350a3bbf7189d8bc39514e64b2}{next\_sequence}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00108}\mbox{\hyperlink{structi2c__mem__store__t_a3cd7ae4383ea4961ace6c172da8be875}{00108}}\ \ \ \ \ uint32\_t\ \mbox{\hyperlink{structi2c__mem__store__t_a3cd7ae4383ea4961ace6c172da8be875}{secret\_counter}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00109}\mbox{\hyperlink{structi2c__mem__store__t_afa61538ac6766c57058ce44fb3c5393e}{00109}}\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structi2c__mem__store__t_afa61538ac6766c57058ce44fb3c5393e}{initialized}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00110}00110\ \}\ \mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}};}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00111}00111\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00117}00117\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{i2c__mem__store_8h_acfe62ca5532da23bdf82427aee292fab}{i2c\_mem\_store\_default\_cfg}}(\mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\_mem\_store\_cfg\_t}}\ *cfg,\ I2C\_HandleTypeDef\ *hi2c);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00118}00118\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00124}00124\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{i2c__mem__store_8h_aaba1a58ad6981efa72e2724df78236e4}{i2c\_mem\_store\_default\_cfg\_m24c01r}}(\mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\_mem\_store\_cfg\_t}}\ *cfg,\ I2C\_HandleTypeDef\ *hi2c);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00125}00125\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00133}00133\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a55b8dd95adc2c388e31bb8fc2b7d990a}{i2c\_mem\_store\_init}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structi2c__mem__store__cfg__t}{i2c\_mem\_store\_cfg\_t}}\ *cfg,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ format\_if\_needed);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00136}00136\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00142}00142\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a705f5bf61205843198a2d0d9091a3562}{i2c\_mem\_store\_format}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00143}00143\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00152}00152\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a3ea434f9cae24dc0dd36ce7ce9f8692a}{i2c\_mem\_store\_append\_message}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00153}00153\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ int16\_t\ rssi\_dbm,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00154}00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *payload,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00155}00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ payload\_len);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00156}00156\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00164}00164\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_aa667df3ee4ef4c6f7e7ac184c6647985}{i2c\_mem\_store\_read\_message}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00165}00165\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ index\_from\_latest,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00166}00166\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structi2c__mem__store__log__record__t}{i2c\_mem\_store\_log\_record\_t}}\ *out\_record);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00167}00167\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00174}00174\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a790b8abd22c0d3ee7003abca90b03f43}{i2c\_mem\_store\_get\_log\_count}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,\ uint16\_t\ *out\_count);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00175}00175\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00184}00184\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a4831ee6dfab6cf690e7de2a5457f4126}{i2c\_mem\_store\_secret\_write}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00185}00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ slot\_id,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00186}00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ uint8\_t\ *data,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00187}00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ data\_len);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00188}00188\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00198}00198\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_af0d8eb773abd635c2ce25e5bffe7ad58}{i2c\_mem\_store\_secret\_read}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00199}00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ slot\_id,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00200}00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *data\_out,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00201}00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ data\_capacity,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00202}00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *data\_len);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00203}00203\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00210}00210\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a7cf21bcdfa9e92d2ae652e9594e94663}{i2c\_mem\_store\_secret\_erase}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,\ uint16\_t\ slot\_id);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00211}00211\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00219}00219\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a82ec5a83b3b3b2f641924ad95b7175af}{i2c\_mem\_store\_trusted\_device\_write}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00220}00220\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ slot\_id,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00221}00221\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\_mem\_store\_trusted\_device\_t}}\ *trusted);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00222}00222\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00230}00230\ \mbox{\hyperlink{i2c__mem__store_8h_a977cb38c3a380bcf3513592448ceef4b}{i2c\_mem\_store\_status\_t}}\ \mbox{\hyperlink{i2c__mem__store_8h_a453a0dbba1eff77aa39c7a818d16ca40}{i2c\_mem\_store\_trusted\_device\_read}}(\mbox{\hyperlink{structi2c__mem__store__t}{i2c\_mem\_store\_t}}\ *ctx,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00231}00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ uint16\_t\ slot\_id,}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00232}00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structi2c__mem__store__trusted__device__t}{i2c\_mem\_store\_trusted\_device\_t}}\ *trusted);}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00233}00233\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00234}00234\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00235}00235\ \}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00236}00236\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00237}00237\ }
+\DoxyCodeLine{\Hypertarget{i2c__mem__store_8h_source_l00238}00238\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ APP\_I2C\_MEM\_STORE\_LIB\_I2C\_MEM\_STORE\_H\_\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

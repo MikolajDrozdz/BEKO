@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury menu_notification_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structmenu__notification__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury menu_notification_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Message passed from application subsystems to the menu task.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="menu__main_8h_source.html">Core/App/menu_main.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a610c43451b5f7e705d45caab8c170537" id="r_a610c43451b5f7e705d45caab8c170537"><td class="memItemLeft" align="right" valign="top"><a class="el" href="menu__main_8h.html#aabc9719ff8234a084c8016acdd8de0a5">menu_notification_type_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a610c43451b5f7e705d45caab8c170537">type</a></td></tr>
+<tr class="memdesc:a610c43451b5f7e705d45caab8c170537"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notification category.  <br /></td></tr>
+<tr class="memitem:ac6beef544269c0d4032a0b5c9286c1c1" id="r_ac6beef544269c0d4032a0b5c9286c1c1"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac6beef544269c0d4032a0b5c9286c1c1">rssi_dbm</a></td></tr>
+<tr class="memdesc:ac6beef544269c0d4032a0b5c9286c1c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">RSSI for RX notifications.  <br /></td></tr>
+<tr class="memitem:a9bb956118def552e4a6024e826bf2763" id="r_a9bb956118def552e4a6024e826bf2763"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9bb956118def552e4a6024e826bf2763">device_code</a></td></tr>
+<tr class="memdesc:a9bb956118def552e4a6024e826bf2763"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source or related device identifier.  <br /></td></tr>
+<tr class="memitem:a796d800a4e60745f9e9c25c41ce1ff4e" id="r_a796d800a4e60745f9e9c25c41ce1ff4e"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a796d800a4e60745f9e9c25c41ce1ff4e">reply_device_code</a></td></tr>
+<tr class="memdesc:a796d800a4e60745f9e9c25c41ce1ff4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reply destination suggested by notification.  <br /></td></tr>
+<tr class="memitem:a812960a97e7d5e10b410bae2008b3d89" id="r_a812960a97e7d5e10b410bae2008b3d89"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a812960a97e7d5e10b410bae2008b3d89">text</a> [21]</td></tr>
+<tr class="memdesc:a812960a97e7d5e10b410bae2008b3d89"><td class="mdescLeft">&#160;</td><td class="mdescRight">LCD-width text payload, null-terminated when possible.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Message passed from application subsystems to the menu task. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8h_source.html#l00028">28</a> pliku <a class="el" href="menu__main_8h_source.html">menu_main.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a9bb956118def552e4a6024e826bf2763" name="a9bb956118def552e4a6024e826bf2763"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bb956118def552e4a6024e826bf2763">&#9670;&#160;</a></span>device_code</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_notification_t::device_code</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Source or related device identifier. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8h_source.html#l00032">32</a> pliku <a class="el" href="menu__main_8h_source.html">menu_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a796d800a4e60745f9e9c25c41ce1ff4e" name="a796d800a4e60745f9e9c25c41ce1ff4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a796d800a4e60745f9e9c25c41ce1ff4e">&#9670;&#160;</a></span>reply_device_code</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t menu_notification_t::reply_device_code</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reply destination suggested by notification. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8h_source.html#l00033">33</a> pliku <a class="el" href="menu__main_8h_source.html">menu_main.h</a>.</p>
+
+</div>
+</div>
+<a id="ac6beef544269c0d4032a0b5c9286c1c1" name="ac6beef544269c0d4032a0b5c9286c1c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6beef544269c0d4032a0b5c9286c1c1">&#9670;&#160;</a></span>rssi_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t menu_notification_t::rssi_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>RSSI for RX notifications. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8h_source.html#l00031">31</a> pliku <a class="el" href="menu__main_8h_source.html">menu_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a812960a97e7d5e10b410bae2008b3d89" name="a812960a97e7d5e10b410bae2008b3d89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a812960a97e7d5e10b410bae2008b3d89">&#9670;&#160;</a></span>text</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char menu_notification_t::text[21]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>LCD-width text payload, null-terminated when possible. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8h_source.html#l00034">34</a> pliku <a class="el" href="menu__main_8h_source.html">menu_main.h</a>.</p>
+
+</div>
+</div>
+<a id="a610c43451b5f7e705d45caab8c170537" name="a610c43451b5f7e705d45caab8c170537"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a610c43451b5f7e705d45caab8c170537">&#9670;&#160;</a></span>type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="menu__main_8h.html#aabc9719ff8234a084c8016acdd8de0a5">menu_notification_type_t</a> menu_notification_t::type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Notification category. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="menu__main_8h_source.html#l00030">30</a> pliku <a class="el" href="menu__main_8h_source.html">menu_main.h</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/<a class="el" href="menu__main_8h_source.html">menu_main.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structmenu__notification__t.html">menu_notification_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

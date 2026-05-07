@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury i2c_mem_store_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structi2c__mem__store__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury i2c_mem_store_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Driver context.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="i2c__mem__store_8h_source.html">Core/App/i2c_mem_store_lib/i2c_mem_store.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:af753053033bd65164d70d7e753031ac7" id="r_af753053033bd65164d70d7e753031ac7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af753053033bd65164d70d7e753031ac7">cfg</a></td></tr>
+<tr class="memdesc:af753053033bd65164d70d7e753031ac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Active configuration.  <br /></td></tr>
+<tr class="memitem:a23073aa999d1ebcf6dbc365f7d0e8507" id="r_a23073aa999d1ebcf6dbc365f7d0e8507"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a23073aa999d1ebcf6dbc365f7d0e8507">slot_count</a></td></tr>
+<tr class="memdesc:a23073aa999d1ebcf6dbc365f7d0e8507"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message log slot count.  <br /></td></tr>
+<tr class="memitem:a2c0a40a8973d7810a5c01f0c83b98946" id="r_a2c0a40a8973d7810a5c01f0c83b98946"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c0a40a8973d7810a5c01f0c83b98946">secret_slot_count</a></td></tr>
+<tr class="memdesc:a2c0a40a8973d7810a5c01f0c83b98946"><td class="mdescLeft">&#160;</td><td class="mdescRight">Secret partition slot count.  <br /></td></tr>
+<tr class="memitem:a8691ec86729dc76ccdac070d138ff5ee" id="r_a8691ec86729dc76ccdac070d138ff5ee"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8691ec86729dc76ccdac070d138ff5ee">write_slot</a></td></tr>
+<tr class="memdesc:a8691ec86729dc76ccdac070d138ff5ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next slot index to write in log partition.  <br /></td></tr>
+<tr class="memitem:a7cfef32e14e2669b30c6ee0764554529" id="r_a7cfef32e14e2669b30c6ee0764554529"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cfef32e14e2669b30c6ee0764554529">valid_count</a></td></tr>
+<tr class="memdesc:a7cfef32e14e2669b30c6ee0764554529"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of valid log entries.  <br /></td></tr>
+<tr class="memitem:a592ab0350a3bbf7189d8bc39514e64b2" id="r_a592ab0350a3bbf7189d8bc39514e64b2"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a592ab0350a3bbf7189d8bc39514e64b2">next_sequence</a></td></tr>
+<tr class="memdesc:a592ab0350a3bbf7189d8bc39514e64b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Next sequence number.  <br /></td></tr>
+<tr class="memitem:a3cd7ae4383ea4961ace6c172da8be875" id="r_a3cd7ae4383ea4961ace6c172da8be875"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3cd7ae4383ea4961ace6c172da8be875">secret_counter</a></td></tr>
+<tr class="memdesc:a3cd7ae4383ea4961ace6c172da8be875"><td class="mdescLeft">&#160;</td><td class="mdescRight">Nonce/counter source for secret encryption.  <br /></td></tr>
+<tr class="memitem:afa61538ac6766c57058ce44fb3c5393e" id="r_afa61538ac6766c57058ce44fb3c5393e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa61538ac6766c57058ce44fb3c5393e">initialized</a></td></tr>
+<tr class="memdesc:afa61538ac6766c57058ce44fb3c5393e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Context initialization flag.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>Driver context. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00100">100</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="af753053033bd65164d70d7e753031ac7" name="af753053033bd65164d70d7e753031ac7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af753053033bd65164d70d7e753031ac7">&#9670;&#160;</a></span>cfg</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structi2c__mem__store__cfg__t.html">i2c_mem_store_cfg_t</a> i2c_mem_store_t::cfg</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Active configuration. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00102">102</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00200">i2c_mem_store_read_raw()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00182">i2c_mem_store_secret_base_addr()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00223">i2c_mem_store_write_raw()</a>.</p>
+
+</div>
+</div>
+<a id="afa61538ac6766c57058ce44fb3c5393e" name="afa61538ac6766c57058ce44fb3c5393e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa61538ac6766c57058ce44fb3c5393e">&#9670;&#160;</a></span>initialized</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool i2c_mem_store_t::initialized</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Context initialization flag. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00109">109</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00624">i2c_mem_store_get_log_count()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00746">i2c_mem_store_secret_erase()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00787">i2c_mem_store_trusted_device_read()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00758">i2c_mem_store_trusted_device_write()</a>.</p>
+
+</div>
+</div>
+<a id="a592ab0350a3bbf7189d8bc39514e64b2" name="a592ab0350a3bbf7189d8bc39514e64b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a592ab0350a3bbf7189d8bc39514e64b2">&#9670;&#160;</a></span>next_sequence</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_t::next_sequence</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Next sequence number. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00107">107</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a>.</p>
+
+</div>
+</div>
+<a id="a3cd7ae4383ea4961ace6c172da8be875" name="a3cd7ae4383ea4961ace6c172da8be875"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cd7ae4383ea4961ace6c172da8be875">&#9670;&#160;</a></span>secret_counter</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_t::secret_counter</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Nonce/counter source for secret encryption. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00108">108</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="a2c0a40a8973d7810a5c01f0c83b98946" name="a2c0a40a8973d7810a5c01f0c83b98946"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c0a40a8973d7810a5c01f0c83b98946">&#9670;&#160;</a></span>secret_slot_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_t::secret_slot_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Secret partition slot count. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00104">104</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00746">i2c_mem_store_secret_erase()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00683">i2c_mem_store_secret_read()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00635">i2c_mem_store_secret_write()</a>.</p>
+
+</div>
+</div>
+<a id="a23073aa999d1ebcf6dbc365f7d0e8507" name="a23073aa999d1ebcf6dbc365f7d0e8507"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23073aa999d1ebcf6dbc365f7d0e8507">&#9670;&#160;</a></span>slot_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_t::slot_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Message log slot count. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00103">103</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00457">i2c_mem_store_init()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="a7cfef32e14e2669b30c6ee0764554529" name="a7cfef32e14e2669b30c6ee0764554529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cfef32e14e2669b30c6ee0764554529">&#9670;&#160;</a></span>valid_count</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_t::valid_count</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Number of valid log entries. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00106">106</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00624">i2c_mem_store_get_log_count()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="a8691ec86729dc76ccdac070d138ff5ee" name="a8691ec86729dc76ccdac070d138ff5ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8691ec86729dc76ccdac070d138ff5ee">&#9670;&#160;</a></span>write_slot</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t i2c_mem_store_t::write_slot</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Next slot index to write in log partition. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00105">105</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00510">i2c_mem_store_append_message()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00496">i2c_mem_store_format()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00293">i2c_mem_store_meta_decode()</a>, <a class="el" href="i2c__mem__store_8c_source.html#l00266">i2c_mem_store_meta_encode()</a> i <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/i2c_mem_store_lib/<a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structi2c__mem__store__t.html">i2c_mem_store_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

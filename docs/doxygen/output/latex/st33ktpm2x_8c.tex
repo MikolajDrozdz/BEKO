@@ -1,0 +1,1831 @@
+\doxysection{Dokumentacja pliku Core/\+App/st33ktpm2x\+\_\+lib/st33ktpm2x.c}
+\hypertarget{st33ktpm2x_8c}{}\label{st33ktpm2x_8c}\index{Core/App/st33ktpm2x\_lib/st33ktpm2x.c@{Core/App/st33ktpm2x\_lib/st33ktpm2x.c}}
+
+
+ST33\+KTPM2X driver implementation (TIS over I2C).  
+
+
+{\ttfamily \#include "{}st33ktpm2x.\+h"{}}\newline
+{\ttfamily \#include "{}app\+\_\+delay.\+h"{}}\newline
+{\ttfamily \#include "{}main.\+h"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Definicje}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_affdcec5c0f1c5034b7ed86f9fbadc03c}{ST33\+\_\+\+REG\+\_\+\+LOC\+\_\+\+SEL}}~0x00U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a77611f690f14048596b44b134b29867e}{ST33\+\_\+\+REG\+\_\+\+ACCESS}}~0x04U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_ac932660f9025eda72164dec910e05617}{ST33\+\_\+\+REG\+\_\+\+STS}}~0x18U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a10fdfaaa994ac8f0d8901eb88ee5087c}{ST33\+\_\+\+REG\+\_\+\+DATA\+\_\+\+FIFO}}~0x24U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a8cee3b9717e32787b618c4810114429d}{ST33\+\_\+\+REG\+\_\+\+INTERFACE\+\_\+\+CAPABILITY}}~0x30U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_aeb04d995641318dde73ea27008e783e0}{ST33\+\_\+\+REG\+\_\+\+DID\+\_\+\+VID}}~0x48U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_adb078f27db584f16c4eeb43ee7fd4da3}{ST33\+\_\+\+REG\+\_\+\+RID}}~0x4\+CU
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_adb630c36cc529bb6a035bd5b1401a631}{ST33\+\_\+\+I2\+C\+\_\+\+MAX\+\_\+\+RETRIES}}~3U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_ae0bae43b9e128f513e88a9cf6b5d1658}{ST33\+\_\+\+ACCESS\+\_\+\+VALID}}~0x80U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a3a62094ed76b06403b794f7daee1d65a}{ST33\+\_\+\+ACCESS\+\_\+\+ACTIVE\+\_\+\+LOCALITY}}~0x20U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_af616cab5df55bf798f075e817e4449c2}{ST33\+\_\+\+ACCESS\+\_\+\+REQUEST\+\_\+\+USE}}~0x02U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_af37f3d96dc09d22ca60e979a4f639c3f}{ST33\+\_\+\+ACCESS\+\_\+\+READ\+\_\+\+ZERO}}~0x48U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_aade299324c065fa4517f895ba8ee3096}{ST33\+\_\+\+STS\+\_\+\+VALID}}~0x80U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a945b5f7c943358f105f6db2bead2cda7}{ST33\+\_\+\+STS\+\_\+\+COMMAND\+\_\+\+READY}}~0x40U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_abea619f1ae470b02bbc564a59190b695}{ST33\+\_\+\+STS\+\_\+\+TPM\+\_\+\+GO}}~0x20U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a5d2f93f0e4d8406df78f59518cc13bee}{ST33\+\_\+\+STS\+\_\+\+DATA\+\_\+\+AVAIL}}~0x10U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a6a3b4509d75011e279ccaa2f1ec69345}{ST33\+\_\+\+STS\+\_\+\+EXPECT}}~0x08U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a6f7ea9d56fb86c7a41e9b8d8b55beaa0}{ST33\+\_\+\+STS\+\_\+\+READ\+\_\+\+ZERO}}~0x23U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a11f28ffb1fa42deaa03243f4d881eef0}{ST33\+\_\+\+TPM\+\_\+\+HEADER\+\_\+\+SIZE}}~10U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a0597734142541ea65f6ebb00a02eab22}{ST33\+\_\+\+TPM\+\_\+\+RH\+\_\+\+OWNER}}~0x40000001\+UL
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_adcf14466eab58d25e18bd0f3170eac2c}{ST33\+\_\+\+TPM\+\_\+\+RH\+\_\+\+PLATFORM}}~0x4000000\+CUL
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a2102ffe74e5d55f6f580a5a4f2e10b79}{ST33\+\_\+\+TPM\+\_\+\+RS\+\_\+\+PW}}~0x40000009\+UL
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a35a1d3a141d3c50f2854772d2c1afb90}{ST33\+\_\+\+TPM\+\_\+\+PW\+\_\+\+AUTH\+\_\+\+SIZE}}~9U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a18130c627fe1f232166611e8ade6983a}{ST33\+\_\+\+TPM\+\_\+\+RANDOM\+\_\+\+MAX\+\_\+\+BYTES}}~256U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_ab3b1a3ede675c87f3042d586f9b472b5}{ST33\+\_\+\+TPM\+\_\+\+NV\+\_\+\+TRANSFER\+\_\+\+MAX\+\_\+\+BYTES}}~512U
+\item 
+\#define \mbox{\hyperlink{st33ktpm2x_8c_a81fb8f3d0d9e06c9de22dc756f60cb60}{ST33\+\_\+\+TRACE}}(...)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+static uint16\+\_\+t \mbox{\hyperlink{st33ktpm2x_8c_ad4cf5c4e278c9f0aa7d55e085ada694f}{st33\+\_\+min\+\_\+u16}} (uint16\+\_\+t a, uint16\+\_\+t b)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_ad4cf5c4e278c9f0aa7d55e085ada694f}{st33\+\_\+min\+\_\+u16}}. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{st33ktpm2x_8c_a4c2020452e3e03a5e95cca22d99ef459}{st33\+\_\+be16\+\_\+read}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a4c2020452e3e03a5e95cca22d99ef459}{st33\+\_\+be16\+\_\+read}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{st33ktpm2x_8c_a65b00788a12718601cf772e22dc57475}{st33\+\_\+be32\+\_\+read}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a65b00788a12718601cf772e22dc57475}{st33\+\_\+be32\+\_\+read}}. \end{DoxyCompactList}\item 
+static uint32\+\_\+t \mbox{\hyperlink{st33ktpm2x_8c_af5d8c396fbf76c79b5aec9083844f7c4}{st33\+\_\+le32\+\_\+read}} (const uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_af5d8c396fbf76c79b5aec9083844f7c4}{st33\+\_\+le32\+\_\+read}}. \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{st33ktpm2x_8c_a3b66292c2ff6ff1c062f2bb1d207c6fc}{st33\+\_\+identity\+\_\+is\+\_\+valid}} (uint32\+\_\+t did\+\_\+vid, uint8\+\_\+t rid)
+\begin{DoxyCompactList}\small\item\em Check whether DID\+\_\+\+VID/\+RID values look like an ST33 TPM response. \end{DoxyCompactList}\item 
+static const char \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{st33ktpm2x_8c_a77e665097f98e248e6a636d216f56d88}{st33\+\_\+status\+\_\+text}} (\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} rc)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a77e665097f98e248e6a636d216f56d88}{st33\+\_\+status\+\_\+text}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{st33ktpm2x_8c_a4d93142e18c06bce7f22d3f9c4520fa2}{st33\+\_\+be16\+\_\+write}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf, uint16\+\_\+t v)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a4d93142e18c06bce7f22d3f9c4520fa2}{st33\+\_\+be16\+\_\+write}}. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{st33ktpm2x_8c_a7fa4a299524086abf70e1c3194f68c11}{st33\+\_\+be32\+\_\+write}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf, uint32\+\_\+t v)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a7fa4a299524086abf70e1c3194f68c11}{st33\+\_\+be32\+\_\+write}}. \end{DoxyCompactList}\item 
+static uint16\+\_\+t \mbox{\hyperlink{st33ktpm2x_8c_a7a3a687f3279945eaeae16124da17209}{st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth}} (uint8\+\_\+t \texorpdfstring{$\ast$}{*}buf)
+\begin{DoxyCompactList}\small\item\em Marshal an empty-\/password authorization session into a TPM2 command. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_affa19799f90a97e6d5ab7a84e00afc3b}{st33\+\_\+i2c\+\_\+read}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_affa19799f90a97e6d5ab7a84e00afc3b}{st33\+\_\+i2c\+\_\+read}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a0009d1d7ee87c776b587fb694ad6086d}{st33\+\_\+i2c\+\_\+write}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t reg, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a0009d1d7ee87c776b587fb694ad6086d}{st33\+\_\+i2c\+\_\+write}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a246bc398d0a96c8308ecc433391f2a50}{st33\+\_\+read\+\_\+access}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t \texorpdfstring{$\ast$}{*}access)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a246bc398d0a96c8308ecc433391f2a50}{st33\+\_\+read\+\_\+access}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a86f44f88a6babe49961fd153c834d761}{st33\+\_\+write\+\_\+access}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a86f44f88a6babe49961fd153c834d761}{st33\+\_\+write\+\_\+access}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_af4a010b695b9416234306bc6b9bfd9c8}{st33\+\_\+write\+\_\+loc\+\_\+sel}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t locality)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_af4a010b695b9416234306bc6b9bfd9c8}{st33\+\_\+write\+\_\+loc\+\_\+sel}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_aaf2fbce0dff13154de59de5446b606c9}{st33\+\_\+read\+\_\+sts}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t \texorpdfstring{$\ast$}{*}sts, uint16\+\_\+t \texorpdfstring{$\ast$}{*}burst\+\_\+count)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_aaf2fbce0dff13154de59de5446b606c9}{st33\+\_\+read\+\_\+sts}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a7d845ce25a19a1f0190f3af77fe8314c}{st33\+\_\+write\+\_\+sts}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a7d845ce25a19a1f0190f3af77fe8314c}{st33\+\_\+write\+\_\+sts}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ad938755f98c5e01795b37c7d8a4ebe3f}{st33\+\_\+wait\+\_\+access\+\_\+bits}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t mask, uint8\+\_\+t expected, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Poll TPM\+\_\+\+ACCESS until required bits are set and forbidden bits are clear. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_aa48bc5bda9273949f00d808ea644f382}{st33\+\_\+wait\+\_\+sts\+\_\+bits}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t mask, uint8\+\_\+t expected, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Poll TPM\+\_\+\+STS until required status bits are set and forbidden bits are clear. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a78f09ad4a7d9dfcd41d72c52303d36db}{st33\+\_\+wait\+\_\+burst}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t \texorpdfstring{$\ast$}{*}burst\+\_\+out, uint8\+\_\+t require\+\_\+data\+\_\+avail)
+\begin{DoxyCompactList}\small\item\em Wait for a non-\/zero TPM FIFO burst count, optionally requiring data availability. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{st33ktpm2x_8c_a26921e98fbcf5420df3d25741888bf64}{st33\+\_\+trace\+\_\+tis}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const char \texorpdfstring{$\ast$}{*}tag)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a26921e98fbcf5420df3d25741888bf64}{st33\+\_\+trace\+\_\+tis}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a0939967125ede2ad5039aedd634a908d}{st33\+\_\+trace\+\_\+fail}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const char \texorpdfstring{$\ast$}{*}stage, \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} rc, bool release\+\_\+locality)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a0939967125ede2ad5039aedd634a908d}{st33\+\_\+trace\+\_\+fail}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a06bef66aade10334ae4388259a80a9ba}{st33\+\_\+fifo\+\_\+write}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a06bef66aade10334ae4388259a80a9ba}{st33\+\_\+fifo\+\_\+write}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_acfffca431d64957f01d5aabf3ae877b4}{st33\+\_\+fifo\+\_\+read}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_acfffca431d64957f01d5aabf3ae877b4}{st33\+\_\+fifo\+\_\+read}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_aab5764298485f46ba5037f0e4541c30d}{st33\+\_\+read\+\_\+response\+\_\+stream}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t \texorpdfstring{$\ast$}{*}dst, uint16\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_aab5764298485f46ba5037f0e4541c30d}{st33\+\_\+read\+\_\+response\+\_\+stream}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{st33ktpm2x_8c_a4395b053468eaa84de32315c833c9a2e}{st33ktpm2x\+\_\+default\+\_\+cfg}} (\mbox{\hyperlink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg, I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c)
+\begin{DoxyCompactList}\small\item\em Fill config with safe defaults (including PB0 reset pin defaults from {\ttfamily main.\+h}). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a980b0aa6419563ca5aa0aef6d9c3d26e}{st33ktpm2x\+\_\+init}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const \mbox{\hyperlink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}cfg)
+\begin{DoxyCompactList}\small\item\em Initialize TPM driver context. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_acb54b869460edebfb386accaac6cbdee}{st33ktpm2x\+\_\+deinit}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx)
+\begin{DoxyCompactList}\small\item\em Deinitialize context and release locality if needed. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a277fcdc81f0d11bd7b7a934deab48d7d}{st33ktpm2x\+\_\+hard\+\_\+reset}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx)
+\begin{DoxyCompactList}\small\item\em Perform hardware reset pulse on TPM reset pin. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_aacbcacfe63408588f1de87b0f790d389}{st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, bool \texorpdfstring{$\ast$}{*}asserted)
+\begin{DoxyCompactList}\small\item\em Read TPM\+\_\+\+DAVINT\# / PIRQ state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ada918f8074c30d27398d3f74587e0c99}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, bool \texorpdfstring{$\ast$}{*}pressed)
+\begin{DoxyCompactList}\small\item\em Read state of optional Physical Presence button. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a43e4a393a0ad5d8d44f36e1e60fe6a74}{st33ktpm2x\+\_\+pp\+\_\+wait\+\_\+pressed}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Wait until Physical Presence button becomes active. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ad8b669c02345b065901bc6230f19aa9d}{st33ktpm2x\+\_\+request\+\_\+locality0}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx)
+\begin{DoxyCompactList}\small\item\em Acquire TPM locality 0. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_adaefa07be059fc8b5e135cc01de47544}{st33ktpm2x\+\_\+release\+\_\+locality0}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx)
+\begin{DoxyCompactList}\small\item\em Release TPM locality 0. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ae0792eaaf30019c3cdbc0c37db09ed98}{st33ktpm2x\+\_\+read\+\_\+identity}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t \texorpdfstring{$\ast$}{*}did\+\_\+vid, uint8\+\_\+t \texorpdfstring{$\ast$}{*}rid)
+\begin{DoxyCompactList}\small\item\em Read TPM DID\+\_\+\+VID and RID registers. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ad66faa4aee2d93f8557b4f370c845317}{st33ktpm2x\+\_\+transceive}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}command, uint16\+\_\+t command\+\_\+len, uint8\+\_\+t \texorpdfstring{$\ast$}{*}response, uint16\+\_\+t response\+\_\+capacity, uint16\+\_\+t \texorpdfstring{$\ast$}{*}response\+\_\+len, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Send one raw TPM command and receive full response. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a7883a6abe5016f7f08fbae5c3ec0e1d0}{st33ktpm2x\+\_\+tpm2\+\_\+startup}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t startup\+\_\+type, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Execute TPM2\+\_\+\+Startup. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ae6c9416bf6fb89130eb182a31ed2acb3}{st33ktpm2x\+\_\+tpm2\+\_\+self\+\_\+test}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, bool full\+\_\+test, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Execute TPM2\+\_\+\+Self\+Test. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_afc1b7709450d38509ee1dd2e87456b23}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+random}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint16\+\_\+t requested\+\_\+bytes, uint8\+\_\+t \texorpdfstring{$\ast$}{*}random\+\_\+out, uint16\+\_\+t random\+\_\+capacity, uint16\+\_\+t \texorpdfstring{$\ast$}{*}random\+\_\+len, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Execute TPM2\+\_\+\+Get\+Random. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a627302c712282068bccff873fcdcb3bb}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+capability}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t capability, uint32\+\_\+t property, uint32\+\_\+t property\+\_\+count, uint8\+\_\+t \texorpdfstring{$\ast$}{*}payload\+\_\+out, uint16\+\_\+t payload\+\_\+capacity, uint16\+\_\+t \texorpdfstring{$\ast$}{*}payload\+\_\+len, bool \texorpdfstring{$\ast$}{*}more\+\_\+data, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Execute TPM2\+\_\+\+Get\+Capability and return raw capability payload. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a601549f7e393fdca42aefbd4f04304c2}{st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint8\+\_\+t pcr\+\_\+index, uint8\+\_\+t digest\+\_\+sha256\+\_\+out\mbox{[}32\mbox{]}, uint32\+\_\+t \texorpdfstring{$\ast$}{*}update\+\_\+counter\+\_\+out, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Execute TPM2\+\_\+\+PCR\+\_\+\+Read for one SHA-\/256 PCR index. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a80d97a74a64b52b531c1038abcbe6fe4}{st33ktpm2x\+\_\+tpm2\+\_\+start\+\_\+auth\+\_\+session}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t \texorpdfstring{$\ast$}{*}session\+\_\+handle\+\_\+out, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Start TPM2 policy/auth session helper (scaffold API). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a21f6025c6a40532501b91579d6b62bc6}{st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+pcr}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t session\+\_\+handle, uint8\+\_\+t pcr\+\_\+index, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Apply Policy\+PCR in an existing policy session (scaffold API). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a2b73e0d636cceab618098a9db9aa2f7d}{st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+physical\+\_\+presence}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t session\+\_\+handle, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Apply Physical Presence policy branch (scaffold API). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a8a0390a3603abfaee06c4a47806bfd93}{st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+command\+\_\+code}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t session\+\_\+handle, uint32\+\_\+t command\+\_\+code, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Apply Policy\+Command\+Code in an existing policy session (scaffold API). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a88fa5109117b117eea6f084fb7947e29}{st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+or}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t session\+\_\+handle, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}digest\+\_\+list, uint8\+\_\+t digest\+\_\+count, uint8\+\_\+t digest\+\_\+size, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Apply Policy\+OR branch combiner (scaffold API). \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a187ec38a3635faa225ffc9df384b8e32}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t nv\+\_\+index, uint16\+\_\+t data\+\_\+size, uint32\+\_\+t attributes, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Define NV index using owner empty-\/password authorization. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a73bad0635a3631ff7fe7cb5f116a3b42}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t nv\+\_\+index, uint16\+\_\+t offset, uint8\+\_\+t \texorpdfstring{$\ast$}{*}out\+\_\+data, uint16\+\_\+t out\+\_\+capacity, uint16\+\_\+t \texorpdfstring{$\ast$}{*}out\+\_\+len, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Read bytes from NV index using owner empty-\/password authorization. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a9e13bd328b660483b8d8d09852e55c6a}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t auth\+\_\+handle, uint32\+\_\+t nv\+\_\+index, uint16\+\_\+t offset, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t data\+\_\+len, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a9e13bd328b660483b8d8d09852e55c6a}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_af1e4206f80948966e16062e7e16f68c4}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+write}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t nv\+\_\+index, uint16\+\_\+t offset, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t data\+\_\+len, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Write bytes to NV index using owner empty-\/password authorization. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_ae63a087a2ccbe308b472c0d72278852d}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+platform\+\_\+pp}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t nv\+\_\+index, uint16\+\_\+t offset, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint16\+\_\+t data\+\_\+len, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Write bytes to NV index using platform authorization with hardware Physical Presence. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} \mbox{\hyperlink{st33ktpm2x_8c_a01917c931e740d07ecdde705b5217f42}{st33ktpm2x\+\_\+tpm2\+\_\+flush\+\_\+context}} (\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}ctx, uint32\+\_\+t handle, uint32\+\_\+t \texorpdfstring{$\ast$}{*}tpm\+\_\+rc)
+\begin{DoxyCompactList}\small\item\em Flush transient context/session handle (scaffold API). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Zmienne}
+\begin{DoxyCompactItemize}
+\item 
+static uint8\+\_\+t \mbox{\hyperlink{st33ktpm2x_8c_a551696deb3469b2d815ef8464cf23b3c}{s\+\_\+st33\+\_\+i2c\+\_\+tx}} \mbox{[}1U+\mbox{\hyperlink{st33ktpm2x_8h_a812f59d07c8c7eb0540b6776127c1c8b}{ST33\+KTPM2\+X\+\_\+\+CMD\+\_\+\+MAX\+\_\+\+BYTES}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+ST33\+KTPM2X driver implementation (TIS over I2C). 
+
+
+
+Definicja w pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+\label{doc-define-members}
+\Hypertarget{st33ktpm2x_8c_doc-define-members}
+\doxysubsection{Dokumentacja definicji}
+\Hypertarget{st33ktpm2x_8c_a3a62094ed76b06403b794f7daee1d65a}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_ACCESS\_ACTIVE\_LOCALITY@{ST33\_ACCESS\_ACTIVE\_LOCALITY}}
+\index{ST33\_ACCESS\_ACTIVE\_LOCALITY@{ST33\_ACCESS\_ACTIVE\_LOCALITY}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_ACCESS\_ACTIVE\_LOCALITY}{ST33\_ACCESS\_ACTIVE\_LOCALITY}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a3a62094ed76b06403b794f7daee1d65a} 
+\#define ST33\+\_\+\+ACCESS\+\_\+\+ACTIVE\+\_\+\+LOCALITY~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00027}{27}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_af37f3d96dc09d22ca60e979a4f639c3f}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_ACCESS\_READ\_ZERO@{ST33\_ACCESS\_READ\_ZERO}}
+\index{ST33\_ACCESS\_READ\_ZERO@{ST33\_ACCESS\_READ\_ZERO}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_ACCESS\_READ\_ZERO}{ST33\_ACCESS\_READ\_ZERO}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_af37f3d96dc09d22ca60e979a4f639c3f} 
+\#define ST33\+\_\+\+ACCESS\+\_\+\+READ\+\_\+\+ZERO~0x48U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00029}{29}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_af616cab5df55bf798f075e817e4449c2}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_ACCESS\_REQUEST\_USE@{ST33\_ACCESS\_REQUEST\_USE}}
+\index{ST33\_ACCESS\_REQUEST\_USE@{ST33\_ACCESS\_REQUEST\_USE}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_ACCESS\_REQUEST\_USE}{ST33\_ACCESS\_REQUEST\_USE}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_af616cab5df55bf798f075e817e4449c2} 
+\#define ST33\+\_\+\+ACCESS\+\_\+\+REQUEST\+\_\+\+USE~0x02U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00028}{28}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_ae0bae43b9e128f513e88a9cf6b5d1658}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_ACCESS\_VALID@{ST33\_ACCESS\_VALID}}
+\index{ST33\_ACCESS\_VALID@{ST33\_ACCESS\_VALID}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_ACCESS\_VALID}{ST33\_ACCESS\_VALID}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ae0bae43b9e128f513e88a9cf6b5d1658} 
+\#define ST33\+\_\+\+ACCESS\+\_\+\+VALID~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00026}{26}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_adb630c36cc529bb6a035bd5b1401a631}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_I2C\_MAX\_RETRIES@{ST33\_I2C\_MAX\_RETRIES}}
+\index{ST33\_I2C\_MAX\_RETRIES@{ST33\_I2C\_MAX\_RETRIES}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_I2C\_MAX\_RETRIES}{ST33\_I2C\_MAX\_RETRIES}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_adb630c36cc529bb6a035bd5b1401a631} 
+\#define ST33\+\_\+\+I2\+C\+\_\+\+MAX\+\_\+\+RETRIES~3U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00023}{23}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a77611f690f14048596b44b134b29867e}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_ACCESS@{ST33\_REG\_ACCESS}}
+\index{ST33\_REG\_ACCESS@{ST33\_REG\_ACCESS}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_ACCESS}{ST33\_REG\_ACCESS}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a77611f690f14048596b44b134b29867e} 
+\#define ST33\+\_\+\+REG\+\_\+\+ACCESS~0x04U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00016}{16}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a10fdfaaa994ac8f0d8901eb88ee5087c}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_DATA\_FIFO@{ST33\_REG\_DATA\_FIFO}}
+\index{ST33\_REG\_DATA\_FIFO@{ST33\_REG\_DATA\_FIFO}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_DATA\_FIFO}{ST33\_REG\_DATA\_FIFO}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a10fdfaaa994ac8f0d8901eb88ee5087c} 
+\#define ST33\+\_\+\+REG\+\_\+\+DATA\+\_\+\+FIFO~0x24U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00018}{18}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_aeb04d995641318dde73ea27008e783e0}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_DID\_VID@{ST33\_REG\_DID\_VID}}
+\index{ST33\_REG\_DID\_VID@{ST33\_REG\_DID\_VID}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_DID\_VID}{ST33\_REG\_DID\_VID}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_aeb04d995641318dde73ea27008e783e0} 
+\#define ST33\+\_\+\+REG\+\_\+\+DID\+\_\+\+VID~0x48U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00020}{20}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a8cee3b9717e32787b618c4810114429d}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_INTERFACE\_CAPABILITY@{ST33\_REG\_INTERFACE\_CAPABILITY}}
+\index{ST33\_REG\_INTERFACE\_CAPABILITY@{ST33\_REG\_INTERFACE\_CAPABILITY}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_INTERFACE\_CAPABILITY}{ST33\_REG\_INTERFACE\_CAPABILITY}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a8cee3b9717e32787b618c4810114429d} 
+\#define ST33\+\_\+\+REG\+\_\+\+INTERFACE\+\_\+\+CAPABILITY~0x30U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00019}{19}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_affdcec5c0f1c5034b7ed86f9fbadc03c}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_LOC\_SEL@{ST33\_REG\_LOC\_SEL}}
+\index{ST33\_REG\_LOC\_SEL@{ST33\_REG\_LOC\_SEL}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_LOC\_SEL}{ST33\_REG\_LOC\_SEL}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_affdcec5c0f1c5034b7ed86f9fbadc03c} 
+\#define ST33\+\_\+\+REG\+\_\+\+LOC\+\_\+\+SEL~0x00U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00015}{15}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_adb078f27db584f16c4eeb43ee7fd4da3}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_RID@{ST33\_REG\_RID}}
+\index{ST33\_REG\_RID@{ST33\_REG\_RID}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_RID}{ST33\_REG\_RID}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_adb078f27db584f16c4eeb43ee7fd4da3} 
+\#define ST33\+\_\+\+REG\+\_\+\+RID~0x4\+CU}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00021}{21}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_ac932660f9025eda72164dec910e05617}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_REG\_STS@{ST33\_REG\_STS}}
+\index{ST33\_REG\_STS@{ST33\_REG\_STS}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_REG\_STS}{ST33\_REG\_STS}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ac932660f9025eda72164dec910e05617} 
+\#define ST33\+\_\+\+REG\+\_\+\+STS~0x18U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00017}{17}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a945b5f7c943358f105f6db2bead2cda7}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_STS\_COMMAND\_READY@{ST33\_STS\_COMMAND\_READY}}
+\index{ST33\_STS\_COMMAND\_READY@{ST33\_STS\_COMMAND\_READY}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_STS\_COMMAND\_READY}{ST33\_STS\_COMMAND\_READY}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a945b5f7c943358f105f6db2bead2cda7} 
+\#define ST33\+\_\+\+STS\+\_\+\+COMMAND\+\_\+\+READY~0x40U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00033}{33}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a5d2f93f0e4d8406df78f59518cc13bee}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_STS\_DATA\_AVAIL@{ST33\_STS\_DATA\_AVAIL}}
+\index{ST33\_STS\_DATA\_AVAIL@{ST33\_STS\_DATA\_AVAIL}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_STS\_DATA\_AVAIL}{ST33\_STS\_DATA\_AVAIL}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a5d2f93f0e4d8406df78f59518cc13bee} 
+\#define ST33\+\_\+\+STS\+\_\+\+DATA\+\_\+\+AVAIL~0x10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00035}{35}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a6a3b4509d75011e279ccaa2f1ec69345}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_STS\_EXPECT@{ST33\_STS\_EXPECT}}
+\index{ST33\_STS\_EXPECT@{ST33\_STS\_EXPECT}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_STS\_EXPECT}{ST33\_STS\_EXPECT}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a6a3b4509d75011e279ccaa2f1ec69345} 
+\#define ST33\+\_\+\+STS\+\_\+\+EXPECT~0x08U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00036}{36}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a6f7ea9d56fb86c7a41e9b8d8b55beaa0}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_STS\_READ\_ZERO@{ST33\_STS\_READ\_ZERO}}
+\index{ST33\_STS\_READ\_ZERO@{ST33\_STS\_READ\_ZERO}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_STS\_READ\_ZERO}{ST33\_STS\_READ\_ZERO}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a6f7ea9d56fb86c7a41e9b8d8b55beaa0} 
+\#define ST33\+\_\+\+STS\+\_\+\+READ\+\_\+\+ZERO~0x23U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00037}{37}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_abea619f1ae470b02bbc564a59190b695}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_STS\_TPM\_GO@{ST33\_STS\_TPM\_GO}}
+\index{ST33\_STS\_TPM\_GO@{ST33\_STS\_TPM\_GO}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_STS\_TPM\_GO}{ST33\_STS\_TPM\_GO}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_abea619f1ae470b02bbc564a59190b695} 
+\#define ST33\+\_\+\+STS\+\_\+\+TPM\+\_\+\+GO~0x20U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00034}{34}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_aade299324c065fa4517f895ba8ee3096}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_STS\_VALID@{ST33\_STS\_VALID}}
+\index{ST33\_STS\_VALID@{ST33\_STS\_VALID}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_STS\_VALID}{ST33\_STS\_VALID}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_aade299324c065fa4517f895ba8ee3096} 
+\#define ST33\+\_\+\+STS\+\_\+\+VALID~0x80U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00032}{32}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a11f28ffb1fa42deaa03243f4d881eef0}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_HEADER\_SIZE@{ST33\_TPM\_HEADER\_SIZE}}
+\index{ST33\_TPM\_HEADER\_SIZE@{ST33\_TPM\_HEADER\_SIZE}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_HEADER\_SIZE}{ST33\_TPM\_HEADER\_SIZE}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a11f28ffb1fa42deaa03243f4d881eef0} 
+\#define ST33\+\_\+\+TPM\+\_\+\+HEADER\+\_\+\+SIZE~10U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00039}{39}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_ab3b1a3ede675c87f3042d586f9b472b5}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_NV\_TRANSFER\_MAX\_BYTES@{ST33\_TPM\_NV\_TRANSFER\_MAX\_BYTES}}
+\index{ST33\_TPM\_NV\_TRANSFER\_MAX\_BYTES@{ST33\_TPM\_NV\_TRANSFER\_MAX\_BYTES}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_NV\_TRANSFER\_MAX\_BYTES}{ST33\_TPM\_NV\_TRANSFER\_MAX\_BYTES}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ab3b1a3ede675c87f3042d586f9b472b5} 
+\#define ST33\+\_\+\+TPM\+\_\+\+NV\+\_\+\+TRANSFER\+\_\+\+MAX\+\_\+\+BYTES~512U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00045}{45}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a35a1d3a141d3c50f2854772d2c1afb90}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_PW\_AUTH\_SIZE@{ST33\_TPM\_PW\_AUTH\_SIZE}}
+\index{ST33\_TPM\_PW\_AUTH\_SIZE@{ST33\_TPM\_PW\_AUTH\_SIZE}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_PW\_AUTH\_SIZE}{ST33\_TPM\_PW\_AUTH\_SIZE}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a35a1d3a141d3c50f2854772d2c1afb90} 
+\#define ST33\+\_\+\+TPM\+\_\+\+PW\+\_\+\+AUTH\+\_\+\+SIZE~9U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00043}{43}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a18130c627fe1f232166611e8ade6983a}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_RANDOM\_MAX\_BYTES@{ST33\_TPM\_RANDOM\_MAX\_BYTES}}
+\index{ST33\_TPM\_RANDOM\_MAX\_BYTES@{ST33\_TPM\_RANDOM\_MAX\_BYTES}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_RANDOM\_MAX\_BYTES}{ST33\_TPM\_RANDOM\_MAX\_BYTES}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a18130c627fe1f232166611e8ade6983a} 
+\#define ST33\+\_\+\+TPM\+\_\+\+RANDOM\+\_\+\+MAX\+\_\+\+BYTES~256U}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00044}{44}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a0597734142541ea65f6ebb00a02eab22}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_RH\_OWNER@{ST33\_TPM\_RH\_OWNER}}
+\index{ST33\_TPM\_RH\_OWNER@{ST33\_TPM\_RH\_OWNER}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_RH\_OWNER}{ST33\_TPM\_RH\_OWNER}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a0597734142541ea65f6ebb00a02eab22} 
+\#define ST33\+\_\+\+TPM\+\_\+\+RH\+\_\+\+OWNER~0x40000001\+UL}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00040}{40}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_adcf14466eab58d25e18bd0f3170eac2c}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_RH\_PLATFORM@{ST33\_TPM\_RH\_PLATFORM}}
+\index{ST33\_TPM\_RH\_PLATFORM@{ST33\_TPM\_RH\_PLATFORM}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_RH\_PLATFORM}{ST33\_TPM\_RH\_PLATFORM}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_adcf14466eab58d25e18bd0f3170eac2c} 
+\#define ST33\+\_\+\+TPM\+\_\+\+RH\+\_\+\+PLATFORM~0x4000000\+CUL}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00041}{41}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a2102ffe74e5d55f6f580a5a4f2e10b79}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TPM\_RS\_PW@{ST33\_TPM\_RS\_PW}}
+\index{ST33\_TPM\_RS\_PW@{ST33\_TPM\_RS\_PW}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TPM\_RS\_PW}{ST33\_TPM\_RS\_PW}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a2102ffe74e5d55f6f580a5a4f2e10b79} 
+\#define ST33\+\_\+\+TPM\+\_\+\+RS\+\_\+\+PW~0x40000009\+UL}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00042}{42}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+\Hypertarget{st33ktpm2x_8c_a81fb8f3d0d9e06c9de22dc756f60cb60}\index{st33ktpm2x.c@{st33ktpm2x.c}!ST33\_TRACE@{ST33\_TRACE}}
+\index{ST33\_TRACE@{ST33\_TRACE}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{ST33\_TRACE}{ST33\_TRACE}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a81fb8f3d0d9e06c9de22dc756f60cb60} 
+\#define ST33\+\_\+\+TRACE(\begin{DoxyParamCaption}\item[{}]{}...{}\end{DoxyParamCaption})}
+
+{\bfseries Wartość\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{do}\ \{\ \textcolor{keywordflow}{if}\ (0)\ \{\ printf(\_\_VA\_ARGS\_\_);\ \}\ \}\ \textcolor{keywordflow}{while}\ (0)}
+
+\end{DoxyCode}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00050}{50}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{st33ktpm2x_8c_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{st33ktpm2x_8c_a4c2020452e3e03a5e95cca22d99ef459}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_be16\_read@{st33\_be16\_read}}
+\index{st33\_be16\_read@{st33\_be16\_read}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_be16\_read()}{st33\_be16\_read()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a4c2020452e3e03a5e95cca22d99ef459} 
+uint16\+\_\+t st33\+\_\+be16\+\_\+read (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a4c2020452e3e03a5e95cca22d99ef459}{st33\+\_\+be16\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00062}{62}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00989}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+random()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l01096}{st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256()}}.
+
+\Hypertarget{st33ktpm2x_8c_a4d93142e18c06bce7f22d3f9c4520fa2}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_be16\_write@{st33\_be16\_write}}
+\index{st33\_be16\_write@{st33\_be16\_write}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_be16\_write()}{st33\_be16\_write()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a4d93142e18c06bce7f22d3f9c4520fa2} 
+void st33\+\_\+be16\+\_\+write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{, }\item[{uint16\+\_\+t}]{v}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a4d93142e18c06bce7f22d3f9c4520fa2}{st33\+\_\+be16\+\_\+write}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{128}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00144}{st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01044}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+capability()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00989}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+random()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01270}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01096}{st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00973}{st33ktpm2x\+\_\+tpm2\+\_\+self\+\_\+test()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00957}{st33ktpm2x\+\_\+tpm2\+\_\+startup()}}.
+
+\Hypertarget{st33ktpm2x_8c_a65b00788a12718601cf772e22dc57475}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_be32\_read@{st33\_be32\_read}}
+\index{st33\_be32\_read@{st33\_be32\_read}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_be32\_read()}{st33\_be32\_read()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a65b00788a12718601cf772e22dc57475} 
+uint32\+\_\+t st33\+\_\+be32\+\_\+read (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a65b00788a12718601cf772e22dc57475}{st33\+\_\+be32\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00068}{68}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01096}{st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a7fa4a299524086abf70e1c3194f68c11}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_be32\_write@{st33\_be32\_write}}
+\index{st33\_be32\_write@{st33\_be32\_write}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_be32\_write()}{st33\_be32\_write()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a7fa4a299524086abf70e1c3194f68c11} 
+void st33\+\_\+be32\+\_\+write (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{, }\item[{uint32\+\_\+t}]{v}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a7fa4a299524086abf70e1c3194f68c11}{st33\+\_\+be32\+\_\+write}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{135}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00144}{st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01044}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+capability()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00989}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+random()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01270}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01096}{st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00973}{st33ktpm2x\+\_\+tpm2\+\_\+self\+\_\+test()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00957}{st33ktpm2x\+\_\+tpm2\+\_\+startup()}}.
+
+\Hypertarget{st33ktpm2x_8c_acfffca431d64957f01d5aabf3ae877b4}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_fifo\_read@{st33\_fifo\_read}}
+\index{st33\_fifo\_read@{st33\_fifo\_read}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_fifo\_read()}{st33\_fifo\_read()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_acfffca431d64957f01d5aabf3ae877b4} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+fifo\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_acfffca431d64957f01d5aabf3ae877b4}{st33\+\_\+fifo\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00485}{485}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00491}{st33\+\_\+read\+\_\+response\+\_\+stream()}}.
+
+\Hypertarget{st33ktpm2x_8c_a06bef66aade10334ae4388259a80a9ba}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_fifo\_write@{st33\_fifo\_write}}
+\index{st33\_fifo\_write@{st33\_fifo\_write}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_fifo\_write()}{st33\_fifo\_write()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a06bef66aade10334ae4388259a80a9ba} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+fifo\+\_\+write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a06bef66aade10334ae4388259a80a9ba}{st33\+\_\+fifo\+\_\+write}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00479}{479}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_affa19799f90a97e6d5ab7a84e00afc3b}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_i2c\_read@{st33\_i2c\_read}}
+\index{st33\_i2c\_read@{st33\_i2c\_read}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_i2c\_read()}{st33\_i2c\_read()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_affa19799f90a97e6d5ab7a84e00afc3b} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+i2c\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_affa19799f90a97e6d5ab7a84e00afc3b}{st33\+\_\+i2c\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{154}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00085}{st33ktpm2x\+\_\+cfg\+\_\+t\+::hi2c}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00086}{st33ktpm2x\+\_\+cfg\+\_\+t\+::i2c\+\_\+addr\+\_\+7bit}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00101}{st33ktpm2x\+\_\+cfg\+\_\+t\+::io\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00072}{ST33\+KTPM2\+X\+\_\+\+EHAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00485}{st33\+\_\+fifo\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00242}{st33\+\_\+read\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00278}{st33\+\_\+read\+\_\+sts()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00755}{st33ktpm2x\+\_\+read\+\_\+identity()}}.
+
+\Hypertarget{st33ktpm2x_8c_a0009d1d7ee87c776b587fb694ad6086d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_i2c\_write@{st33\_i2c\_write}}
+\index{st33\_i2c\_write@{st33\_i2c\_write}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_i2c\_write()}{st33\_i2c\_write()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a0009d1d7ee87c776b587fb694ad6086d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+i2c\+\_\+write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a0009d1d7ee87c776b587fb694ad6086d}{st33\+\_\+i2c\+\_\+write}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{199}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00085}{st33ktpm2x\+\_\+cfg\+\_\+t\+::hi2c}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00086}{st33ktpm2x\+\_\+cfg\+\_\+t\+::i2c\+\_\+addr\+\_\+7bit}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00101}{st33ktpm2x\+\_\+cfg\+\_\+t\+::io\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00032}{ST33\+KTPM2\+X\+\_\+\+CMD\+\_\+\+MAX\+\_\+\+BYTES}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00072}{ST33\+KTPM2\+X\+\_\+\+EHAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00074}{ST33\+KTPM2\+X\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00479}{st33\+\_\+fifo\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00266}{st33\+\_\+write\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00272}{st33\+\_\+write\+\_\+loc\+\_\+sel()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00306}{st33\+\_\+write\+\_\+sts()}}.
+
+\Hypertarget{st33ktpm2x_8c_a3b66292c2ff6ff1c062f2bb1d207c6fc}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_identity\_is\_valid@{st33\_identity\_is\_valid}}
+\index{st33\_identity\_is\_valid@{st33\_identity\_is\_valid}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_identity\_is\_valid()}{st33\_identity\_is\_valid()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a3b66292c2ff6ff1c062f2bb1d207c6fc} 
+bool st33\+\_\+identity\+\_\+is\+\_\+valid (\begin{DoxyParamCaption}\item[{uint32\+\_\+t}]{did\+\_\+vid}{, }\item[{uint8\+\_\+t}]{rid}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Check whether DID\+\_\+\+VID/\+RID values look like an ST33 TPM response. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00086}{86}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00755}{st33ktpm2x\+\_\+read\+\_\+identity()}}.
+
+\Hypertarget{st33ktpm2x_8c_af5d8c396fbf76c79b5aec9083844f7c4}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_le32\_read@{st33\_le32\_read}}
+\index{st33\_le32\_read@{st33\_le32\_read}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_le32\_read()}{st33\_le32\_read()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_af5d8c396fbf76c79b5aec9083844f7c4} 
+uint32\+\_\+t st33\+\_\+le32\+\_\+read (\begin{DoxyParamCaption}\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_af5d8c396fbf76c79b5aec9083844f7c4}{st33\+\_\+le32\+\_\+read}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00077}{77}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00755}{st33ktpm2x\+\_\+read\+\_\+identity()}}.
+
+\Hypertarget{st33ktpm2x_8c_ad4cf5c4e278c9f0aa7d55e085ada694f}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_min\_u16@{st33\_min\_u16}}
+\index{st33\_min\_u16@{st33\_min\_u16}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_min\_u16()}{st33\_min\_u16()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ad4cf5c4e278c9f0aa7d55e085ada694f} 
+uint16\+\_\+t st33\+\_\+min\+\_\+u16 (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{a}{, }\item[{uint16\+\_\+t}]{b}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_ad4cf5c4e278c9f0aa7d55e085ada694f}{st33\+\_\+min\+\_\+u16}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00056}{56}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00491}{st33\+\_\+read\+\_\+response\+\_\+stream()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a246bc398d0a96c8308ecc433391f2a50}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_read\_access@{st33\_read\_access}}
+\index{st33\_read\_access@{st33\_read\_access}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_read\_access()}{st33\_read\_access()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a246bc398d0a96c8308ecc433391f2a50} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+read\+\_\+access (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{access}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a246bc398d0a96c8308ecc433391f2a50}{st33\+\_\+read\+\_\+access}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00242}{242}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00312}{st33\+\_\+wait\+\_\+access\+\_\+bits()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}.
+
+\Hypertarget{st33ktpm2x_8c_aab5764298485f46ba5037f0e4541c30d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_read\_response\_stream@{st33\_read\_response\_stream}}
+\index{st33\_read\_response\_stream@{st33\_read\_response\_stream}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_read\_response\_stream()}{st33\_read\_response\_stream()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_aab5764298485f46ba5037f0e4541c30d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+read\+\_\+response\+\_\+stream (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{dst}{, }\item[{uint16\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_aab5764298485f46ba5037f0e4541c30d}{st33\+\_\+read\+\_\+response\+\_\+stream}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00491}{491}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00485}{st33\+\_\+fifo\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00056}{st33\+\_\+min\+\_\+u16()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{st33\+\_\+wait\+\_\+burst()}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_aaf2fbce0dff13154de59de5446b606c9}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_read\_sts@{st33\_read\_sts}}
+\index{st33\_read\_sts@{st33\_read\_sts}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_read\_sts()}{st33\_read\_sts()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_aaf2fbce0dff13154de59de5446b606c9} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+read\+\_\+sts (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{sts}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{burst\+\_\+count}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_aaf2fbce0dff13154de59de5446b606c9}{st33\+\_\+read\+\_\+sts}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00278}{278}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{st33\+\_\+wait\+\_\+burst()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00350}{st33\+\_\+wait\+\_\+sts\+\_\+bits()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a77e665097f98e248e6a636d216f56d88}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_status\_text@{st33\_status\_text}}
+\index{st33\_status\_text@{st33\_status\_text}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_status\_text()}{st33\_status\_text()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a77e665097f98e248e6a636d216f56d88} 
+const char \texorpdfstring{$\ast$}{*} st33\+\_\+status\+\_\+text (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}}}]{rc}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a77e665097f98e248e6a636d216f56d88}{st33\+\_\+status\+\_\+text}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{100}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00072}{ST33\+KTPM2\+X\+\_\+\+EHAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00074}{ST33\+KTPM2\+X\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00071}{ST33\+KTPM2\+X\+\_\+\+ESTATE}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00076}{ST33\+KTPM2\+X\+\_\+\+ETPM\+\_\+\+RC}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00461}{st33\+\_\+trace\+\_\+fail()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00312}{st33\+\_\+wait\+\_\+access\+\_\+bits()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{st33\+\_\+wait\+\_\+burst()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00350}{st33\+\_\+wait\+\_\+sts\+\_\+bits()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}}.
+
+\Hypertarget{st33ktpm2x_8c_a9e13bd328b660483b8d8d09852e55c6a}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_tpm2\_nv\_write\_auth@{st33\_tpm2\_nv\_write\_auth}}
+\index{st33\_tpm2\_nv\_write\_auth@{st33\_tpm2\_nv\_write\_auth}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_tpm2\_nv\_write\_auth()}{st33\_tpm2\_nv\_write\_auth()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a9e13bd328b660483b8d8d09852e55c6a} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{auth\+\_\+handle}{, }\item[{uint32\+\_\+t}]{nv\+\_\+index}{, }\item[{uint16\+\_\+t}]{offset}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{data\+\_\+len}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a9e13bd328b660483b8d8d09852e55c6a}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{1419}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00144}{st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01483}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+write()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l01499}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+platform\+\_\+pp()}}.
+
+\Hypertarget{st33ktpm2x_8c_a0939967125ede2ad5039aedd634a908d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_trace\_fail@{st33\_trace\_fail}}
+\index{st33\_trace\_fail@{st33\_trace\_fail}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_trace\_fail()}{st33\_trace\_fail()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a0939967125ede2ad5039aedd634a908d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+trace\+\_\+fail (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{stage}{, }\item[{\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}}}]{rc}{, }\item[{bool}]{release\+\_\+locality}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a0939967125ede2ad5039aedd634a908d}{st33\+\_\+trace\+\_\+fail}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00461}{461}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a26921e98fbcf5420df3d25741888bf64}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_trace\_tis@{st33\_trace\_tis}}
+\index{st33\_trace\_tis@{st33\_trace\_tis}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_trace\_tis()}{st33\_trace\_tis()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a26921e98fbcf5420df3d25741888bf64} 
+void st33\+\_\+trace\+\_\+tis (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const char \texorpdfstring{$\ast$}{*}}]{tag}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a26921e98fbcf5420df3d25741888bf64}{st33\+\_\+trace\+\_\+tis}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{437}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00085}{st33ktpm2x\+\_\+cfg\+\_\+t\+::hi2c}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00113}{st33ktpm2x\+\_\+t\+::locality0\+\_\+acquired}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00242}{st33\+\_\+read\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00278}{st33\+\_\+read\+\_\+sts()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00461}{st33\+\_\+trace\+\_\+fail()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_ad938755f98c5e01795b37c7d8a4ebe3f}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_wait\_access\_bits@{st33\_wait\_access\_bits}}
+\index{st33\_wait\_access\_bits@{st33\_wait\_access\_bits}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_wait\_access\_bits()}{st33\_wait\_access\_bits()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ad938755f98c5e01795b37c7d8a4ebe3f} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+wait\+\_\+access\+\_\+bits (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{mask}{, }\item[{uint8\+\_\+t}]{expected}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Poll TPM\+\_\+\+ACCESS until required bits are set and forbidden bits are clear. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00312}{312}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00242}{st33\+\_\+read\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}.
+
+\Hypertarget{st33ktpm2x_8c_a78f09ad4a7d9dfcd41d72c52303d36db}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_wait\_burst@{st33\_wait\_burst}}
+\index{st33\_wait\_burst@{st33\_wait\_burst}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_wait\_burst()}{st33\_wait\_burst()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a78f09ad4a7d9dfcd41d72c52303d36db} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+wait\+\_\+burst (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{burst\+\_\+out}{, }\item[{uint8\+\_\+t}]{require\+\_\+data\+\_\+avail}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Wait for a non-\/zero TPM FIFO burst count, optionally requiring data availability. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{390}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00103}{st33ktpm2x\+\_\+cfg\+\_\+t\+::burst\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00278}{st33\+\_\+read\+\_\+sts()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00491}{st33\+\_\+read\+\_\+response\+\_\+stream()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_aa48bc5bda9273949f00d808ea644f382}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_wait\_sts\_bits@{st33\_wait\_sts\_bits}}
+\index{st33\_wait\_sts\_bits@{st33\_wait\_sts\_bits}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_wait\_sts\_bits()}{st33\_wait\_sts\_bits()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_aa48bc5bda9273949f00d808ea644f382} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+wait\+\_\+sts\+\_\+bits (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{mask}{, }\item[{uint8\+\_\+t}]{expected}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Poll TPM\+\_\+\+STS until required status bits are set and forbidden bits are clear. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00350}{350}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00278}{st33\+\_\+read\+\_\+sts()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a86f44f88a6babe49961fd153c834d761}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_write\_access@{st33\_write\_access}}
+\index{st33\_write\_access@{st33\_write\_access}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_write\_access()}{st33\_write\_access()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a86f44f88a6babe49961fd153c834d761} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+write\+\_\+access (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a86f44f88a6babe49961fd153c834d761}{st33\+\_\+write\+\_\+access}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00266}{266}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}.
+
+\Hypertarget{st33ktpm2x_8c_a7a3a687f3279945eaeae16124da17209}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_write\_empty\_password\_auth@{st33\_write\_empty\_password\_auth}}
+\index{st33\_write\_empty\_password\_auth@{st33\_write\_empty\_password\_auth}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_write\_empty\_password\_auth()}{st33\_write\_empty\_password\_auth()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a7a3a687f3279945eaeae16124da17209} 
+uint16\+\_\+t st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth (\begin{DoxyParamCaption}\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{buf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Marshal an empty-\/password authorization session into a TPM2 command. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00144}{144}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01270}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read()}}.
+
+\Hypertarget{st33ktpm2x_8c_af4a010b695b9416234306bc6b9bfd9c8}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_write\_loc\_sel@{st33\_write\_loc\_sel}}
+\index{st33\_write\_loc\_sel@{st33\_write\_loc\_sel}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_write\_loc\_sel()}{st33\_write\_loc\_sel()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_af4a010b695b9416234306bc6b9bfd9c8} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+write\+\_\+loc\+\_\+sel (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{locality}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_af4a010b695b9416234306bc6b9bfd9c8}{st33\+\_\+write\+\_\+loc\+\_\+sel}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00272}{272}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{st33ktpm2x\+\_\+hard\+\_\+reset()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}}.
+
+\Hypertarget{st33ktpm2x_8c_a7d845ce25a19a1f0190f3af77fe8314c}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33\_write\_sts@{st33\_write\_sts}}
+\index{st33\_write\_sts@{st33\_write\_sts}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33\_write\_sts()}{st33\_write\_sts()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a7d845ce25a19a1f0190f3af77fe8314c} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33\+\_\+write\+\_\+sts (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internal helper\+: {\ttfamily \doxylink{st33ktpm2x_8c_a7d845ce25a19a1f0190f3af77fe8314c}{st33\+\_\+write\+\_\+sts}}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00306}{306}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00199}{st33\+\_\+i2c\+\_\+write()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_aacbcacfe63408588f1de87b0f790d389}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_davint\_is\_asserted@{st33ktpm2x\_davint\_is\_asserted}}
+\index{st33ktpm2x\_davint\_is\_asserted@{st33ktpm2x\_davint\_is\_asserted}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_davint\_is\_asserted()}{st33ktpm2x\_davint\_is\_asserted()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_aacbcacfe63408588f1de87b0f790d389} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+davint\+\_\+is\+\_\+asserted (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{bool \texorpdfstring{$\ast$}{*}}]{asserted}{}\end{DoxyParamCaption})}
+
+
+
+Read TPM\+\_\+\+DAVINT\# / PIRQ state. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em asserted} & \mbox{[}out\mbox{]} {\ttfamily true} if active-\/low interrupt line is asserted. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code ({\ttfamily \doxylink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}} if DAVINT pin is not configured). 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00605}{605}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00095}{st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+active\+\_\+state}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00094}{st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00093}{st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+\Hypertarget{st33ktpm2x_8c_a4395b053468eaa84de32315c833c9a2e}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_default\_cfg@{st33ktpm2x\_default\_cfg}}
+\index{st33ktpm2x\_default\_cfg@{st33ktpm2x\_default\_cfg}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_default\_cfg()}{st33ktpm2x\_default\_cfg()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a4395b053468eaa84de32315c833c9a2e} 
+void st33ktpm2x\+\_\+default\+\_\+cfg (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{, }\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{}\end{DoxyParamCaption})}
+
+
+
+Fill config with safe defaults (including PB0 reset pin defaults from {\ttfamily main.\+h}). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em cfg} & \mbox{[}out\mbox{]} Configuration object to initialize. \\
+\hline
+{\em hi2c} & I2C peripheral handle (use {\ttfamily \&hi2c3}). \\
+\hline
+\end{DoxyParams}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00518}{518}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00103}{st33ktpm2x\+\_\+cfg\+\_\+t\+::burst\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00095}{st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+active\+\_\+state}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00094}{st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00093}{st33ktpm2x\+\_\+cfg\+\_\+t\+::davint\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00085}{st33ktpm2x\+\_\+cfg\+\_\+t\+::hi2c}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00086}{st33ktpm2x\+\_\+cfg\+\_\+t\+::i2c\+\_\+addr\+\_\+7bit}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00101}{st33ktpm2x\+\_\+cfg\+\_\+t\+::io\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00102}{st33ktpm2x\+\_\+cfg\+\_\+t\+::locality\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00099}{st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+active\+\_\+state}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00098}{st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00097}{st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00089}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00088}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00090}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pulse\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00091}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+recovery\+\_\+ms}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00031}{ST33\+KTPM2\+X\+\_\+\+I2\+C\+\_\+\+ADDR\+\_\+\+DEFAULT}}.
+
+\Hypertarget{st33ktpm2x_8c_acb54b869460edebfb386accaac6cbdee}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_deinit@{st33ktpm2x\_deinit}}
+\index{st33ktpm2x\_deinit@{st33ktpm2x\_deinit}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_deinit()}{st33ktpm2x\_deinit()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_acb54b869460edebfb386accaac6cbdee} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+deinit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{}\end{DoxyParamCaption})}
+
+
+
+Deinitialize context and release locality if needed. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00565}{565}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00071}{ST33\+KTPM2\+X\+\_\+\+ESTATE}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}}.
+
+\Hypertarget{st33ktpm2x_8c_a277fcdc81f0d11bd7b7a934deab48d7d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_hard\_reset@{st33ktpm2x\_hard\_reset}}
+\index{st33ktpm2x\_hard\_reset@{st33ktpm2x\_hard\_reset}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_hard\_reset()}{st33ktpm2x\_hard\_reset()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a277fcdc81f0d11bd7b7a934deab48d7d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+hard\+\_\+reset (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{}\end{DoxyParamCaption})}
+
+
+
+Perform hardware reset pulse on TPM reset pin. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00577}{577}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00113}{st33ktpm2x\+\_\+t\+::locality0\+\_\+acquired}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00089}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00088}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00090}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pulse\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00091}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+recovery\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00272}{st33\+\_\+write\+\_\+loc\+\_\+sel()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00071}{ST33\+KTPM2\+X\+\_\+\+ESTATE}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+\Hypertarget{st33ktpm2x_8c_a980b0aa6419563ca5aa0aef6d9c3d26e}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_init@{st33ktpm2x\_init}}
+\index{st33ktpm2x\_init@{st33ktpm2x\_init}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_init()}{st33ktpm2x\_init()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a980b0aa6419563ca5aa0aef6d9c3d26e} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const \mbox{\hyperlink{structst33ktpm2x__cfg__t}{st33ktpm2x\+\_\+cfg\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{cfg}{}\end{DoxyParamCaption})}
+
+
+
+Initialize TPM driver context. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em cfg} & Runtime configuration. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00547}{547}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00085}{st33ktpm2x\+\_\+cfg\+\_\+t\+::hi2c}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00089}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00088}{st33ktpm2x\+\_\+cfg\+\_\+t\+::reset\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+\Hypertarget{st33ktpm2x_8c_ada918f8074c30d27398d3f74587e0c99}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_pp\_is\_pressed@{st33ktpm2x\_pp\_is\_pressed}}
+\index{st33ktpm2x\_pp\_is\_pressed@{st33ktpm2x\_pp\_is\_pressed}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_pp\_is\_pressed()}{st33ktpm2x\_pp\_is\_pressed()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ada918f8074c30d27398d3f74587e0c99} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{bool \texorpdfstring{$\ast$}{*}}]{pressed}{}\end{DoxyParamCaption})}
+
+
+
+Read state of optional Physical Presence button. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em pressed} & \mbox{[}out\mbox{]} {\ttfamily true} if button is active. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code ({\ttfamily \doxylink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}} if PP pin is not configured). 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{624}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00099}{st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+active\+\_\+state}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00098}{st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+pin}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00097}{st33ktpm2x\+\_\+cfg\+\_\+t\+::pp\+\_\+port}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00643}{st33ktpm2x\+\_\+pp\+\_\+wait\+\_\+pressed()}}.
+
+\Hypertarget{st33ktpm2x_8c_a43e4a393a0ad5d8d44f36e1e60fe6a74}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_pp\_wait\_pressed@{st33ktpm2x\_pp\_wait\_pressed}}
+\index{st33ktpm2x\_pp\_wait\_pressed@{st33ktpm2x\_pp\_wait\_pressed}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_pp\_wait\_pressed()}{st33ktpm2x\_pp\_wait\_pressed()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a43e4a393a0ad5d8d44f36e1e60fe6a74} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+pp\+\_\+wait\+\_\+pressed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Wait until Physical Presence button becomes active. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em timeout\+\_\+ms} & Timeout in ms. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00643}{643}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00071}{ST33\+KTPM2\+X\+\_\+\+ESTATE}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00073}{ST33\+KTPM2\+X\+\_\+\+ETIMEOUT}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00624}{st33ktpm2x\+\_\+pp\+\_\+is\+\_\+pressed()}}.
+
+\Hypertarget{st33ktpm2x_8c_ae0792eaaf30019c3cdbc0c37db09ed98}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_read\_identity@{st33ktpm2x\_read\_identity}}
+\index{st33ktpm2x\_read\_identity@{st33ktpm2x\_read\_identity}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_read\_identity()}{st33ktpm2x\_read\_identity()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ae0792eaaf30019c3cdbc0c37db09ed98} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+read\+\_\+identity (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{did\+\_\+vid}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{rid}{}\end{DoxyParamCaption})}
+
+
+
+Read TPM DID\+\_\+\+VID and RID registers. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em did\+\_\+vid} & \mbox{[}out\mbox{]} 32-\/bit DID\+\_\+\+VID register value. \\
+\hline
+{\em rid} & \mbox{[}out\mbox{]} 8-\/bit Revision ID value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00755}{755}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00154}{st33\+\_\+i2c\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00086}{st33\+\_\+identity\+\_\+is\+\_\+valid()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00077}{st33\+\_\+le32\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+\Hypertarget{st33ktpm2x_8c_adaefa07be059fc8b5e135cc01de47544}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_release\_locality0@{st33ktpm2x\_release\_locality0}}
+\index{st33ktpm2x\_release\_locality0@{st33ktpm2x\_release\_locality0}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_release\_locality0()}{st33ktpm2x\_release\_locality0()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_adaefa07be059fc8b5e135cc01de47544} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+release\+\_\+locality0 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{}\end{DoxyParamCaption})}
+
+
+
+Release TPM locality 0. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{730}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00113}{st33ktpm2x\+\_\+t\+::locality0\+\_\+acquired}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00100}{st33\+\_\+status\+\_\+text()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00266}{st33\+\_\+write\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00071}{ST33\+KTPM2\+X\+\_\+\+ESTATE}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00461}{st33\+\_\+trace\+\_\+fail()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00565}{st33ktpm2x\+\_\+deinit()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_ad8b669c02345b065901bc6230f19aa9d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_request\_locality0@{st33ktpm2x\_request\_locality0}}
+\index{st33ktpm2x\_request\_locality0@{st33ktpm2x\_request\_locality0}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_request\_locality0()}{st33ktpm2x\_request\_locality0()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ad8b669c02345b065901bc6230f19aa9d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+request\+\_\+locality0 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{}\end{DoxyParamCaption})}
+
+
+
+Acquire TPM locality 0. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{672}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00113}{st33ktpm2x\+\_\+t\+::locality0\+\_\+acquired}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00102}{st33ktpm2x\+\_\+cfg\+\_\+t\+::locality\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00242}{st33\+\_\+read\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00461}{st33\+\_\+trace\+\_\+fail()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00312}{st33\+\_\+wait\+\_\+access\+\_\+bits()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00266}{st33\+\_\+write\+\_\+access()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00272}{st33\+\_\+write\+\_\+loc\+\_\+sel()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00071}{ST33\+KTPM2\+X\+\_\+\+ESTATE}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a01917c931e740d07ecdde705b5217f42}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_flush\_context@{st33ktpm2x\_tpm2\_flush\_context}}
+\index{st33ktpm2x\_tpm2\_flush\_context@{st33ktpm2x\_tpm2\_flush\_context}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_flush\_context()}{st33ktpm2x\_tpm2\_flush\_context()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a01917c931e740d07ecdde705b5217f42} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+flush\+\_\+context (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{handle}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Flush transient context/session handle (scaffold API). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em handle} & Transient handle. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01515}{1515}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}.
+
+\Hypertarget{st33ktpm2x_8c_a627302c712282068bccff873fcdcb3bb}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_get\_capability@{st33ktpm2x\_tpm2\_get\_capability}}
+\index{st33ktpm2x\_tpm2\_get\_capability@{st33ktpm2x\_tpm2\_get\_capability}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_get\_capability()}{st33ktpm2x\_tpm2\_get\_capability()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a627302c712282068bccff873fcdcb3bb} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+capability (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{capability}{, }\item[{uint32\+\_\+t}]{property}{, }\item[{uint32\+\_\+t}]{property\+\_\+count}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{payload\+\_\+out}{, }\item[{uint16\+\_\+t}]{payload\+\_\+capacity}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{payload\+\_\+len}{, }\item[{bool \texorpdfstring{$\ast$}{*}}]{more\+\_\+data}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Execute TPM2\+\_\+\+Get\+Capability and return raw capability payload. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em capability} & TPM capability selector. \\
+\hline
+{\em property} & Capability-\/specific property/offset. \\
+\hline
+{\em property\+\_\+count} & Number of properties requested. \\
+\hline
+{\em payload\+\_\+out} & Raw capability payload output (without {\ttfamily more\+Data} byte). \\
+\hline
+{\em payload\+\_\+capacity} & Capacity of {\ttfamily payload\+\_\+out}. \\
+\hline
+{\em payload\+\_\+len} & \mbox{[}out\mbox{]} Returned payload length. \\
+\hline
+{\em more\+\_\+data} & \mbox{[}out\mbox{]} {\ttfamily true} if TPM reports more data available. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01044}{1044}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00074}{ST33\+KTPM2\+X\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00033}{ST33\+KTPM2\+X\+\_\+\+RSP\+\_\+\+MAX\+\_\+\+BYTES}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_afc1b7709450d38509ee1dd2e87456b23}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_get\_random@{st33ktpm2x\_tpm2\_get\_random}}
+\index{st33ktpm2x\_tpm2\_get\_random@{st33ktpm2x\_tpm2\_get\_random}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_get\_random()}{st33ktpm2x\_tpm2\_get\_random()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_afc1b7709450d38509ee1dd2e87456b23} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+random (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{requested\+\_\+bytes}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{random\+\_\+out}{, }\item[{uint16\+\_\+t}]{random\+\_\+capacity}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{random\+\_\+len}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Execute TPM2\+\_\+\+Get\+Random. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em requested\+\_\+bytes} & Number of random bytes requested from TPM. \\
+\hline
+{\em random\+\_\+out} & Output buffer for random bytes. \\
+\hline
+{\em random\+\_\+capacity} & Capacity of {\ttfamily random\+\_\+out}. \\
+\hline
+{\em random\+\_\+len} & \mbox{[}out\mbox{]} Actual bytes returned. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00989}{989}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00062}{st33\+\_\+be16\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00074}{ST33\+KTPM2\+X\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a187ec38a3635faa225ffc9df384b8e32}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_nv\_define@{st33ktpm2x\_tpm2\_nv\_define}}
+\index{st33ktpm2x\_tpm2\_nv\_define@{st33ktpm2x\_tpm2\_nv\_define}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_nv\_define()}{st33ktpm2x\_tpm2\_nv\_define()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a187ec38a3635faa225ffc9df384b8e32} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{nv\+\_\+index}{, }\item[{uint16\+\_\+t}]{data\+\_\+size}{, }\item[{uint32\+\_\+t}]{attributes}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Define NV index using owner empty-\/password authorization. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em nv\+\_\+index} & NV index handle. \\
+\hline
+{\em data\+\_\+size} & NV data size. \\
+\hline
+{\em attributes} & NV attributes mask. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01270}{1270}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00144}{st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a73bad0635a3631ff7fe7cb5f116a3b42}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_nv\_read@{st33ktpm2x\_tpm2\_nv\_read}}
+\index{st33ktpm2x\_tpm2\_nv\_read@{st33ktpm2x\_tpm2\_nv\_read}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_nv\_read()}{st33ktpm2x\_tpm2\_nv\_read()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a73bad0635a3631ff7fe7cb5f116a3b42} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{nv\+\_\+index}{, }\item[{uint16\+\_\+t}]{offset}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{out\+\_\+data}{, }\item[{uint16\+\_\+t}]{out\+\_\+capacity}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{out\+\_\+len}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Read bytes from NV index using owner empty-\/password authorization. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em nv\+\_\+index} & NV index handle. \\
+\hline
+{\em offset} & Offset in bytes. \\
+\hline
+{\em out\+\_\+data} & Output buffer. \\
+\hline
+{\em out\+\_\+capacity} & Output capacity. \\
+\hline
+{\em out\+\_\+len} & \mbox{[}out\mbox{]} Returned data length. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{1330}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00062}{st33\+\_\+be16\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00144}{st33\+\_\+write\+\_\+empty\+\_\+password\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00074}{ST33\+KTPM2\+X\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_af1e4206f80948966e16062e7e16f68c4}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_nv\_write@{st33ktpm2x\_tpm2\_nv\_write}}
+\index{st33ktpm2x\_tpm2\_nv\_write@{st33ktpm2x\_tpm2\_nv\_write}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_nv\_write()}{st33ktpm2x\_tpm2\_nv\_write()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_af1e4206f80948966e16062e7e16f68c4} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+write (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{nv\+\_\+index}{, }\item[{uint16\+\_\+t}]{offset}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{data\+\_\+len}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Write bytes to NV index using owner empty-\/password authorization. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em nv\+\_\+index} & NV index handle. \\
+\hline
+{\em offset} & Offset in bytes. \\
+\hline
+{\em data} & Input data. \\
+\hline
+{\em data\+\_\+len} & Input data length. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01483}{1483}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}.
+
+\Hypertarget{st33ktpm2x_8c_ae63a087a2ccbe308b472c0d72278852d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_nv\_write\_platform\_pp@{st33ktpm2x\_tpm2\_nv\_write\_platform\_pp}}
+\index{st33ktpm2x\_tpm2\_nv\_write\_platform\_pp@{st33ktpm2x\_tpm2\_nv\_write\_platform\_pp}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_nv\_write\_platform\_pp()}{st33ktpm2x\_tpm2\_nv\_write\_platform\_pp()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ae63a087a2ccbe308b472c0d72278852d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+platform\+\_\+pp (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{nv\+\_\+index}{, }\item[{uint16\+\_\+t}]{offset}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint16\+\_\+t}]{data\+\_\+len}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Write bytes to NV index using platform authorization with hardware Physical Presence. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em nv\+\_\+index} & NV index handle. \\
+\hline
+{\em offset} & Offset in bytes. \\
+\hline
+{\em data} & Input data. \\
+\hline
+{\em data\+\_\+len} & Input data length. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01499}{1499}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}.
+
+\Hypertarget{st33ktpm2x_8c_a601549f7e393fdca42aefbd4f04304c2}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_pcr\_read\_sha256@{st33ktpm2x\_tpm2\_pcr\_read\_sha256}}
+\index{st33ktpm2x\_tpm2\_pcr\_read\_sha256@{st33ktpm2x\_tpm2\_pcr\_read\_sha256}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_pcr\_read\_sha256()}{st33ktpm2x\_tpm2\_pcr\_read\_sha256()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a601549f7e393fdca42aefbd4f04304c2} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256 (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint8\+\_\+t}]{pcr\+\_\+index}{, }\item[{uint8\+\_\+t}]{digest\+\_\+sha256\+\_\+out}{\mbox{[}32\mbox{]}, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{update\+\_\+counter\+\_\+out}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Execute TPM2\+\_\+\+PCR\+\_\+\+Read for one SHA-\/256 PCR index. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em pcr\+\_\+index} & PCR index in range 0..23. \\
+\hline
+{\em digest\+\_\+sha256\+\_\+out} & \mbox{[}out\mbox{]} 32-\/byte SHA-\/256 PCR digest. \\
+\hline
+{\em update\+\_\+counter\+\_\+out} & \mbox{[}out\mbox{]} PCR update counter. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01096}{1096}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00062}{st33\+\_\+be16\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00068}{st33\+\_\+be32\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00033}{ST33\+KTPM2\+X\+\_\+\+RSP\+\_\+\+MAX\+\_\+\+BYTES}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a8a0390a3603abfaee06c4a47806bfd93}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_policy\_command\_code@{st33ktpm2x\_tpm2\_policy\_command\_code}}
+\index{st33ktpm2x\_tpm2\_policy\_command\_code@{st33ktpm2x\_tpm2\_policy\_command\_code}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_policy\_command\_code()}{st33ktpm2x\_tpm2\_policy\_command\_code()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a8a0390a3603abfaee06c4a47806bfd93} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+command\+\_\+code (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{session\+\_\+handle}{, }\item[{uint32\+\_\+t}]{command\+\_\+code}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Apply Policy\+Command\+Code in an existing policy session (scaffold API). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em session\+\_\+handle} & Policy session handle. \\
+\hline
+{\em command\+\_\+code} & TPM command code to authorize. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01236}{1236}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}.
+
+\Hypertarget{st33ktpm2x_8c_a88fa5109117b117eea6f084fb7947e29}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_policy\_or@{st33ktpm2x\_tpm2\_policy\_or}}
+\index{st33ktpm2x\_tpm2\_policy\_or@{st33ktpm2x\_tpm2\_policy\_or}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_policy\_or()}{st33ktpm2x\_tpm2\_policy\_or()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a88fa5109117b117eea6f084fb7947e29} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+or (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{session\+\_\+handle}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{digest\+\_\+list}{, }\item[{uint8\+\_\+t}]{digest\+\_\+count}{, }\item[{uint8\+\_\+t}]{digest\+\_\+size}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Apply Policy\+OR branch combiner (scaffold API). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em session\+\_\+handle} & Policy session handle. \\
+\hline
+{\em digest\+\_\+list} & Pointer to concatenated digest list. \\
+\hline
+{\em digest\+\_\+count} & Number of digests. \\
+\hline
+{\em digest\+\_\+size} & Single digest size. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01251}{1251}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}.
+
+\Hypertarget{st33ktpm2x_8c_a21f6025c6a40532501b91579d6b62bc6}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_policy\_pcr@{st33ktpm2x\_tpm2\_policy\_pcr}}
+\index{st33ktpm2x\_tpm2\_policy\_pcr@{st33ktpm2x\_tpm2\_policy\_pcr}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_policy\_pcr()}{st33ktpm2x\_tpm2\_policy\_pcr()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a21f6025c6a40532501b91579d6b62bc6} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+pcr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{session\+\_\+handle}{, }\item[{uint8\+\_\+t}]{pcr\+\_\+index}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Apply Policy\+PCR in an existing policy session (scaffold API). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em session\+\_\+handle} & Policy session handle. \\
+\hline
+{\em pcr\+\_\+index} & PCR index. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01208}{1208}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}.
+
+\Hypertarget{st33ktpm2x_8c_a2b73e0d636cceab618098a9db9aa2f7d}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_policy\_physical\_presence@{st33ktpm2x\_tpm2\_policy\_physical\_presence}}
+\index{st33ktpm2x\_tpm2\_policy\_physical\_presence@{st33ktpm2x\_tpm2\_policy\_physical\_presence}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_policy\_physical\_presence()}{st33ktpm2x\_tpm2\_policy\_physical\_presence()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a2b73e0d636cceab618098a9db9aa2f7d} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+policy\+\_\+physical\+\_\+presence (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t}]{session\+\_\+handle}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Apply Physical Presence policy branch (scaffold API). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em session\+\_\+handle} & Policy session handle. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01223}{1223}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}.
+
+\Hypertarget{st33ktpm2x_8c_ae6c9416bf6fb89130eb182a31ed2acb3}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_self\_test@{st33ktpm2x\_tpm2\_self\_test}}
+\index{st33ktpm2x\_tpm2\_self\_test@{st33ktpm2x\_tpm2\_self\_test}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_self\_test()}{st33ktpm2x\_tpm2\_self\_test()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ae6c9416bf6fb89130eb182a31ed2acb3} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+self\+\_\+test (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{bool}]{full\+\_\+test}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Execute TPM2\+\_\+\+Self\+Test. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em full\+\_\+test} & {\ttfamily true} for full self-\/test, {\ttfamily false} for incremental self-\/test. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00973}{973}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_a80d97a74a64b52b531c1038abcbe6fe4}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_start\_auth\_session@{st33ktpm2x\_tpm2\_start\_auth\_session}}
+\index{st33ktpm2x\_tpm2\_start\_auth\_session@{st33ktpm2x\_tpm2\_start\_auth\_session}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_start\_auth\_session()}{st33ktpm2x\_tpm2\_start\_auth\_session()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a80d97a74a64b52b531c1038abcbe6fe4} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+start\+\_\+auth\+\_\+session (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{session\+\_\+handle\+\_\+out}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Start TPM2 policy/auth session helper (scaffold API). 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em session\+\_\+handle\+\_\+out} & \mbox{[}out\mbox{]} Created session handle. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l01192}{1192}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00077}{ST33\+KTPM2\+X\+\_\+\+ENOTSUP}}.
+
+\Hypertarget{st33ktpm2x_8c_a7883a6abe5016f7f08fbae5c3ec0e1d0}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_tpm2\_startup@{st33ktpm2x\_tpm2\_startup}}
+\index{st33ktpm2x\_tpm2\_startup@{st33ktpm2x\_tpm2\_startup}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_tpm2\_startup()}{st33ktpm2x\_tpm2\_startup()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a7883a6abe5016f7f08fbae5c3ec0e1d0} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+tpm2\+\_\+startup (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{uint16\+\_\+t}]{startup\+\_\+type}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Execute TPM2\+\_\+\+Startup. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em startup\+\_\+type} & Use {\ttfamily ST33\+KTPM2\+X\+\_\+\+TPM2\+\_\+\+SU\+\_\+\+CLEAR} or {\ttfamily ST33\+KTPM2\+X\+\_\+\+TPM2\+\_\+\+SU\+\_\+\+STATE}. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM response code. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00957}{957}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8c_source_l00128}{st33\+\_\+be16\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00135}{st33\+\_\+be32\+\_\+write()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{st33ktpm2x\+\_\+transceive()}}.
+
+\Hypertarget{st33ktpm2x_8c_ad66faa4aee2d93f8557b4f370c845317}\index{st33ktpm2x.c@{st33ktpm2x.c}!st33ktpm2x\_transceive@{st33ktpm2x\_transceive}}
+\index{st33ktpm2x\_transceive@{st33ktpm2x\_transceive}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{st33ktpm2x\_transceive()}{st33ktpm2x\_transceive()}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_ad66faa4aee2d93f8557b4f370c845317} 
+\mbox{\hyperlink{st33ktpm2x_8h_a3ebfd1bc90ba1d3d57f36a141e0f8c70}{st33ktpm2x\+\_\+status\+\_\+t}} st33ktpm2x\+\_\+transceive (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structst33ktpm2x__t}{st33ktpm2x\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{ctx}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{command}{, }\item[{uint16\+\_\+t}]{command\+\_\+len}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{response}{, }\item[{uint16\+\_\+t}]{response\+\_\+capacity}{, }\item[{uint16\+\_\+t \texorpdfstring{$\ast$}{*}}]{response\+\_\+len}{, }\item[{uint32\+\_\+t \texorpdfstring{$\ast$}{*}}]{tpm\+\_\+rc}{}\end{DoxyParamCaption})}
+
+
+
+Send one raw TPM command and receive full response. 
+
+This is the primary extension point for advanced TPM2 features.
+
+
+\begin{DoxyParams}{Parametry}
+{\em ctx} & Driver context. \\
+\hline
+{\em command} & Command buffer (TPM2 packet, complete header+payload). \\
+\hline
+{\em command\+\_\+len} & Command length in bytes. \\
+\hline
+{\em response} & Buffer for response packet. \\
+\hline
+{\em response\+\_\+capacity} & Response buffer capacity in bytes. \\
+\hline
+{\em response\+\_\+len} & \mbox{[}out\mbox{]} Actual response length. \\
+\hline
+{\em tpm\+\_\+rc} & \mbox{[}out\mbox{]} TPM2 response code parsed from response header. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+Status code. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00786}{786}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{st33ktpm2x_8h_source_l00103}{st33ktpm2x\+\_\+cfg\+\_\+t\+::burst\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00111}{st33ktpm2x\+\_\+t\+::cfg}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00112}{st33ktpm2x\+\_\+t\+::initialized}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00068}{st33\+\_\+be32\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00479}{st33\+\_\+fifo\+\_\+write()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00056}{st33\+\_\+min\+\_\+u16()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00491}{st33\+\_\+read\+\_\+response\+\_\+stream()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00278}{st33\+\_\+read\+\_\+sts()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00461}{st33\+\_\+trace\+\_\+fail()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00437}{st33\+\_\+trace\+\_\+tis()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00390}{st33\+\_\+wait\+\_\+burst()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00350}{st33\+\_\+wait\+\_\+sts\+\_\+bits()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00306}{st33\+\_\+write\+\_\+sts()}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00032}{ST33\+KTPM2\+X\+\_\+\+CMD\+\_\+\+MAX\+\_\+\+BYTES}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00070}{ST33\+KTPM2\+X\+\_\+\+EINVAL}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00074}{ST33\+KTPM2\+X\+\_\+\+EOVERFLOW}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00075}{ST33\+KTPM2\+X\+\_\+\+EPROTO}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00076}{ST33\+KTPM2\+X\+\_\+\+ETPM\+\_\+\+RC}}, \mbox{\hyperlink{st33ktpm2x_8h_source_l00069}{ST33\+KTPM2\+X\+\_\+\+OK}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00730}{st33ktpm2x\+\_\+release\+\_\+locality0()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00672}{st33ktpm2x\+\_\+request\+\_\+locality0()}} i \mbox{\hyperlink{st33ktpm2x_8h_source_l00033}{ST33\+KTPM2\+X\+\_\+\+RSP\+\_\+\+MAX\+\_\+\+BYTES}}.
+
+
+
+Odwołania w \mbox{\hyperlink{st33ktpm2x_8c_source_l01419}{st33\+\_\+tpm2\+\_\+nv\+\_\+write\+\_\+auth()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01044}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+capability()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00989}{st33ktpm2x\+\_\+tpm2\+\_\+get\+\_\+random()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01270}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+define()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01330}{st33ktpm2x\+\_\+tpm2\+\_\+nv\+\_\+read()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l01096}{st33ktpm2x\+\_\+tpm2\+\_\+pcr\+\_\+read\+\_\+sha256()}}, \mbox{\hyperlink{st33ktpm2x_8c_source_l00973}{st33ktpm2x\+\_\+tpm2\+\_\+self\+\_\+test()}} i \mbox{\hyperlink{st33ktpm2x_8c_source_l00957}{st33ktpm2x\+\_\+tpm2\+\_\+startup()}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{st33ktpm2x_8c_doc-var-members}
+\doxysubsection{Dokumentacja zmiennych}
+\Hypertarget{st33ktpm2x_8c_a551696deb3469b2d815ef8464cf23b3c}\index{st33ktpm2x.c@{st33ktpm2x.c}!s\_st33\_i2c\_tx@{s\_st33\_i2c\_tx}}
+\index{s\_st33\_i2c\_tx@{s\_st33\_i2c\_tx}!st33ktpm2x.c@{st33ktpm2x.c}}
+\doxysubsubsection{\texorpdfstring{s\_st33\_i2c\_tx}{s\_st33\_i2c\_tx}}
+{\footnotesize\ttfamily \label{st33ktpm2x_8c_a551696deb3469b2d815ef8464cf23b3c} 
+uint8\+\_\+t s\+\_\+st33\+\_\+i2c\+\_\+tx\mbox{[}1U+\mbox{\hyperlink{st33ktpm2x_8h_a812f59d07c8c7eb0540b6776127c1c8b}{ST33\+KTPM2\+X\+\_\+\+CMD\+\_\+\+MAX\+\_\+\+BYTES}}\mbox{]}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definicja w linii \mbox{\hyperlink{st33ktpm2x_8c_source_l00053}{53}} pliku \mbox{\hyperlink{st33ktpm2x_8c_source}{st33ktpm2x.\+c}}.
+

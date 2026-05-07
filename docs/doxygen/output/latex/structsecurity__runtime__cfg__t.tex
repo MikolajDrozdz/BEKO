@@ -1,0 +1,239 @@
+\doxysection{Dokumentacja struktury security\+\_\+runtime\+\_\+cfg\+\_\+t}
+\hypertarget{structsecurity__runtime__cfg__t}{}\label{structsecurity__runtime__cfg__t}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+
+
+Persistent and runtime security settings snapshot.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/security\+\_\+main.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{structsecurity__runtime__cfg__t_a2dbe7463349f84d116c1f25e2e9ba027}{coding\+\_\+enabled}}
+\begin{DoxyCompactList}\small\item\em Protected/coded traffic setting. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structsecurity__runtime__cfg__t_adbfd578d8f0882cb768e8bedb10b3bdd}{fh\+\_\+enabled}}
+\begin{DoxyCompactList}\small\item\em Frequency hopping setting. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structsecurity__runtime__cfg__t_acf4e54f09cb7da3404f3a21971c4edaa}{fh\+\_\+period\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Frequency hopping period in milliseconds. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structsecurity__runtime__cfg__t_a0ab9ab1cc0a38c67d09c9ebfebe670eb}{auto\+\_\+ping\+\_\+enabled}}
+\begin{DoxyCompactList}\small\item\em Automatic ping setting. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structsecurity__runtime__cfg__t_a654ffd1797b943c53db8e2aecfb61898}{auto\+\_\+ping\+\_\+period\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Automatic ping period in milliseconds. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} \mbox{\hyperlink{structsecurity__runtime__cfg__t_a836268a1850253e7f0d5aab38fe96ab9}{auto\+\_\+ping\+\_\+mode}}
+\begin{DoxyCompactList}\small\item\em Automatic ping payload mode. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}} \mbox{\hyperlink{structsecurity__runtime__cfg__t_adf9cf796c526ed33659d841a00d35447}{notify\+\_\+mode}}
+\begin{DoxyCompactList}\small\item\em Security notification display mode. \end{DoxyCompactList}\item 
+uint8\+\_\+t \mbox{\hyperlink{structsecurity__runtime__cfg__t_a27deaae71af67200235a6f06a9a3d84a}{lora\+\_\+preset}}
+\begin{DoxyCompactList}\small\item\em Selected Lo\+Ra preset. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} \mbox{\hyperlink{structsecurity__runtime__cfg__t_a6ea64e49878b3e18a540e1b0ff2bda34}{active\+\_\+modulation}}
+\begin{DoxyCompactList}\small\item\em Active modulation family. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structsecurity__runtime__cfg__t_abfa0ce16882adff3981a56126ba5f6d4}{lora}}
+\begin{DoxyCompactList}\small\item\em Persisted Lo\+Ra profile. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structsecurity__runtime__cfg__t_ac0efdc06c007576c76335b661b576217}{fsk}}
+\begin{DoxyCompactList}\small\item\em Persisted FSK profile. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} \mbox{\hyperlink{structsecurity__runtime__cfg__t_aac2ddfcf83fbd0fe477f54d1cc57a55a}{ook}}
+\begin{DoxyCompactList}\small\item\em Persisted OOK profile. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{structsecurity__runtime__cfg__t_a661a780c148d7641dc2ab54556577842}{radio\+\_\+profiles\+\_\+persisted}}
+\begin{DoxyCompactList}\small\item\em {\ttfamily true} when radio profiles were loaded from store. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Persistent and runtime security settings snapshot. 
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00048}{48}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structsecurity__runtime__cfg__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structsecurity__runtime__cfg__t_a6ea64e49878b3e18a540e1b0ff2bda34}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!active\_modulation@{active\_modulation}}
+\index{active\_modulation@{active\_modulation}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{active\_modulation}{active\_modulation}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a6ea64e49878b3e18a540e1b0ff2bda34} 
+\mbox{\hyperlink{radio__main_8h_a94aa5079cc936bd8622c2615177ee6e1}{radio\+\_\+main\+\_\+modulation\+\_\+t}} security\+\_\+runtime\+\_\+cfg\+\_\+t\+::active\+\_\+modulation}
+
+
+
+Active modulation family. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00058}{58}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_a0ab9ab1cc0a38c67d09c9ebfebe670eb}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!auto\_ping\_enabled@{auto\_ping\_enabled}}
+\index{auto\_ping\_enabled@{auto\_ping\_enabled}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_enabled}{auto\_ping\_enabled}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a0ab9ab1cc0a38c67d09c9ebfebe670eb} 
+bool security\+\_\+runtime\+\_\+cfg\+\_\+t\+::auto\+\_\+ping\+\_\+enabled}
+
+
+
+Automatic ping setting. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00053}{53}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_a836268a1850253e7f0d5aab38fe96ab9}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!auto\_ping\_mode@{auto\_ping\_mode}}
+\index{auto\_ping\_mode@{auto\_ping\_mode}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_mode}{auto\_ping\_mode}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a836268a1850253e7f0d5aab38fe96ab9} 
+\mbox{\hyperlink{radio__main_8h_a924b68fe454425e6115096a3568341b6}{radio\+\_\+main\+\_\+auto\+\_\+ping\+\_\+mode\+\_\+t}} security\+\_\+runtime\+\_\+cfg\+\_\+t\+::auto\+\_\+ping\+\_\+mode}
+
+
+
+Automatic ping payload mode. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00055}{55}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_a654ffd1797b943c53db8e2aecfb61898}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!auto\_ping\_period\_ms@{auto\_ping\_period\_ms}}
+\index{auto\_ping\_period\_ms@{auto\_ping\_period\_ms}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{auto\_ping\_period\_ms}{auto\_ping\_period\_ms}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a654ffd1797b943c53db8e2aecfb61898} 
+uint32\+\_\+t security\+\_\+runtime\+\_\+cfg\+\_\+t\+::auto\+\_\+ping\+\_\+period\+\_\+ms}
+
+
+
+Automatic ping period in milliseconds. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00054}{54}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_a2dbe7463349f84d116c1f25e2e9ba027}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!coding\_enabled@{coding\_enabled}}
+\index{coding\_enabled@{coding\_enabled}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{coding\_enabled}{coding\_enabled}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a2dbe7463349f84d116c1f25e2e9ba027} 
+bool security\+\_\+runtime\+\_\+cfg\+\_\+t\+::coding\+\_\+enabled}
+
+
+
+Protected/coded traffic setting. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00050}{50}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_adbfd578d8f0882cb768e8bedb10b3bdd}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!fh\_enabled@{fh\_enabled}}
+\index{fh\_enabled@{fh\_enabled}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{fh\_enabled}{fh\_enabled}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_adbfd578d8f0882cb768e8bedb10b3bdd} 
+bool security\+\_\+runtime\+\_\+cfg\+\_\+t\+::fh\+\_\+enabled}
+
+
+
+Frequency hopping setting. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00051}{51}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_acf4e54f09cb7da3404f3a21971c4edaa}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!fh\_period\_ms@{fh\_period\_ms}}
+\index{fh\_period\_ms@{fh\_period\_ms}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{fh\_period\_ms}{fh\_period\_ms}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_acf4e54f09cb7da3404f3a21971c4edaa} 
+uint32\+\_\+t security\+\_\+runtime\+\_\+cfg\+\_\+t\+::fh\+\_\+period\+\_\+ms}
+
+
+
+Frequency hopping period in milliseconds. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00052}{52}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_ac0efdc06c007576c76335b661b576217}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!fsk@{fsk}}
+\index{fsk@{fsk}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{fsk}{fsk}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_ac0efdc06c007576c76335b661b576217} 
+\mbox{\hyperlink{structradio__main__fsk__cfg__t}{radio\+\_\+main\+\_\+fsk\+\_\+cfg\+\_\+t}} security\+\_\+runtime\+\_\+cfg\+\_\+t\+::fsk}
+
+
+
+Persisted FSK profile. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00060}{60}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_abfa0ce16882adff3981a56126ba5f6d4}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!lora@{lora}}
+\index{lora@{lora}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{lora}{lora}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_abfa0ce16882adff3981a56126ba5f6d4} 
+\mbox{\hyperlink{structradio__lora__cfg__t}{radio\+\_\+lora\+\_\+cfg\+\_\+t}} security\+\_\+runtime\+\_\+cfg\+\_\+t\+::lora}
+
+
+
+Persisted Lo\+Ra profile. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00059}{59}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_a27deaae71af67200235a6f06a9a3d84a}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!lora\_preset@{lora\_preset}}
+\index{lora\_preset@{lora\_preset}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{lora\_preset}{lora\_preset}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a27deaae71af67200235a6f06a9a3d84a} 
+uint8\+\_\+t security\+\_\+runtime\+\_\+cfg\+\_\+t\+::lora\+\_\+preset}
+
+
+
+Selected Lo\+Ra preset. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00057}{57}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_adf9cf796c526ed33659d841a00d35447}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!notify\_mode@{notify\_mode}}
+\index{notify\_mode@{notify\_mode}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{notify\_mode}{notify\_mode}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_adf9cf796c526ed33659d841a00d35447} 
+\mbox{\hyperlink{security__main_8h_adab8fef5f7716a7e73c831dc6ddd18ae}{security\+\_\+notify\+\_\+mode\+\_\+t}} security\+\_\+runtime\+\_\+cfg\+\_\+t\+::notify\+\_\+mode}
+
+
+
+Security notification display mode. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00056}{56}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_aac2ddfcf83fbd0fe477f54d1cc57a55a}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!ook@{ook}}
+\index{ook@{ook}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{ook}{ook}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_aac2ddfcf83fbd0fe477f54d1cc57a55a} 
+\mbox{\hyperlink{structradio__main__ook__cfg__t}{radio\+\_\+main\+\_\+ook\+\_\+cfg\+\_\+t}} security\+\_\+runtime\+\_\+cfg\+\_\+t\+::ook}
+
+
+
+Persisted OOK profile. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00061}{61}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+\Hypertarget{structsecurity__runtime__cfg__t_a661a780c148d7641dc2ab54556577842}\index{security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}!radio\_profiles\_persisted@{radio\_profiles\_persisted}}
+\index{radio\_profiles\_persisted@{radio\_profiles\_persisted}!security\_runtime\_cfg\_t@{security\_runtime\_cfg\_t}}
+\doxysubsubsection{\texorpdfstring{radio\_profiles\_persisted}{radio\_profiles\_persisted}}
+{\footnotesize\ttfamily \label{structsecurity__runtime__cfg__t_a661a780c148d7641dc2ab54556577842} 
+bool security\+\_\+runtime\+\_\+cfg\+\_\+t\+::radio\+\_\+profiles\+\_\+persisted}
+
+
+
+{\ttfamily true} when radio profiles were loaded from store. 
+
+
+
+Definicja w linii \mbox{\hyperlink{security__main_8h_source_l00062}{62}} pliku \mbox{\hyperlink{security__main_8h_source}{security\+\_\+main.\+h}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/\mbox{\hyperlink{security__main_8h}{security\+\_\+main.\+h}}\end{DoxyCompactItemize}

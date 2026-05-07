@@ -1,0 +1,1840 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja pliku Core/App/st33ktpm2x_lib/st33ktpm2x.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('st33ktpm2x_8h.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja pliku st33ktpm2x.h</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>High-level and transport-level driver for ST33KTPM2X over I2C (TIS/FIFO).  
+<a href="#details">Więcej...</a></p>
+<div class="textblock"><code>#include &quot;stm32u5xx_hal.h&quot;</code><br />
+<code>#include &lt;stdbool.h&gt;</code><br />
+<code>#include &lt;stdint.h&gt;</code><br />
+</div>
+<p><a href="st33ktpm2x_8h_source.html">Idź do kodu źródłowego tego pliku.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Struktury danych</h2></td></tr>
+<tr class="memitem:st33ktpm2x_5Fcfg_5Ft" id="r_st33ktpm2x_5Fcfg_5Ft"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runtime configuration for ST33KTPM2X instance.  <a href="structst33ktpm2x__cfg__t.html#details">Więcej...</a><br /></td></tr>
+<tr class="memitem:st33ktpm2x_5Ft" id="r_st33ktpm2x_5Ft"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Driver context for one TPM device.  <a href="structst33ktpm2x__t.html#details">Więcej...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-define-members" class="groupheader"><a id="define-members" name="define-members"></a>
+Definicje</h2></td></tr>
+<tr id="define-members-0" class="groupHeader"><td colspan="2"><div class="groupHeader">Default Configuration</div></td></tr>
+<tr class="memitem:ae212edaef4769d3c4aff9a2081e2538c" id="r_ae212edaef4769d3c4aff9a2081e2538c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae212edaef4769d3c4aff9a2081e2538c">ST33KTPM2X_I2C_ADDR_DEFAULT</a>&#160;&#160;&#160;0x2EU</td></tr>
+<tr class="memdesc:ae212edaef4769d3c4aff9a2081e2538c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default 7-bit TPM I2C address.  <br /></td></tr>
+<tr class="memitem:a812f59d07c8c7eb0540b6776127c1c8b" id="r_a812f59d07c8c7eb0540b6776127c1c8b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a812f59d07c8c7eb0540b6776127c1c8b">ST33KTPM2X_CMD_MAX_BYTES</a>&#160;&#160;&#160;1024U</td></tr>
+<tr class="memdesc:a812f59d07c8c7eb0540b6776127c1c8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safe default max command size.  <br /></td></tr>
+<tr class="memitem:afda24876ac56c36993052e2b149e9f0a" id="r_afda24876ac56c36993052e2b149e9f0a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afda24876ac56c36993052e2b149e9f0a">ST33KTPM2X_RSP_MAX_BYTES</a>&#160;&#160;&#160;1024U</td></tr>
+<tr class="memdesc:afda24876ac56c36993052e2b149e9f0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Safe default max response size.  <br /></td></tr>
+<tr id="define-members-1" class="groupHeader"><td colspan="2"><div class="groupHeader">TPM2 Common Constants</div></td></tr>
+<tr class="memitem:a2509b5c851d119c9d8d3dead4843035d" id="r_a2509b5c851d119c9d8d3dead4843035d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2509b5c851d119c9d8d3dead4843035d">ST33KTPM2X_TPM2_ST_NO_SESSIONS</a>&#160;&#160;&#160;0x8001U</td></tr>
+<tr class="memitem:a433b3df6bfbcb74b885818e9b0ce0988" id="r_a433b3df6bfbcb74b885818e9b0ce0988"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a433b3df6bfbcb74b885818e9b0ce0988">ST33KTPM2X_TPM2_ST_SESSIONS</a>&#160;&#160;&#160;0x8002U</td></tr>
+<tr class="memitem:a8a5c9c01ae64c2681ceec8e09047fa9e" id="r_a8a5c9c01ae64c2681ceec8e09047fa9e"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a5c9c01ae64c2681ceec8e09047fa9e">ST33KTPM2X_TPM2_RC_SUCCESS</a>&#160;&#160;&#160;0x00000000UL</td></tr>
+<tr class="memitem:ae56b9ec1d5f0f19bdf4796b965b2aa27" id="r_ae56b9ec1d5f0f19bdf4796b965b2aa27"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae56b9ec1d5f0f19bdf4796b965b2aa27">ST33KTPM2X_TPM2_CC_STARTUP</a>&#160;&#160;&#160;0x00000144UL</td></tr>
+<tr class="memitem:ab9685b84c60addd391491b862ddd6aa7" id="r_ab9685b84c60addd391491b862ddd6aa7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9685b84c60addd391491b862ddd6aa7">ST33KTPM2X_TPM2_CC_SELF_TEST</a>&#160;&#160;&#160;0x00000143UL</td></tr>
+<tr class="memitem:a8c9e590bbc4971ee024aa9dfd6ffebe6" id="r_a8c9e590bbc4971ee024aa9dfd6ffebe6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8c9e590bbc4971ee024aa9dfd6ffebe6">ST33KTPM2X_TPM2_CC_GET_RANDOM</a>&#160;&#160;&#160;0x0000017BUL</td></tr>
+<tr class="memitem:aa68c002531aeaaac650b75ff97c74c6c" id="r_aa68c002531aeaaac650b75ff97c74c6c"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa68c002531aeaaac650b75ff97c74c6c">ST33KTPM2X_TPM2_CC_GET_CAPABILITY</a>&#160;&#160;&#160;0x0000017AUL</td></tr>
+<tr class="memitem:adfd541d207ec8ea0b5d34cf6ab2730fa" id="r_adfd541d207ec8ea0b5d34cf6ab2730fa"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adfd541d207ec8ea0b5d34cf6ab2730fa">ST33KTPM2X_TPM2_CC_PCR_READ</a>&#160;&#160;&#160;0x0000017EUL</td></tr>
+<tr class="memitem:af36012ec15c75ce32fa7b9f3a2d21d61" id="r_af36012ec15c75ce32fa7b9f3a2d21d61"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af36012ec15c75ce32fa7b9f3a2d21d61">ST33KTPM2X_TPM2_CC_NV_DEFINE_SPACE</a>&#160;&#160;&#160;0x0000012AUL</td></tr>
+<tr class="memitem:aee01717d49d6e57338a8813e03169281" id="r_aee01717d49d6e57338a8813e03169281"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee01717d49d6e57338a8813e03169281">ST33KTPM2X_TPM2_CC_NV_WRITE</a>&#160;&#160;&#160;0x00000137UL</td></tr>
+<tr class="memitem:a985e31334026444aa5b833f2cce30f8d" id="r_a985e31334026444aa5b833f2cce30f8d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a985e31334026444aa5b833f2cce30f8d">ST33KTPM2X_TPM2_CC_NV_READ</a>&#160;&#160;&#160;0x0000014EUL</td></tr>
+<tr class="memitem:ad60792d793b988636c660cce08fff81f" id="r_ad60792d793b988636c660cce08fff81f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad60792d793b988636c660cce08fff81f">ST33KTPM2X_TPM2_SU_CLEAR</a>&#160;&#160;&#160;0x0000U</td></tr>
+<tr class="memitem:a3bab20021103c195ed096175f5a46d79" id="r_a3bab20021103c195ed096175f5a46d79"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3bab20021103c195ed096175f5a46d79">ST33KTPM2X_TPM2_SU_STATE</a>&#160;&#160;&#160;0x0001U</td></tr>
+<tr class="memitem:aed9091e8f773fec1a84f5f0a5347f6be" id="r_aed9091e8f773fec1a84f5f0a5347f6be"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed9091e8f773fec1a84f5f0a5347f6be">ST33KTPM2X_TPM2_ALG_SHA256</a>&#160;&#160;&#160;0x000BU</td></tr>
+<tr class="memitem:a5ce99e693ddb9d794579980bc4e5e4c4" id="r_a5ce99e693ddb9d794579980bc4e5e4c4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ce99e693ddb9d794579980bc4e5e4c4">ST33KTPM2X_TPM2_CAP_ALGS</a>&#160;&#160;&#160;0x00000000UL</td></tr>
+<tr class="memitem:a2f96f96276d4bc3e4a957cec3484e250" id="r_a2f96f96276d4bc3e4a957cec3484e250"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f96f96276d4bc3e4a957cec3484e250">ST33KTPM2X_TPM2_CAP_HANDLES</a>&#160;&#160;&#160;0x00000001UL</td></tr>
+<tr class="memitem:a14259fd01e58548b1e18a54a2f5fcf43" id="r_a14259fd01e58548b1e18a54a2f5fcf43"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a14259fd01e58548b1e18a54a2f5fcf43">ST33KTPM2X_TPM2_CAP_COMMANDS</a>&#160;&#160;&#160;0x00000002UL</td></tr>
+<tr class="memitem:a0e737bc4a9083699e81f18ca035f4a50" id="r_a0e737bc4a9083699e81f18ca035f4a50"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0e737bc4a9083699e81f18ca035f4a50">ST33KTPM2X_TPM2_CAP_PCRS</a>&#160;&#160;&#160;0x00000005UL</td></tr>
+<tr class="memitem:a422866b175f9fe7bbb8f6a1293aa4b8b" id="r_a422866b175f9fe7bbb8f6a1293aa4b8b"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a422866b175f9fe7bbb8f6a1293aa4b8b">ST33KTPM2X_TPM2_CAP_TPM_PROPERTIES</a>&#160;&#160;&#160;0x00000006UL</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-enum-members" class="groupheader"><a id="enum-members" name="enum-members"></a>
+Wyliczenia</h2></td></tr>
+<tr class="memitem:a3ebfd1bc90ba1d3d57f36a141e0f8c70" id="r_a3ebfd1bc90ba1d3d57f36a141e0f8c70"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> { <br />
+&#160;&#160;<a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a3ec31cf477f0115bc0e8b0a4636dd518">ST33KTPM2X_OK</a> = 0
+, <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a3a8924b5659e15e5864775d672fd8669">ST33KTPM2X_EINVAL</a>
+, <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70ad0e78d44b89812f86cc8437c498510db">ST33KTPM2X_ESTATE</a>
+, <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a68b6e4d763820354b0ce320d33e81f23">ST33KTPM2X_EHAL</a>
+, <br />
+&#160;&#160;<a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a193f1d31b8d9c8dfb7696be786eb36ef">ST33KTPM2X_ETIMEOUT</a>
+, <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a07c2421ae559eecb3aa4a396bb7b9949">ST33KTPM2X_EOVERFLOW</a>
+, <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70afa2b6dca56502a0adb1a224c684bdeb1">ST33KTPM2X_EPROTO</a>
+, <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a7430e365e86b8988d4c8f97626ba3191">ST33KTPM2X_ETPM_RC</a>
+, <br />
+&#160;&#160;<a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8">ST33KTPM2X_ENOTSUP</a>
+<br />
+ }</td></tr>
+<tr class="memdesc:a3ebfd1bc90ba1d3d57f36a141e0f8c70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Driver status/result codes.  <a href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">Więcej...</a><br /></td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-func-members" class="groupheader"><a id="func-members" name="func-members"></a>
+Funkcje</h2></td></tr>
+<tr class="memitem:a4395b053468eaa84de32315c833c9a2e" id="r_a4395b053468eaa84de32315c833c9a2e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4395b053468eaa84de32315c833c9a2e">st33ktpm2x_default_cfg</a> (<a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a> *cfg, I2C_HandleTypeDef *hi2c)</td></tr>
+<tr class="memdesc:a4395b053468eaa84de32315c833c9a2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill config with safe defaults (including PB0 reset pin defaults from <span class="tt">main.h</span>).  <br /></td></tr>
+<tr class="memitem:a980b0aa6419563ca5aa0aef6d9c3d26e" id="r_a980b0aa6419563ca5aa0aef6d9c3d26e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a980b0aa6419563ca5aa0aef6d9c3d26e">st33ktpm2x_init</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, const <a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a> *cfg)</td></tr>
+<tr class="memdesc:a980b0aa6419563ca5aa0aef6d9c3d26e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize TPM driver context.  <br /></td></tr>
+<tr class="memitem:acb54b869460edebfb386accaac6cbdee" id="r_acb54b869460edebfb386accaac6cbdee"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb54b869460edebfb386accaac6cbdee">st33ktpm2x_deinit</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx)</td></tr>
+<tr class="memdesc:acb54b869460edebfb386accaac6cbdee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinitialize context and release locality if needed.  <br /></td></tr>
+<tr class="memitem:a277fcdc81f0d11bd7b7a934deab48d7d" id="r_a277fcdc81f0d11bd7b7a934deab48d7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a277fcdc81f0d11bd7b7a934deab48d7d">st33ktpm2x_hard_reset</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx)</td></tr>
+<tr class="memdesc:a277fcdc81f0d11bd7b7a934deab48d7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform hardware reset pulse on TPM reset pin.  <br /></td></tr>
+<tr class="memitem:aacbcacfe63408588f1de87b0f790d389" id="r_aacbcacfe63408588f1de87b0f790d389"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aacbcacfe63408588f1de87b0f790d389">st33ktpm2x_davint_is_asserted</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, bool *asserted)</td></tr>
+<tr class="memdesc:aacbcacfe63408588f1de87b0f790d389"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read TPM_DAVINT# / PIRQ state.  <br /></td></tr>
+<tr class="memitem:ada918f8074c30d27398d3f74587e0c99" id="r_ada918f8074c30d27398d3f74587e0c99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada918f8074c30d27398d3f74587e0c99">st33ktpm2x_pp_is_pressed</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, bool *pressed)</td></tr>
+<tr class="memdesc:ada918f8074c30d27398d3f74587e0c99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read state of optional Physical Presence button.  <br /></td></tr>
+<tr class="memitem:a43e4a393a0ad5d8d44f36e1e60fe6a74" id="r_a43e4a393a0ad5d8d44f36e1e60fe6a74"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43e4a393a0ad5d8d44f36e1e60fe6a74">st33ktpm2x_pp_wait_pressed</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t timeout_ms)</td></tr>
+<tr class="memdesc:a43e4a393a0ad5d8d44f36e1e60fe6a74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until Physical Presence button becomes active.  <br /></td></tr>
+<tr class="memitem:ad8b669c02345b065901bc6230f19aa9d" id="r_ad8b669c02345b065901bc6230f19aa9d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad8b669c02345b065901bc6230f19aa9d">st33ktpm2x_request_locality0</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx)</td></tr>
+<tr class="memdesc:ad8b669c02345b065901bc6230f19aa9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Acquire TPM locality 0.  <br /></td></tr>
+<tr class="memitem:adaefa07be059fc8b5e135cc01de47544" id="r_adaefa07be059fc8b5e135cc01de47544"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adaefa07be059fc8b5e135cc01de47544">st33ktpm2x_release_locality0</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx)</td></tr>
+<tr class="memdesc:adaefa07be059fc8b5e135cc01de47544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Release TPM locality 0.  <br /></td></tr>
+<tr class="memitem:ae0792eaaf30019c3cdbc0c37db09ed98" id="r_ae0792eaaf30019c3cdbc0c37db09ed98"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae0792eaaf30019c3cdbc0c37db09ed98">st33ktpm2x_read_identity</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t *did_vid, uint8_t *rid)</td></tr>
+<tr class="memdesc:ae0792eaaf30019c3cdbc0c37db09ed98"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read TPM DID_VID and RID registers.  <br /></td></tr>
+<tr class="memitem:ad66faa4aee2d93f8557b4f370c845317" id="r_ad66faa4aee2d93f8557b4f370c845317"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad66faa4aee2d93f8557b4f370c845317">st33ktpm2x_transceive</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, const uint8_t *command, uint16_t command_len, uint8_t *response, uint16_t response_capacity, uint16_t *response_len, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:ad66faa4aee2d93f8557b4f370c845317"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send one raw TPM command and receive full response.  <br /></td></tr>
+<tr class="memitem:a7883a6abe5016f7f08fbae5c3ec0e1d0" id="r_a7883a6abe5016f7f08fbae5c3ec0e1d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7883a6abe5016f7f08fbae5c3ec0e1d0">st33ktpm2x_tpm2_startup</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint16_t startup_type, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a7883a6abe5016f7f08fbae5c3ec0e1d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute TPM2_Startup.  <br /></td></tr>
+<tr class="memitem:ae6c9416bf6fb89130eb182a31ed2acb3" id="r_ae6c9416bf6fb89130eb182a31ed2acb3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6c9416bf6fb89130eb182a31ed2acb3">st33ktpm2x_tpm2_self_test</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, bool full_test, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:ae6c9416bf6fb89130eb182a31ed2acb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute TPM2_SelfTest.  <br /></td></tr>
+<tr class="memitem:afc1b7709450d38509ee1dd2e87456b23" id="r_afc1b7709450d38509ee1dd2e87456b23"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc1b7709450d38509ee1dd2e87456b23">st33ktpm2x_tpm2_get_random</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint16_t requested_bytes, uint8_t *random_out, uint16_t random_capacity, uint16_t *random_len, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:afc1b7709450d38509ee1dd2e87456b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute TPM2_GetRandom.  <br /></td></tr>
+<tr class="memitem:a627302c712282068bccff873fcdcb3bb" id="r_a627302c712282068bccff873fcdcb3bb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a627302c712282068bccff873fcdcb3bb">st33ktpm2x_tpm2_get_capability</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t capability, uint32_t property, uint32_t property_count, uint8_t *payload_out, uint16_t payload_capacity, uint16_t *payload_len, bool *more_data, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a627302c712282068bccff873fcdcb3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute TPM2_GetCapability and return raw capability payload.  <br /></td></tr>
+<tr class="memitem:a601549f7e393fdca42aefbd4f04304c2" id="r_a601549f7e393fdca42aefbd4f04304c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a601549f7e393fdca42aefbd4f04304c2">st33ktpm2x_tpm2_pcr_read_sha256</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint8_t pcr_index, uint8_t digest_sha256_out[32], uint32_t *update_counter_out, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a601549f7e393fdca42aefbd4f04304c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute TPM2_PCR_Read for one SHA-256 PCR index.  <br /></td></tr>
+<tr class="memitem:a80d97a74a64b52b531c1038abcbe6fe4" id="r_a80d97a74a64b52b531c1038abcbe6fe4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a80d97a74a64b52b531c1038abcbe6fe4">st33ktpm2x_tpm2_start_auth_session</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t *session_handle_out, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a80d97a74a64b52b531c1038abcbe6fe4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start TPM2 policy/auth session helper (scaffold API).  <br /></td></tr>
+<tr class="memitem:a21f6025c6a40532501b91579d6b62bc6" id="r_a21f6025c6a40532501b91579d6b62bc6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21f6025c6a40532501b91579d6b62bc6">st33ktpm2x_tpm2_policy_pcr</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t session_handle, uint8_t pcr_index, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a21f6025c6a40532501b91579d6b62bc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply PolicyPCR in an existing policy session (scaffold API).  <br /></td></tr>
+<tr class="memitem:a2b73e0d636cceab618098a9db9aa2f7d" id="r_a2b73e0d636cceab618098a9db9aa2f7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b73e0d636cceab618098a9db9aa2f7d">st33ktpm2x_tpm2_policy_physical_presence</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t session_handle, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a2b73e0d636cceab618098a9db9aa2f7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply Physical Presence policy branch (scaffold API).  <br /></td></tr>
+<tr class="memitem:a8a0390a3603abfaee06c4a47806bfd93" id="r_a8a0390a3603abfaee06c4a47806bfd93"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8a0390a3603abfaee06c4a47806bfd93">st33ktpm2x_tpm2_policy_command_code</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t session_handle, uint32_t command_code, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a8a0390a3603abfaee06c4a47806bfd93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply PolicyCommandCode in an existing policy session (scaffold API).  <br /></td></tr>
+<tr class="memitem:a88fa5109117b117eea6f084fb7947e29" id="r_a88fa5109117b117eea6f084fb7947e29"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a88fa5109117b117eea6f084fb7947e29">st33ktpm2x_tpm2_policy_or</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t session_handle, const uint8_t *digest_list, uint8_t digest_count, uint8_t digest_size, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a88fa5109117b117eea6f084fb7947e29"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply PolicyOR branch combiner (scaffold API).  <br /></td></tr>
+<tr class="memitem:a187ec38a3635faa225ffc9df384b8e32" id="r_a187ec38a3635faa225ffc9df384b8e32"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a187ec38a3635faa225ffc9df384b8e32">st33ktpm2x_tpm2_nv_define</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t nv_index, uint16_t data_size, uint32_t attributes, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a187ec38a3635faa225ffc9df384b8e32"><td class="mdescLeft">&#160;</td><td class="mdescRight">Define NV index using owner empty-password authorization.  <br /></td></tr>
+<tr class="memitem:a73bad0635a3631ff7fe7cb5f116a3b42" id="r_a73bad0635a3631ff7fe7cb5f116a3b42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a73bad0635a3631ff7fe7cb5f116a3b42">st33ktpm2x_tpm2_nv_read</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t nv_index, uint16_t offset, uint8_t *out_data, uint16_t out_capacity, uint16_t *out_len, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a73bad0635a3631ff7fe7cb5f116a3b42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read bytes from NV index using owner empty-password authorization.  <br /></td></tr>
+<tr class="memitem:af1e4206f80948966e16062e7e16f68c4" id="r_af1e4206f80948966e16062e7e16f68c4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af1e4206f80948966e16062e7e16f68c4">st33ktpm2x_tpm2_nv_write</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t nv_index, uint16_t offset, const uint8_t *data, uint16_t data_len, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:af1e4206f80948966e16062e7e16f68c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write bytes to NV index using owner empty-password authorization.  <br /></td></tr>
+<tr class="memitem:ae63a087a2ccbe308b472c0d72278852d" id="r_ae63a087a2ccbe308b472c0d72278852d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae63a087a2ccbe308b472c0d72278852d">st33ktpm2x_tpm2_nv_write_platform_pp</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t nv_index, uint16_t offset, const uint8_t *data, uint16_t data_len, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:ae63a087a2ccbe308b472c0d72278852d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write bytes to NV index using platform authorization with hardware Physical Presence.  <br /></td></tr>
+<tr class="memitem:a01917c931e740d07ecdde705b5217f42" id="r_a01917c931e740d07ecdde705b5217f42"><td class="memItemLeft" align="right" valign="top"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01917c931e740d07ecdde705b5217f42">st33ktpm2x_tpm2_flush_context</a> (<a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *ctx, uint32_t handle, uint32_t *tpm_rc)</td></tr>
+<tr class="memdesc:a01917c931e740d07ecdde705b5217f42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flush transient context/session handle (scaffold API).  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>High-level and transport-level driver for ST33KTPM2X over I2C (TIS/FIFO). </p>
+<p>This module provides:</p><ul>
+<li>low-level TPM TIS over I2C access,</li>
+<li>locality handling,</li>
+<li>command/response transport,</li>
+<li>selected TPM2 helper commands for security feature development.</li>
+</ul>
+<p>The implementation is designed to be extensible. For advanced commands (sessions, HMAC, policy, NV authorization), use raw command transport APIs and add dedicated marshaling helpers in your application layer. </p>
+
+<p class="definition">Definicja w pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+</div><a name="doc-define-members" id="doc-define-members"></a><h2 id="header-doc-define-members" class="groupheader">Dokumentacja definicji</h2>
+<a id="a812f59d07c8c7eb0540b6776127c1c8b" name="a812f59d07c8c7eb0540b6776127c1c8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a812f59d07c8c7eb0540b6776127c1c8b">&#9670;&#160;</a></span>ST33KTPM2X_CMD_MAX_BYTES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_CMD_MAX_BYTES&#160;&#160;&#160;1024U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Safe default max command size. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00032">32</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00199">st33_i2c_write()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="ae212edaef4769d3c4aff9a2081e2538c" name="ae212edaef4769d3c4aff9a2081e2538c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae212edaef4769d3c4aff9a2081e2538c">&#9670;&#160;</a></span>ST33KTPM2X_I2C_ADDR_DEFAULT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_I2C_ADDR_DEFAULT&#160;&#160;&#160;0x2EU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default 7-bit TPM I2C address. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00031">31</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00518">st33ktpm2x_default_cfg()</a>.</p>
+
+</div>
+</div>
+<a id="afda24876ac56c36993052e2b149e9f0a" name="afda24876ac56c36993052e2b149e9f0a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afda24876ac56c36993052e2b149e9f0a">&#9670;&#160;</a></span>ST33KTPM2X_RSP_MAX_BYTES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_RSP_MAX_BYTES&#160;&#160;&#160;1024U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Safe default max response size. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00033">33</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l01044">st33ktpm2x_tpm2_get_capability()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01096">st33ktpm2x_tpm2_pcr_read_sha256()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="aed9091e8f773fec1a84f5f0a5347f6be" name="aed9091e8f773fec1a84f5f0a5347f6be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed9091e8f773fec1a84f5f0a5347f6be">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_ALG_SHA256</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_ALG_SHA256&#160;&#160;&#160;0x000BU</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00055">55</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a5ce99e693ddb9d794579980bc4e5e4c4" name="a5ce99e693ddb9d794579980bc4e5e4c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ce99e693ddb9d794579980bc4e5e4c4">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CAP_ALGS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CAP_ALGS&#160;&#160;&#160;0x00000000UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00057">57</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a14259fd01e58548b1e18a54a2f5fcf43" name="a14259fd01e58548b1e18a54a2f5fcf43"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14259fd01e58548b1e18a54a2f5fcf43">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CAP_COMMANDS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CAP_COMMANDS&#160;&#160;&#160;0x00000002UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00059">59</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a2f96f96276d4bc3e4a957cec3484e250" name="a2f96f96276d4bc3e4a957cec3484e250"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f96f96276d4bc3e4a957cec3484e250">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CAP_HANDLES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CAP_HANDLES&#160;&#160;&#160;0x00000001UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00058">58</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a0e737bc4a9083699e81f18ca035f4a50" name="a0e737bc4a9083699e81f18ca035f4a50"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e737bc4a9083699e81f18ca035f4a50">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CAP_PCRS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CAP_PCRS&#160;&#160;&#160;0x00000005UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00060">60</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a422866b175f9fe7bbb8f6a1293aa4b8b" name="a422866b175f9fe7bbb8f6a1293aa4b8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a422866b175f9fe7bbb8f6a1293aa4b8b">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CAP_TPM_PROPERTIES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CAP_TPM_PROPERTIES&#160;&#160;&#160;0x00000006UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00061">61</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="aa68c002531aeaaac650b75ff97c74c6c" name="aa68c002531aeaaac650b75ff97c74c6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa68c002531aeaaac650b75ff97c74c6c">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_GET_CAPABILITY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_GET_CAPABILITY&#160;&#160;&#160;0x0000017AUL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00046">46</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a8c9e590bbc4971ee024aa9dfd6ffebe6" name="a8c9e590bbc4971ee024aa9dfd6ffebe6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c9e590bbc4971ee024aa9dfd6ffebe6">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_GET_RANDOM</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_GET_RANDOM&#160;&#160;&#160;0x0000017BUL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00045">45</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="af36012ec15c75ce32fa7b9f3a2d21d61" name="af36012ec15c75ce32fa7b9f3a2d21d61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af36012ec15c75ce32fa7b9f3a2d21d61">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_NV_DEFINE_SPACE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_NV_DEFINE_SPACE&#160;&#160;&#160;0x0000012AUL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00048">48</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a985e31334026444aa5b833f2cce30f8d" name="a985e31334026444aa5b833f2cce30f8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a985e31334026444aa5b833f2cce30f8d">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_NV_READ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_NV_READ&#160;&#160;&#160;0x0000014EUL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00050">50</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="aee01717d49d6e57338a8813e03169281" name="aee01717d49d6e57338a8813e03169281"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee01717d49d6e57338a8813e03169281">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_NV_WRITE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_NV_WRITE&#160;&#160;&#160;0x00000137UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00049">49</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="adfd541d207ec8ea0b5d34cf6ab2730fa" name="adfd541d207ec8ea0b5d34cf6ab2730fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adfd541d207ec8ea0b5d34cf6ab2730fa">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_PCR_READ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_PCR_READ&#160;&#160;&#160;0x0000017EUL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00047">47</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="ab9685b84c60addd391491b862ddd6aa7" name="ab9685b84c60addd391491b862ddd6aa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9685b84c60addd391491b862ddd6aa7">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_SELF_TEST</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_SELF_TEST&#160;&#160;&#160;0x00000143UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00044">44</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="ae56b9ec1d5f0f19bdf4796b965b2aa27" name="ae56b9ec1d5f0f19bdf4796b965b2aa27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae56b9ec1d5f0f19bdf4796b965b2aa27">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_CC_STARTUP</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_CC_STARTUP&#160;&#160;&#160;0x00000144UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00043">43</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a8a5c9c01ae64c2681ceec8e09047fa9e" name="a8a5c9c01ae64c2681ceec8e09047fa9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a5c9c01ae64c2681ceec8e09047fa9e">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_RC_SUCCESS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_RC_SUCCESS&#160;&#160;&#160;0x00000000UL</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00041">41</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a2509b5c851d119c9d8d3dead4843035d" name="a2509b5c851d119c9d8d3dead4843035d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2509b5c851d119c9d8d3dead4843035d">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_ST_NO_SESSIONS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_ST_NO_SESSIONS&#160;&#160;&#160;0x8001U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00039">39</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a433b3df6bfbcb74b885818e9b0ce0988" name="a433b3df6bfbcb74b885818e9b0ce0988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a433b3df6bfbcb74b885818e9b0ce0988">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_ST_SESSIONS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_ST_SESSIONS&#160;&#160;&#160;0x8002U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00040">40</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="ad60792d793b988636c660cce08fff81f" name="ad60792d793b988636c660cce08fff81f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad60792d793b988636c660cce08fff81f">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_SU_CLEAR</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_SU_CLEAR&#160;&#160;&#160;0x0000U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00052">52</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a id="a3bab20021103c195ed096175f5a46d79" name="a3bab20021103c195ed096175f5a46d79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bab20021103c195ed096175f5a46d79">&#9670;&#160;</a></span>ST33KTPM2X_TPM2_SU_STATE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define ST33KTPM2X_TPM2_SU_STATE&#160;&#160;&#160;0x0001U</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00053">53</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-enum-members" id="doc-enum-members"></a><h2 id="header-doc-enum-members" class="groupheader">Dokumentacja typów wyliczanych</h2>
+<a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">&#9670;&#160;</a></span>st33ktpm2x_status_t</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Driver status/result codes. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Wartości wyliczeń</th></tr><tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a3ec31cf477f0115bc0e8b0a4636dd518" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a3ec31cf477f0115bc0e8b0a4636dd518"></a>ST33KTPM2X_OK&#160;</td><td class="fielddoc"><p>Operation completed successfully. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a3a8924b5659e15e5864775d672fd8669" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a3a8924b5659e15e5864775d672fd8669"></a>ST33KTPM2X_EINVAL&#160;</td><td class="fielddoc"><p>Invalid argument. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70ad0e78d44b89812f86cc8437c498510db" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70ad0e78d44b89812f86cc8437c498510db"></a>ST33KTPM2X_ESTATE&#160;</td><td class="fielddoc"><p>Invalid driver state. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a68b6e4d763820354b0ce320d33e81f23" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a68b6e4d763820354b0ce320d33e81f23"></a>ST33KTPM2X_EHAL&#160;</td><td class="fielddoc"><p>HAL I2C or GPIO operation failed. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a193f1d31b8d9c8dfb7696be786eb36ef" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a193f1d31b8d9c8dfb7696be786eb36ef"></a>ST33KTPM2X_ETIMEOUT&#160;</td><td class="fielddoc"><p>Timeout while waiting for TPM state. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a07c2421ae559eecb3aa4a396bb7b9949" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a07c2421ae559eecb3aa4a396bb7b9949"></a>ST33KTPM2X_EOVERFLOW&#160;</td><td class="fielddoc"><p>Provided buffer too small for response. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70afa2b6dca56502a0adb1a224c684bdeb1" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70afa2b6dca56502a0adb1a224c684bdeb1"></a>ST33KTPM2X_EPROTO&#160;</td><td class="fielddoc"><p>TPM protocol/TIS response format error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a7430e365e86b8988d4c8f97626ba3191" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a7430e365e86b8988d4c8f97626ba3191"></a>ST33KTPM2X_ETPM_RC&#160;</td><td class="fielddoc"><p>TPM responded with non-success TPM2_RC. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8" name="a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8"></a>ST33KTPM2X_ENOTSUP&#160;</td><td class="fielddoc"><p>Optional feature not configured/supported. </p>
+</td></tr>
+</table>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8h_source.html#l00067">67</a> pliku <a class="el" href="st33ktpm2x_8h_source.html">st33ktpm2x.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Dokumentacja funkcji</h2>
+<a id="aacbcacfe63408588f1de87b0f790d389" name="aacbcacfe63408588f1de87b0f790d389"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacbcacfe63408588f1de87b0f790d389">&#9670;&#160;</a></span>st33ktpm2x_davint_is_asserted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_davint_is_asserted </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool *</td>          <td class="paramname"><span class="paramname"><em>asserted</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read TPM_DAVINT# / PIRQ state. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">asserted</td><td>[out] <span class="tt">true</span> if active-low interrupt line is asserted. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code (<span class="tt"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8" title="Optional feature not configured/supported.">ST33KTPM2X_ENOTSUP</a></span> if DAVINT pin is not configured). </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00605">605</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00111">st33ktpm2x_t::cfg</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00095">st33ktpm2x_cfg_t::davint_active_state</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00094">st33ktpm2x_cfg_t::davint_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00093">st33ktpm2x_cfg_t::davint_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+</div>
+</div>
+<a id="a4395b053468eaa84de32315c833c9a2e" name="a4395b053468eaa84de32315c833c9a2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4395b053468eaa84de32315c833c9a2e">&#9670;&#160;</a></span>st33ktpm2x_default_cfg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void st33ktpm2x_default_cfg </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">I2C_HandleTypeDef *</td>          <td class="paramname"><span class="paramname"><em>hi2c</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Fill config with safe defaults (including PB0 reset pin defaults from <span class="tt">main.h</span>). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cfg</td><td>[out] Configuration object to initialize. </td></tr>
+    <tr><td class="paramname">hi2c</td><td>I2C peripheral handle (use <span class="tt">&amp;hi2c3</span>). </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00518">518</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00103">st33ktpm2x_cfg_t::burst_timeout_ms</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00095">st33ktpm2x_cfg_t::davint_active_state</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00094">st33ktpm2x_cfg_t::davint_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00093">st33ktpm2x_cfg_t::davint_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00085">st33ktpm2x_cfg_t::hi2c</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00086">st33ktpm2x_cfg_t::i2c_addr_7bit</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00101">st33ktpm2x_cfg_t::io_timeout_ms</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00102">st33ktpm2x_cfg_t::locality_timeout_ms</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00099">st33ktpm2x_cfg_t::pp_active_state</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00098">st33ktpm2x_cfg_t::pp_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00097">st33ktpm2x_cfg_t::pp_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00089">st33ktpm2x_cfg_t::reset_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00088">st33ktpm2x_cfg_t::reset_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00090">st33ktpm2x_cfg_t::reset_pulse_ms</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00091">st33ktpm2x_cfg_t::reset_recovery_ms</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00031">ST33KTPM2X_I2C_ADDR_DEFAULT</a>.</p>
+
+</div>
+</div>
+<a id="acb54b869460edebfb386accaac6cbdee" name="acb54b869460edebfb386accaac6cbdee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb54b869460edebfb386accaac6cbdee">&#9670;&#160;</a></span>st33ktpm2x_deinit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_deinit </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Deinitialize context and release locality if needed. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00565">565</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00071">ST33KTPM2X_ESTATE</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00730">st33ktpm2x_release_locality0()</a>.</p>
+
+</div>
+</div>
+<a id="a277fcdc81f0d11bd7b7a934deab48d7d" name="a277fcdc81f0d11bd7b7a934deab48d7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a277fcdc81f0d11bd7b7a934deab48d7d">&#9670;&#160;</a></span>st33ktpm2x_hard_reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_hard_reset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Perform hardware reset pulse on TPM reset pin. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00577">577</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00111">st33ktpm2x_t::cfg</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00113">st33ktpm2x_t::locality0_acquired</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00089">st33ktpm2x_cfg_t::reset_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00088">st33ktpm2x_cfg_t::reset_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00090">st33ktpm2x_cfg_t::reset_pulse_ms</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00091">st33ktpm2x_cfg_t::reset_recovery_ms</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00100">st33_status_text()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00437">st33_trace_tis()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00272">st33_write_loc_sel()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00071">ST33KTPM2X_ESTATE</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+</div>
+</div>
+<a id="a980b0aa6419563ca5aa0aef6d9c3d26e" name="a980b0aa6419563ca5aa0aef6d9c3d26e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a980b0aa6419563ca5aa0aef6d9c3d26e">&#9670;&#160;</a></span>st33ktpm2x_init()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_init </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structst33ktpm2x__cfg__t.html">st33ktpm2x_cfg_t</a> *</td>          <td class="paramname"><span class="paramname"><em>cfg</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Initialize TPM driver context. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">cfg</td><td>Runtime configuration. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00547">547</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00111">st33ktpm2x_t::cfg</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00085">st33ktpm2x_cfg_t::hi2c</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00089">st33ktpm2x_cfg_t::reset_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00088">st33ktpm2x_cfg_t::reset_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+</div>
+</div>
+<a id="ada918f8074c30d27398d3f74587e0c99" name="ada918f8074c30d27398d3f74587e0c99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada918f8074c30d27398d3f74587e0c99">&#9670;&#160;</a></span>st33ktpm2x_pp_is_pressed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_pp_is_pressed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool *</td>          <td class="paramname"><span class="paramname"><em>pressed</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read state of optional Physical Presence button. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">pressed</td><td>[out] <span class="tt">true</span> if button is active. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code (<span class="tt"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70a8a4218b109d365420595e817406016c8" title="Optional feature not configured/supported.">ST33KTPM2X_ENOTSUP</a></span> if PP pin is not configured). </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00624">624</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00111">st33ktpm2x_t::cfg</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00099">st33ktpm2x_cfg_t::pp_active_state</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00098">st33ktpm2x_cfg_t::pp_pin</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00097">st33ktpm2x_cfg_t::pp_port</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00643">st33ktpm2x_pp_wait_pressed()</a>.</p>
+
+</div>
+</div>
+<a id="a43e4a393a0ad5d8d44f36e1e60fe6a74" name="a43e4a393a0ad5d8d44f36e1e60fe6a74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43e4a393a0ad5d8d44f36e1e60fe6a74">&#9670;&#160;</a></span>st33ktpm2x_pp_wait_pressed()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_pp_wait_pressed </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>timeout_ms</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Wait until Physical Presence button becomes active. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">timeout_ms</td><td>Timeout in ms. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00643">643</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00071">ST33KTPM2X_ESTATE</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00073">ST33KTPM2X_ETIMEOUT</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00624">st33ktpm2x_pp_is_pressed()</a>.</p>
+
+</div>
+</div>
+<a id="ae0792eaaf30019c3cdbc0c37db09ed98" name="ae0792eaaf30019c3cdbc0c37db09ed98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae0792eaaf30019c3cdbc0c37db09ed98">&#9670;&#160;</a></span>st33ktpm2x_read_identity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_read_identity </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>did_vid</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>rid</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read TPM DID_VID and RID registers. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">did_vid</td><td>[out] 32-bit DID_VID register value. </td></tr>
+    <tr><td class="paramname">rid</td><td>[out] 8-bit Revision ID value. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00755">755</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00154">st33_i2c_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00086">st33_identity_is_valid()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00077">st33_le32_read()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+</div>
+</div>
+<a id="adaefa07be059fc8b5e135cc01de47544" name="adaefa07be059fc8b5e135cc01de47544"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adaefa07be059fc8b5e135cc01de47544">&#9670;&#160;</a></span>st33ktpm2x_release_locality0()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_release_locality0 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Release TPM locality 0. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00730">730</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00113">st33ktpm2x_t::locality0_acquired</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00100">st33_status_text()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00266">st33_write_access()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00071">ST33KTPM2X_ESTATE</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00461">st33_trace_fail()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00565">st33ktpm2x_deinit()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="ad8b669c02345b065901bc6230f19aa9d" name="ad8b669c02345b065901bc6230f19aa9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8b669c02345b065901bc6230f19aa9d">&#9670;&#160;</a></span>st33ktpm2x_request_locality0()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_request_locality0 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Acquire TPM locality 0. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00672">672</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00111">st33ktpm2x_t::cfg</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00113">st33ktpm2x_t::locality0_acquired</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00102">st33ktpm2x_cfg_t::locality_timeout_ms</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00242">st33_read_access()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00461">st33_trace_fail()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00437">st33_trace_tis()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00312">st33_wait_access_bits()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00266">st33_write_access()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00272">st33_write_loc_sel()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00071">ST33KTPM2X_ESTATE</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a01917c931e740d07ecdde705b5217f42" name="a01917c931e740d07ecdde705b5217f42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01917c931e740d07ecdde705b5217f42">&#9670;&#160;</a></span>st33ktpm2x_tpm2_flush_context()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_flush_context </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>handle</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flush transient context/session handle (scaffold API). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">handle</td><td>Transient handle. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01515">1515</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a>.</p>
+
+</div>
+</div>
+<a id="a627302c712282068bccff873fcdcb3bb" name="a627302c712282068bccff873fcdcb3bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a627302c712282068bccff873fcdcb3bb">&#9670;&#160;</a></span>st33ktpm2x_tpm2_get_capability()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_get_capability </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>capability</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>property</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>property_count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>payload_out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>payload_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>payload_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool *</td>          <td class="paramname"><span class="paramname"><em>more_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Execute TPM2_GetCapability and return raw capability payload. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">capability</td><td>TPM capability selector. </td></tr>
+    <tr><td class="paramname">property</td><td>Capability-specific property/offset. </td></tr>
+    <tr><td class="paramname">property_count</td><td>Number of properties requested. </td></tr>
+    <tr><td class="paramname">payload_out</td><td>Raw capability payload output (without <span class="tt">moreData</span> byte). </td></tr>
+    <tr><td class="paramname">payload_capacity</td><td>Capacity of <span class="tt">payload_out</span>. </td></tr>
+    <tr><td class="paramname">payload_len</td><td>[out] Returned payload length. </td></tr>
+    <tr><td class="paramname">more_data</td><td>[out] <span class="tt">true</span> if TPM reports more data available. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01044">1044</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00074">ST33KTPM2X_EOVERFLOW</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00033">ST33KTPM2X_RSP_MAX_BYTES</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="afc1b7709450d38509ee1dd2e87456b23" name="afc1b7709450d38509ee1dd2e87456b23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc1b7709450d38509ee1dd2e87456b23">&#9670;&#160;</a></span>st33ktpm2x_tpm2_get_random()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_get_random </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>requested_bytes</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>random_out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>random_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>random_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Execute TPM2_GetRandom. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">requested_bytes</td><td>Number of random bytes requested from TPM. </td></tr>
+    <tr><td class="paramname">random_out</td><td>Output buffer for random bytes. </td></tr>
+    <tr><td class="paramname">random_capacity</td><td>Capacity of <span class="tt">random_out</span>. </td></tr>
+    <tr><td class="paramname">random_len</td><td>[out] Actual bytes returned. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00989">989</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l00062">st33_be16_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00074">ST33KTPM2X_EOVERFLOW</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a187ec38a3635faa225ffc9df384b8e32" name="a187ec38a3635faa225ffc9df384b8e32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a187ec38a3635faa225ffc9df384b8e32">&#9670;&#160;</a></span>st33ktpm2x_tpm2_nv_define()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_nv_define </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>nv_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>attributes</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Define NV index using owner empty-password authorization. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">nv_index</td><td>NV index handle. </td></tr>
+    <tr><td class="paramname">data_size</td><td>NV data size. </td></tr>
+    <tr><td class="paramname">attributes</td><td>NV attributes mask. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01270">1270</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00144">st33_write_empty_password_auth()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a73bad0635a3631ff7fe7cb5f116a3b42" name="a73bad0635a3631ff7fe7cb5f116a3b42"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73bad0635a3631ff7fe7cb5f116a3b42">&#9670;&#160;</a></span>st33ktpm2x_tpm2_nv_read()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_nv_read </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>nv_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>out_data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>out_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>out_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Read bytes from NV index using owner empty-password authorization. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">nv_index</td><td>NV index handle. </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in bytes. </td></tr>
+    <tr><td class="paramname">out_data</td><td>Output buffer. </td></tr>
+    <tr><td class="paramname">out_capacity</td><td>Output capacity. </td></tr>
+    <tr><td class="paramname">out_len</td><td>[out] Returned data length. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01330">1330</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00062">st33_be16_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00144">st33_write_empty_password_auth()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00074">ST33KTPM2X_EOVERFLOW</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="af1e4206f80948966e16062e7e16f68c4" name="af1e4206f80948966e16062e7e16f68c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1e4206f80948966e16062e7e16f68c4">&#9670;&#160;</a></span>st33ktpm2x_tpm2_nv_write()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_nv_write </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>nv_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write bytes to NV index using owner empty-password authorization. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">nv_index</td><td>NV index handle. </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in bytes. </td></tr>
+    <tr><td class="paramname">data</td><td>Input data. </td></tr>
+    <tr><td class="paramname">data_len</td><td>Input data length. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01483">1483</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l01419">st33_tpm2_nv_write_auth()</a>.</p>
+
+</div>
+</div>
+<a id="ae63a087a2ccbe308b472c0d72278852d" name="ae63a087a2ccbe308b472c0d72278852d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae63a087a2ccbe308b472c0d72278852d">&#9670;&#160;</a></span>st33ktpm2x_tpm2_nv_write_platform_pp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_nv_write_platform_pp </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>nv_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>offset</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>data</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>data_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Write bytes to NV index using platform authorization with hardware Physical Presence. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">nv_index</td><td>NV index handle. </td></tr>
+    <tr><td class="paramname">offset</td><td>Offset in bytes. </td></tr>
+    <tr><td class="paramname">data</td><td>Input data. </td></tr>
+    <tr><td class="paramname">data_len</td><td>Input data length. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01499">1499</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l01419">st33_tpm2_nv_write_auth()</a>.</p>
+
+</div>
+</div>
+<a id="a601549f7e393fdca42aefbd4f04304c2" name="a601549f7e393fdca42aefbd4f04304c2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a601549f7e393fdca42aefbd4f04304c2">&#9670;&#160;</a></span>st33ktpm2x_tpm2_pcr_read_sha256()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_pcr_read_sha256 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>pcr_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>digest_sha256_out</em></span>[32], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>update_counter_out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Execute TPM2_PCR_Read for one SHA-256 PCR index. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">pcr_index</td><td>PCR index in range 0..23. </td></tr>
+    <tr><td class="paramname">digest_sha256_out</td><td>[out] 32-byte SHA-256 PCR digest. </td></tr>
+    <tr><td class="paramname">update_counter_out</td><td>[out] PCR update counter. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01096">1096</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l00062">st33_be16_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00068">st33_be32_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00033">ST33KTPM2X_RSP_MAX_BYTES</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a8a0390a3603abfaee06c4a47806bfd93" name="a8a0390a3603abfaee06c4a47806bfd93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a0390a3603abfaee06c4a47806bfd93">&#9670;&#160;</a></span>st33ktpm2x_tpm2_policy_command_code()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_policy_command_code </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>session_handle</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>command_code</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply PolicyCommandCode in an existing policy session (scaffold API). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">session_handle</td><td>Policy session handle. </td></tr>
+    <tr><td class="paramname">command_code</td><td>TPM command code to authorize. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01236">1236</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a>.</p>
+
+</div>
+</div>
+<a id="a88fa5109117b117eea6f084fb7947e29" name="a88fa5109117b117eea6f084fb7947e29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a88fa5109117b117eea6f084fb7947e29">&#9670;&#160;</a></span>st33ktpm2x_tpm2_policy_or()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_policy_or </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>session_handle</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>digest_list</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>digest_count</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>digest_size</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply PolicyOR branch combiner (scaffold API). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">session_handle</td><td>Policy session handle. </td></tr>
+    <tr><td class="paramname">digest_list</td><td>Pointer to concatenated digest list. </td></tr>
+    <tr><td class="paramname">digest_count</td><td>Number of digests. </td></tr>
+    <tr><td class="paramname">digest_size</td><td>Single digest size. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01251">1251</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a>.</p>
+
+</div>
+</div>
+<a id="a21f6025c6a40532501b91579d6b62bc6" name="a21f6025c6a40532501b91579d6b62bc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21f6025c6a40532501b91579d6b62bc6">&#9670;&#160;</a></span>st33ktpm2x_tpm2_policy_pcr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_policy_pcr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>session_handle</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t</td>          <td class="paramname"><span class="paramname"><em>pcr_index</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply PolicyPCR in an existing policy session (scaffold API). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">session_handle</td><td>Policy session handle. </td></tr>
+    <tr><td class="paramname">pcr_index</td><td>PCR index. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01208">1208</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a>.</p>
+
+</div>
+</div>
+<a id="a2b73e0d636cceab618098a9db9aa2f7d" name="a2b73e0d636cceab618098a9db9aa2f7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b73e0d636cceab618098a9db9aa2f7d">&#9670;&#160;</a></span>st33ktpm2x_tpm2_policy_physical_presence()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_policy_physical_presence </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t</td>          <td class="paramname"><span class="paramname"><em>session_handle</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply Physical Presence policy branch (scaffold API). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">session_handle</td><td>Policy session handle. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01223">1223</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a>.</p>
+
+</div>
+</div>
+<a id="ae6c9416bf6fb89130eb182a31ed2acb3" name="ae6c9416bf6fb89130eb182a31ed2acb3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6c9416bf6fb89130eb182a31ed2acb3">&#9670;&#160;</a></span>st33ktpm2x_tpm2_self_test()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_self_test </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>full_test</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Execute TPM2_SelfTest. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">full_test</td><td><span class="tt">true</span> for full self-test, <span class="tt">false</span> for incremental self-test. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00973">973</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="a80d97a74a64b52b531c1038abcbe6fe4" name="a80d97a74a64b52b531c1038abcbe6fe4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80d97a74a64b52b531c1038abcbe6fe4">&#9670;&#160;</a></span>st33ktpm2x_tpm2_start_auth_session()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_start_auth_session </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>session_handle_out</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Start TPM2 policy/auth session helper (scaffold API). </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">session_handle_out</td><td>[out] Created session handle. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l01192">1192</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00077">ST33KTPM2X_ENOTSUP</a>.</p>
+
+</div>
+</div>
+<a id="a7883a6abe5016f7f08fbae5c3ec0e1d0" name="a7883a6abe5016f7f08fbae5c3ec0e1d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7883a6abe5016f7f08fbae5c3ec0e1d0">&#9670;&#160;</a></span>st33ktpm2x_tpm2_startup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_tpm2_startup </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>startup_type</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Execute TPM2_Startup. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">startup_type</td><td>Use <span class="tt">ST33KTPM2X_TPM2_SU_CLEAR</span> or <span class="tt">ST33KTPM2X_TPM2_SU_STATE</span>. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM response code. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00957">957</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8c_source.html#l00128">st33_be16_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00135">st33_be32_write()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00786">st33ktpm2x_transceive()</a>.</p>
+
+</div>
+</div>
+<a id="ad66faa4aee2d93f8557b4f370c845317" name="ad66faa4aee2d93f8557b4f370c845317"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad66faa4aee2d93f8557b4f370c845317">&#9670;&#160;</a></span>st33ktpm2x_transceive()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#a3ebfd1bc90ba1d3d57f36a141e0f8c70">st33ktpm2x_status_t</a> st33ktpm2x_transceive </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structst33ktpm2x__t.html">st33ktpm2x_t</a> *</td>          <td class="paramname"><span class="paramname"><em>ctx</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *</td>          <td class="paramname"><span class="paramname"><em>command</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>command_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint8_t *</td>          <td class="paramname"><span class="paramname"><em>response</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t</td>          <td class="paramname"><span class="paramname"><em>response_capacity</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint16_t *</td>          <td class="paramname"><span class="paramname"><em>response_len</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *</td>          <td class="paramname"><span class="paramname"><em>tpm_rc</em></span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Send one raw TPM command and receive full response. </p>
+<p>This is the primary extension point for advanced TPM2 features.</p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ctx</td><td>Driver context. </td></tr>
+    <tr><td class="paramname">command</td><td>Command buffer (TPM2 packet, complete header+payload). </td></tr>
+    <tr><td class="paramname">command_len</td><td>Command length in bytes. </td></tr>
+    <tr><td class="paramname">response</td><td>Buffer for response packet. </td></tr>
+    <tr><td class="paramname">response_capacity</td><td>Response buffer capacity in bytes. </td></tr>
+    <tr><td class="paramname">response_len</td><td>[out] Actual response length. </td></tr>
+    <tr><td class="paramname">tpm_rc</td><td>[out] TPM2 response code parsed from response header. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>Status code. </dd></dl>
+
+<p class="definition">Definicja w linii <a class="el" href="st33ktpm2x_8c_source.html#l00786">786</a> pliku <a class="el" href="st33ktpm2x_8c_source.html">st33ktpm2x.c</a>.</p>
+
+<p class="reference">Odwołuje się do <a class="el" href="st33ktpm2x_8h_source.html#l00103">st33ktpm2x_cfg_t::burst_timeout_ms</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00111">st33ktpm2x_t::cfg</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00112">st33ktpm2x_t::initialized</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00068">st33_be32_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00479">st33_fifo_write()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00056">st33_min_u16()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00491">st33_read_response_stream()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00278">st33_read_sts()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00461">st33_trace_fail()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00437">st33_trace_tis()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00390">st33_wait_burst()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00350">st33_wait_sts_bits()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00306">st33_write_sts()</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00032">ST33KTPM2X_CMD_MAX_BYTES</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00070">ST33KTPM2X_EINVAL</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00074">ST33KTPM2X_EOVERFLOW</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00075">ST33KTPM2X_EPROTO</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00076">ST33KTPM2X_ETPM_RC</a>, <a class="el" href="st33ktpm2x_8h_source.html#l00069">ST33KTPM2X_OK</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00730">st33ktpm2x_release_locality0()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00672">st33ktpm2x_request_locality0()</a> i <a class="el" href="st33ktpm2x_8h_source.html#l00033">ST33KTPM2X_RSP_MAX_BYTES</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="st33ktpm2x_8c_source.html#l01419">st33_tpm2_nv_write_auth()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01044">st33ktpm2x_tpm2_get_capability()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00989">st33ktpm2x_tpm2_get_random()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01270">st33ktpm2x_tpm2_nv_define()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01330">st33ktpm2x_tpm2_nv_read()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l01096">st33ktpm2x_tpm2_pcr_read_sha256()</a>, <a class="el" href="st33ktpm2x_8c_source.html#l00973">st33ktpm2x_tpm2_self_test()</a> i <a class="el" href="st33ktpm2x_8c_source.html#l00957">st33ktpm2x_tpm2_startup()</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><b>Core</b></li><li class="navelem"><a href="dir_358a96ec289b26a3ec39132274b023b0.html">App</a></li><li class="navelem"><a href="dir_4708a5e97be5c562a34184c0e9880bf6.html">st33ktpm2x_lib</a></li><li class="navelem"><a href="st33ktpm2x_8h.html">st33ktpm2x.h</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

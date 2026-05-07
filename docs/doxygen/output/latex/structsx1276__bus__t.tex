@@ -1,0 +1,111 @@
+\doxysection{Dokumentacja struktury sx1276\+\_\+bus\+\_\+t}
+\hypertarget{structsx1276__bus__t}{}\label{structsx1276__bus__t}\index{sx1276\_bus\_t@{sx1276\_bus\_t}}
+
+
+Kontekst magistrali SPI dla układu SX1276.  
+
+
+
+
+{\ttfamily \#include $<$Core/\+App/radio\+\_\+lib/common/sx1276/radio\+\_\+sx1276.\+h$>$}
+
+\doxysubsubsection*{Pola danych}
+\begin{DoxyCompactItemize}
+\item 
+SPI\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}{hspi}}
+\begin{DoxyCompactList}\small\item\em Uchwyt SPI. \end{DoxyCompactList}\item 
+GPIO\+\_\+\+Type\+Def \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structsx1276__bus__t_a3f789cfb46120b989f9f04898002a031}{nss\+\_\+port}}
+\begin{DoxyCompactList}\small\item\em Port pinu NSS/\+CS. \end{DoxyCompactList}\item 
+uint16\+\_\+t \mbox{\hyperlink{structsx1276__bus__t_abbe8af22e6d3af0dc3c40ea428bdd987}{nss\+\_\+pin}}
+\begin{DoxyCompactList}\small\item\em Pin NSS/\+CS. \end{DoxyCompactList}\item 
+uint32\+\_\+t \mbox{\hyperlink{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}{spi\+\_\+timeout\+\_\+ms}}
+\begin{DoxyCompactList}\small\item\em Timeout transferu SPI. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Kontekst magistrali SPI dla układu SX1276. 
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8h_source_l00017}{17}} pliku \mbox{\hyperlink{radio__sx1276_8h_source}{radio\+\_\+sx1276.\+h}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{structsx1276__bus__t_doc-variable-members}
+\doxysubsection{Dokumentacja pól}
+\Hypertarget{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6}\index{sx1276\_bus\_t@{sx1276\_bus\_t}!hspi@{hspi}}
+\index{hspi@{hspi}!sx1276\_bus\_t@{sx1276\_bus\_t}}
+\doxysubsubsection{\texorpdfstring{hspi}{hspi}}
+{\footnotesize\ttfamily \label{structsx1276__bus__t_acbe1a6fb4b51a0ba12fbd1172950a8a6} 
+SPI\+\_\+\+Handle\+Type\+Def\texorpdfstring{$\ast$}{*} sx1276\+\_\+bus\+\_\+t\+::hspi}
+
+
+
+Uchwyt SPI. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8h_source_l00019}{19}} pliku \mbox{\hyperlink{radio__sx1276_8h_source}{radio\+\_\+sx1276.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{sx1276\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+\Hypertarget{structsx1276__bus__t_abbe8af22e6d3af0dc3c40ea428bdd987}\index{sx1276\_bus\_t@{sx1276\_bus\_t}!nss\_pin@{nss\_pin}}
+\index{nss\_pin@{nss\_pin}!sx1276\_bus\_t@{sx1276\_bus\_t}}
+\doxysubsubsection{\texorpdfstring{nss\_pin}{nss\_pin}}
+{\footnotesize\ttfamily \label{structsx1276__bus__t_abbe8af22e6d3af0dc3c40ea428bdd987} 
+uint16\+\_\+t sx1276\+\_\+bus\+\_\+t\+::nss\+\_\+pin}
+
+
+
+Pin NSS/\+CS. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8h_source_l00021}{21}} pliku \mbox{\hyperlink{radio__sx1276_8h_source}{radio\+\_\+sx1276.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__sx1276_8c_source_l00022}{sx1276\+\_\+deselect()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}.
+
+\Hypertarget{structsx1276__bus__t_a3f789cfb46120b989f9f04898002a031}\index{sx1276\_bus\_t@{sx1276\_bus\_t}!nss\_port@{nss\_port}}
+\index{nss\_port@{nss\_port}!sx1276\_bus\_t@{sx1276\_bus\_t}}
+\doxysubsubsection{\texorpdfstring{nss\_port}{nss\_port}}
+{\footnotesize\ttfamily \label{structsx1276__bus__t_a3f789cfb46120b989f9f04898002a031} 
+GPIO\+\_\+\+Type\+Def\texorpdfstring{$\ast$}{*} sx1276\+\_\+bus\+\_\+t\+::nss\+\_\+port}
+
+
+
+Port pinu NSS/\+CS. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8h_source_l00020}{20}} pliku \mbox{\hyperlink{radio__sx1276_8h_source}{radio\+\_\+sx1276.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__sx1276_8c_source_l00022}{sx1276\+\_\+deselect()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}.
+
+\Hypertarget{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234}\index{sx1276\_bus\_t@{sx1276\_bus\_t}!spi\_timeout\_ms@{spi\_timeout\_ms}}
+\index{spi\_timeout\_ms@{spi\_timeout\_ms}!sx1276\_bus\_t@{sx1276\_bus\_t}}
+\doxysubsubsection{\texorpdfstring{spi\_timeout\_ms}{spi\_timeout\_ms}}
+{\footnotesize\ttfamily \label{structsx1276__bus__t_a9e332f32ea65d23614fe44ead6ed4234} 
+uint32\+\_\+t sx1276\+\_\+bus\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}
+
+
+
+Timeout transferu SPI. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8h_source_l00022}{22}} pliku \mbox{\hyperlink{radio__sx1276_8h_source}{radio\+\_\+sx1276.\+h}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{sx1276\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Dokumentacja dla tej struktury została wygenerowana z pliku\+:\begin{DoxyCompactItemize}
+\item 
+Core/\+App/radio\+\_\+lib/common/sx1276/\mbox{\hyperlink{radio__sx1276_8h}{radio\+\_\+sx1276.\+h}}\end{DoxyCompactItemize}

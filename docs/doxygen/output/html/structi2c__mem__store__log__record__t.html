@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury i2c_mem_store_log_record_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structi2c__mem__store__log__record__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury i2c_mem_store_log_record_t</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>One logged message record returned to caller.  
+ <a href="#details">Więcej...</a></p>
+
+<p><code>#include &lt;<a class="el" href="i2c__mem__store_8h_source.html">Core/App/i2c_mem_store_lib/i2c_mem_store.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:adceeadbe1bb5b45f2c3421a7d690cfe1" id="r_adceeadbe1bb5b45f2c3421a7d690cfe1"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adceeadbe1bb5b45f2c3421a7d690cfe1">sequence</a></td></tr>
+<tr class="memdesc:adceeadbe1bb5b45f2c3421a7d690cfe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Monotonic record sequence.  <br /></td></tr>
+<tr class="memitem:ab9967eb15efbb252fcca55e2f5d7211b" id="r_ab9967eb15efbb252fcca55e2f5d7211b"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9967eb15efbb252fcca55e2f5d7211b">timestamp_ms</a></td></tr>
+<tr class="memdesc:ab9967eb15efbb252fcca55e2f5d7211b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Timestamp from HAL_GetTick().  <br /></td></tr>
+<tr class="memitem:a6e9cf39c7f9fbd2333ad119378486542" id="r_a6e9cf39c7f9fbd2333ad119378486542"><td class="memItemLeft" align="right" valign="top">int16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e9cf39c7f9fbd2333ad119378486542">rssi_dbm</a></td></tr>
+<tr class="memdesc:a6e9cf39c7f9fbd2333ad119378486542"><td class="mdescLeft">&#160;</td><td class="mdescRight">RSSI attached to message.  <br /></td></tr>
+<tr class="memitem:ab947d98d458ed1f09ab2d2707c62aa56" id="r_ab947d98d458ed1f09ab2d2707c62aa56"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab947d98d458ed1f09ab2d2707c62aa56">length</a></td></tr>
+<tr class="memdesc:ab947d98d458ed1f09ab2d2707c62aa56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message payload length.  <br /></td></tr>
+<tr class="memitem:a2970dab04ffd2d81d284e0df3158c2fc" id="r_a2970dab04ffd2d81d284e0df3158c2fc"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2970dab04ffd2d81d284e0df3158c2fc">payload</a> [I2C_MEM_STORE_LOG_PAYLOAD_MAX]</td></tr>
+<tr class="memdesc:a2970dab04ffd2d81d284e0df3158c2fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Message payload bytes.  <br /></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock"><p>One logged message record returned to caller. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00062">62</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="ab947d98d458ed1f09ab2d2707c62aa56" name="ab947d98d458ed1f09ab2d2707c62aa56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab947d98d458ed1f09ab2d2707c62aa56">&#9670;&#160;</a></span>length</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t i2c_mem_store_log_record_t::length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Message payload length. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00067">67</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="a2970dab04ffd2d81d284e0df3158c2fc" name="a2970dab04ffd2d81d284e0df3158c2fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2970dab04ffd2d81d284e0df3158c2fc">&#9670;&#160;</a></span>payload</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t i2c_mem_store_log_record_t::payload[I2C_MEM_STORE_LOG_PAYLOAD_MAX]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Message payload bytes. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00068">68</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="a6e9cf39c7f9fbd2333ad119378486542" name="a6e9cf39c7f9fbd2333ad119378486542"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e9cf39c7f9fbd2333ad119378486542">&#9670;&#160;</a></span>rssi_dbm</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int16_t i2c_mem_store_log_record_t::rssi_dbm</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>RSSI attached to message. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00066">66</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="adceeadbe1bb5b45f2c3421a7d690cfe1" name="adceeadbe1bb5b45f2c3421a7d690cfe1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adceeadbe1bb5b45f2c3421a7d690cfe1">&#9670;&#160;</a></span>sequence</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_log_record_t::sequence</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Monotonic record sequence. </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00064">64</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<a id="ab9967eb15efbb252fcca55e2f5d7211b" name="ab9967eb15efbb252fcca55e2f5d7211b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9967eb15efbb252fcca55e2f5d7211b">&#9670;&#160;</a></span>timestamp_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t i2c_mem_store_log_record_t::timestamp_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Timestamp from HAL_GetTick(). </p>
+
+<p class="definition">Definicja w linii <a class="el" href="i2c__mem__store_8h_source.html#l00065">65</a> pliku <a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a>.</p>
+
+<p class="reference">Odwołania w <a class="el" href="i2c__mem__store_8c_source.html#l00569">i2c_mem_store_read_message()</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/i2c_mem_store_lib/<a class="el" href="i2c__mem__store_8h_source.html">i2c_mem_store.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structi2c__mem__store__log__record__t.html">i2c_mem_store_log_record_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>

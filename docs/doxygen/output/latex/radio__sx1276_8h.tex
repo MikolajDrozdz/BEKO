@@ -1,0 +1,696 @@
+\doxysection{Dokumentacja pliku Core/\+App/radio\+\_\+lib/common/sx1276/radio\+\_\+sx1276.h}
+\hypertarget{radio__sx1276_8h}{}\label{radio__sx1276_8h}\index{Core/App/radio\_lib/common/sx1276/radio\_sx1276.h@{Core/App/radio\_lib/common/sx1276/radio\_sx1276.h}}
+
+
+Niskopoziomowe API dostępu do rejestrów SX1276.  
+
+
+{\ttfamily \#include "{}stm32u5xx\+\_\+hal.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Kontekst magistrali SPI dla układu SX1276. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a0be3807ba48f424c293c3e6312e4b004}{sx1276\+\_\+read\+\_\+reg}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}value)
+\begin{DoxyCompactList}\small\item\em Odczytuje pojedynczy rejestr SX1276. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_af20d56d667bf340216eff31602a31c85}{sx1276\+\_\+write\+\_\+reg}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t reg, uint8\+\_\+t value)
+\begin{DoxyCompactList}\small\item\em Zapisuje pojedynczy rejestr SX1276. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_adc74dc514898113c4e43bc5fbc8b280b}{sx1276\+\_\+read\+\_\+burst}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t reg, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Odczytuje sekwencję bajtów od rejestru startowego. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a3a3c532ff762f574aac721fe906acd85}{sx1276\+\_\+write\+\_\+burst}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t reg, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Zapisuje sekwencję bajtów od rejestru startowego. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{Indent}\textbf{ Pomocnicze operacje konfiguracyjne}\par
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_ae308f754e1ef59472e61b1cba0b26d6d}{sx1276\+\_\+get\+\_\+version}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t \texorpdfstring{$\ast$}{*}version)
+\begin{DoxyCompactList}\small\item\em Odczytuje identyfikator wersji układu SX1276. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a2d735690e49eb3453479d5c70f9cdd20}{sx1276\+\_\+set\+\_\+op\+\_\+mode}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t op\+\_\+mode)
+\begin{DoxyCompactList}\small\item\em Ustawia rejestr trybu pracy {\ttfamily Reg\+Op\+Mode}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a7726c49e402b455d667895cc37ac8ec8}{sx1276\+\_\+set\+\_\+frequency}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint32\+\_\+t frequency\+\_\+hz)
+\begin{DoxyCompactList}\small\item\em Ustawia częstotliwość nośną RF. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a7f6da27f88d9e1ee14012e7fc01a06c5}{sx1276\+\_\+set\+\_\+pa\+\_\+output\+\_\+power}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, int8\+\_\+t tx\+\_\+power\+\_\+dbm)
+\begin{DoxyCompactList}\small\item\em Ustawia moc nadajnika dla toru PA\+\_\+\+BOOST. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a114bd1113c90a7d2f7875d1776f2ec8e}{sx1276\+\_\+set\+\_\+lora\+\_\+modem}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t bandwidth\+\_\+code, uint8\+\_\+t spreading\+\_\+factor, uint8\+\_\+t coding\+\_\+rate\+\_\+denominator, bool implicit\+\_\+header, bool crc\+\_\+on, bool low\+\_\+datarate\+\_\+optimize)
+\begin{DoxyCompactList}\small\item\em Konfiguruje parametry modemu Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a6487ef0d55e681a5e50e3d7354886753}{sx1276\+\_\+set\+\_\+symbol\+\_\+timeout}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint16\+\_\+t symbol\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Ustawia timeout symbolowy dla odbioru pojedynczego. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a2bb5199c2391aa24e194d8a4d4ac2157}{sx1276\+\_\+set\+\_\+preamble}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint16\+\_\+t preamble\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Ustawia długość preambuły Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a74e72da97dcdd90a7e071af8504a4f04}{sx1276\+\_\+set\+\_\+sync\+\_\+word}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t sync\+\_\+word)
+\begin{DoxyCompactList}\small\item\em Ustawia sync word Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_af8c0cb076e901b4aa2d4ff6959dc71a3}{sx1276\+\_\+set\+\_\+invert\+\_\+iq}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, bool invert\+\_\+iq)
+\begin{DoxyCompactList}\small\item\em Włącza lub wyłącza inwersję IQ. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ FIFO i pakiet}\par
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a2c71c2e3d5c9a8404ccd9388fd3276d3}{sx1276\+\_\+set\+\_\+fifo\+\_\+base\+\_\+addrs}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t tx\+\_\+base, uint8\+\_\+t rx\+\_\+base)
+\begin{DoxyCompactList}\small\item\em Ustawia bazowe adresy FIFO dla TX i RX. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_ac768a620c5104a7cc1e932e0fd41e5bb}{sx1276\+\_\+set\+\_\+fifo\+\_\+addr\+\_\+ptr}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t addr)
+\begin{DoxyCompactList}\small\item\em Ustawia wskaźnik bieżącego adresu FIFO. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_aeb0a3f646a276aed07c4e23dfabff75c}{sx1276\+\_\+write\+\_\+fifo}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, const uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Zapisuje payload do FIFO. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_ab173599c491a7a6b761c9e4c685843af}{sx1276\+\_\+read\+\_\+fifo}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t \texorpdfstring{$\ast$}{*}data, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Odczytuje payload z FIFO. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a62348eb179378aacf27663c00ea490c1}{sx1276\+\_\+set\+\_\+payload\+\_\+length}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Ustawia długość payloadu Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a3c52ec2e93ac86e40f504021db364208}{sx1276\+\_\+get\+\_\+rx\+\_\+current\+\_\+addr}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t \texorpdfstring{$\ast$}{*}addr)
+\begin{DoxyCompactList}\small\item\em Odczytuje adres początku aktualnego pakietu RX w FIFO. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a3675f7d7f297d0c053ede0812830844e}{sx1276\+\_\+get\+\_\+rx\+\_\+nb\+\_\+bytes}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t \texorpdfstring{$\ast$}{*}len)
+\begin{DoxyCompactList}\small\item\em Odczytuje liczbę odebranych bajtów pakietu. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a5ef2d8fcef425e0f53703b2181b66930}{sx1276\+\_\+get\+\_\+packet\+\_\+snr\+\_\+raw}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, int8\+\_\+t \texorpdfstring{$\ast$}{*}snr\+\_\+raw)
+\begin{DoxyCompactList}\small\item\em Odczytuje surowy rejestr SNR pakietu. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a4623abcf4ecce80c86b787491dd35bd2}{sx1276\+\_\+get\+\_\+packet\+\_\+rssi\+\_\+raw}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t \texorpdfstring{$\ast$}{*}rssi\+\_\+raw)
+\begin{DoxyCompactList}\small\item\em Odczytuje surowy rejestr RSSI pakietu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+\begin{Indent}\textbf{ IRQ i mapowanie DIO}\par
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a038d9ebac1fb9c451ebb19d717d72959}{sx1276\+\_\+get\+\_\+irq\+\_\+flags}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t \texorpdfstring{$\ast$}{*}flags)
+\begin{DoxyCompactList}\small\item\em Odczytuje flagi IRQ Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a8b3de4da7603cdd8c1de0b1519a0a96f}{sx1276\+\_\+clear\+\_\+irq\+\_\+flags}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t flags\+\_\+to\+\_\+clear)
+\begin{DoxyCompactList}\small\item\em Czyści wskazane flagi IRQ Lo\+Ra. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{radio__sx1276_8h_a71f3f213995c99ce1cf7ef22ddefed79}{sx1276\+\_\+map\+\_\+dio}} (const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}bus, uint8\+\_\+t dio\+\_\+mapping1, uint8\+\_\+t dio\+\_\+mapping2)
+\begin{DoxyCompactList}\small\item\em Ustawia mapowanie funkcji dla linii DIO. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\end{Indent}
+
+
+\doxysubsection{Opis szczegółowy}
+Niskopoziomowe API dostępu do rejestrów SX1276. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{radio__sx1276_8h_source}{radio\+\_\+sx1276.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{radio__sx1276_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{radio__sx1276_8h_a8b3de4da7603cdd8c1de0b1519a0a96f}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_clear\_irq\_flags@{sx1276\_clear\_irq\_flags}}
+\index{sx1276\_clear\_irq\_flags@{sx1276\_clear\_irq\_flags}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_clear\_irq\_flags()}{sx1276\_clear\_irq\_flags()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a8b3de4da7603cdd8c1de0b1519a0a96f} 
+bool sx1276\+\_\+clear\+\_\+irq\+\_\+flags (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{flags\+\_\+to\+\_\+clear}{}\end{DoxyParamCaption})}
+
+
+
+Czyści wskazane flagi IRQ Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00352}{352}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00580}{radio\+\_\+lora\+\_\+process()}}, \mbox{\hyperlink{radio__lora_8c_source_l00507}{radio\+\_\+lora\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lora_8c_source_l00452}{radio\+\_\+lora\+\_\+start\+\_\+rx\+\_\+continuous()}} i \mbox{\hyperlink{radio__lora_8c_source_l00476}{radio\+\_\+lora\+\_\+start\+\_\+rx\+\_\+single()}}.
+
+\Hypertarget{radio__sx1276_8h_a038d9ebac1fb9c451ebb19d717d72959}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_get\_irq\_flags@{sx1276\_get\_irq\_flags}}
+\index{sx1276\_get\_irq\_flags@{sx1276\_get\_irq\_flags}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_get\_irq\_flags()}{sx1276\_get\_irq\_flags()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a038d9ebac1fb9c451ebb19d717d72959} 
+bool sx1276\+\_\+get\+\_\+irq\+\_\+flags (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{flags}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje flagi IRQ Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00347}{347}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00067}{radio\+\_\+read\+\_\+irq\+\_\+flags\+\_\+retry()}} i \mbox{\hyperlink{radio__lora_8c_source_l00179}{radio\+\_\+wait\+\_\+for\+\_\+tx\+\_\+enter\+\_\+or\+\_\+done()}}.
+
+\Hypertarget{radio__sx1276_8h_a4623abcf4ecce80c86b787491dd35bd2}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_get\_packet\_rssi\_raw@{sx1276\_get\_packet\_rssi\_raw}}
+\index{sx1276\_get\_packet\_rssi\_raw@{sx1276\_get\_packet\_rssi\_raw}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_get\_packet\_rssi\_raw()}{sx1276\_get\_packet\_rssi\_raw()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a4623abcf4ecce80c86b787491dd35bd2} 
+bool sx1276\+\_\+get\+\_\+packet\+\_\+rssi\+\_\+raw (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{rssi\+\_\+raw}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje surowy rejestr RSSI pakietu. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00342}{342}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__sx1276_8h_a5ef2d8fcef425e0f53703b2181b66930}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_get\_packet\_snr\_raw@{sx1276\_get\_packet\_snr\_raw}}
+\index{sx1276\_get\_packet\_snr\_raw@{sx1276\_get\_packet\_snr\_raw}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_get\_packet\_snr\_raw()}{sx1276\_get\_packet\_snr\_raw()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a5ef2d8fcef425e0f53703b2181b66930} 
+bool sx1276\+\_\+get\+\_\+packet\+\_\+snr\+\_\+raw (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{int8\+\_\+t \texorpdfstring{$\ast$}{*}}]{snr\+\_\+raw}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje surowy rejestr SNR pakietu. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00329}{329}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__sx1276_8h_a3c52ec2e93ac86e40f504021db364208}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_get\_rx\_current\_addr@{sx1276\_get\_rx\_current\_addr}}
+\index{sx1276\_get\_rx\_current\_addr@{sx1276\_get\_rx\_current\_addr}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_get\_rx\_current\_addr()}{sx1276\_get\_rx\_current\_addr()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a3c52ec2e93ac86e40f504021db364208} 
+bool sx1276\+\_\+get\+\_\+rx\+\_\+current\+\_\+addr (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{addr}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje adres początku aktualnego pakietu RX w FIFO. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00319}{319}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__sx1276_8h_a3675f7d7f297d0c053ede0812830844e}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_get\_rx\_nb\_bytes@{sx1276\_get\_rx\_nb\_bytes}}
+\index{sx1276\_get\_rx\_nb\_bytes@{sx1276\_get\_rx\_nb\_bytes}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_get\_rx\_nb\_bytes()}{sx1276\_get\_rx\_nb\_bytes()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a3675f7d7f297d0c053ede0812830844e} 
+bool sx1276\+\_\+get\+\_\+rx\+\_\+nb\+\_\+bytes (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje liczbę odebranych bajtów pakietu. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00324}{324}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__sx1276_8h_ae308f754e1ef59472e61b1cba0b26d6d}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_get\_version@{sx1276\_get\_version}}
+\index{sx1276\_get\_version@{sx1276\_get\_version}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_get\_version()}{sx1276\_get\_version()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_ae308f754e1ef59472e61b1cba0b26d6d} 
+bool sx1276\+\_\+get\+\_\+version (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{version}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje identyfikator wersji układu SX1276. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00125}{125}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00489}{radio\+\_\+fsk\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}} i \mbox{\hyperlink{radio__ook_8c_source_l00406}{radio\+\_\+ook\+\_\+init()}}.
+
+\Hypertarget{radio__sx1276_8h_a71f3f213995c99ce1cf7ef22ddefed79}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_map\_dio@{sx1276\_map\_dio}}
+\index{sx1276\_map\_dio@{sx1276\_map\_dio}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_map\_dio()}{sx1276\_map\_dio()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a71f3f213995c99ce1cf7ef22ddefed79} 
+bool sx1276\+\_\+map\+\_\+dio (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{dio\+\_\+mapping1}{, }\item[{uint8\+\_\+t}]{dio\+\_\+mapping2}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia mapowanie funkcji dla linii DIO. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00357}{357}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00155}{radio\+\_\+config\+\_\+dio\+\_\+for\+\_\+rx()}} i \mbox{\hyperlink{radio__lora_8c_source_l00164}{radio\+\_\+config\+\_\+dio\+\_\+for\+\_\+tx()}}.
+
+\Hypertarget{radio__sx1276_8h_adc74dc514898113c4e43bc5fbc8b280b}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_read\_burst@{sx1276\_read\_burst}}
+\index{sx1276\_read\_burst@{sx1276\_read\_burst}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_read\_burst()}{sx1276\_read\_burst()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_adc74dc514898113c4e43bc5fbc8b280b} 
+bool sx1276\+\_\+read\+\_\+burst (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje sekwencję bajtów od rejestru startowego. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em bus} & Kontekst magistrali SPI. \\
+\hline
+{\em reg} & Adres startowy. \\
+\hline
+{\em data} & \mbox{[}out\mbox{]} Bufor danych. \\
+\hline
+{\em len} & Liczba bajtów do odczytu. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} gdy transfer się powiódł. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{73}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8h_source_l00019}{sx1276\+\_\+bus\+\_\+t\+::hspi}}, \mbox{\hyperlink{radio__sx1276_8h_source_l00022}{sx1276\+\_\+bus\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00022}{sx1276\+\_\+deselect()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00870}{radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__lora_8c_source_l00760}{radio\+\_\+lora\+\_\+raw\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__ook_8c_source_l00779}{radio\+\_\+ook\+\_\+raw\+\_\+read\+\_\+burst()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00432}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}, \mbox{\hyperlink{radio__ook_8c_source_l00349}{radio\+\_\+read\+\_\+rx\+\_\+packet()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00309}{sx1276\+\_\+read\+\_\+fifo()}}.
+
+\Hypertarget{radio__sx1276_8h_ab173599c491a7a6b761c9e4c685843af}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_read\_fifo@{sx1276\_read\_fifo}}
+\index{sx1276\_read\_fifo@{sx1276\_read\_fifo}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_read\_fifo()}{sx1276\_read\_fifo()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_ab173599c491a7a6b761c9e4c685843af} 
+bool sx1276\+\_\+read\+\_\+fifo (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje payload z FIFO. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00309}{309}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00073}{sx1276\+\_\+read\+\_\+burst()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__sx1276_8h_a0be3807ba48f424c293c3e6312e4b004}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_read\_reg@{sx1276\_read\_reg}}
+\index{sx1276\_read\_reg@{sx1276\_read\_reg}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_read\_reg()}{sx1276\_read\_reg()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a0be3807ba48f424c293c3e6312e4b004} 
+bool sx1276\+\_\+read\+\_\+reg (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Odczytuje pojedynczy rejestr SX1276. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em bus} & Kontekst magistrali SPI. \\
+\hline
+{\em reg} & Adres rejestru. \\
+\hline
+{\em value} & \mbox{[}out\mbox{]} Odczytana wartość. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} gdy transfer się powiódł. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{27}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8h_source_l00019}{sx1276\+\_\+bus\+\_\+t\+::hspi}}, \mbox{\hyperlink{radio__sx1276_8h_source_l00022}{sx1276\+\_\+bus\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00022}{sx1276\+\_\+deselect()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00705}{radio\+\_\+fsk\+\_\+process()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00850}{radio\+\_\+fsk\+\_\+raw\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__lora_8c_source_l00580}{radio\+\_\+lora\+\_\+process()}}, \mbox{\hyperlink{radio__lora_8c_source_l00740}{radio\+\_\+lora\+\_\+raw\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__ook_8c_source_l00622}{radio\+\_\+ook\+\_\+process()}}, \mbox{\hyperlink{radio__ook_8c_source_l00759}{radio\+\_\+ook\+\_\+raw\+\_\+read\+\_\+reg()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00432}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}, \mbox{\hyperlink{radio__ook_8c_source_l00349}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}, \mbox{\hyperlink{radio__lora_8c_source_l00179}{radio\+\_\+wait\+\_\+for\+\_\+tx\+\_\+enter\+\_\+or\+\_\+done()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00347}{sx1276\+\_\+get\+\_\+irq\+\_\+flags()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00342}{sx1276\+\_\+get\+\_\+packet\+\_\+rssi\+\_\+raw()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00329}{sx1276\+\_\+get\+\_\+packet\+\_\+snr\+\_\+raw()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00319}{sx1276\+\_\+get\+\_\+rx\+\_\+current\+\_\+addr()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00324}{sx1276\+\_\+get\+\_\+rx\+\_\+nb\+\_\+bytes()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00125}{sx1276\+\_\+get\+\_\+version()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00268}{sx1276\+\_\+set\+\_\+invert\+\_\+iq()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00184}{sx1276\+\_\+set\+\_\+lora\+\_\+modem()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00241}{sx1276\+\_\+set\+\_\+symbol\+\_\+timeout()}}.
+
+\Hypertarget{radio__sx1276_8h_ac768a620c5104a7cc1e932e0fd41e5bb}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_fifo\_addr\_ptr@{sx1276\_set\_fifo\_addr\_ptr}}
+\index{sx1276\_set\_fifo\_addr\_ptr@{sx1276\_set\_fifo\_addr\_ptr}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_fifo\_addr\_ptr()}{sx1276\_set\_fifo\_addr\_ptr()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_ac768a620c5104a7cc1e932e0fd41e5bb} 
+bool sx1276\+\_\+set\+\_\+fifo\+\_\+addr\+\_\+ptr (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{addr}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia wskaźnik bieżącego adresu FIFO. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00299}{299}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00507}{radio\+\_\+lora\+\_\+send\+\_\+async()}} i \mbox{\hyperlink{radio__lora_8c_source_l00255}{radio\+\_\+read\+\_\+rx\+\_\+packet()}}.
+
+\Hypertarget{radio__sx1276_8h_a2c71c2e3d5c9a8404ccd9388fd3276d3}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_fifo\_base\_addrs@{sx1276\_set\_fifo\_base\_addrs}}
+\index{sx1276\_set\_fifo\_base\_addrs@{sx1276\_set\_fifo\_base\_addrs}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_fifo\_base\_addrs()}{sx1276\_set\_fifo\_base\_addrs()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a2c71c2e3d5c9a8404ccd9388fd3276d3} 
+bool sx1276\+\_\+set\+\_\+fifo\+\_\+base\+\_\+addrs (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{tx\+\_\+base}{, }\item[{uint8\+\_\+t}]{rx\+\_\+base}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia bazowe adresy FIFO dla TX i RX. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00293}{293}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_a7726c49e402b455d667895cc37ac8ec8}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_frequency@{sx1276\_set\_frequency}}
+\index{sx1276\_set\_frequency@{sx1276\_set\_frequency}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_frequency()}{sx1276\_set\_frequency()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a7726c49e402b455d667895cc37ac8ec8} 
+bool sx1276\+\_\+set\+\_\+frequency (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint32\+\_\+t}]{frequency\+\_\+hz}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia częstotliwość nośną RF. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00135}{135}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}} i \mbox{\hyperlink{radio__ook_8c_source_l00197}{radio\+\_\+apply\+\_\+ook\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_af8c0cb076e901b4aa2d4ff6959dc71a3}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_invert\_iq@{sx1276\_set\_invert\_iq}}
+\index{sx1276\_set\_invert\_iq@{sx1276\_set\_invert\_iq}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_invert\_iq()}{sx1276\_set\_invert\_iq()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_af8c0cb076e901b4aa2d4ff6959dc71a3} 
+bool sx1276\+\_\+set\+\_\+invert\+\_\+iq (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{bool}]{invert\+\_\+iq}{}\end{DoxyParamCaption})}
+
+
+
+Włącza lub wyłącza inwersję IQ. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00268}{268}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_a114bd1113c90a7d2f7875d1776f2ec8e}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_lora\_modem@{sx1276\_set\_lora\_modem}}
+\index{sx1276\_set\_lora\_modem@{sx1276\_set\_lora\_modem}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_lora\_modem()}{sx1276\_set\_lora\_modem()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a114bd1113c90a7d2f7875d1776f2ec8e} 
+bool sx1276\+\_\+set\+\_\+lora\+\_\+modem (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{bandwidth\+\_\+code}{, }\item[{uint8\+\_\+t}]{spreading\+\_\+factor}{, }\item[{uint8\+\_\+t}]{coding\+\_\+rate\+\_\+denominator}{, }\item[{bool}]{implicit\+\_\+header}{, }\item[{bool}]{crc\+\_\+on}{, }\item[{bool}]{low\+\_\+datarate\+\_\+optimize}{}\end{DoxyParamCaption})}
+
+
+
+Konfiguruje parametry modemu Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00184}{184}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_a2d735690e49eb3453479d5c70f9cdd20}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_op\_mode@{sx1276\_set\_op\_mode}}
+\index{sx1276\_set\_op\_mode@{sx1276\_set\_op\_mode}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_op\_mode()}{sx1276\_set\_op\_mode()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a2d735690e49eb3453479d5c70f9cdd20} 
+bool sx1276\+\_\+set\+\_\+op\+\_\+mode (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{op\+\_\+mode}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia rejestr trybu pracy {\ttfamily Reg\+Op\+Mode}. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{130}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00563}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00588}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single()}}, \mbox{\hyperlink{radio__lora_8c_source_l00368}{radio\+\_\+lora\+\_\+init()}}, \mbox{\hyperlink{radio__lora_8c_source_l00507}{radio\+\_\+lora\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lora_8c_source_l00564}{radio\+\_\+lora\+\_\+sleep()}}, \mbox{\hyperlink{radio__lora_8c_source_l00548}{radio\+\_\+lora\+\_\+standby()}}, \mbox{\hyperlink{radio__lora_8c_source_l00452}{radio\+\_\+lora\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__lora_8c_source_l00476}{radio\+\_\+lora\+\_\+start\+\_\+rx\+\_\+single()}}, \mbox{\hyperlink{radio__ook_8c_source_l00535}{radio\+\_\+ook\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__ook_8c_source_l00480}{radio\+\_\+ook\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__ook_8c_source_l00505}{radio\+\_\+ook\+\_\+start\+\_\+rx\+\_\+single()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00324}{radio\+\_\+resume\+\_\+after\+\_\+tx()}} i \mbox{\hyperlink{radio__ook_8c_source_l00243}{radio\+\_\+resume\+\_\+after\+\_\+tx()}}.
+
+\Hypertarget{radio__sx1276_8h_a7f6da27f88d9e1ee14012e7fc01a06c5}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_pa\_output\_power@{sx1276\_set\_pa\_output\_power}}
+\index{sx1276\_set\_pa\_output\_power@{sx1276\_set\_pa\_output\_power}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_pa\_output\_power()}{sx1276\_set\_pa\_output\_power()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a7f6da27f88d9e1ee14012e7fc01a06c5} 
+bool sx1276\+\_\+set\+\_\+pa\+\_\+output\+\_\+power (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{int8\+\_\+t}]{tx\+\_\+power\+\_\+dbm}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia moc nadajnika dla toru PA\+\_\+\+BOOST. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00152}{152}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}} i \mbox{\hyperlink{radio__ook_8c_source_l00197}{radio\+\_\+apply\+\_\+ook\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_a62348eb179378aacf27663c00ea490c1}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_payload\_length@{sx1276\_set\_payload\_length}}
+\index{sx1276\_set\_payload\_length@{sx1276\_set\_payload\_length}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_payload\_length()}{sx1276\_set\_payload\_length()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a62348eb179378aacf27663c00ea490c1} 
+bool sx1276\+\_\+set\+\_\+payload\+\_\+length (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia długość payloadu Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00314}{314}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}} i \mbox{\hyperlink{radio__lora_8c_source_l00507}{radio\+\_\+lora\+\_\+send\+\_\+async()}}.
+
+\Hypertarget{radio__sx1276_8h_a2bb5199c2391aa24e194d8a4d4ac2157}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_preamble@{sx1276\_set\_preamble}}
+\index{sx1276\_set\_preamble@{sx1276\_set\_preamble}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_preamble()}{sx1276\_set\_preamble()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a2bb5199c2391aa24e194d8a4d4ac2157} 
+bool sx1276\+\_\+set\+\_\+preamble (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint16\+\_\+t}]{preamble\+\_\+len}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia długość preambuły Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00257}{257}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_a6487ef0d55e681a5e50e3d7354886753}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_symbol\_timeout@{sx1276\_set\_symbol\_timeout}}
+\index{sx1276\_set\_symbol\_timeout@{sx1276\_set\_symbol\_timeout}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_symbol\_timeout()}{sx1276\_set\_symbol\_timeout()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a6487ef0d55e681a5e50e3d7354886753} 
+bool sx1276\+\_\+set\+\_\+symbol\+\_\+timeout (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint16\+\_\+t}]{symbol\+\_\+timeout}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia timeout symbolowy dla odbioru pojedynczego. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00241}{241}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00027}{sx1276\+\_\+read\+\_\+reg()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}, \mbox{\hyperlink{radio__lora_8c_source_l00452}{radio\+\_\+lora\+\_\+start\+\_\+rx\+\_\+continuous()}} i \mbox{\hyperlink{radio__lora_8c_source_l00476}{radio\+\_\+lora\+\_\+start\+\_\+rx\+\_\+single()}}.
+
+\Hypertarget{radio__sx1276_8h_a74e72da97dcdd90a7e071af8504a4f04}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_set\_sync\_word@{sx1276\_set\_sync\_word}}
+\index{sx1276\_set\_sync\_word@{sx1276\_set\_sync\_word}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_set\_sync\_word()}{sx1276\_set\_sync\_word()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a74e72da97dcdd90a7e071af8504a4f04} 
+bool sx1276\+\_\+set\+\_\+sync\+\_\+word (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{sync\+\_\+word}{}\end{DoxyParamCaption})}
+
+
+
+Ustawia sync word Lo\+Ra. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00263}{263}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{sx1276\+\_\+write\+\_\+reg()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}.
+
+\Hypertarget{radio__sx1276_8h_a3a3c532ff762f574aac721fe906acd85}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_write\_burst@{sx1276\_write\_burst}}
+\index{sx1276\_write\_burst@{sx1276\_write\_burst}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_write\_burst()}{sx1276\_write\_burst()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_a3a3c532ff762f574aac721fe906acd85} 
+bool sx1276\+\_\+write\+\_\+burst (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Zapisuje sekwencję bajtów od rejestru startowego. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em bus} & Kontekst magistrali SPI. \\
+\hline
+{\em reg} & Adres startowy. \\
+\hline
+{\em data} & Bufor danych do zapisu. \\
+\hline
+{\em len} & Liczba bajtów do zapisu. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} gdy transfer się powiódł. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{99}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8h_source_l00019}{sx1276\+\_\+bus\+\_\+t\+::hspi}}, \mbox{\hyperlink{radio__sx1276_8h_source_l00022}{sx1276\+\_\+bus\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00022}{sx1276\+\_\+deselect()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00885}{radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__lora_8c_source_l00775}{radio\+\_\+lora\+\_\+raw\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__ook_8c_source_l00794}{radio\+\_\+ook\+\_\+raw\+\_\+write\+\_\+burst()}}, \mbox{\hyperlink{radio__ook_8c_source_l00535}{radio\+\_\+ook\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00250}{radio\+\_\+write\+\_\+sync\+\_\+word()}}, \mbox{\hyperlink{radio__ook_8c_source_l00125}{radio\+\_\+write\+\_\+sync\+\_\+word()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00304}{sx1276\+\_\+write\+\_\+fifo()}}.
+
+\Hypertarget{radio__sx1276_8h_aeb0a3f646a276aed07c4e23dfabff75c}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_write\_fifo@{sx1276\_write\_fifo}}
+\index{sx1276\_write\_fifo@{sx1276\_write\_fifo}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_write\_fifo()}{sx1276\_write\_fifo()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_aeb0a3f646a276aed07c4e23dfabff75c} 
+bool sx1276\+\_\+write\+\_\+fifo (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{const uint8\+\_\+t \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint8\+\_\+t}]{len}{}\end{DoxyParamCaption})}
+
+
+
+Zapisuje payload do FIFO. 
+
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00304}{304}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8c_source_l00099}{sx1276\+\_\+write\+\_\+burst()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__lora_8c_source_l00507}{radio\+\_\+lora\+\_\+send\+\_\+async()}}.
+
+\Hypertarget{radio__sx1276_8h_af20d56d667bf340216eff31602a31c85}\index{radio\_sx1276.h@{radio\_sx1276.h}!sx1276\_write\_reg@{sx1276\_write\_reg}}
+\index{sx1276\_write\_reg@{sx1276\_write\_reg}!radio\_sx1276.h@{radio\_sx1276.h}}
+\doxysubsubsection{\texorpdfstring{sx1276\_write\_reg()}{sx1276\_write\_reg()}}
+{\footnotesize\ttfamily \label{radio__sx1276_8h_af20d56d667bf340216eff31602a31c85} 
+bool sx1276\+\_\+write\+\_\+reg (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structsx1276__bus__t}{sx1276\+\_\+bus\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{bus}{, }\item[{uint8\+\_\+t}]{reg}{, }\item[{uint8\+\_\+t}]{value}{}\end{DoxyParamCaption})}
+
+
+
+Zapisuje pojedynczy rejestr SX1276. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em bus} & Kontekst magistrali SPI. \\
+\hline
+{\em reg} & Adres rejestru. \\
+\hline
+{\em value} & Wartość do zapisu. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} gdy transfer się powiódł. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{radio__sx1276_8c_source_l00051}{51}} pliku \mbox{\hyperlink{radio__sx1276_8c_source}{radio\+\_\+sx1276.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{radio__sx1276_8h_source_l00019}{sx1276\+\_\+bus\+\_\+t\+::hspi}}, \mbox{\hyperlink{radio__sx1276_8h_source_l00022}{sx1276\+\_\+bus\+\_\+t\+::spi\+\_\+timeout\+\_\+ms}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00022}{sx1276\+\_\+deselect()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00010}{sx1276\+\_\+select()}}.
+
+
+
+Odwołania w \mbox{\hyperlink{radio__fsk_8c_source_l00271}{radio\+\_\+apply\+\_\+fsk\+\_\+config()}}, \mbox{\hyperlink{radio__lora_8c_source_l00127}{radio\+\_\+apply\+\_\+lora\+\_\+config()}}, \mbox{\hyperlink{radio__ook_8c_source_l00197}{radio\+\_\+apply\+\_\+ook\+\_\+config()}}, \mbox{\hyperlink{radio__ook_8c_source_l00178}{radio\+\_\+apply\+\_\+threshold()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00860}{radio\+\_\+fsk\+\_\+raw\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00618}{radio\+\_\+fsk\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00563}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00588}{radio\+\_\+fsk\+\_\+start\+\_\+rx\+\_\+single()}}, \mbox{\hyperlink{radio__lora_8c_source_l00750}{radio\+\_\+lora\+\_\+raw\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__ook_8c_source_l00769}{radio\+\_\+ook\+\_\+raw\+\_\+write\+\_\+reg()}}, \mbox{\hyperlink{radio__ook_8c_source_l00535}{radio\+\_\+ook\+\_\+send\+\_\+async()}}, \mbox{\hyperlink{radio__ook_8c_source_l00480}{radio\+\_\+ook\+\_\+start\+\_\+rx\+\_\+continuous()}}, \mbox{\hyperlink{radio__ook_8c_source_l00505}{radio\+\_\+ook\+\_\+start\+\_\+rx\+\_\+single()}}, \mbox{\hyperlink{radio__fsk_8c_source_l00250}{radio\+\_\+write\+\_\+sync\+\_\+word()}}, \mbox{\hyperlink{radio__ook_8c_source_l00125}{radio\+\_\+write\+\_\+sync\+\_\+word()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00352}{sx1276\+\_\+clear\+\_\+irq\+\_\+flags()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00357}{sx1276\+\_\+map\+\_\+dio()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00299}{sx1276\+\_\+set\+\_\+fifo\+\_\+addr\+\_\+ptr()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00293}{sx1276\+\_\+set\+\_\+fifo\+\_\+base\+\_\+addrs()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00135}{sx1276\+\_\+set\+\_\+frequency()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00268}{sx1276\+\_\+set\+\_\+invert\+\_\+iq()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00184}{sx1276\+\_\+set\+\_\+lora\+\_\+modem()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00130}{sx1276\+\_\+set\+\_\+op\+\_\+mode()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00152}{sx1276\+\_\+set\+\_\+pa\+\_\+output\+\_\+power()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00314}{sx1276\+\_\+set\+\_\+payload\+\_\+length()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00257}{sx1276\+\_\+set\+\_\+preamble()}}, \mbox{\hyperlink{radio__sx1276_8c_source_l00241}{sx1276\+\_\+set\+\_\+symbol\+\_\+timeout()}} i \mbox{\hyperlink{radio__sx1276_8c_source_l00263}{sx1276\+\_\+set\+\_\+sync\+\_\+word()}}.
+

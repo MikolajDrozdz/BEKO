@@ -1,0 +1,205 @@
+\doxysection{Dokumentacja pliku Core/\+App/bmp280\+\_\+lib/bmp280\+\_\+api.h}
+\hypertarget{bmp280__api_8h}{}\label{bmp280__api_8h}\index{Core/App/bmp280\_lib/bmp280\_api.h@{Core/App/bmp280\_lib/bmp280\_api.h}}
+
+
+Single-\/instance BMP280 measurement wrapper used by the application.  
+
+
+{\ttfamily \#include "{}bmp280.\+h"{}}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+\doxysubsubsection*{Struktury danych}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}}
+\begin{DoxyCompactList}\small\item\em Cached measurement container. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Funkcje}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{bmp280__api_8h_a025b729d310db7fd0e1dce05f857f066}{bmp280\+\_\+api\+\_\+init}} (I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}hi2c, uint8\+\_\+t i2c\+\_\+address)
+\begin{DoxyCompactList}\small\item\em Initialize BMP280 for single-\/shot measurements. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280__api_8h_a0b886112e261fb9e9b59d7aef503a59e}{bmp280\+\_\+api\+\_\+measure\+\_\+temperature}} (float \texorpdfstring{$\ast$}{*}temperature\+\_\+c, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Measure temperature using forced mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280__api_8h_afea4ce098d4b54bf6fe668648d073f79}{bmp280\+\_\+api\+\_\+measure\+\_\+pressure}} (float \texorpdfstring{$\ast$}{*}pressure\+\_\+pa, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Measure pressure using forced mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280__api_8h_a9a003b4d85c479d96dfd8e81fedeed61}{bmp280\+\_\+api\+\_\+measure\+\_\+all}} (\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}} \texorpdfstring{$\ast$}{*}data, uint32\+\_\+t timeout\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em Measure temperature and pressure using forced mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280__api_8h_aa6b7e3416d6eea2e1ddbac50116f8876}{bmp280\+\_\+api\+\_\+sleep}} (void)
+\begin{DoxyCompactList}\small\item\em Force the sensor into sleep mode. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{bmp280__api_8h_a10524ad028441c558c0e5528bbbb1d59}{bmp280\+\_\+api\+\_\+get\+\_\+last\+\_\+data}} (\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}} \texorpdfstring{$\ast$}{*}data)
+\begin{DoxyCompactList}\small\item\em Read back the last cached measurement data. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Opis szczegółowy}
+Single-\/instance BMP280 measurement wrapper used by the application. 
+
+
+
+Definicja w pliku \mbox{\hyperlink{bmp280__api_8h_source}{bmp280\+\_\+api.\+h}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{bmp280__api_8h_doc-func-members}
+\doxysubsection{Dokumentacja funkcji}
+\Hypertarget{bmp280__api_8h_a10524ad028441c558c0e5528bbbb1d59}\index{bmp280\_api.h@{bmp280\_api.h}!bmp280\_api\_get\_last\_data@{bmp280\_api\_get\_last\_data}}
+\index{bmp280\_api\_get\_last\_data@{bmp280\_api\_get\_last\_data}!bmp280\_api.h@{bmp280\_api.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_api\_get\_last\_data()}{bmp280\_api\_get\_last\_data()}}
+{\footnotesize\ttfamily \label{bmp280__api_8h_a10524ad028441c558c0e5528bbbb1d59} 
+bool bmp280\+\_\+api\+\_\+get\+\_\+last\+\_\+data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{data}{}\end{DoxyParamCaption})}
+
+
+
+Read back the last cached measurement data. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em data} & \mbox{[}out\mbox{]} Cached measurement container. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when valid cached data was copied. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8c_source_l00272}{272}} pliku \mbox{\hyperlink{bmp280__api_8c_source}{bmp280\+\_\+api.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280__api_8c_source_l00256}{bmp280\+\_\+api\+\_\+sleep()}}.
+
+\Hypertarget{bmp280__api_8h_a025b729d310db7fd0e1dce05f857f066}\index{bmp280\_api.h@{bmp280\_api.h}!bmp280\_api\_init@{bmp280\_api\_init}}
+\index{bmp280\_api\_init@{bmp280\_api\_init}!bmp280\_api.h@{bmp280\_api.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_api\_init()}{bmp280\_api\_init()}}
+{\footnotesize\ttfamily \label{bmp280__api_8h_a025b729d310db7fd0e1dce05f857f066} 
+bool bmp280\+\_\+api\+\_\+init (\begin{DoxyParamCaption}\item[{I2\+C\+\_\+\+Handle\+Type\+Def \texorpdfstring{$\ast$}{*}}]{hi2c}{, }\item[{uint8\+\_\+t}]{i2c\+\_\+address}{}\end{DoxyParamCaption})}
+
+
+
+Initialize BMP280 for single-\/shot measurements. 
+
+The device is left in sleep mode after initialization.
+
+
+\begin{DoxyParams}{Parametry}
+{\em hi2c} & I2C peripheral handle. \\
+\hline
+{\em i2c\+\_\+address} & {\ttfamily \doxylink{bmp280_8h_aa11b925ebf4b81cf1b62232196ac1d8f}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+0}} (0x76) or {\ttfamily \doxylink{bmp280_8h_a0b9ffea4fca103b7edef727777596909}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+1}} (0x77). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the sensor was initialized. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8c_source_l00152}{152}} pliku \mbox{\hyperlink{bmp280__api_8c_source}{bmp280\+\_\+api.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280__api_8c_source_l00256}{bmp280\+\_\+api\+\_\+sleep()}}, \mbox{\hyperlink{bmp280_8h_source_l00047}{BMP280\+\_\+\+FILTER\+\_\+\+OFF}}, \mbox{\hyperlink{bmp280_8h_source_l00026}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+0}}, \mbox{\hyperlink{bmp280_8h_source_l00028}{BMP280\+\_\+\+I2\+C\+\_\+\+ADDRESS\+\_\+1}}, \mbox{\hyperlink{bmp280_8h_source_l00086}{bmp280\+\_\+params\+\_\+t\+::filter}}, \mbox{\hyperlink{bmp280_8h_source_l00085}{bmp280\+\_\+params\+\_\+t\+::mode}}, \mbox{\hyperlink{bmp280_8h_source_l00087}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+pressure}}, \mbox{\hyperlink{bmp280_8h_source_l00088}{bmp280\+\_\+params\+\_\+t\+::oversampling\+\_\+temperature}} i \mbox{\hyperlink{bmp280_8h_source_l00090}{bmp280\+\_\+params\+\_\+t\+::standby}}.
+
+\Hypertarget{bmp280__api_8h_a9a003b4d85c479d96dfd8e81fedeed61}\index{bmp280\_api.h@{bmp280\_api.h}!bmp280\_api\_measure\_all@{bmp280\_api\_measure\_all}}
+\index{bmp280\_api\_measure\_all@{bmp280\_api\_measure\_all}!bmp280\_api.h@{bmp280\_api.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_api\_measure\_all()}{bmp280\_api\_measure\_all()}}
+{\footnotesize\ttfamily \label{bmp280__api_8h_a9a003b4d85c479d96dfd8e81fedeed61} 
+bool bmp280\+\_\+api\+\_\+measure\+\_\+all (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structbmp280__api__data__t}{bmp280\+\_\+api\+\_\+data\+\_\+t}} \texorpdfstring{$\ast$}{*}}]{data}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Measure temperature and pressure using forced mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em data} & \mbox{[}out\mbox{]} Measurement container. \\
+\hline
+{\em timeout\+\_\+ms} & Measurement timeout checked with {\ttfamily HAL\+\_\+\+Get\+Tick()}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when a fresh measurement was read. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8c_source_l00235}{235}} pliku \mbox{\hyperlink{bmp280__api_8c_source}{bmp280\+\_\+api.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280__api_8c_source_l00256}{bmp280\+\_\+api\+\_\+sleep()}}.
+
+\Hypertarget{bmp280__api_8h_afea4ce098d4b54bf6fe668648d073f79}\index{bmp280\_api.h@{bmp280\_api.h}!bmp280\_api\_measure\_pressure@{bmp280\_api\_measure\_pressure}}
+\index{bmp280\_api\_measure\_pressure@{bmp280\_api\_measure\_pressure}!bmp280\_api.h@{bmp280\_api.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_api\_measure\_pressure()}{bmp280\_api\_measure\_pressure()}}
+{\footnotesize\ttfamily \label{bmp280__api_8h_afea4ce098d4b54bf6fe668648d073f79} 
+bool bmp280\+\_\+api\+\_\+measure\+\_\+pressure (\begin{DoxyParamCaption}\item[{float \texorpdfstring{$\ast$}{*}}]{pressure\+\_\+pa}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Measure pressure using forced mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em pressure\+\_\+pa} & \mbox{[}out\mbox{]} Pressure in Pascals. \\
+\hline
+{\em timeout\+\_\+ms} & Measurement timeout checked with {\ttfamily HAL\+\_\+\+Get\+Tick()}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when a fresh measurement was read. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8c_source_l00220}{220}} pliku \mbox{\hyperlink{bmp280__api_8c_source}{bmp280\+\_\+api.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280__api_8c_source_l00256}{bmp280\+\_\+api\+\_\+sleep()}}.
+
+\Hypertarget{bmp280__api_8h_a0b886112e261fb9e9b59d7aef503a59e}\index{bmp280\_api.h@{bmp280\_api.h}!bmp280\_api\_measure\_temperature@{bmp280\_api\_measure\_temperature}}
+\index{bmp280\_api\_measure\_temperature@{bmp280\_api\_measure\_temperature}!bmp280\_api.h@{bmp280\_api.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_api\_measure\_temperature()}{bmp280\_api\_measure\_temperature()}}
+{\footnotesize\ttfamily \label{bmp280__api_8h_a0b886112e261fb9e9b59d7aef503a59e} 
+bool bmp280\+\_\+api\+\_\+measure\+\_\+temperature (\begin{DoxyParamCaption}\item[{float \texorpdfstring{$\ast$}{*}}]{temperature\+\_\+c}{, }\item[{uint32\+\_\+t}]{timeout\+\_\+ms}{}\end{DoxyParamCaption})}
+
+
+
+Measure temperature using forced mode. 
+
+
+\begin{DoxyParams}{Parametry}
+{\em temperature\+\_\+c} & \mbox{[}out\mbox{]} Temperature in degrees Celsius. \\
+\hline
+{\em timeout\+\_\+ms} & Measurement timeout checked with {\ttfamily HAL\+\_\+\+Get\+Tick()}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when a fresh measurement was read. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8c_source_l00205}{205}} pliku \mbox{\hyperlink{bmp280__api_8c_source}{bmp280\+\_\+api.\+c}}.
+
+
+
+Odwołuje się do \mbox{\hyperlink{bmp280__api_8c_source_l00256}{bmp280\+\_\+api\+\_\+sleep()}}.
+
+\Hypertarget{bmp280__api_8h_aa6b7e3416d6eea2e1ddbac50116f8876}\index{bmp280\_api.h@{bmp280\_api.h}!bmp280\_api\_sleep@{bmp280\_api\_sleep}}
+\index{bmp280\_api\_sleep@{bmp280\_api\_sleep}!bmp280\_api.h@{bmp280\_api.h}}
+\doxysubsubsection{\texorpdfstring{bmp280\_api\_sleep()}{bmp280\_api\_sleep()}}
+{\footnotesize\ttfamily \label{bmp280__api_8h_aa6b7e3416d6eea2e1ddbac50116f8876} 
+bool bmp280\+\_\+api\+\_\+sleep (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption})}
+
+
+
+Force the sensor into sleep mode. 
+
+\begin{DoxyReturn}{Zwraca}
+{\ttfamily true} when the sleep command was written. 
+\end{DoxyReturn}
+
+
+Definicja w linii \mbox{\hyperlink{bmp280__api_8c_source_l00256}{256}} pliku \mbox{\hyperlink{bmp280__api_8c_source}{bmp280\+\_\+api.\+c}}.
+
+
+
+Odwołania w \mbox{\hyperlink{bmp280__api_8c_source_l00272}{bmp280\+\_\+api\+\_\+get\+\_\+last\+\_\+data()}}, \mbox{\hyperlink{bmp280__api_8c_source_l00152}{bmp280\+\_\+api\+\_\+init()}}, \mbox{\hyperlink{bmp280__api_8c_source_l00235}{bmp280\+\_\+api\+\_\+measure\+\_\+all()}}, \mbox{\hyperlink{bmp280__api_8c_source_l00220}{bmp280\+\_\+api\+\_\+measure\+\_\+pressure()}} i \mbox{\hyperlink{bmp280__api_8c_source_l00205}{bmp280\+\_\+api\+\_\+measure\+\_\+temperature()}}.
+

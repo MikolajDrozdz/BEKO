@@ -1,0 +1,409 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.15.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BEKO Pager Firmware: Dokumentacja struktury led_array_ctx_t</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">BEKO Pager Firmware
+   </div>
+   <div id="projectbrief">STM32 firmware for BEKO pager node</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Wygenerowano za pomocą Doxygen 1.15.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Szukaj',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('structled__array__ctx__t.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Wczytywanie...</div>
+<div class="SRStatus" id="Searching">Szukanie...</div>
+<div class="SRStatus" id="NoMatches">Brak dopasowań</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Dokumentacja struktury led_array_ctx_t</div></div>
+</div><!--header-->
+<div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Pola danych</h2></td></tr>
+<tr class="memitem:a6fd9f1d2788a9a221c32f0621e5112bc" id="r_a6fd9f1d2788a9a221c32f0621e5112bc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6fd9f1d2788a9a221c32f0621e5112bc">initialized</a></td></tr>
+<tr class="memitem:a0f52ce51e28605e8bac98aa720fa9729" id="r_a0f52ce51e28605e8bac98aa720fa9729"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0f52ce51e28605e8bac98aa720fa9729">timer_running</a></td></tr>
+<tr class="memitem:a2b4c2dfe1eaf342fa9ed64c54aab670d" id="r_a2b4c2dfe1eaf342fa9ed64c54aab670d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b4c2dfe1eaf342fa9ed64c54aab670d">tick_period_ms</a></td></tr>
+<tr class="memitem:a4b79ac05dcae971971704ddfa4e3734d" id="r_a4b79ac05dcae971971704ddfa4e3734d"><td class="memItemLeft" align="right" valign="top">uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4b79ac05dcae971971704ddfa4e3734d">last_tick_ms</a></td></tr>
+<tr class="memitem:add157fc1f0b3a203e80b345768b393fa" id="r_add157fc1f0b3a203e80b345768b393fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="led__array__lib_8h.html#aac3178a392f43cf39c6fdd1095ed1060">led_array_effect_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add157fc1f0b3a203e80b345768b393fa">effect</a></td></tr>
+<tr class="memitem:a1b13b9082d342e259faff29ca4134f04" id="r_a1b13b9082d342e259faff29ca4134f04"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b13b9082d342e259faff29ca4134f04">manual_brightness</a> [LED_ARRAY_COUNT]</td></tr>
+<tr class="memitem:a02efc95f1491d8032d5d2eb682af96d2" id="r_a02efc95f1491d8032d5d2eb682af96d2"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02efc95f1491d8032d5d2eb682af96d2">active_brightness</a> [LED_ARRAY_COUNT]</td></tr>
+<tr class="memitem:"><td class="memItemLeft anon"><a id="a4654fbd0e89963aa773fa5befe6ce753" name="a4654fbd0e89963aa773fa5befe6ce753"></a>
+struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:af6e84e813c2b586da84edfbbe2db693c" id="r_af6e84e813c2b586da84edfbbe2db693c"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a5c6385ed55ace61500dd5b556d48a8ae">mask</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a851ce273959ab4d12d3410c8f0c19b0e" id="r_a851ce273959ab4d12d3410c8f0c19b0e"><td class="memItemLeft anon">&#160;&#160;&#160;uint16_t&#160;&#160;&#160;<a class="el" href="#adb209fa8194fd6671b06160d652b1db0">duration_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a74459f4b907c66ddc1d61339aaef0e32" id="r_a74459f4b907c66ddc1d61339aaef0e32"><td class="memItemLeft anon">&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a2bb3523f53a76df003812df6e3933f6e">elapsed_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a4654fbd0e89963aa773fa5befe6ce753" id="r_a4654fbd0e89963aa773fa5befe6ce753"><td class="memItemLeft anonEnd" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><b>fade</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon"><a id="a8ad5dc4341bf43bd4401fe6ae21fa8c7" name="a8ad5dc4341bf43bd4401fe6ae21fa8c7"></a>
+struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a6fdb397205dadaa3f702a40c32e8578f" id="r_a6fdb397205dadaa3f702a40c32e8578f"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a5c6385ed55ace61500dd5b556d48a8ae">mask</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a3d30a6bb0c4811af8035bf916fd74c92" id="r_a3d30a6bb0c4811af8035bf916fd74c92"><td class="memItemLeft anon">&#160;&#160;&#160;uint16_t&#160;&#160;&#160;<a class="el" href="#a8a322d14242be6328b0fe301e903d130">period_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a8b92f9b752dfa0ed0e21a492a1651f9b" id="r_a8b92f9b752dfa0ed0e21a492a1651f9b"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a126cb7b893981199bb15502ef8611956">min_pct</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a5d6af11ddb740491bcefe9a1154bbd6d" id="r_a5d6af11ddb740491bcefe9a1154bbd6d"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#af30dc7d6c6e7a33cd849a1c00c4df138">max_pct</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a746c70a78e1331d81a2b3e23e1346c14" id="r_a746c70a78e1331d81a2b3e23e1346c14"><td class="memItemLeft anon">&#160;&#160;&#160;uint32_t&#160;&#160;&#160;<a class="el" href="#a2bb3523f53a76df003812df6e3933f6e">elapsed_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a8ad5dc4341bf43bd4401fe6ae21fa8c7" id="r_a8ad5dc4341bf43bd4401fe6ae21fa8c7"><td class="memItemLeft anonEnd" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><b>breath</b></td></tr>
+<tr class="memitem:"><td class="memItemLeft anon"><a id="aea665daef78b613ce9c948c56de31362" name="aea665daef78b613ce9c948c56de31362"></a>
+struct {&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a8093183a32985b9bd8612e5622c46bf6" id="r_a8093183a32985b9bd8612e5622c46bf6"><td class="memItemLeft anon">&#160;&#160;&#160;uint16_t&#160;&#160;&#160;<a class="el" href="#aa6829f9a45bf3f712e6c9fb5ad22e3ec">step_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a3aa94d2431608c84a4771aa95bee9380" id="r_a3aa94d2431608c84a4771aa95bee9380"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#a126cb7b893981199bb15502ef8611956">min_pct</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aafbdb8b357b863f4ac18c11f36f55967" id="r_aafbdb8b357b863f4ac18c11f36f55967"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#af30dc7d6c6e7a33cd849a1c00c4df138">max_pct</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:abf01f70b342ae7c5896f673778f8b548" id="r_abf01f70b342ae7c5896f673778f8b548"><td class="memItemLeft anon">&#160;&#160;&#160;uint16_t&#160;&#160;&#160;<a class="el" href="#a66dbf6d28ec93f75c1eeccd3027254cd">phase_accum_ms</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:a6c99709f02c09676c6ab5d7a86176f97" id="r_a6c99709f02c09676c6ab5d7a86176f97"><td class="memItemLeft anon">&#160;&#160;&#160;uint8_t&#160;&#160;&#160;<a class="el" href="#ac52e92a9e8e203a2bc67d28e7481851c">phase_base</a>&#160;</td><td class="memItemRight" valign="bottom"></td></tr>
+<tr class="memitem:aea665daef78b613ce9c948c56de31362" id="r_aea665daef78b613ce9c948c56de31362"><td class="memItemLeft anonEnd" valign="top">}&#160;</td><td class="memItemRight" valign="bottom"><b>rainbow</b></td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Opis szczegółowy</h2>
+<div class="textblock">
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00018">18</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+</div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Dokumentacja pól</h2>
+<a id="a02efc95f1491d8032d5d2eb682af96d2" name="a02efc95f1491d8032d5d2eb682af96d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02efc95f1491d8032d5d2eb682af96d2">&#9670;&#160;</a></span>active_brightness</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t led_array_ctx_t::active_brightness[LED_ARRAY_COUNT]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00026">26</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="adb209fa8194fd6671b06160d652b1db0" name="adb209fa8194fd6671b06160d652b1db0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adb209fa8194fd6671b06160d652b1db0">&#9670;&#160;</a></span>duration_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t led_array_ctx_t::duration_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00030">30</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="add157fc1f0b3a203e80b345768b393fa" name="add157fc1f0b3a203e80b345768b393fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add157fc1f0b3a203e80b345768b393fa">&#9670;&#160;</a></span>effect</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="led__array__lib_8h.html#aac3178a392f43cf39c6fdd1095ed1060">led_array_effect_t</a> led_array_ctx_t::effect</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00024">24</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a2bb3523f53a76df003812df6e3933f6e" name="a2bb3523f53a76df003812df6e3933f6e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bb3523f53a76df003812df6e3933f6e">&#9670;&#160;</a></span>elapsed_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t led_array_ctx_t::elapsed_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00031">31</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a6fd9f1d2788a9a221c32f0621e5112bc" name="a6fd9f1d2788a9a221c32f0621e5112bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fd9f1d2788a9a221c32f0621e5112bc">&#9670;&#160;</a></span>initialized</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool led_array_ctx_t::initialized</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00020">20</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a4b79ac05dcae971971704ddfa4e3734d" name="a4b79ac05dcae971971704ddfa4e3734d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b79ac05dcae971971704ddfa4e3734d">&#9670;&#160;</a></span>last_tick_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t led_array_ctx_t::last_tick_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00023">23</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a1b13b9082d342e259faff29ca4134f04" name="a1b13b9082d342e259faff29ca4134f04"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b13b9082d342e259faff29ca4134f04">&#9670;&#160;</a></span>manual_brightness</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t led_array_ctx_t::manual_brightness[LED_ARRAY_COUNT]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00025">25</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a5c6385ed55ace61500dd5b556d48a8ae" name="a5c6385ed55ace61500dd5b556d48a8ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c6385ed55ace61500dd5b556d48a8ae">&#9670;&#160;</a></span>mask</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t led_array_ctx_t::mask</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00029">29</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="af30dc7d6c6e7a33cd849a1c00c4df138" name="af30dc7d6c6e7a33cd849a1c00c4df138"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af30dc7d6c6e7a33cd849a1c00c4df138">&#9670;&#160;</a></span>max_pct</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t led_array_ctx_t::max_pct</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00038">38</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a126cb7b893981199bb15502ef8611956" name="a126cb7b893981199bb15502ef8611956"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a126cb7b893981199bb15502ef8611956">&#9670;&#160;</a></span>min_pct</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t led_array_ctx_t::min_pct</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00037">37</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a8a322d14242be6328b0fe301e903d130" name="a8a322d14242be6328b0fe301e903d130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a322d14242be6328b0fe301e903d130">&#9670;&#160;</a></span>period_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t led_array_ctx_t::period_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00036">36</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a66dbf6d28ec93f75c1eeccd3027254cd" name="a66dbf6d28ec93f75c1eeccd3027254cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66dbf6d28ec93f75c1eeccd3027254cd">&#9670;&#160;</a></span>phase_accum_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t led_array_ctx_t::phase_accum_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00046">46</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="ac52e92a9e8e203a2bc67d28e7481851c" name="ac52e92a9e8e203a2bc67d28e7481851c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac52e92a9e8e203a2bc67d28e7481851c">&#9670;&#160;</a></span>phase_base</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint8_t led_array_ctx_t::phase_base</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00047">47</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="aa6829f9a45bf3f712e6c9fb5ad22e3ec" name="aa6829f9a45bf3f712e6c9fb5ad22e3ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6829f9a45bf3f712e6c9fb5ad22e3ec">&#9670;&#160;</a></span>step_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint16_t led_array_ctx_t::step_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00043">43</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a2b4c2dfe1eaf342fa9ed64c54aab670d" name="a2b4c2dfe1eaf342fa9ed64c54aab670d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b4c2dfe1eaf342fa9ed64c54aab670d">&#9670;&#160;</a></span>tick_period_ms</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">uint32_t led_array_ctx_t::tick_period_ms</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00022">22</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<a id="a0f52ce51e28605e8bac98aa720fa9729" name="a0f52ce51e28605e8bac98aa720fa9729"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0f52ce51e28605e8bac98aa720fa9729">&#9670;&#160;</a></span>timer_running</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool led_array_ctx_t::timer_running</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definicja w linii <a class="el" href="led__array__lib_8c_source.html#l00021">21</a> pliku <a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a>.</p>
+
+</div>
+</div>
+<hr/>Dokumentacja dla tej struktury została wygenerowana z pliku:<ul>
+<li>Core/App/led_array_lib/<a class="el" href="led__array__lib_8c_source.html">led_array_lib.c</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="structled__array__ctx__t.html">led_array_ctx_t</a></li>
+    <li class="footer">Wygenerowano za pomocą <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.15.0 </li>
+  </ul>
+</div>
+</body>
+</html>
