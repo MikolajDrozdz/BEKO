@@ -12,17 +12,32 @@
 #include <stdio.h>
 #include <string.h>
 
+/*
+ * Tryb energooszczędny TX-only:
+ *
+ * Radio SX1276 jest utrzymywane w trybie Sleep (0.2 µA) przez cały czas
+ * między transmisjami. Zadanie radio_main blokuje na kolejce TX z timeoutem
+ * osWaitForever — scheduler FreeRTOS może wówczas wejść w tickless idle
+ * i wprowadzić MCU w tryb Stop (wybudzenie przez RTC/LPTIM skonfigurowane
+ * w vPortSuppressTicksAndSleep w warstwie portowej CMSIS-OS2).
+ *
+ * Faza aktywna trwa ok. 100 ms raz na godzinę (czas TX LoRa SF7 BW125).
+ * Polling 10 ms jest utrzymany tylko w tej krótkiej fazie.
+ */
+
 extern SPI_HandleTypeDef hspi1;
 
 static osThreadId_t s_radio_task = NULL;
 static osMessageQueueId_t s_radio_tx_queue = NULL;
 static StaticTask_t s_radio_task_cb;
+
 #define RADIO_TASK_STACK_SIZE   4096U
 #define RADIO_TASK_STACK_WORDS  (RADIO_TASK_STACK_SIZE / sizeof(StackType_t))
 #define RADIO_TX_QUEUE_LENGTH   1U
 #define RADIO_PROCESS_PERIOD_MS 10U
 #define RADIO_TX_WATCHDOG_MS    2000U
 #define RADIO_INIT_RETRY_MS     5000U
+
 static StackType_t s_radio_task_stack[RADIO_TASK_STACK_WORDS];
 
 typedef struct
@@ -33,7 +48,7 @@ typedef struct
 
 static void radio_main_task_fn(void *argument);
 static bool radio_main_init_radio(void);
-static void radio_main_handle_events(uint32_t events, uint32_t *tx_start_ms);
+static bool radio_main_wait_tx_done(uint32_t start_ms);
 static void radio_main_print_tx(const radio_main_tx_message_t *message);
 static uint32_t radio_main_now_ms(void);
 
@@ -91,8 +106,7 @@ static void radio_main_task_fn(void *argument)
 {
     radio_main_tx_message_t message;
     radio_status_t send_status;
-    uint32_t events;
-    uint32_t tx_start_ms = 0U;
+    uint32_t tx_start_ms;
 
     (void)argument;
 
@@ -103,41 +117,45 @@ static void radio_main_task_fn(void *argument)
 
     for (;;)
     {
-        radio_process();
-        events = radio_take_events();
-        radio_main_handle_events(events, &tx_start_ms);
-
-        if ((radio_get_state() == RADIO_STATE_TX) &&
-            (tx_start_ms != 0U) &&
-            ((uint32_t)(radio_main_now_ms() - tx_start_ms) > RADIO_TX_WATCHDOG_MS))
+        /*
+         * Blokuj bez timeoutu — scheduler może wejść w Stop przez tickless
+         * idle. MCU budzi się przez RTC/LPTIM gdy upłynie 1 h i telemetry_main
+         * wstawi ramkę do kolejki.
+         */
+        if (osMessageQueueGet(s_radio_tx_queue, &message, NULL, osWaitForever) != osOK)
         {
-            printf("RADIO WARN: TX timeout, recovery without retransmission\r\n");
+            continue;
+        }
+
+        /* radio_send_async() wchodzi w Standby przed TX, wbudzone ze Sleep */
+        send_status = radio_send_async(message.data, message.length);
+        if (send_status != RADIO_OK)
+        {
+            printf("RADIO TX failed: %d (frame dropped)\r\n", (int)send_status);
+            /* radio mogło wyjść z Sleep tylko częściowo — przywróć Sleep */
             (void)radio_standby();
-            (void)radio_start_rx_continuous();
-            tx_start_ms = 0U;
+            (void)radio_sleep();
+            continue;
         }
 
-        if ((radio_get_state() != RADIO_STATE_TX) &&
-            (osMessageQueueGet(s_radio_tx_queue, &message, NULL, 0U) == osOK))
+        tx_start_ms = radio_main_now_ms();
+        radio_main_print_tx(&message);
+
+        if (!radio_main_wait_tx_done(tx_start_ms))
         {
-            send_status = radio_send_async(message.data, message.length);
-            if (send_status == RADIO_OK)
-            {
-                tx_start_ms = radio_main_now_ms();
-                radio_main_print_tx(&message);
-            }
-            else
-            {
-                printf("RADIO TX failed: %d (frame dropped)\r\n", (int)send_status);
-                if (send_status == RADIO_EHW)
-                {
-                    (void)radio_standby();
-                    (void)radio_start_rx_continuous();
-                }
-            }
+            printf("RADIO WARN: TX timeout, recovery\r\n");
+            (void)radio_standby();
         }
 
-        app_delay_ms(RADIO_PROCESS_PERIOD_MS);
+        /* Radio jest teraz w Standby (radio_resume_after_tx) — uśpij je */
+        if (radio_sleep() != RADIO_OK)
+        {
+            printf("RADIO WARN: sleep failed\r\n");
+        }
+        else
+        {
+            printf("RADIO: sleep mode\r\n");
+        }
     }
 }
 
@@ -159,58 +177,52 @@ static bool radio_main_init_radio(void)
         return false;
     }
 
-    status = radio_start_rx_continuous();
+    /* Natychmiast uśpij radio — nie startujemy RX ciągłego */
+    status = radio_sleep();
     if (status != RADIO_OK)
     {
-        printf("RADIO RX start failed: %d, retry in %u ms\r\n",
+        printf("RADIO sleep failed: %d, retry in %u ms\r\n",
                (int)status,
                RADIO_INIT_RETRY_MS);
         (void)radio_deinit();
         return false;
     }
 
-    printf("RADIO ready: LoRa 868.1 MHz BW125 SF7 CR4/5\r\n");
+    printf("RADIO ready: LoRa 868.1 MHz BW125 SF7 CR4/5 | sleep mode\r\n");
     return true;
 }
 
-static void radio_main_handle_events(uint32_t events, uint32_t *tx_start_ms)
+/*
+ * Polling na zdarzenie TX_DONE — działa tylko przez czas transmisji (~100 ms).
+ * Zwraca true gdy TX_DONE, false gdy watchdog timeout.
+ */
+static bool radio_main_wait_tx_done(uint32_t start_ms)
 {
-    radio_packet_t packet;
+    uint32_t events;
 
-    if ((events & RADIO_EVENT_TX_DONE) != 0U)
+    for (;;)
     {
-        printf("RADIO EVT: TX_DONE\r\n");
-        if (tx_start_ms != NULL)
+        radio_process();
+        events = radio_take_events();
+
+        if ((events & RADIO_EVENT_TX_DONE) != 0U)
         {
-            *tx_start_ms = 0U;
+            printf("RADIO EVT: TX_DONE\r\n");
+            return true;
         }
-    }
 
-    if ((events & RADIO_EVENT_RX_DONE) != 0U)
-    {
-        if (radio_get_last_packet(&packet))
+        if ((events & RADIO_EVENT_HW_ERROR) != 0U)
         {
-            printf("RADIO RX len=%u RSSI=%d SNR=%d\r\n",
-                   packet.length,
-                   packet.rssi_dbm,
-                   packet.snr_db);
-            (void)lcd_main_push_message(packet.rssi_dbm, packet.data, packet.length);
+            printf("RADIO EVT: HW_ERROR during TX\r\n");
+            return false;
         }
-    }
 
-    if ((events & RADIO_EVENT_CRC_ERR) != 0U)
-    {
-        printf("RADIO EVT: PHY CRC_ERR\r\n");
-    }
-    if ((events & RADIO_EVENT_FIFO_OVERRUN) != 0U)
-    {
-        printf("RADIO EVT: FIFO_OVERRUN\r\n");
-    }
-    if ((events & RADIO_EVENT_HW_ERROR) != 0U)
-    {
-        printf("RADIO EVT: HW_ERROR\r\n");
-        (void)radio_standby();
-        (void)radio_start_rx_continuous();
+        if ((uint32_t)(radio_main_now_ms() - start_ms) > RADIO_TX_WATCHDOG_MS)
+        {
+            return false;
+        }
+
+        app_delay_ms(RADIO_PROCESS_PERIOD_MS);
     }
 }
 

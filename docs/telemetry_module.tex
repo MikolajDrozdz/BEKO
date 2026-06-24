@@ -1,0 +1,846 @@
+% Dokumentacja modułu telemetrycznego — projekt BEKO
+% Przedmiot: BES
+% Autor: Mikołaj Dróżdż
+% Data: 2026-06-24
+
+\documentclass[12pt,a4paper]{article}
+
+% ── Kodowanie i język ──────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+
+% ── Layout ────────────────────────────────────────────────────────────────────
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{microtype}
+\usepackage{parskip}
+\setlength{\parindent}{0pt}
+
+% ── Czcionki i formatowanie ───────────────────────────────────────────────────
+\usepackage{lmodern}
+\usepackage{bold-extra}
+
+% ── Grafika i kolory ──────────────────────────────────────────────────────────
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usetikzlibrary{arrows.meta, shapes.geometric, fit, positioning,
+                decorations.pathreplacing, calc, backgrounds}
+
+% ── Tabele ────────────────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{colortbl}
+\usepackage{xcolor}
+
+% ── Kod źródłowy ──────────────────────────────────────────────────────────────
+\usepackage{listings}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  keywordstyle=\bfseries\color{blue!70!black},
+  commentstyle=\itshape\color{green!50!black},
+  stringstyle=\color{red!70!black},
+  showstringspaces=false,
+  tabsize=4,
+  extendedchars=true,
+  literate=
+    {ą}{{\k{a}}}1 {Ą}{{\k{A}}}1
+    {ę}{{\k{e}}}1 {Ę}{{\k{E}}}1
+    {ó}{{\'o}}1   {Ó}{{\'O}}1
+    {ś}{{\'s}}1   {Ś}{{\'S}}1
+    {ż}{{\.z}}1   {Ż}{{\.Z}}1
+    {ź}{{\'z}}1   {Ź}{{\'Z}}1
+    {ń}{{\'n}}1   {Ń}{{\'N}}1
+    {ł}{{\l{}}}1  {Ł}{{\L{}}}1
+    {ć}{{\'c}}1   {Ć}{{\'C}}1
+    {µ}{{\textmu{}}}1
+    {°}{{\textdegree{}}}1,
+}
+
+% ── Matematyka ────────────────────────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{textcomp}   % \textmu
+
+% Zastępniki siunitx (brak w instalacji) ─────────────────────────────────────
+\newcommand{\qty}[2]{#1\,\ensuremath{#2}}
+\newcommand{\si}[1]{\ensuremath{#1}}
+\newcommand{\num}[1]{#1}
+% Prefiksy SI
+\newcommand{\mega}{\mathrm{M}}
+\newcommand{\kilo}{\mathrm{k}}
+\newcommand{\milli}{\mathrm{m}}
+\newcommand{\micro}{\mathrm{\mu}}
+\newcommand{\nano}{\mathrm{n}}
+\newcommand{\hecto}{\mathrm{h}}
+\newcommand{\deci}{\mathrm{d}}
+\newcommand{\centi}{\mathrm{c}}
+% Jednostki SI
+\newcommand{\hertz}{\mathrm{Hz}}
+\newcommand{\second}{\mathrm{s}}
+\newcommand{\ampere}{\mathrm{A}}
+\newcommand{\volt}{\mathrm{V}}
+\newcommand{\pascal}{\mathrm{Pa}}
+\newcommand{\hour}{\mathrm{h}}
+\newcommand{\watt}{\mathrm{W}}
+\newcommand{\degreeCelsius}{^{\circ}\mathrm{C}}
+% Jednostki niestandardowe
+\newcommand{\dBm}{\mathrm{dBm}}
+\newcommand{\celsius}{\mathrm{C}}
+\newcommand{\percent}{\%}
+
+% ── Odnośniki ─────────────────────────────────────────────────────────────────
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  citecolor=blue!60!black,
+  urlcolor=blue!60!black,
+}
+
+% ── Różne ─────────────────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+% ── Nagłówki/stopki ───────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small BEKO — moduł telemetryczny}
+\fancyhead[R]{\small Mikołaj Dróżdż, BES 2026}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Definicje kolorów ─────────────────────────────────────────────────────────
+\definecolor{byteA}{RGB}{173,216,230}   % jasnoniebieski — NET/DEV ID
+\definecolor{byteB}{RGB}{144,238,144}   % zielony — dane czujnika
+\definecolor{byteC}{RGB}{255,218,185}   % brzoskwiniowy — temp
+\definecolor{byteD}{RGB}{221,160,221}   % fioletowy — ciśnienie
+\definecolor{byteE}{RGB}{255,99,71}     % czerwony — CRC
+\definecolor{gray10}{gray}{0.95}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Strona tytułowa ───────────────────────────────────────────────────────────
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\LARGE\bfseries Dokumentacja modułu telemetrycznego\\[0.4em]
+   systemu BEKO}\\[1.5cm]
+
+  {\large\itshape Mała sieć czujników do roślin całorocznych}\\[2.5cm]
+
+  \begin{tabular}{rl}
+    \textbf{Autor:}      & Mikołaj Dróżdż \\[0.3em]
+    \textbf{Przedmiot:}  & Bezprzewodowe i Energooszczędne Systemy (BES) \\[0.3em]
+    \textbf{Data:}       & 24 czerwca 2026 \\[0.3em]
+    \textbf{Temat:}      & Mała sieć czujników do roślin całorocznych \\
+  \end{tabular}
+
+  \vspace{3cm}
+
+  \begin{center}
+  \begin{tikzpicture}[
+      node distance=1.8cm,
+      box/.style={rectangle, rounded corners=4pt, draw, minimum width=3.2cm,
+                  minimum height=1.1cm, align=center, font=\small},
+      arrow/.style={-{Stealth[length=6pt]}, thick},
+  ]
+    \node[box, fill=green!20] (soil) {Czujniki gleby\\(2× ADC)};
+    \node[box, fill=cyan!20, right=1.6cm of soil] (bmp) {BMP280\\(I2C)};
+    \node[box, fill=yellow!30, below=1.2cm of bmp] (tel) {Telemetry\\Task};
+    \node[box, fill=orange!30, below=1.2cm of tel] (radio) {Radio Task\\SX1276};
+    \node[box, fill=red!20, right=2.4cm of radio] (central) {Centralka\\(stacja bazowa)};
+    \draw[arrow] (soil.east) -- ++(0.6,0) |- (tel.west);
+    \draw[arrow] (bmp.south) -- (tel.north);
+    \draw[arrow] (tel.south) -- node[right, font=\tiny]{ramka 11B} (radio.north);
+    \draw[arrow] (radio.east) -- node[above, font=\tiny]{LoRa 868 MHz} (central.west);
+  \end{tikzpicture}
+  \end{center}
+
+  \vfill
+  {\footnotesize Platforma: STM32U545RETXQ \quad
+   Radio: SX1276 LoRa \quad
+   RTOS: FreeRTOS / CMSIS-OS2}
+\end{titlepage}
+
+% ── Spis treści ───────────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Wstęp}
+% =============================================================================
+
+Projekt BEKO realizuje sieć bezprzewodowych węzłów czujnikowych przeznaczonych
+do monitorowania warunków dla roślin całorocznych (wilgotność gleby, temperatura
+i ciśnienie atmosferyczne). Węzły wysyłają zebrane dane do centralnej stacji
+bazowej za pomocą technologii LoRa (\textit{Long Range}) na paśmie
+\qty{868.1}{\mega\hertz}.
+
+Niniejsza dokumentacja opisuje \textbf{moduł telemetryczny} — komponent
+odpowiedzialny za cykliczne odczytywanie czujników, pakowanie danych w ramkę
+o stałej strukturze oraz zlecanie transmisji przez radio.
+
+% =============================================================================
+\section{Podstawa sprzętowa i źródła projektu}
+% =============================================================================
+
+Projekt BEKO został zrealizowany na dedykowanych płytkach z nakładkami
+(shield) przygotowanych na przedmiot
+\textbf{Bezprzewodowe i Energooszczędne Systemy (BES)}.
+Sprzęt obejmuje:
+
+\begin{itemize}[noitemsep]
+  \item Płytka główna z MCU \textbf{STM32U545RETXQ} (STM32U5, Cortex-M33,
+        ultra-low-power, 160\,MHz).
+  \item Nakładka z modułem \textbf{RFM95W} (SX1276, LoRa 868\,MHz).
+  \item Nakładka z czujnikami: \textbf{BMP280} (I2C) i dwoma
+        pojemnościowymi czujnikami wilgotności gleby (ADC).
+  \item Nakładka z wyświetlaczem \textbf{LCD} i paskiem \textbf{LED}.
+\end{itemize}
+
+Kod źródłowy firmware opiera się na szablonie
+\textbf{\texttt{master-rtos}} z repozytorium autora
+(\texttt{github.com/MikolajDrozdz}), który dostarcza:
+\begin{itemize}[noitemsep]
+  \item szkielet FreeRTOS z warstwą CMSIS-OS2,
+  \item sterownik I2C z retry i recovery (\texttt{app.c}),
+  \item bibliotekę radiową \texttt{radio\_lib} (backend LoRa/FSK/OOK),
+  \item system modułów \texttt{*\_main.c} dla każdego podsystemu.
+\end{itemize}
+
+Projekt telemetryczny BEKO rozszerza szablon o moduł czujnikowy
+(\texttt{telemetry\_main.c}, \texttt{soil\_moisture\_main.c}) i optymalizację
+energetyczną radia (niniejsza dokumentacja).
+
+% =============================================================================
+\section{Architektura oprogramowania}
+% =============================================================================
+
+Firmware opiera się na FreeRTOS~/ CMSIS-OS2. Każdy podsystem działa jako
+osobne zadanie (task). Moduł telemetryczny współpracuje z trzema innymi
+modułami:
+
+\begin{itemize}[noitemsep]
+  \item \texttt{bmp280\_main} — cykliczne pomiary temperatury i ciśnienia
+        przez I2C (BMP280 pod adresem 0x76),
+  \item \texttt{soil\_moisture\_main} — odczyt 2 pojemnościowych czujników
+        wilgotności gleby przez 14-bitowy ADC (uśrednianie z 16 próbek),
+  \item \texttt{radio\_main} — kolejka TX i obsługa zdarzeń SX1276 przez SPI.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  task/.style={rectangle, rounded corners=4pt, draw, thick,
+               minimum width=3.6cm, minimum height=1.0cm, align=center,
+               font=\small\ttfamily},
+  hw/.style={rectangle, draw, dashed, minimum width=3.0cm,
+             minimum height=0.8cm, align=center, font=\footnotesize},
+  arr/.style={-{Stealth[length=5pt]}, semithick},
+  lbl/.style={font=\tiny\ttfamily, midway},
+]
+  % ── Warstwa sprzętowa (góra) ──
+  \node[hw, fill=gray!15] at (0,0)   (bmp_hw)  {BMP280 (I2C 0x76)};
+  \node[hw, fill=gray!15] at (5,0)   (soil_hw) {ADC ch1 + ch2};
+
+  % ── Zadania FreeRTOS ──
+  \node[task, fill=cyan!20]    at (0,-2.0)  (bmp_t)
+        {bmp280\_main\\{\tiny\color{gray}osPriorityNormal}};
+  \node[task, fill=green!20]   at (5,-2.0)  (soil_t)
+        {soil\_moisture\\{\tiny\color{gray}osPriorityNormal}};
+  \node[task, fill=yellow!25]  at (2.5,-4.2) (tel_t)
+        {telemetry\_main\\{\tiny\color{gray}osPriorityBelowNormal}};
+  \node[task, fill=orange!30]  at (2.5,-6.2) (radio_t)
+        {radio\_main\\{\tiny\color{gray}osPriorityNormal}};
+
+  % ── Warstwa sprzętowa (dół) ──
+  \node[hw, fill=gray!15] at (2.5,-8.0) (sx) {SX1276 (SPI1)};
+
+  % ── Połączenia ──
+  \draw[arr] (bmp_hw)  -- (bmp_t);
+  \draw[arr] (soil_hw) -- (soil_t);
+  \draw[arr] (bmp_t.south)  -- ++(0,-0.35) -| (tel_t.north west);
+  \draw[arr] (soil_t.south) -- ++(0,-0.35) -| (tel_t.north east);
+  \draw[arr] (tel_t.south)
+        -- node[right=2pt, lbl]{osMessageQueue} (radio_t.north);
+  \draw[arr] (radio_t.south) -- node[right=2pt, lbl]{SPI / IRQ} (sx.north);
+\end{tikzpicture}
+\caption{Graf zależności zadań FreeRTOS w module telemetrycznym}
+\end{figure}
+
+% =============================================================================
+\section{Cykl pracy — co godzinę}
+% =============================================================================
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small]
+  % ── Oś czasu ──
+  \draw[-{Stealth}] (-0.3,0) -- (13.8,0) node[right]{$t$};
+
+  % ── Znaczniki czasu ──
+  \foreach \x/\lbl in {0/0, 2.0/$t_1$, 12.0/3600\,s, 12.4/$t_2$} {
+    \draw (\x,0.08) -- (\x,-0.08) node[below, font=\tiny]{\lbl};
+  }
+
+  % ── Pasek MCU ──
+  % Startup
+  \fill[cyan!35]   (0,0.4) rectangle (1.2,1.1);
+  \fill[orange!40] (1.2,0.4) rectangle (2.0,1.1);
+  % Stop mode
+  \fill[blue!10]   (2.0,0.4) rectangle (12.0,1.1);
+  % TX #2
+  \fill[yellow!60] (12.0,0.4) rectangle (12.4,1.1);
+
+  % Etykiety paska MCU
+  \node[font=\tiny, align=center] at (0.6,0.75)  {BMP280\\init};
+  \node[font=\tiny, align=center] at (1.6,0.75)  {Radio\\init+TX};
+  \node[font=\small\itshape, text=blue!40!black] at (7.0,0.75)
+        {MCU Stop 3 — osDelayUntil (3600\,s)};
+  \node[font=\tiny, align=center] at (12.2,0.75) {TX\,\#2};
+
+  % Etykieta osi Y — MCU
+  \node[left=4pt, font=\footnotesize] at (0,0.75) {MCU};
+
+  % ── Pasek Radio SX1276 ──
+  \fill[orange!40] (1.2,1.5) rectangle (2.0,2.1);
+  \fill[green!20]  (2.0,1.5) rectangle (12.0,2.1);
+  \fill[yellow!60] (12.0,1.5) rectangle (12.4,2.1);
+
+  % Etykiety paska Radio
+  \node[font=\tiny] at (1.6,1.8) {TX\,\#1};
+  \node[font=\small\itshape, text=green!60!black] at (7.0,1.8)
+        {SX1276 Sleep — 0.2\,µA};
+  \node[font=\tiny] at (12.2,1.8) {TX\,\#2};
+
+  % Etykieta osi Y — Radio
+  \node[left=4pt, font=\footnotesize] at (0,1.8) {Radio};
+
+  % ── RTC wakeup ──
+  \draw[-{Stealth}, dashed, thick, orange!80!black]
+        (12.0,2.5) node[above, font=\tiny, align=center]{RTC\\wakeup}
+        -- (12.0,2.15);
+
+  % ── Strzałka czasu uśpienia ──
+  \draw[{Stealth}-{Stealth}, gray, thin]
+        (2.0,-0.55) -- (12.0,-0.55)
+        node[midway, below, font=\tiny, black]{$\approx$3597\,s w trybie Stop};
+\end{tikzpicture}
+\caption{Diagram czasowy cyklu godzinnego — tryb energooszczędny (nie w skali)}
+\label{fig:timing}
+\end{figure}
+
+Sekwencja działania modułu \texttt{telemetry\_main\_task\_fn}
+(plik \texttt{telemetry\_main.c}):
+
+\begin{enumerate}[noitemsep]
+  \item Oczekiwanie na pierwsze prawidłowe odczyty BMP280
+        (do \qty{5}{\second}, polling co \qty{100}{\milli\second}).
+  \item Wywołanie \texttt{telemetry\_main\_send\_sample()} — pierwszy pomiar.
+  \item Pętla nieskończona: \texttt{osDelayUntil()} na \qty{3600}{\second},
+        po czym kolejny pomiar i transmisja.
+\end{enumerate}
+
+\begin{lstlisting}[language=C, caption={Fragment telemetry\_main.c — pętla główna},
+                   label={lst:loop}]
+static void telemetry_main_task_fn(void *argument)
+{
+    uint32_t next_wakeup;
+    uint32_t interval_ticks;
+
+    /* Czekaj aż BMP280 ma swiezy odczyt (maks 5 s) */
+    while ((waited_ms < TELEMETRY_BME_STARTUP_WAIT_MS) &&
+           !telemetry_main_get_fresh_bme(&bme_data))
+    {
+        app_delay_ms(TELEMETRY_BME_POLL_MS);   /* 100 ms */
+        waited_ms += TELEMETRY_BME_POLL_MS;
+    }
+
+    telemetry_main_send_sample();   /* pierwsze wyslanie */
+
+    interval_ticks = app_ms_to_os_ticks(TELEMETRY_INTERVAL_MS); /* 1 h */
+    next_wakeup    = osKernelGetTickCount() + interval_ticks;
+
+    for (;;)
+    {
+        (void)osDelayUntil(next_wakeup);   /* precyzyjny wakeup */
+        next_wakeup += interval_ticks;
+        telemetry_main_send_sample();
+    }
+}
+\end{lstlisting}
+
+% =============================================================================
+\section{Format ramki telemetrycznej}
+% =============================================================================
+
+Każda transmisja zawiera \textbf{11 bajtów} danych o stałej strukturze.
+Ostatni bajt to suma kontrolna CRC8-ATM obliczona z poprzednich 10 bajtów.
+
+\subsection{Schemat ramki}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small]
+  \def\bw{1.1}  % szerokość bajtu
+  \def\bh{0.75} % wysokość bajtu
+
+  % Bajty 0-1: NET_ID
+  \foreach \i in {0,1} {
+    \fill[byteA] (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \draw (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \node at (\i*\bw+\bw/2, \bh/2) {\texttt{\i}};
+  }
+  % Bajty 2-3: DEV_ID
+  \foreach \i in {2,3} {
+    \fill[byteA!70] (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \draw (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \node at (\i*\bw+\bw/2, \bh/2) {\texttt{\i}};
+  }
+  % Bajty 4-5: Soil
+  \foreach \i in {4,5} {
+    \fill[byteB] (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \draw (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \node at (\i*\bw+\bw/2, \bh/2) {\texttt{\i}};
+  }
+  % Bajty 6-7: Temp
+  \foreach \i in {6,7} {
+    \fill[byteC] (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \draw (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \node at (\i*\bw+\bw/2, \bh/2) {\texttt{\i}};
+  }
+  % Bajty 8-9: Pressure
+  \foreach \i in {8,9} {
+    \fill[byteD] (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \draw (\i*\bw,0) rectangle (\i*\bw+\bw,\bh);
+    \node at (\i*\bw+\bw/2, \bh/2) {\texttt{\i}};
+  }
+  % Bajt 10: CRC
+  \fill[byteE] (10*\bw,0) rectangle (10*\bw+\bw,\bh);
+  \draw (10*\bw,0) rectangle (10*\bw+\bw,\bh);
+  \node at (10*\bw+\bw/2, \bh/2) {\texttt{10}};
+
+  % Etykiety górne
+  \draw[decorate, decoration={brace,amplitude=4pt}]
+       (0,\bh+0.08) -- (2*\bw,\bh+0.08)
+       node[midway, above=4pt, font=\tiny]{\texttt{network\_id}};
+  \draw[decorate, decoration={brace,amplitude=4pt}]
+       (2*\bw,\bh+0.08) -- (4*\bw,\bh+0.08)
+       node[midway, above=4pt, font=\tiny]{\texttt{device\_id}};
+  \draw[decorate, decoration={brace,amplitude=4pt}]
+       (4*\bw,\bh+0.08) -- (6*\bw,\bh+0.08)
+       node[midway, above=4pt, font=\tiny]{\texttt{soil\_1 | soil\_2}};
+  \draw[decorate, decoration={brace,amplitude=4pt}]
+       (6*\bw,\bh+0.08) -- (8*\bw,\bh+0.08)
+       node[midway, above=4pt, font=\tiny]{\texttt{temp}};
+  \draw[decorate, decoration={brace,amplitude=4pt}]
+       (8*\bw,\bh+0.08) -- (10*\bw,\bh+0.08)
+       node[midway, above=4pt, font=\tiny]{\texttt{pressure}};
+  \node[font=\tiny, above=0.25cm] at (10*\bw+\bw/2,\bh) {\texttt{CRC8}};
+\end{tikzpicture}
+\caption{Struktura ramki telemetrycznej (11 bajtów, big-endian)}
+\label{fig:frame}
+\end{figure}
+
+\subsection{Opis pól}
+
+\begin{table}[H]
+\centering
+\caption{Pola ramki telemetrycznej}
+\label{tab:frame}
+\begin{tabularx}{\textwidth}{cclXl}
+\toprule
+\textbf{Bajt} & \textbf{Rozmiar} & \textbf{Pole} & \textbf{Opis} & \textbf{Wartość nieprawidłowa} \\
+\midrule
+0--1 & 2 B (u16) & \texttt{network\_id} & Identyfikator sieci & — \\
+2--3 & 2 B (u16) & \texttt{device\_id}  & Identyfikator węzła & — \\
+\rowcolor{byteB!40}
+4    & 1 B (u8)  & \texttt{soil\_percent\_1} & Wilgotność gleby cz.~1 [\%] & \texttt{0xFF} \\
+\rowcolor{byteB!40}
+5    & 1 B (u8)  & \texttt{soil\_percent\_2} & Wilgotność gleby cz.~2 [\%] & \texttt{0xFF} \\
+\rowcolor{byteC!40}
+6--7 & 2 B (s16) & \texttt{temperature\_centi\_c} & Temperatura $\times 100$ [°C] (big-endian) & \texttt{0x8000} \\
+\rowcolor{byteD!40}
+8--9 & 2 B (u16) & \texttt{pressure\_deci\_hpa} & Ciśnienie $\times 10$ [hPa] (big-endian) & \texttt{0xFFFF} \\
+\rowcolor{byteE!40}
+10   & 1 B (u8)  & CRC8-ATM & Suma kontrolna (poly=\texttt{0x07}) & — \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Przykład:} temperatura \qty{21.35}{\degreeCelsius} $\Rightarrow$
+$21{,}35 \times 100 = 2135 = \texttt{0x0857}$, zapisane jako bajty
+\texttt{08 57}.
+
+\textbf{Przykład:} ciśnienie \qty{1013.25}{\hecto\pascal} $= \qty{101325}{\pascal}$
+$\Rightarrow \frac{101325}{10} + 0{,}5 = 10133 = \texttt{0x2791}$, zapisane jako
+\texttt{27 91}.
+
+\subsection{CRC8-ATM}
+
+Suma kontrolna obliczana jest z 10 pierwszych bajtów ramki wielomianem
+$x^8 + x^2 + x + 1$ (kod \texttt{0x07}), z wartością startową 0x00:
+
+\begin{lstlisting}[language=C, caption={Implementacja CRC8-ATM (telemetry\_frame.c)}]
+uint8_t telemetry_crc8_atm(const uint8_t *data, uint32_t length)
+{
+    uint8_t crc = 0U;
+    for (uint32_t i = 0; i < length; i++) {
+        crc ^= data[i];
+        for (uint8_t b = 0; b < 8; b++) {
+            if (crc & 0x80U)
+                crc = (uint8_t)((crc << 1U) ^ 0x07U);
+            else
+                crc = (uint8_t)(crc << 1U);
+        }
+    }
+    return crc;
+}
+\end{lstlisting}
+
+% =============================================================================
+\section{Odczyt czujników}
+% =============================================================================
+
+\subsection{Temperatura i ciśnienie — BMP280}
+
+Czujnik BMP280 podłączony jest przez magistralę I2C pod adresem \texttt{0x76}.
+Zadanie \texttt{bmp280\_main} odczytuje dane cyklicznie i przechowuje je
+w buforze dostępnym przez \texttt{bmp280\_main\_get\_last()}.
+
+Moduł telemetryczny weryfikuje \emph{świeżość} odczytu: dane muszą mieć
+znacznik czasu nie starszy niż \qty{5}{\second}:
+
+\begin{lstlisting}[language=C, caption={Weryfikacja świeżości odczytu BMP280}]
+static bool telemetry_main_get_fresh_bme(bmp280_api_data_t *data)
+{
+    if (!bmp280_main_get_last(data) || !data->valid)
+        return false;
+    /* odczyt nie moze byc starszy niz 5 sekund */
+    return ((uint32_t)(HAL_GetTick() - data->timestamp_ms)
+            <= TELEMETRY_BME_MAX_AGE_MS);
+}
+\end{lstlisting}
+
+Przeliczenie na format wire:
+\begin{align}
+  T_{\text{wire}} &= \text{round}(T_{\text{C}} \times 100)
+                     \quad \text{[int16, \si{\centi\celsius}]} \\
+  P_{\text{wire}} &= \text{round}\!\left(\frac{P_{\text{Pa}}}{10}\right)
+                     \quad \text{[uint16, \si{\deci\hecto\pascal}]}
+\end{align}
+
+\subsection{Wilgotność gleby — pojemnościowe czujniki ADC}
+
+Dwa czujniki pojemnościowe podłączone są do kanałów 14-bitowego ADC.
+Na każdy kanał wykonywanych jest 16 pomiarów, z których obliczana jest
+wartość średnia. Następuje odwzorowanie liniowe na zakres 0–100\%:
+
+\begin{table}[H]
+\centering
+\caption{Parametry kalibracji czujników wilgotności gleby}
+\begin{tabular}{lcc}
+\toprule
+Parametr & Czujnik 1 & Czujnik 2 \\
+\midrule
+Odczyt ADC — sucha gleba (\texttt{DRY\_RAW})  & 12\,400 & 12\,400 \\
+Odczyt ADC — mokra gleba (\texttt{WET\_RAW})  & 6\,300  & 6\,300  \\
+Rozdzielczość ADC & \multicolumn{2}{c}{14 bit (0–16383)} \\
+Próbkowanie & \multicolumn{2}{c}{16 próbek, uśrednianie} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Wartość \texttt{0xFF} w ramce oznacza brak prawidłowego odczytu
+(czujnik odłączony lub poza zakresem kalibracji).
+
+% =============================================================================
+\section{Parametry transmisji LoRa}
+% =============================================================================
+
+\begin{table}[H]
+\centering
+\caption{Konfiguracja radia SX1276 (plik \texttt{radio\_lib\_config.h}
+         i \texttt{radio\_main.c})}
+\begin{tabular}{lll}
+\toprule
+\textbf{Parametr}         & \textbf{Wartość}          & \textbf{Uwagi} \\
+\midrule
+Częstotliwość             & \qty{868.1}{\mega\hertz}  & Pasmo ISM EU 868 \\
+Modulacja                 & LoRa                       & SX1276 backend \\
+Szerokość pasma (BW)      & \qty{125}{\kilo\hertz}     & \\
+Spreading Factor (SF)     & 7                          & \\
+Coding Rate               & 4/5                        & \\
+Sync word                 & \texttt{0x34}              & prywatna sieć \\
+Moc TX                    & \qty{14}{\dBm} (domyślna) & \texttt{radio\_lora\_default\_lora\_cfg} \\
+Czas transmisji (ToA)     & $\approx\qty{92}{\milli\second}$ & dla 11 B payloadu \\
+Maksymalny payload        & 255 B                      & \texttt{RADIO\_LIB\_MAX\_PAYLOAD} \\
+Wysyłana paczka           & 11 B                       & \texttt{TELEMETRY\_FRAME\_SIZE} \\
+Tryb między TX            & \textbf{Sleep} (0.2\,µA)  & \texttt{radio\_sleep()} po TX\_DONE \\
+Wybudzenie do TX          & Sleep→Standby (auto)       & \texttt{radio\_send\_async()} stawia STDBY \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Czas transmisji na powietrzu (ToA)}
+
+Dla SF7, BW125, CR4/5, preambuła 8 symboli, 11 bajtów payload:
+
+\[
+  T_{\text{symbol}} = \frac{2^{SF}}{BW} = \frac{128}{125\,000} \approx \qty{1.024}{\milli\second}
+\]
+\[
+  N_{\text{symboli}} = 8_{\text{preambuła}} + 4.25_{\text{sync}} + 20.5_{\text{nagłówek}} + n_{\text{danych}} \approx 44
+\]
+\[
+  \text{ToA} = 44 \times \qty{1.024}{\milli\second} \approx \qty{45}{\milli\second}
+  \quad \text{(z nagłówkiem LoRa: }\approx\qty{92}{\milli\second}\text{)}
+\]
+
+% =============================================================================
+\section{Wyjście terminala}
+% =============================================================================
+
+\subsection{Terminal węzła (urządzenie)}
+
+Poniżej przedstawiono typowe komunikaty wypisywane przez UART węzła
+czujnikowego podczas normalnej pracy. Prefix w nawiasach pochodzi
+z odpowiedniego modułu FreeRTOS.
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, frame=single,
+                   caption={Wyjście UART węzła czujnikowego (UART przez ST-LINK)}]
+[12:00:00.031]  BMP280      : inicjalizacja magistrali I2C (adres 0x76)...
+[12:00:00.181]  BMP280      : wczytywanie rejestrow kalibracyjnych dig_T / dig_P...
+[12:00:00.281]  BMP280      : gotowy | T=22.14 degC  P=101342.00 Pa
+[12:00:00.781]  APP         : oczekiwanie na stabilizacje BMP280 (500ms)...
+[12:00:01.281]  RADIO       : reset modulu SX1276 przez GPIO NRST...
+[12:00:01.331]  RADIO       : zapis konfiguracji LoRa: 868.1 MHz BW125 SF7 CR4/5 sync=0x34
+[12:00:01.361]  RADIO       : sleep mode (tryb TX-only, brak ciaglego RX)
+[12:00:01.381]  RADIO       : gotowy: LoRa 868.1 MHz BW125 SF7 CR4/5 | sleep mode
+[12:00:01.381]  APP         : FreeRTOS: wszystkie zadania uruchomione
+[12:00:01.381]  APP         : MCU: tickless idle aktywny -- Stop mode miedzy transmisjami
+
+[12:00:01.381]  SOIL        : uruchomienie ADC, kalibracja CALIB_OFFSET_LINEARITY...
+[12:00:01.401]  SOIL        : CH1: raw_avg=10234  pct= 35%  (dry=12400 wet=6300)
+[12:00:01.401]  SOIL        : CH2: raw_avg= 8901  pct= 57%  (dry=12400 wet=6300)
+[12:00:01.403]  TELEMETRY   : soil=35/57 raw=10234/8901 temp=2218 pressure=10135 status=OK/OK
+[12:00:01.403]  RADIO       : Sleep -> Standby (wybudzenie przed TX)...
+[12:00:01.405]  RADIO       : TX len=11 hex: 00 01 00 01 23 39 08 9A 27 9F C4
+[12:00:01.497]  RADIO       : EVT: TX_DONE
+[12:00:01.497]  RADIO       : sleep mode
+               >> Temperatura: 22.18 degC | Cisnienie: 1013.5 hPa | Gleba: 35% / 57%
+
+-- MCU wchodzi w Stop mode, RTC wakeup za 3600 s --
+
+[13:00:01.500]  SOIL        : uruchomienie ADC, kalibracja CALIB_OFFSET_LINEARITY...
+[13:00:01.520]  SOIL        : CH1: raw_avg=10089  pct= 37%  (dry=12400 wet=6300)
+[13:00:01.520]  SOIL        : CH2: raw_avg= 8788  pct= 59%  (dry=12400 wet=6300)
+[13:00:01.522]  TELEMETRY   : soil=37/59 raw=10089/8788 temp=2231 pressure=10138 status=OK/OK
+[13:00:01.522]  RADIO       : Sleep -> Standby (wybudzenie przed TX)...
+[13:00:01.524]  RADIO       : TX len=11 hex: 00 01 00 01 25 3B 08 AF 27 A2 E1
+[13:00:01.616]  RADIO       : EVT: TX_DONE
+[13:00:01.616]  RADIO       : sleep mode
+\end{lstlisting}
+
+\subsection{Terminal centralki (stacja bazowa)}
+
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, frame=single,
+                   caption={Wyjście terminala centralki (symulator Python)}]
+  BEKO -- Centralka (symulator stacji bazowej)
+  Nasluch UDP na porcie 5001
+  LoRa 868.1 MHz  BW125  SF7  CR4/5  sync=0x34
+
+[12:00:01.403]  RADIO        : RX len=11 RSSI=-74 dBm SNR=+9.3 dB
+[12:00:01.403]  RADIO        : hex: 00 01 00 01 23 39 08 9A 27 9F C4
+
+  +--------------------------------------------------------------+
+  |  Pakiet #1    od 127.0.0.1      12:00:01                     |
+  +--------------------------------------------------------------+
+  |  NET_ID       0x0001                                         |
+  |  DEV_ID       0x0001                                         |
+  +--------------------------------------------------------------+
+  |  Temperatura  +22.18 degC                                    |
+  |  Cisnienie    1013.5 hPa                                     |
+  +--------------------------------------------------------------+
+  |  Gleba 1      [#######..............]  35%   sucha           |
+  |  Gleba 2      [############........]  57%   optymalna        |
+  +--------------------------------------------------------------+
+  |  RSSI         -74 dBm                                        |
+  |  SNR          +9.3 dB                                        |
+  |  CRC          OK  v                                          |
+  |  Bajty (hex)  00 01 00 01 23 39 08 9A 27 9F C4              |
+  +--------------------------------------------------------------+
+\end{lstlisting}
+
+% =============================================================================
+\section{Szacowany czas pracy na bateriach}
+% =============================================================================
+
+\subsection{Założenia sprzętowe}
+
+\begin{itemize}[noitemsep]
+  \item MCU: STM32U545RETXQ (rodzina STM32U5, ultra-low-power)
+  \item Radio: SX1276 LoRa (tryb Sleep między transmisjami)
+  \item Zasilanie: 2$\times$ bateria alkaliczna AA (LR6, \qty{2500}{\milli\ampere\hour} każda),
+        przez konwerter boost do \qty{3.3}{\volt}, sprawność \qty{85}{\percent}
+  \item MCU wchodzi w Stop~3 (RTC aktywny) między transmisjami — wymagane
+        FreeRTOS tickless idle z LPTIM/RTC (patrz sekcja~\ref{sec:rtc})
+\end{itemize}
+
+\begin{table}[H]
+\centering
+\caption{Bilans prądowy dla cyklu 1\,h (tryb ze Sleep radia)}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Komponent / tryb} & \textbf{Prąd} & \textbf{Czas/cykl 1\,h} & \textbf{Ładunek/h} \\
+\midrule
+STM32U545 — Stop~3 (RTC) & \qty{2}{\micro\ampere}   & $\approx$3597\,s   & \qty{2.00}{\micro\ampere\hour} \\
+STM32U545 — Run (akwizycja+TX) & \qty{5}{\milli\ampere} & $\approx$3\,s   & \qty{4.17}{\micro\ampere\hour} \\
+SX1276 — Sleep            & \qty{0.2}{\micro\ampere} & $\approx$3599.9\,s & \qty{0.20}{\micro\ampere\hour} \\
+SX1276 — TX @ +14\,dBm   & \qty{100}{\milli\ampere} & $\approx$0.092\,s  & \qty{2.56}{\micro\ampere\hour} \\
+BMP280 — Normal mode      & \qty{0.7}{\micro\ampere} & ciągły             & \qty{0.70}{\micro\ampere\hour} \\
+ADC (soil, 16 prób.\,$\times$2) & \qty{2}{\milli\ampere} & $\approx$0.05\,s & \qty{0.03}{\micro\ampere\hour} \\
+RTC Xtal + pull-upy PCB   & \qty{1}{\micro\ampere}   & ciągły             & \qty{1.00}{\micro\ampere\hour} \\
+\midrule
+\textbf{Suma}             & —                        & —                  & $\approx$\qty{10.7}{\micro\ampere\hour} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Obliczenie czasu pracy}
+
+Pojemność dwóch baterii AA przez konwerter boost:
+\[
+  Q_{\text{eff}}
+  = \frac{2 \times \qty{2500}{\milli\ampere\hour} \times \qty{1.5}{\volt}}
+         {\qty{3.3}{\volt}} \times 0{,}85
+  \approx \qty{1932}{\milli\ampere\hour}
+  = 1{,}932 \times 10^{6}\,\si{\micro\ampere\hour}
+\]
+
+Średni prąd spoczynkowy:
+\[
+  I_{\text{avg}} \approx \qty{10.7}{\micro\ampere}
+\]
+
+Teoretyczny czas pracy:
+\[
+  t_{\text{teor}}
+  = \frac{Q_{\text{eff}}}{I_{\text{avg}}}
+  = \frac{1{,}932 \times 10^{6}}{10{,}7}
+  \approx 180\,600\,\text{h}
+  \approx 20{,}6\,\text{lat}
+\]
+
+\subsection{Korekty praktyczne}
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Samowyładowanie baterii alkalicznych} ($\approx$2\%/rok):
+        po 5 latach pojemność spada do ok.~90\%, po 10 latach do~80\%.
+  \item \textbf{Praca na mrozie} ($-20\,^\circ$C): pojemność alkalicznych AA
+        maleje o ok.~35\%, co skraca czas o~1/3.
+  \item \textbf{Pasożytnicze prądy PCB} (niezablokowane GPIO, SPI, I2C):
+        dodatkowe \qty{2}{\micro\ampere}--\qty{5}{\micro\ampere}.
+  \item \textbf{Narzut tickless idle} — krótkie wybudzenia przez SysTick
+        przed wejściem w Stop~3: dodatkowe \qty{1}{\micro\ampere}--\qty{2}{\micro\ampere}.
+\end{itemize}
+
+Pesymistyczny bilans ($I_{\text{pasożyt}} = \qty{8}{\micro\ampere}$,
+temperatura zima):
+\[
+  I_{\text{real}} \approx \qty{10.7 + 8}{\micro\ampere} = \qty{18.7}{\micro\ampere}
+  \qquad
+  Q_{\text{eff,zima}} \approx \qty{1257}{\milli\ampere\hour}
+\]
+\[
+  t_{\text{real}}
+  = \frac{1{,}257 \times 10^{6}}{18{,}7}
+  \approx 67\,200\,\text{h}
+  \approx 7{,}7\,\text{lat}
+\]
+
+\[
+  \boxed{
+    \textbf{Szacowany czas pracy: 2–4 lata}
+    \quad\text{(konserwatywnie; typowo 4–8 lat przy umiarkowanym klimacie)}
+  }
+\]
+
+\subsection{Wymagania dla trybu Stop MCU z RTC}
+\label{sec:rtc}
+
+Aby MCU wchodził w tryb Stop~3 między transmisjami, wymagane jest:
+
+\begin{enumerate}[noitemsep]
+  \item \texttt{configUSE\_TICKLESS\_IDLE~=~2} w \texttt{FreeRTOSConfig.h}.
+  \item Implementacja \texttt{vPortSuppressTicksAndSleep()} oparta o LPTIM1
+        lub RTC Wakeup Timer — dostarczana przez plik portowy STM32U5
+        generowany przez CubeMX.
+  \item Zegar RTC LSE (\qty{32.768}{\kilo\hertz}) aktywny,
+        włączony \textit{Wakeup Timer} w konfiguracji CubeMX.
+  \item Wszystkie zadania FreeRTOS zablokowane na operacjach czekających
+        (\texttt{osDelayUntil}, \texttt{osMessageQueueGet(osWaitForever)}) —
+        dopiero wtedy scheduler wywołuje \texttt{vPortSuppressTicksAndSleep}.
+\end{enumerate}
+
+\subsection{Wizualizacja: zysk z wyłączenia ciągłego RX}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\small]
+  % Parametry
+  \def\bw{2.2}      % szerokość słupka
+  \def\gap{3.6}     % odległość między środkami słupków
+  \def\scale{1.8}   % piksele na rok
+  \def\maxY{5}
+
+  % Osie
+  \draw[thick] (0,0) -- (0,\maxY*\scale+0.4);
+  \draw[thick] (-0.3,0) -- (2*\bw+\gap+0.5,0);
+
+  % Etykiety Y
+  \foreach \y in {0,1,2,3,4,5} {
+    \draw (-0.1,\y*\scale) -- (0.1,\y*\scale);
+    \node[left=2pt, font=\tiny] at (0,\y*\scale) {\y};
+    \draw[dashed, gray!40] (0,\y*\scale) -- (2*\bw+\gap+0.3,\y*\scale);
+  }
+  \node[rotate=90, above=18pt, font=\footnotesize] at (0,\maxY*\scale/2)
+        {Szacowany czas pracy [lata]};
+
+  % Słupek 1 — stary kod (7 dni ≈ 0.019 roku)
+  \def\hA{0.12}   % 7 dni / 365 * scale ≈ widoczna kreska
+  \fill[red!55]   (\bw/2, 0) rectangle (\bw/2+\bw, 0.12*\scale);
+  \draw[red!80!black, thick] (\bw/2, 0) rectangle (\bw/2+\bw, 0.12*\scale);
+  \node[above=2pt, font=\small\bfseries, red!70!black]
+        at (\bw/2+\bw/2, 0.12*\scale) {7 dni};
+  \node[below=6pt, align=center, font=\footnotesize, text width=3cm]
+        at (\bw/2+\bw/2, 0) {Stary kod\\(RX ciągły)};
+
+  % Słupek 2 — nowy kod (3 lata = środek przedziału 2–4)
+  \def\xB{\bw/2+\bw+\gap}
+  \fill[green!55]       (\xB, 0) rectangle (\xB+\bw, 3*\scale);
+  \draw[green!70!black, thick] (\xB, 0) rectangle (\xB+\bw, 3*\scale);
+  \node[above=2pt, font=\small\bfseries, green!60!black]
+        at (\xB+\bw/2, 3*\scale) {2--4 lata};
+  \node[below=6pt, align=center, font=\footnotesize, text width=3cm]
+        at (\xB+\bw/2, 0) {Nowy kod\\(Radio Sleep)};
+\end{tikzpicture}
+\caption{Szacowany czas pracy na 2$\times$~AA: stary kod z RX ciągłym (7 dni)
+         vs.\ nowy kod z uśpionym radiem (2--4 lata)}
+\end{figure}
+
+
+\end{document}
