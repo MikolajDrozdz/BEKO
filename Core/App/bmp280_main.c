@@ -83,12 +83,25 @@ static void bmp280_main_task_fn(void *argument)
 {
     bmp280_api_data_t sample;
     bool sensor_ready;
+    uint8_t sensor_address = 0U;
 
     (void)argument;
 
     if (app_i2c_lock(0U))
     {
         sensor_ready = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_1);
+        if (sensor_ready)
+        {
+            sensor_address = BMP280_I2C_ADDRESS_1;
+        }
+        else
+        {
+            sensor_ready = bmp280_api_init(&hi2c1, BMP280_I2C_ADDRESS_0);
+            if (sensor_ready)
+            {
+                sensor_address = BMP280_I2C_ADDRESS_0;
+            }
+        }
         app_i2c_unlock();
     }
     else
@@ -102,7 +115,7 @@ static void bmp280_main_task_fn(void *argument)
     }
     else
     {
-        printf("BMP280 task: init OK\r\n");
+        printf("BMP/BME280 task: init OK at 0x%02X\r\n", sensor_address);
     }
 
     memset(&sample, 0, sizeof(sample));

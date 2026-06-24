@@ -10,6 +10,7 @@
 #include "lcd_main.h"
 #include "led_array_main.h"
 #include "radio_main.h"
+#include "telemetry_main.h"
 #include "tof_main.h"
 
 #include "app_delay.h"
@@ -60,6 +61,7 @@ void app_freertos_init(void)
     bmp280_main_create_task();
     tof_main_create_task();
     radio_main_create_task();
+    telemetry_main_create_task();
     led_array_main_create_task();
 }
 
@@ -363,4 +365,3 @@ static bool app_i2c_recover_locked(I2C_HandleTypeDef *hi2c)
 
     return true;
 }
-

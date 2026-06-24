@@ -58,6 +58,52 @@
 
 /* USER CODE END 0 */
 /**
+  * @brief ADC MSP Initialization
+  * This function configures the hardware resources used by ADC1.
+  * @param hadc ADC handle pointer
+  */
+void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
+
+  if(hadc->Instance==ADC1)
+  {
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADCDAC;
+    PeriphClkInit.AdcDacClockSelection = RCC_ADCDACCLKSOURCE_HCLK;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_RCC_ADC12_CLK_ENABLE();
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+    /**ADC1 GPIO Configuration
+    PA2     ------> ADC1_IN7
+    PA3     ------> ADC1_IN8
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_3;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  }
+}
+
+/**
+  * @brief ADC MSP De-Initialization
+  * @param hadc ADC handle pointer
+  */
+void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
+{
+  if(hadc->Instance==ADC1)
+  {
+    __HAL_RCC_ADC12_CLK_DISABLE();
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_2|GPIO_PIN_3);
+  }
+}
+
+/**
   * Initializes the Global MSP.
   */
 void HAL_MspInit(void)
@@ -68,6 +114,7 @@ void HAL_MspInit(void)
   /* USER CODE END MspInit 0 */
 
   __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_PWREx_EnableVddA();
 
   /* System interrupt init*/
   /* PendSV_IRQn interrupt configuration */
